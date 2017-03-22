@@ -1,0 +1,18 @@
+<p>{top-message}</p>
+
+<form method="post" action="{edit-link}">
+	{nonce}
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th scope="row"><label for="key">{key-label}</label></th>
+				<td><input type="text" aria-required="true" value="{key}" id="key" name="key" class="regular-text code" /></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<p class="submit">
+		<input type="submit" class="button button-primary" value="{save-label}" name="submit" />
+		<input type="submit" class="button button-primary" value="{new-label}" name="new" />
+	</p>
+</form>
