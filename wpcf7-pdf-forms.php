@@ -471,7 +471,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		public static function wpcf7_field_name_encode( $attachment_id, $pdf_field_name )
 		{
-			return "pdf-field-" . $attachment_id . "-" . self::base64url_encode( $pdf_field_name );
+			$slug = sanitize_title( $pdf_field_name );
+			return "pdf-field-" . $attachment_id . "-" . $slug . "-" . self::base64url_encode( $pdf_field_name );
 		}
 		public static function wpcf7_field_name_decode( $attachment_id, $wpcf7_field_name )
 		{
@@ -479,7 +480,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( substr( $wpcf7_field_name, 0, strlen( $flag ) ) !== $flag )
 				return FALSE;
 			
-			return self::base64url_decode( substr( $wpcf7_field_name, strlen( $flag ) ) );
+			$str = strrchr( $wpcf7_field_name, '-' );
+			if( $str == FALSE )
+				return FALSE;
+			
+			$base64encoded_field_name = substr( $str, 1 );
+			return self::base64url_decode( $base64encoded_field_name );
 		}
 	}
 	
