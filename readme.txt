@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== PDF forms for Contact Form 7 ===
 Contributors: maximumsoftware
 Tags: pdf, form, forms, pdf form, contact form 7, contact form, fill, filler, contactform7, cf7, attach, attachment
 Requires at least: 4.6
