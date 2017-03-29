@@ -4,7 +4,7 @@ Tags: pdf, form, forms, pdf form, contact form 7, contact form, fill, filler, co
 Requires at least: 4.6
 Tested up to: 4.7.3
 Stable tag: trunk
-Version: 0.1.0
+Version: 0.1.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -20,6 +20,14 @@ This plugin gives WordPress Admin Panel users the ability to add PDF attachments
 2. Upload this plugin's folder to the `/wp-content/plugins/` directory, or install the plugin through the WordPress plugins screen directly.
 3. Activate the plugin through the 'Plugins' screen in WordPress
 4. Start using the 'PDF Form' button in the CF7 form editor
+
+== Changelog ==
+
+= 0.1.1 =
+
+* Release date: March 28, 2017
+
+* Removed unnecessary files to save disk space
 
 == Frequently Asked Questions ==
 
