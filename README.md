@@ -16,15 +16,17 @@ This plugin gives WordPress Admin Panel users the ability to add PDF attachments
 ## Frequently Asked Questions
 
 1. Does this plugin allow website visitors to work with PDF files?
+
 No.  This plugin adds features to the CF7 interface in the WordPress Admin Panel only.
 
 2. Does this plugin require special software installation on the web server?
+
 No.  The plugin uses core WordPress features only.  No special software or PHP extensions are needed.  Working with PDF files is done through a HTTP JSON REST API.
 
 ## Screenshots
 
-![PDF Form button is available to access PDF attachments interface](screenshot-1.png?raw=true)
+![PDF Form button is available to access PDF attachments interface](assets/screenshot-1.png?raw=true)
 
-![Form-tag Generator interface that allows users to upload and attach PDF files and generate tags](screenshot-2.png?raw=true)
+![Form-tag Generator interface that allows users to upload and attach PDF files and generate tags](assets/screenshot-2.png?raw=true)
 
-![Email message in Thunderbird with the attached PDF file](screenshot-3.png?raw=true)
+![Email message in Thunderbird with the attached PDF file](assets/screenshot-3.png?raw=true)
