@@ -1,6 +1,6 @@
-=== PDF forms for Contact Form 7 ===
+=== PDF Forms Filler for Contact Form 7 ===
 Contributors: maximumsoftware
-Tags: pdf, form, forms, pdf form, contact form 7, contact form, fill, filler, contactform7, cf7, attach, attachment
+Tags: pdf, form, filler, contact form, attachment, email
 Requires at least: 4.6
 Tested up to: 4.7.3
 Stable tag: trunk
@@ -12,7 +12,7 @@ Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically 
 
 == Description ==
 
-This plugin gives WordPress Admin Panel users the ability to add PDF attachments to email messages of Contact Form 7.  If the PDF attachment has a PDF form, the plugin allows users to add fields onto the CF7 form that are mapped to fields in the PDF form.  When a website visitor submits the CF7 form, the form in the PDF file is filled with CF7 form information and the resulting PDF file is attached to the CF7 email message.
+This plugin gives WordPress Admin Panel users the ability to add PDF attachments to email messages of Contact Form 7.  If the PDF attachment has a PDF form, the plugin allows users to add fields onto the CF7 form that are mapped to fields in the PDF form.  When a website visitor submits the CF7 form, the form in the PDF file is filled with CF7 form information and the resulting PDF file is attached to the CF7 email message.  External web API (https://pdf.ninja) is used for filling PDF forms.
 
 == Installation ==
 

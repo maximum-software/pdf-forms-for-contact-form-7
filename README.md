@@ -1,4 +1,4 @@
-# PDF forms for Contact Form 7
+# PDF Forms Filler for Contact Form 7
 
 Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically and attached to email messages upon form submission on your website.
 
