@@ -322,31 +322,35 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$tags = "";
 				if( is_array( $fields ) )
-				foreach ( $fields as $name => $value )
 				{
-					// radio button and select
-					if( isset( $value['type'] ) )
-						if( $value['type'] == 'radio' || $value['type'] == 'select' )
+					if( count($fields) == 0 )
+						$tags = __( "This PDF file does not appear to contain a PDF form.  See https://acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for more information.", 'wpcf7-pdf-forms' );
+					else
+						foreach ( $fields as $name => $value )
 						{
-							if( isset( $value['options'] ) )
+							// radio button and select
+							if( isset( $value['type'] ) )
+								if( $value['type'] == 'radio' || $value['type'] == 'select' )
+								{
+									if( isset( $value['options'] ) )
+									{
+										$tag = '<label>' . $value['name'] . '</label>' . "\n";
+										$tag .= '    [' . $value['type'] . ' ' . self::wpcf7_field_name_encode( $attachment_id, $value['name'] ) . ' ';
+										foreach( $value['options'] as $name => $value )
+											$tag .= '"'.$value.'" ';
+										$tag .= ']';
+										$tags .= $tag . "\n\n";
+									}
+								}
+							
+							if( isset( $value['type'] ) && $value['type'] == 'text' )
 							{
 								$tag = '<label>' . $value['name'] . '</label>' . "\n";
-								$tag .= '    [' . $value['type'] . ' ' . self::wpcf7_field_name_encode( $attachment_id, $value['name'] ) . ' ';
-								foreach( $value['options'] as $name => $value )
-									$tag .= '"'.$value.'" ';
-								$tag .= ']';
+								$tag .= '    [' . $value['type'] . ' ' . self::wpcf7_field_name_encode( $attachment_id, $value['name'] ) . ' ]';
 								$tags .= $tag . "\n\n";
 							}
 						}
-					
-					if( isset( $value['type'] ) && $value['type'] == 'text' )
-					{
-						$tag = '<label>' . $value['name'] . '</label>' . "\n";
-						$tag .= '    [' . $value['type'] . ' ' . self::wpcf7_field_name_encode( $attachment_id, $value['name'] ) . ' ]';
-						$tags .= $tag . "\n\n";
-					}
 				}
-				
 				return wp_send_json( array(
 					'success' => true,
 					'tags' => $tags,
