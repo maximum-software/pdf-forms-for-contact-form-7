@@ -6,6 +6,8 @@ Description: Create Contact Form 7 forms from PDF forms.  Get PDF forms filled a
 Version: 0.1.1
 Author: Maximum.Software
 Author URI: https://maximum.software/
+Text Domain: wpcf7-pdf-forms
+Domain Path: /languages
 License: GPLv3
 */
 
@@ -19,7 +21,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		
 		public function __construct()
 		{
-			load_plugin_textdomain( 'wpcf7-pdf-forms', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
+			load_plugin_textdomain( 'wpcf7-pdf-forms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 			add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 			
 			if( ! class_exists('WPCF7') )

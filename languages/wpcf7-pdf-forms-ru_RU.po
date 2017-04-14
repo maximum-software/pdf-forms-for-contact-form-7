@@ -1,0 +1,199 @@
+# Copyright (C) 2017 PDF Forms Filler for Contact Form 7
+# This file is distributed under the same license as the PDF Forms Filler for Contact Form 7 package.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/git\n"
+"POT-Creation-Date: 2017-04-14 03:21:12+00:00\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+
+#: modules/pdf-ninja.php:38
+msgid "Pdf.Ninja API"
+msgstr "Pdf.Ninja API"
+
+#: modules/pdf-ninja.php:134 modules/pdf-ninja.php:154
+msgid "Failed to get API server response"
+msgstr "Не удалось получить ответ от сервера API"
+
+#: modules/pdf-ninja.php:139 modules/pdf-ninja.php:159
+msgid "Failed to decode API server response"
+msgstr "Не удалось декодировать ответ от сервера API"
+
+#: modules/pdf-ninja.php:175 modules/pdf-ninja.php:347
+#: modules/pdf-ninja.php:392
+msgid "Pdf.Ninja API server did not send an expected response"
+msgstr "Сервер API Pdf.Ninja не послал ожидаемый ответ"
+
+#: modules/pdf-ninja.php:240 modules/pdf-ninja.php:277
+msgid "File not found"
+msgstr "Файл не найден"
+
+#: modules/pdf-ninja.php:396
+msgid "Cannot download PDF file from the API server"
+msgstr "Невозможно загрузить PDF файл с сервера API"
+
+#: modules/pdf-ninja.php:401
+msgid "Cannot open temporary PDF file for writing"
+msgstr "Невозможно открыть временный файл PDF для записи"
+
+#: modules/pdf-ninja.php:407
+msgid "Cannot create temporary PDF file"
+msgstr "Невозможно создать временный файл PDF"
+
+#: modules/pdf-ninja.php:442 wpcf7-pdf-forms.php:264 wpcf7-pdf-forms.php:317
+#: wpcf7-pdf-forms.php:384
+msgid "Permission denied"
+msgstr "Запрещено"
+
+#: modules/pdf-ninja.php:488
+msgid "This API provides functionality for working with PDF forms."
+msgstr ""
+"Этот API предоставляет функциональные возможности для работы с PDF-формами."
+
+#: modules/pdf-ninja.php:489 modules/pdf-ninja.php:516
+msgid "API Key"
+msgstr "Ключ API"
+
+#: modules/pdf-ninja.php:491 modules/pdf-ninja.php:504
+msgid "Edit"
+msgstr "Редактировать"
+
+#: modules/pdf-ninja.php:502
+msgid "Error!"
+msgstr "Ошибка!"
+
+#: modules/pdf-ninja.php:515
+msgid "The following form allows you to edit your API key."
+msgstr "Следующая форма позволяет редактировать ключ API."
+
+#: modules/pdf-ninja.php:520
+msgid "Save"
+msgstr "Сохранить"
+
+#: modules/pdf-ninja.php:521
+msgid "Get New Key"
+msgstr "Получить новый ключ"
+
+#: modules/pdf-ninja.php:532 modules/pdf-ninja.php:538
+msgid "PDF Forms for CF7 plugin error"
+msgstr "Ошибка в плагине PDF Forms for CF7"
+
+#: modules/pdf-ninja.php:533
+msgid "Can't save new key."
+msgstr "Невозможно сохранить новый ключ."
+
+#: modules/pdf-ninja.php:544
+msgid "Key saved."
+msgstr "Ключ сохранен."
+
+#: wpcf7-pdf-forms.php:48 wpcf7-pdf-forms.php:59
+msgid "PDF Forms Filler for CF7 plugin error"
+msgstr "PDF Forms Filler для ошибки CF7 плагин"
+
+#: wpcf7-pdf-forms.php:49
+msgid "The required plugin 'Contact Form 7' is not installed!"
+msgstr "Необходимый плагин «Contact Form 7» не установлен!"
+
+#: wpcf7-pdf-forms.php:60
+msgid "Could not get a Pdf.Ninja API key."
+msgstr "Не удалось получить ключ API Pdf.Ninja."
+
+#: wpcf7-pdf-forms.php:91
+msgid "File not specified"
+msgstr "Файл не указан"
+
+#: wpcf7-pdf-forms.php:92
+msgid "Get Tags"
+msgstr "Получить теги"
+
+#: wpcf7-pdf-forms.php:93
+msgid "Delete"
+msgstr "Удалить"
+
+#: wpcf7-pdf-forms.php:110
+msgid "PDF Forms"
+msgstr "PDF формы"
+
+#: wpcf7-pdf-forms.php:261 wpcf7-pdf-forms.php:309 wpcf7-pdf-forms.php:376
+msgid "Nonce mismatch"
+msgstr "Несоответствие нонса"
+
+#: wpcf7-pdf-forms.php:271
+msgid "Invalid file mime type, must be 'application/pdf'"
+msgstr "Неверный тип файла мим, должен быть «приложение / PDF»"
+
+#: wpcf7-pdf-forms.php:314
+msgid "Invalid attachment ID"
+msgstr "Недопустимый идентификатор вложения"
+
+#: wpcf7-pdf-forms.php:327
+msgid ""
+"This PDF file does not appear to contain a PDF form.  See https://acrobat."
+"adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
+"more information."
+msgstr ""
+"Этот файл PDF не содержит PDF форму. Дополнительную информацию см. на "
+"странице https://acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-"
+"forms-creator.html."
+
+#: wpcf7-pdf-forms.php:381
+msgid "Invalid post ID"
+msgstr "Недопустимый идентификатор сообщения"
+
+#: wpcf7-pdf-forms.php:417 wpcf7-pdf-forms.php:426
+msgid "PDF Form"
+msgstr "PDF форма"
+
+#: wpcf7-pdf-forms.php:454
+msgid ""
+"Attach a PDF file to your form and insert tags into your form that map to "
+"fields in the PDF file."
+msgstr ""
+"Приложить файл PDF в форму и вставить тег в вашу форму, сопоставляемые с "
+"полей в файле PDF."
+
+#: wpcf7-pdf-forms.php:455
+msgid "Upload & Attach a PDF File"
+msgstr "Загрузить & Приложить PDF-файл"
+
+#: wpcf7-pdf-forms.php:456
+msgid "Insert Tags"
+msgstr "Вставить теги"
+
+#: wpcf7-pdf-forms.php:461
+msgid "Your CF7 plugin is too out of date, please upgrade."
+msgstr "Ваш CF7 плагин слишком устарел, пожалуйста, обновите."
+
+#. Plugin Name of the plugin/theme
+msgid "PDF Forms Filler for Contact Form 7"
+msgstr "Заполнятель PDF форм для Contact Form 7"
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/maximum-software/wpcf7-pdf-forms"
+msgstr "https://github.com/maximum-software/wpcf7-pdf-forms"
+
+#. Description of the plugin/theme
+msgid ""
+"Create Contact Form 7 forms from PDF forms.  Get PDF forms filled "
+"automatically and attached to email messages upon form submission on your "
+"website.  Uses https://pdf.ninja API for working with PDF files."
+msgstr ""
+"Создавайте Contact Form 7 формы из PDF форм. Заполняйте PDF формы "
+"автоматически и прилагайте их к сообщению электронной почты при заполнении "
+"формы на вашем сайте. Планиг использует https://pdf.ninja API для работы с "
+"PDF-файлами."
+
+#. Author of the plugin/theme
+msgid "Maximum.Software"
+msgstr "Maximum.Software"
+
+#. Author URI of the plugin/theme
+msgid "https://maximum.software/"
+msgstr "https://maximum.software/"
