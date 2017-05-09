@@ -218,11 +218,14 @@ jQuery(document).ready(function($) {
 					addAttachment(data.attachment_id, data.filename);
 				
 				file.val("");
+				
+				if(data.attachment_id)
+					setTimeout( function(){ getTags(data.attachment_id); }, 100);
 			},
 			
 			error: function (jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
 			
-			beforeSend: function() { showSpinner() },
+			beforeSend: function() { showSpinner(); },
 			complete: function() { hideSpinner(); }
 			
 		});
