@@ -261,14 +261,14 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 			'Content-Type' => 'multipart/form-data; boundary=' . $boundary
 		);
 		
-		$payload = '';
+		$payload = "";
 		
 		foreach( $params as $name => $value )
 		{
-			$payload .= '--' . $boundary . "\r\n"
-			          . 'Content-Disposition: form-data; name="' . $name . "\r\n"
+			$payload .= "--{$boundary}\r\n"
+			          . "Content-Disposition: form-data; name=\"{$name}\"\r\n"
 			          . "\r\n"
-			          . $value . "\r\n";
+			          . "{$value}\r\n";
 		}
 		
 		$filepath = get_attached_file( $attachment_id );
@@ -276,14 +276,15 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 		if( ! file_exists( $filepath ) )
 			throw new Exception( __( "File not found", 'wpcf7-pdf-forms' ) );
 		
-		$payload .= '--' . $boundary . "\r\n"
-		          . 'Content-Disposition: form-data; name="file"; filename="' . basename( $filepath ) . '"' . "\r\n"
-		          . 'Content-Type: application/octet-stream' . "\r\n"
-		          . "\r\n"
-		          . file_get_contents( $filepath )
-		          . "\r\n";
+		$filename = basename( $filepath );
+		$filecontents = file_get_contents( $filepath );
 		
-		$payload .= '--' . $boundary . '--';
+		$payload .= "--{$boundary}\r\n"
+		          . "Content-Disposition: form-data; name=\"file\"; filename=\"{$filename}\"\r\n"
+		          . "Content-Type: application/octet-stream\r\n"
+		          . "\r\n"
+		          . "{$filecontents}\r\n"
+		          . "--{$boundary}--";
 		
 		$result = $this->api_post( 'file', $headers, $payload );
 		
