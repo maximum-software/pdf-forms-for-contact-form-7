@@ -469,11 +469,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public static function base64url_encode( $data )
 		{
-			return rtrim( strtr( base64_encode( $data ), '+/', '-_' ), '=' );
+			return rtrim( strtr( base64_encode( $data ), '+/', '._' ), '=' );
 		}
 		public static function base64url_decode( $data )
 		{
-			return base64_decode( str_pad(strtr( $data, '-_', '+/' ), strlen( $data ) % 4, '=', STR_PAD_RIGHT ) );
+			return base64_decode( str_pad(strtr( $data, '._', '+/' ), strlen( $data ) % 4, '=', STR_PAD_RIGHT ) );
 		}
 		public static function wpcf7_field_name_encode( $attachment_id, $pdf_field_name )
 		{
