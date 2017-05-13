@@ -363,11 +363,8 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 			'fileId' => $this->get_file_id( $attachment_id ),
 			'md5sum' => $this->get_file_md5sum( $attachment_id ),
 			'key'    => $this->get_key(),
+			'data'   => $data,
 		);
-		
-		foreach( $data as $key => $datum )
-			// TODO: escape $key
-			$params['data[' . $key . ']'] = $datum;
 		
 		$headers  = array(
 			'Content-Type' => 'application/x-www-form-urlencoded;charset=UTF-8'
