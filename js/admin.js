@@ -7,6 +7,8 @@ jQuery(document).ready(function($) {
 	};
 	
 	var errorMessage = function(msg) {
+		if(!msg)
+			msg = wpcf7_pdf_forms.__Unknown_error;
 		jQuery('.wpcf7-pdf-forms-admin .messages').append(
 			jQuery('<div class="error"/>').text(msg)
 		);
