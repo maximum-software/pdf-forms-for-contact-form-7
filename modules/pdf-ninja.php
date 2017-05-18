@@ -117,13 +117,25 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 		return $this->api_get_key($email);
 	}
 	
+	private function wp_remote_args()
+	{
+		return array(
+			'headers'     => array( 'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8' ),
+			'compress'    => true,
+			'decompress'  => true,
+			'timeout'     => 10,
+			'redirection' => 5,
+			'user-agent'  => 'wpcf-pdf-forms/0.1'
+		);
+	}
+	
 	/*
 	 * Helper function for communicating with the API via the GET request
 	 */
 	private function api_get( $endpoint, $params )
 	{
-		$url = add_query_arg($params, self::API_SERVER_URL . '/api/v1/' . $endpoint);
-		$response = wp_remote_get($url);
+		$url = add_query_arg( $params, self::API_SERVER_URL . '/api/v1/' . $endpoint );
+		$response = wp_remote_get( $url, $this->wp_remote_args() );
 		
 		if( is_wp_error( $response ) )
 			throw new Exception( implode( ', ', $response->get_error_messages() ) );
@@ -144,9 +156,21 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 	/*
 	 * Helper function for communicating with the API via the POST request
 	 */
-	private function api_post( $endpoint, $headers, $payload )
+	private function api_post( $endpoint, $payload, $headers = array(), $args_override = array() )
 	{
-		$response = wp_remote_post( self::API_SERVER_URL . '/api/v1/' . $endpoint, array( 'headers' => $headers, 'body' => $payload ));
+		$args = $this->wp_remote_args();
+		
+		$args['body'] = $payload;
+		
+		if( is_array( $headers ) )
+			foreach( $headers as $key => $value )
+				$args['headers'][$key] = $value;
+		
+		if( is_array( $args_override ) )
+			foreach( $args_override as $key => $value )
+				$args[$key] = $value;
+		
+		$response = wp_remote_post( self::API_SERVER_URL . '/api/v1/' . $endpoint, $args );
 		
 		$body = wp_remote_retrieve_body( $response );
 		
@@ -257,19 +281,13 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 		
 		$boundary = wp_generate_password( 24 );
 		
-		$headers  = array(
-			'Content-Type' => 'multipart/form-data; boundary=' . $boundary
-		);
-		
 		$payload = "";
 		
 		foreach( $params as $name => $value )
-		{
 			$payload .= "--{$boundary}\r\n"
 			          . "Content-Disposition: form-data; name=\"{$name}\"\r\n"
 			          . "\r\n"
 			          . "{$value}\r\n";
-		}
 		
 		$filepath = get_attached_file( $attachment_id );
 		
@@ -283,10 +301,14 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 		          . "Content-Disposition: form-data; name=\"file\"; filename=\"{$filename}\"\r\n"
 		          . "Content-Type: application/octet-stream\r\n"
 		          . "\r\n"
-		          . "{$filecontents}\r\n"
-		          . "--{$boundary}--";
+		          . "{$filecontents}\r\n";
 		
-		$result = $this->api_post( 'file', $headers, $payload );
+		$payload .= "--{$boundary}--";
+		
+		$headers  = array( 'Content-Type' => 'multipart/form-data; boundary=' . $boundary );
+		$args = array( 'timeout' => 300 );
+		
+		$result = $this->api_post( 'file', $payload, $headers, $args );
 		
 		if( $result['success'] != true )
 			throw new Exception( $result['error'] );
@@ -363,14 +385,10 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 			'fileId' => $this->get_file_id( $attachment_id ),
 			'md5sum' => $this->get_file_md5sum( $attachment_id ),
 			'key'    => $this->get_key(),
-			'data'   => $data,
+			'data'   => json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES )
 		);
 		
-		$headers  = array(
-			'Content-Type' => 'application/x-www-form-urlencoded;charset=UTF-8'
-		);
-		
-		return $this->api_post( 'fill', $headers, $params );
+		return $this->api_post( 'fill', $params );
 	}
 	
 	/*
@@ -389,7 +407,9 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 		if( ! $result['fileUrl'] )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'wpcf7-pdf-forms' ) );
 		
-		$response = wp_remote_get( $result['fileUrl'] );
+		$args = $this->wp_remote_args();
+		$args['timeout'] = 100;
+		$response = wp_remote_get( $result['fileUrl'], $args );
 		if( is_wp_error( $response ) )
 			throw new Exception( __( "Cannot download PDF file from the API server", 'wpcf7-pdf-forms' ) );
 		
