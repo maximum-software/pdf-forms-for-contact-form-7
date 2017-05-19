@@ -213,7 +213,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				{
 					$field = self::wpcf7_field_name_decode( $attachment_id, $key );
 					if( $field !== FALSE )
+					{
+						if( is_array( $value ) )
+							$value = array_shift( $value );
 						$data[$field] = $value;
+					}
 				}
 				
 				try
