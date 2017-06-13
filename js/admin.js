@@ -115,7 +115,7 @@ jQuery(document).ready(function($) {
 		tag.find('.filename').text('['+attachment_id+'] '+filename);
 		var tags_button = tag.find('.get-tags-button');
 		tags_button.data('attachment_id', attachment_id);
-		tags_button.click(function() {
+		tags_button.click(function(event) {
 			
 			// prevent running default button click handlers
 			event.stopPropagation();
@@ -126,7 +126,7 @@ jQuery(document).ready(function($) {
 		});
 		var delete_button = tag.find('.delete-button');
 		delete_button.data('attachment_id', attachment_id);
-		delete_button.click(function() {
+		delete_button.click(function(event) {
 			
 			// prevent running default button click handlers
 			event.stopPropagation();
@@ -179,7 +179,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Upload PDF' button handler
-	jQuery('.wpcf7-pdf-forms-admin .upload-btn').click(function (event) {
+	jQuery('.wpcf7-pdf-forms-admin .upload-btn').click(function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
