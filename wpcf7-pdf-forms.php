@@ -3,7 +3,7 @@
 Plugin Name: PDF Forms Filler for Contact Form 7
 Plugin URI: https://github.com/maximum-software/wpcf7-pdf-forms
 Description: Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically and attached to email messages upon form submission on your website.  Uses https://pdf.ninja API for working with PDF files.
-Version: 0.1.3
+Version: 0.1.4
 Author: Maximum.Software
 Author URI: https://maximum.software/
 Text Domain: wpcf7-pdf-forms
@@ -17,6 +17,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 {
 	class WPCF7_Pdf_Forms
 	{
+		const VERSION = '0.1.4';
+		
 		private $service;
 		
 		public function __construct()
@@ -84,8 +86,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			if( false !== strpos($hook, 'wpcf7') )
 			{
-				wp_register_script( 'wpcf7_pdf_forms_admin_script', plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery' ) );
-				wp_register_style( 'wpcf7_pdf_forms_admin_style', plugin_dir_url( __FILE__ ) . 'css/admin.css' );
+				wp_register_script( 'wpcf7_pdf_forms_admin_script', plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery' ), self::VERSION );
+				wp_register_style( 'wpcf7_pdf_forms_admin_style', plugin_dir_url( __FILE__ ) . 'css/admin.css', array( ), self::VERSION );
 				
 				wp_localize_script( 'wpcf7_pdf_forms_admin_script', 'wpcf7_pdf_forms', array(
 					'ajax_url' => admin_url( 'admin-ajax.php' ),
@@ -96,8 +98,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__Unknown_error' => __( 'Unknown error', 'wpcf7-pdf-forms' ),
 				) );
 				
-				wp_enqueue_script('thickbox');
-				wp_enqueue_style('thickbox');
+				wp_enqueue_script( 'thickbox' );
+				wp_enqueue_style( 'thickbox' );
 				
 				wp_enqueue_script( 'wpcf7_pdf_forms_admin_script' );
 				wp_enqueue_style( 'wpcf7_pdf_forms_admin_style' );
