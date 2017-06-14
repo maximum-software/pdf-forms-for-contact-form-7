@@ -9,10 +9,21 @@
 	overflow-wrap: break-word;
 }
 
+.wpcf7-pdf-forms-admin table,
+.wpcf7-pdf-forms-admin input[type=file]
+{
+	width: 100%;
+	max-width: 100%;
+}
+
 .wpcf7-pdf-forms-admin .tags-textarea
 {
 	min-height: 250px;
 	width: 100%;
+}
+.wpcf7-pdf-forms-admin .submitbox
+{
+	margin: 5px;
 }
 
 .spinner-overlay
