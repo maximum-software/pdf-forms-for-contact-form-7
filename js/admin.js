@@ -46,6 +46,8 @@ jQuery(document).ready(function($) {
 		
 		var textarea = jQuery('.wpcf7-pdf-forms-admin .tags-textarea');
 		
+		textarea.val('');
+		
 		jQuery.ajax({
 			url: wpcf7_pdf_forms.ajax_url,
 			type: 'GET',
