@@ -96,6 +96,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__Get_Tags' => __( 'Get Tags', 'wpcf7-pdf-forms' ),
 					'__Delete' => __( 'Delete', 'wpcf7-pdf-forms' ),
 					'__Unknown_error' => __( 'Unknown error', 'wpcf7-pdf-forms' ),
+					'__No_WPCF7' => __( 'Please copy/paste tags manually', 'wpcf7-pdf-forms' ),
 				) );
 				
 				wp_enqueue_script( 'thickbox' );

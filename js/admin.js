@@ -175,8 +175,18 @@ jQuery(document).ready(function($) {
 	// set up 'Insert Tags' button handler
 	jQuery('.wpcf7-pdf-forms-admin .insert-tags-btn').click(function(event) {
 		var tags = jQuery('.wpcf7-pdf-forms-admin .tags-textarea').val();
-		_wpcf7.taggen.insert(tags);
-		tb_remove();
+		var wpcf7obj;
+		if(typeof _wpcf7 != 'undefined' && _wpcf7 !== null)
+			wpcf7obj = _wpcf7;
+		if(typeof wpcf7 != 'undefined' && wpcf7 !== null)
+			wpcf7obj = wpcf7;
+		if(!wpcf7obj)
+			alert(wpcf7_pdf_forms.__No_WPCF7);
+		else
+		{
+			wpcf7obj.taggen.insert(tags);
+			tb_remove();
+		}
 		return false;
 	});
 	
