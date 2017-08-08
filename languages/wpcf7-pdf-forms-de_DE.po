@@ -82,7 +82,7 @@ msgstr "Get New Key"
 
 #: modules/pdf-ninja.php:532 modules/pdf-ninja.php:538
 msgid "PDF Forms for CF7 plugin error"
-msgstr "PDF-Formulare für CF7 Plugin-Fehler"
+msgstr "PDF Forms Filler for CF7 Plugin Fehler"
 
 #: modules/pdf-ninja.php:533
 msgid "Can't save new key."
@@ -138,9 +138,9 @@ msgid ""
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
 "more information."
 msgstr ""
-"Diese PDF-Datei enthält kein PDF-Formular. Weitere Informationen finden Sie "
-"unter https://acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-"
-"forms-creator.html."
+"Diese pdf Datei scheint kein pdf Formular zu enthalten. Weitere "
+"Informationen erhältst Du hier: https://acrobat.adobe.com/us/en/acrobat/how-"
+"to/create-fillable-pdf-forms-creator.html"
 
 #: wpcf7-pdf-forms.php:381
 msgid "Invalid post ID"
@@ -184,9 +184,10 @@ msgid ""
 "automatically and attached to email messages upon form submission on your "
 "website.  Uses https://pdf.ninja API for working with PDF files."
 msgstr ""
-"Erstellen Kontaktformular 7 Formulare von PDF-Formularen. Erhalten Sie PDF-"
-"Formulare automatisch ausgefüllt und an Nachrichten auf Formular-Vorlage auf "
-"Ihrer Website eine E-Mail. Verwendet https://pdf.ninja API für PDF-Dateien."
+"Erstelle Contact Form 7 Formulare mit PDF Forms. Erhalte PDF Forms "
+"vorausgefüllt und als Dateianhang in einer Email durch Anmeldeformulare auf "
+"Deiner Website. Benutzt: https://pdf.ninja API für das Verarbeiten von pdf "
+"Formulare."
 
 #. Author of the plugin/theme
 msgid "Maximum.Software"
