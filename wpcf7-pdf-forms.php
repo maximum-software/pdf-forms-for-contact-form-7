@@ -336,27 +336,40 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( count($fields) == 0 )
 						$tags = __( "This PDF file does not appear to contain a PDF form.  See https://acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for more information.", 'wpcf7-pdf-forms' );
 					else
-						foreach ( $fields as $name => $value )
+						foreach ( $fields as &$field )
 						{
-							// radio button and select
-							if( isset( $value['type'] ) )
-								if( $value['type'] == 'radio' || $value['type'] == 'select' )
+							if( isset( $field['type'] ) )
+							{
+								$type = $field['type'];
+								$name = $field['name'];
+								
+								$tag = '<label>' . $name . '</label>' . "\n";
+								
+								if( $type == 'text' )
 								{
-									if( isset( $value['options'] ) )
+									$tag .= '    [' . $field['type'] . ' ' . self::wpcf7_field_name_encode( $attachment_id, $field['name'] ) . ' ]';
+								}
+								else if( $type == 'radio' || $type == 'select' )
+								{
+									if( isset( $field['options'] ) )
 									{
-										$tag = '<label>' . $value['name'] . '</label>' . "\n";
-										$tag .= '    [' . $value['type'] . ' ' . self::wpcf7_field_name_encode( $attachment_id, $value['name'] ) . ' ';
-										foreach( $value['options'] as $name => $value )
-											$tag .= '"'.$value.'" ';
+										$options = $field['options'];
+										
+										if( ( $off_key = array_search( 'Off', $options ) ) !== FALSE )
+											unset( $options[ $off_key ] );
+										
+										if( count( $options ) == 1 )
+											$type = 'checkbox';
+										
+										$tag .= '    [' . $type . ' ' . self::wpcf7_field_name_encode( $attachment_id, $name ) . ' ';
+										foreach( $options as &$option )
+											$tag .= '"' . $option . '" ';
 										$tag .= ']';
-										$tags .= $tag . "\n\n";
 									}
 								}
-							
-							if( isset( $value['type'] ) && $value['type'] == 'text' )
-							{
-								$tag = '<label>' . $value['name'] . '</label>' . "\n";
-								$tag .= '    [' . $value['type'] . ' ' . self::wpcf7_field_name_encode( $attachment_id, $value['name'] ) . ' ]';
+								else
+									continue;
+								
 								$tags .= $tag . "\n\n";
 							}
 						}
