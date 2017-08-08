@@ -327,12 +327,11 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 		// retry uploading the file
 		// if file is gone from the API server
 		// or if there is a md5 mismatch
-		if( $previous_result['reason'] == 'noSuchFileId'
-		||  $previous_result['reason'] == 'md5sumMismatch' )
-		{
-			if( $this->api_upload_file( $attachment_id ) )
-				return true;
-		}
+		if( isset( $previous_result['reason'] ) )
+			if( $previous_result['reason'] == 'noSuchFileId'
+			||  $previous_result['reason'] == 'md5sumMismatch' )
+				if( $this->api_upload_file( $attachment_id ) )
+					return true;
 		
 		return false;
 	}
