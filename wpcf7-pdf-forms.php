@@ -235,6 +235,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				}
 				catch(Exception $e)
 				{
+					if( ! file_exists( $destfile ) )
+						copy( $filepath, $destfile );
+					$files[] = $destfile;
 					$destfile = self::create_wpcf7_tmp_filepath( basename( basename( $filepath . ".txt" ) ) );
 					$text = "Error generating PDF: " . $e->getMessage() . "\n"
 					      . "\n"
