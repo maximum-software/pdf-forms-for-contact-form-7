@@ -19,26 +19,49 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 	{
 		const VERSION = '0.1.6';
 		
-		private $service;
+		private static $instance = null;
+		private $pdf_ninja_service = null;
+		private $service = null;
+		private $registered_services = false;
 		
-		public function __construct()
+		private function __construct()
 		{
 			load_plugin_textdomain( 'wpcf7-pdf-forms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 			add_action( 'admin_notices', array( $this, 'admin_notices' ) );
-			
+			add_action( 'plugins_loaded', array( $this, 'plugin_init' ) );
+		}
+		
+		/*
+		 * Runs after all plugins have been loaded
+		 */
+		public function plugin_init()
+		{
 			if( ! class_exists('WPCF7') )
 				return;
 			
-			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_and_attach_pdfs' ) );
-			
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+			
 			add_action( 'wp_ajax_wpcf7_pdf_forms_upload', array( $this, 'wp_ajax_upload' ) );
 			add_action( 'wp_ajax_wpcf7_pdf_forms_query_fields', array( $this, 'wp_ajax_query_fields' ) );
 			add_action( 'wp_ajax_wpcf7_pdf_forms_query_attachments', array( $this, 'wp_ajax_query_attachments' ) );
+			
 			add_action( 'admin_init', array( $this, 'extend_tag_generator' ), 80 );
-			add_action( 'admin_menu', array( $this,'register_service') );
-			add_action( 'wpcf7_after_create', array( $this,'update_post_attachments') );
-			add_action( 'wpcf7_after_update', array( $this,'update_post_attachments') );
+			add_action( 'admin_menu', array( $this, 'register_services') );
+			
+			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_and_attach_pdfs' ) );
+			add_action( 'wpcf7_after_create', array( $this, 'update_post_attachments' ) );
+			add_action( 'wpcf7_after_update', array( $this, 'update_post_attachments' ) );
+		}
+		
+		/*
+		 * Returns a global instance of this class
+		 */
+		public static function get_instance()
+		{
+			if( !self::$instance )
+				self::$instance = new self;
+			
+			return self::$instance;
 		}
 		
 		/**
@@ -55,28 +78,43 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return;
 			}
 			
-			if( $this->get_service() )
-			{
-				try { $key = $this->service->get_key(); } catch(Exception $e) { };
-				if( ! $key )
-				echo WPCF7_Pdf_Forms::render( 'notice_error', array(
-					'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'wpcf7-pdf-forms' ),
-					'message' => esc_html__( "Could not get a Pdf.Ninja API key.", 'wpcf7-pdf-forms' ),
-				) );
-			}
+			if( ( $service = $this->get_service() ) )
+				$service->admin_notices();
 		}
 		
 		/**
-		 * Loads service module and returns the service instance
+		 * Loads the Pdf.Ninja service module
+		 */
+		private function load_pdf_ninja_service()
+		{
+			if( ! $this->pdf_ninja_service )
+			{
+				require_once untrailingslashit( dirname( __FILE__ ) ) . '/modules/pdf-ninja.php';
+				$this->pdf_ninja_service = WPCF7_Pdf_Ninja::get_instance();
+			}
+			
+			return $this->pdf_ninja_service;
+		}
+		
+		/**
+		 * Returns the service module instance
 		 */
 		public function get_service()
 		{
+			$this->register_services();
+			
 			if( ! $this->service )
-			{
-				require_once untrailingslashit(dirname(__FILE__)) . '/modules/pdf-ninja.php';
-				$this->service = WPCF7_Pdf_Ninja::get_instance();
-			}
+				$this->set_service( $this->load_pdf_ninja_service() );
+			
 			return $this->service;
+		}
+		
+		/**
+		 * Sets the service module instance
+		 */
+		public function set_service( $service )
+		{
+			return $this->service = $service;
 		}
 		
 		/**
@@ -108,15 +146,25 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/**
-		 * Registers PDF forms service with the Contact Form 7 integration
+		 * Registers PDF forms category and PDF.Ninja service with the Contact Form 7 integration class
 		 */
-		public function register_service()
+		public function register_services()
 		{
+			if( $this->registered_services )
+				return;
+			
+			require_once untrailingslashit( dirname( __FILE__ ) ) . '/modules/service.php';
+			
 			$integration = WPCF7_Integration::get_instance();
 			$integration->add_category( 'pdf_forms', __('PDF Forms', 'wpcf7-pdf-forms') );
-			$service = $this->get_service();
-			if( $service )
-				$integration->add_service( $service->get_service_name(), $service );
+			
+			$this->registered_services = true;
+			
+			$pdf_ninja_service = $this->load_pdf_ninja_service();
+			if( $pdf_ninja_service )
+				$integration->add_service( $pdf_ninja_service->get_service_name(), $pdf_ninja_service );
+			
+			do_action( 'wpcf7_pdf_forms_register_services' );
 		}
 		
 		/**
@@ -527,5 +575,5 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 	}
 	
-	new WPCF7_Pdf_Forms();
+	WPCF7_Pdf_Forms::get_instance();
 }

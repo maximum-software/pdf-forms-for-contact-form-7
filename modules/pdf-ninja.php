@@ -1,6 +1,6 @@
 <?php
 
-class WPCF7_Pdf_Ninja extends WPCF7_Service
+class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 {
 	private static $instance;
 	private $key;
@@ -45,7 +45,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 	{
 		try
 		{
-			return $this->get_key() != null;
+			return $this->get_key() != null && WPCF7_Pdf_Forms::get_instance()->get_service() instanceof static;
 		}
 		catch(Exception $e)
 		{
@@ -484,7 +484,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 			if( 'edit' == $action )
 				return $this->display_edit();
 			
-			if( ! $this->is_active() )
+			if( ! $this->is_active() && $this->error )
 				return $this->display_error();
 			
 			return $this->display_info();
@@ -502,7 +502,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 	public function display_info()
 	{
 		echo WPCF7_Pdf_Forms::render( 'pdfninja_integration_info', array(
-			'top-message' => esc_html__( "This API provides functionality for working with PDF forms.", 'wpcf7-pdf-forms' ),
+			'top-message' => esc_html__( "This service provides functionality for working with PDF forms via a web API.", 'wpcf7-pdf-forms' ),
 			'key-label' => esc_html__( 'API Key', 'wpcf7-pdf-forms' ),
 			'key' => esc_html( $this->get_key() ),
 			'edit-label' => esc_html__( "Edit", 'wpcf7-pdf-forms' ),
@@ -560,5 +560,15 @@ class WPCF7_Pdf_Ninja extends WPCF7_Service
 			echo WPCF7_Pdf_Forms::render( 'notice_success', array(
 				'message' => esc_html__( "Key saved.", 'wpcf7-pdf-forms' ),
 			) );
+	}
+	
+	public function admin_notices()
+	{
+		try { $key = $this->get_key(); } catch(Exception $e) { };
+		if( ! $key )
+		echo WPCF7_Pdf_Forms::render( 'notice_error', array(
+			'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'wpcf7-pdf-forms' ),
+			'message' => esc_html__( "Could not get a Pdf.Ninja API key.", 'wpcf7-pdf-forms' ),
+		) );
 	}
 }
