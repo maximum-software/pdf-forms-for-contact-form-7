@@ -461,10 +461,18 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public static function render( $template, $attributes = array() )
 		{
+			return self::render_file( plugin_dir_path(__FILE__) . 'html/' . $template . '.html', $attributes );
+		}
+		
+		/**
+		 * Takes html template file and renders it with the given attributes
+		 */
+		public static function render_file( $template_filepath, $attributes = array() )
+		{
 			return str_replace(
 				array_map( function( $a ) { return '{'.$a.'}'; }, array_keys( $attributes ) ),
 				array_values( $attributes ),
-				file_get_contents( plugin_dir_path(__FILE__) . 'html/' . $template . '.html' )
+				file_get_contents( $template_filepath )
 			);
 		}
 		
