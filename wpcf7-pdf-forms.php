@@ -354,21 +354,21 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 								}
 								else if( $type == 'radio' || $type == 'select' )
 								{
-									if( isset( $field['options'] ) )
-									{
-										$options = $field['options'];
-										
-										if( ( $off_key = array_search( 'Off', $options ) ) !== FALSE )
-											unset( $options[ $off_key ] );
-										
-										if( count( $options ) == 1 )
-											$type = 'checkbox';
-										
-										$tag .= '    [' . $type . ' ' . self::wpcf7_field_name_encode( $attachment_id, $name ) . ' ';
-										foreach( $options as &$option )
-											$tag .= '"' . $option . '" ';
-										$tag .= ']';
-									}
+									if( ! isset( $field['options'] ) )
+										continue;
+									
+									$options = $field['options'];
+									
+									if( ( $off_key = array_search( 'Off', $options ) ) !== FALSE )
+										unset( $options[ $off_key ] );
+									
+									if( count( $options ) == 1 )
+										$type = 'checkbox';
+									
+									$tag .= '    [' . $type . ' ' . self::wpcf7_field_name_encode( $attachment_id, $name ) . ' ';
+									foreach( $options as &$option )
+										$tag .= '"' . $option . '" ';
+									$tag .= ']';
 								}
 								else
 									continue;
