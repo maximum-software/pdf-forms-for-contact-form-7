@@ -12,7 +12,13 @@ Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically 
 
 == Description ==
 
-This plugin gives WordPress Admin Panel users the ability to add PDF attachments to email messages of Contact Form 7.  If the PDF attachment has a PDF form, the plugin allows users to add fields onto the CF7 form that are mapped to fields in the PDF form.  When a website visitor submits the CF7 form, the form in the PDF file is filled with CF7 form information and the resulting PDF file is attached to the CF7 email message.  External web API (https://pdf.ninja) is used for filling PDF forms (free usage has limitations).
+This plugin gives WordPress Admin Panel users the ability to add PDF attachments to email messages of Contact Form 7.
+
+If the PDF attachment has a PDF form, the plugin allows users to add fields onto the CF7 form that are mapped to fields in the PDF form.
+
+When a website visitor submits the CF7 form, the form in the PDF file is filled with CF7 form information and the resulting PDF file is attached to the CF7 email message.
+
+An external web API (https://pdf.ninja) is used for filling PDF forms (free usage has limitations).  An Enterprise Extension, which enables performing all PDF operations locally on the web server (no external web API), is available upon request.
 
 == Installation ==
 
