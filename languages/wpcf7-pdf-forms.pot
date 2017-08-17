@@ -2,158 +2,180 @@
 # This file is distributed under the same license as the PDF Forms Filler for Contact Form 7 package.
 msgid ""
 msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/git\n"
+"POT-Creation-Date: 2017-08-17 19:21:12+00:00\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+"X-Poedit-KeywordsList: esc_html__;__;esc_html_e;_e\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: wpcf7-pdf-forms.php\n"
+"X-Poedit-SearchPath-1: modules\n"
 
 #: modules/pdf-ninja.php:38
 msgid "Pdf.Ninja API"
 msgstr ""
 
-#: modules/pdf-ninja.php:134 modules/pdf-ninja.php:154
+#: modules/pdf-ninja.php:146 modules/pdf-ninja.php:178
 msgid "Failed to get API server response"
 msgstr ""
 
-#: modules/pdf-ninja.php:139 modules/pdf-ninja.php:159
+#: modules/pdf-ninja.php:151 modules/pdf-ninja.php:183
 msgid "Failed to decode API server response"
 msgstr ""
 
-#: modules/pdf-ninja.php:175 modules/pdf-ninja.php:347
-#: modules/pdf-ninja.php:392
+#: modules/pdf-ninja.php:199 modules/pdf-ninja.php:369
+#: modules/pdf-ninja.php:407
 msgid "Pdf.Ninja API server did not send an expected response"
 msgstr ""
 
-#: modules/pdf-ninja.php:240 modules/pdf-ninja.php:277
+#: modules/pdf-ninja.php:264 modules/pdf-ninja.php:295
 msgid "File not found"
 msgstr ""
 
-#: modules/pdf-ninja.php:396
+#: modules/pdf-ninja.php:413
 msgid "Cannot download PDF file from the API server"
 msgstr ""
 
-#: modules/pdf-ninja.php:401
+#: modules/pdf-ninja.php:418
 msgid "Cannot open temporary PDF file for writing"
 msgstr ""
 
-#: modules/pdf-ninja.php:407
+#: modules/pdf-ninja.php:424
 msgid "Cannot create temporary PDF file"
 msgstr ""
 
-#: modules/pdf-ninja.php:442 wpcf7-pdf-forms.php:264 wpcf7-pdf-forms.php:317
-#: wpcf7-pdf-forms.php:384
+#: modules/pdf-ninja.php:459 wpcf7-pdf-forms.php:325 wpcf7-pdf-forms.php:378
+#: wpcf7-pdf-forms.php:458
 msgid "Permission denied"
 msgstr ""
 
-#: modules/pdf-ninja.php:488
-msgid "This API provides functionality for working with PDF forms."
+#: modules/pdf-ninja.php:505
+msgid ""
+"This service provides functionality for working with PDF forms via a web API."
 msgstr ""
 
-#: modules/pdf-ninja.php:489 modules/pdf-ninja.php:516
+#: modules/pdf-ninja.php:506 modules/pdf-ninja.php:533
 msgid "API Key"
 msgstr ""
 
-#: modules/pdf-ninja.php:491 modules/pdf-ninja.php:504
+#: modules/pdf-ninja.php:508 modules/pdf-ninja.php:521
 msgid "Edit"
 msgstr ""
 
-#: modules/pdf-ninja.php:502
+#: modules/pdf-ninja.php:519
 msgid "Error!"
 msgstr ""
 
-#: modules/pdf-ninja.php:515
+#: modules/pdf-ninja.php:532
 msgid "The following form allows you to edit your API key."
 msgstr ""
 
-#: modules/pdf-ninja.php:520
+#: modules/pdf-ninja.php:537
 msgid "Save"
 msgstr ""
 
-#: modules/pdf-ninja.php:521
+#: modules/pdf-ninja.php:538
 msgid "Get New Key"
 msgstr ""
 
-#: modules/pdf-ninja.php:532 modules/pdf-ninja.php:538
+#: modules/pdf-ninja.php:549 modules/pdf-ninja.php:555
 msgid "PDF Forms for CF7 plugin error"
 msgstr ""
 
-#: modules/pdf-ninja.php:533
+#: modules/pdf-ninja.php:550
 msgid "Can't save new key."
 msgstr ""
 
-#: modules/pdf-ninja.php:544
+#: modules/pdf-ninja.php:561
 msgid "Key saved."
 msgstr ""
 
-#: wpcf7-pdf-forms.php:48 wpcf7-pdf-forms.php:59
+#: modules/pdf-ninja.php:570 wpcf7-pdf-forms.php:75
 msgid "PDF Forms Filler for CF7 plugin error"
 msgstr ""
 
-#: wpcf7-pdf-forms.php:49
-msgid "The required plugin 'Contact Form 7' is not installed!"
-msgstr ""
-
-#: wpcf7-pdf-forms.php:60
+#: modules/pdf-ninja.php:571
 msgid "Could not get a Pdf.Ninja API key."
 msgstr ""
 
-#: wpcf7-pdf-forms.php:91
+#: wpcf7-pdf-forms.php:76
+msgid "The required plugin 'Contact Form 7' is not installed!"
+msgstr ""
+
+#: wpcf7-pdf-forms.php:133
 msgid "File not specified"
 msgstr ""
 
-#: wpcf7-pdf-forms.php:92
+#: wpcf7-pdf-forms.php:134
 msgid "Get Tags"
 msgstr ""
 
-#: wpcf7-pdf-forms.php:93
+#: wpcf7-pdf-forms.php:135
 msgid "Delete"
 msgstr ""
 
-#: wpcf7-pdf-forms.php:110
+#: wpcf7-pdf-forms.php:136
+msgid "Unknown error"
+msgstr ""
+
+#: wpcf7-pdf-forms.php:137
+msgid "Please copy/paste tags manually"
+msgstr ""
+
+#: wpcf7-pdf-forms.php:159
 msgid "PDF Forms"
 msgstr ""
 
-#: wpcf7-pdf-forms.php:261 wpcf7-pdf-forms.php:309 wpcf7-pdf-forms.php:376
+#: wpcf7-pdf-forms.php:322 wpcf7-pdf-forms.php:370 wpcf7-pdf-forms.php:450
 msgid "Nonce mismatch"
 msgstr ""
 
-#: wpcf7-pdf-forms.php:271
+#: wpcf7-pdf-forms.php:332
 msgid "Invalid file mime type, must be 'application/pdf'"
 msgstr ""
 
-#: wpcf7-pdf-forms.php:314
+#: wpcf7-pdf-forms.php:375
 msgid "Invalid attachment ID"
 msgstr ""
 
-#: wpcf7-pdf-forms.php:327
+#: wpcf7-pdf-forms.php:388
 msgid ""
 "This PDF file does not appear to contain a PDF form.  See https://acrobat."
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
 "more information."
 msgstr ""
 
-#: wpcf7-pdf-forms.php:381
+#: wpcf7-pdf-forms.php:455
 msgid "Invalid post ID"
 msgstr ""
 
-#: wpcf7-pdf-forms.php:417 wpcf7-pdf-forms.php:426
+#: wpcf7-pdf-forms.php:491 wpcf7-pdf-forms.php:500
 msgid "PDF Form"
 msgstr ""
 
-#: wpcf7-pdf-forms.php:454
+#: wpcf7-pdf-forms.php:536
 msgid ""
 "Attach a PDF file to your form and insert tags into your form that map to "
 "fields in the PDF file."
 msgstr ""
 
-#: wpcf7-pdf-forms.php:455
+#: wpcf7-pdf-forms.php:537
 msgid "Upload & Attach a PDF File"
 msgstr ""
 
-#: wpcf7-pdf-forms.php:456
+#: wpcf7-pdf-forms.php:538
 msgid "Insert Tags"
 msgstr ""
 
-#: wpcf7-pdf-forms.php:461
+#: wpcf7-pdf-forms.php:543
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr ""
 
