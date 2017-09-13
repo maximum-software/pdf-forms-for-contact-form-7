@@ -77,7 +77,7 @@ An external web API (https://pdf.ninja) is used for filling PDF forms (free usag
 
 = Does this plugin allow website visitors to work with PDF files? =
 
-No.  This plugin adds features to the CF7 interface in the WordPress Admin Panel only.
+No.  This plugin adds features to the [Contact Form 7](https://wordpress.org/plugins/contact-form-7) interface in the WordPress Admin Panel only.
 
 = Does this plugin require special software installation on the web server? =
 
@@ -89,7 +89,11 @@ The fields in the PDF form are mapped using the random looking code in the CF7 f
 
 = How do I remove the watermark in the filled PDF files? =
 
-Please see the [Pdf.Ninja API website](https://pdf.ninja).
+Please see the [Pdf.Ninja API website](https://pdf.ninja) and the [Enterprise Extension plugin](https://maximum.software/store/pdf-forms-for-contact-form-7-wordpress-plugin-enterprise-extension/).
+
+= How do I set up PDF form filling on my local web server? =
+
+Please see the [Enterprise Extension plugin](https://maximum.software/store/pdf-forms-for-contact-form-7-wordpress-plugin-enterprise-extension/).
 
 == Screenshots ==
 
