@@ -391,36 +391,69 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						{
 							if( isset( $field['type'] ) )
 							{
-								$type = $field['type'];
-								$name = $field['name'];
+								$type = strval($field['type']);
+								$name = strval($field['name']);
 								
-								$tag = '<label>' . $name . '</label>' . "\n";
-								
-								if( $type == 'text' )
-								{
-									$tag .= '    [' . $field['type'] . ' ' . self::wpcf7_field_name_encode( $attachment_id, $field['name'] ) . ' ]';
-								}
-								else if( $type == 'radio' || $type == 'select' )
-								{
-									if( ! isset( $field['options'] ) )
-										continue;
-									
-									$options = $field['options'];
-									
-									if( ( $off_key = array_search( 'Off', $options ) ) !== FALSE )
-										unset( $options[ $off_key ] );
-									
-									if( count( $options ) == 1 )
-										$type = 'checkbox';
-									
-									$tag .= '    [' . $type . ' ' . self::wpcf7_field_name_encode( $attachment_id, $name ) . ' ';
-									foreach( $options as &$option )
-										$tag .= '"' . $option . '" ';
-									$tag .= ']';
-								}
-								else
+								// sanity check
+								if( ! ( $type === 'text' || $type === 'radio' || $type === 'select' || $type === 'checkbox' ) )
 									continue;
 								
+								$tag = '<label>' . esc_html( $name ) . '</label>' . "\n";
+								
+								$tagType = $type;
+								$tagName = self::wpcf7_field_name_encode( $attachment_id, $name );
+								$tagOptions = '';
+								$tagValues = '';
+								
+								if( $type == 'text' )
+									if( isset( $field['value'] ) )
+										$tagValues .= '"' . strval( $field['value'] ) . '" ';
+								
+								if( $type == 'radio' || $type == 'select' || $type == 'checkbox' )
+								{
+									if( isset( $field['options'] ) && is_array( $field['options'] ) )
+									{
+										$options = $field['options'];
+										
+										if( ( $off_key = array_search( 'Off', $options ) ) !== FALSE )
+											unset( $options[ $off_key ] );
+									
+										if( $type == 'radio' && count( $options ) == 1 )
+											$tagType = 'checkbox';
+										
+										foreach( $options as &$option )
+											$tagValues .= '"' . $option . '" ';
+									}
+									else
+										continue;
+								}
+								
+								if( isset( $field['flags'] ) && is_array( $field['flags'] ) )
+								{
+									$flags = $field['flags'];
+									
+									if( $type == 'text' )
+										if( in_array( 'Multiline', $flags ) )
+											$tagType = 'textarea';
+									
+									if( $type == 'select' )
+										if( in_array( 'MultiSelect', $flags ) )
+											$tagOptions .= 'multiple ';
+									
+									if( in_array( 'Required', $flags ) )
+									{
+										if( ! ( $tagType == 'radio' || $tagType == 'select' || $tagType == 'checkbox' ) )
+											$tagType .= '*';
+									}
+									else
+										if( $tagType == 'select' )
+											$tagOptions .= 'include_blank ';
+									
+									if( in_array( 'ReadOnly', $flags ) )
+										$tagOptions .= 'readonly ';
+								}
+								
+								$tag .= '    [' . $tagType . ' ' . $tagName . ' ' . $tagOptions . $tagValues . ']';
 								$tags .= $tag . "\n\n";
 							}
 						}
