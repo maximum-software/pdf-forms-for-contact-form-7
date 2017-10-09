@@ -12,6 +12,8 @@ Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically 
 
 == Description ==
 
+[youtube https://www.youtube.com/embed/e4ur95rER6o?rel=0&amp;showinfo=0]
+
 This plugin gives WordPress Admin Panel users the ability to add PDF attachments to email messages of Contact Form 7.
 
 If the PDF attachment has a PDF form, the plugin allows users to add fields onto the CF7 form that are mapped to fields in the PDF form.
