@@ -569,6 +569,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'instructions' => esc_html__( "Attach a PDF file to your form and insert tags into your form that map to fields in the PDF file.", 'wpcf7-pdf-forms' ),
 					'upload-button-label' => esc_html__( "Upload & Attach a PDF File", 'wpcf7-pdf-forms' ),
 					'insert-button-label' => esc_html__( "Insert Tags", 'wpcf7-pdf-forms' ),
+					'help-message' => str_replace(
+						array('{a-href-forum}','{a-href-howto}','{/a}'),
+						array(
+							'<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
+							'<a href="https://youtu.be/e4ur95rER6o" target="_blank">',
+							'</a>'
+						),
+						esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-howto}the How-To video{/a}.", 'wpcf7-pdf-forms' )
+					),
 				) );
 			// support for older CF7 versions
 			else
