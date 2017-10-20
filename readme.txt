@@ -4,7 +4,7 @@ Tags: pdf, form, filler, contact form, attachment, email
 Requires at least: 4.6
 Tested up to: 4.8
 Stable tag: trunk
-Version: 0.2.1
+Version: 0.2.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -30,6 +30,12 @@ An external web API (https://pdf.ninja) is used for filling PDF forms (free usag
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 0.2.2 =
+
+* Release date: October 20, 2017
+
+* Fixed a small issue
 
 = 0.2.1 =
 
