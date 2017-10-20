@@ -328,7 +328,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( $file )
 				{
 					// TODO: check type of contents of the file instead of just extension
-					if( wp_check_filetype( $file['name'] )['type'] !== 'application/pdf' )
+					if( ( $type = wp_check_filetype( $file['name'] ) ) && isset( $type['type'] ) && $type['type'] !== 'application/pdf' )
 						throw new Exception( __( "Invalid file mime type, must be 'application/pdf'", 'wpcf7-pdf-forms' ) );
 					
 					$overrides = array(
