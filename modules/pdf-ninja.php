@@ -380,11 +380,15 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			if( ! $this->api_upload_file( $attachment_id ) )
 				return null;
 		
+		$encoded_data = json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+		if( $encoded_data === FALSE )
+			throw new Exception( __( "Failed to encode JSON data", 'wpcf7-pdf-forms' ) );
+		
 		$params = array(
 			'fileId' => $this->get_file_id( $attachment_id ),
 			'md5sum' => $this->get_file_md5sum( $attachment_id ),
 			'key'    => $this->get_key(),
-			'data'   => json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES )
+			'data'   => $encoded_data
 		);
 		
 		return $this->api_post( 'fill', $params );

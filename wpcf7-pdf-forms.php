@@ -267,7 +267,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					{
 						if( is_array( $value ) )
 							$value = array_shift( $value );
-						$data[$field] = $value;
+						$data[$field] = strval( $value );
 					}
 				}
 				
