@@ -298,12 +298,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				foreach( $posted_data as $key => $value )
 				{
 					$field = self::wpcf7_field_name_decode( $attachment_id, $key );
-					if( $field !== FALSE )
-					{
-						if( is_array( $value ) )
-							$value = array_shift( $value );
-						$data[$field] = strval( $value );
-					}
+					if( is_array( $value ) )
+						$value = array_shift( $value );
+					$value = strval( $value );
+					if( $field !== FALSE && $value !=="" )
+						$data[$field] = $value;
 				}
 				
 				if( count( $data ) == 0 && $attachment['options']['skip_empty'] )
