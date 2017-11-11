@@ -135,6 +135,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__Delete' => __( 'Delete', 'wpcf7-pdf-forms' ),
 					'__Unknown_error' => __( 'Unknown error', 'wpcf7-pdf-forms' ),
 					'__No_WPCF7' => __( 'Please copy/paste tags manually', 'wpcf7-pdf-forms' ),
+					'__Skip_when_empty' => __( 'Skip when empty', 'wpcf7-pdf-forms' ),
 				) );
 				
 				wp_enqueue_script( 'thickbox' );
@@ -170,9 +171,22 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		/**
 		 * Attaches an attachment to a post
 		 */
-		public function post_add_pdf( $post_id, $attachment_id )
+		public function post_add_pdf( $post_id, $attachment_id, $options )
 		{
 			wp_update_post( array( 'ID' => $attachment_id, 'post_parent' => $post_id ) );
+			$this->post_update_pdf( $post_id, $attachment_id, $options );
+		}
+		
+		const pdf_options = array('skip_empty');
+		
+		public function post_update_pdf( $post_id, $attachment_id, $options )
+		{
+			foreach( self::pdf_options as $option )
+				if( isset( $options[$option] ) )
+				{
+					$oldval = get_post_meta( $attachment_id, 'wpcf7-pdf-forms-'.$post_id.'-'.$option, true );
+					update_post_meta( $attachment_id, 'wpcf7-pdf-forms-'.$post_id.'-'.$option, json_encode( $options[$option] ), $oldval );
+				}
 		}
 		
 		/**
@@ -182,7 +196,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			$pdfs = array();
 			foreach( get_attached_media( 'application/pdf', $post_id ) as $attachment )
-				$pdfs[$attachment->ID] = $attachment->ID;
+			{
+				$attachment_id = $attachment->ID;
+				$options = array();
+				foreach( self::pdf_options as $option )
+					$options[$option] = json_decode( get_post_meta( $attachment_id, 'wpcf7-pdf-forms-'.$post_id.'-'.$option, true ), true );
+				$pdfs[$attachment_id] = array( 'attachment_id' => $attachment_id, 'options' => $options );
+			}
 			return $pdfs;
 		}
 		
@@ -192,6 +212,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public function post_del_pdf( $post_id, $attachment_id )
 		{
 			wp_update_post( array( 'ID' => $attachment_id, 'post_parent' => 0 ) );
+			
+			foreach( self::pdf_options as $option )
+				delete_post_meta( $attachment_id, 'wpcf7-pdf-forms-'.$post_id.'-'.$option );
 		}
 		
 		/**
@@ -201,23 +224,35 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			$post_id = $contact_form->id();
 			
-			$new_attachments = json_decode( $_POST['wpcf7-pdf-forms-attachments'] );
+			$post_var = wp_unslash( $_POST['wpcf7-pdf-forms-attachments'] );
+			$new_attachments = json_decode( $post_var, true );
 			$old_attachments = $this->post_get_all_pdfs( $post_id );
 			
 			if( is_array( $new_attachments ) )
 			{
-				foreach( $new_attachments as &$aid )
-					$attachment_id = intval( $aid );
-					
-				foreach( $new_attachments as $attachment_id )
+				$new_attachment_ids = array();
+				foreach( $new_attachments as $attachment )
+				{
+					$attachment_id = intval( $attachment['attachment_id'] );
 					if( $attachment_id > 0 )
 						if( current_user_can( 'edit_post', $attachment_id ) )
-							if( ! in_array( $attachment_id, $old_attachments ) )
-								$this->post_add_pdf( $post_id, $attachment_id );
+						{
+							$new_attachment_ids[$attachment_id] = $attachment_id;
+							
+							$options = array();
+							if( isset( $attachment['options'] ) )
+								$options = $attachment['options'];
+							
+							if( ! isset( $old_attachments[$attachment_id] ) )
+								$this->post_add_pdf( $post_id, $attachment_id, $options );
+							else
+								$this->post_update_pdf( $post_id, $attachment_id, $options );
+						}
+				}
 				
-				foreach( $old_attachments as $attachment_id )
+				foreach( $old_attachments as $attachment_id => $attachment )
 				{
-					if( ! in_array( $attachment_id, $new_attachments ) )
+					if( ! isset( $new_attachment_ids[$attachment_id] ) )
 						$this->post_del_pdf( $post_id, $attachment_id );
 				}
 			}
@@ -254,7 +289,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$submission = WPCF7_Submission::get_instance();
 			
 			$files = array();
-			foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id )
+			foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
 			{
 				$filepath = get_attached_file( $attachment_id );
 				$destfile = self::create_wpcf7_tmp_filepath( basename( $filepath ) );
@@ -270,6 +305,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						$data[$field] = strval( $value );
 					}
 				}
+				
+				if( count( $data ) == 0 && $attachment['options']['skip_empty'] )
+					continue;
 				
 				try
 				{
@@ -343,10 +381,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( is_wp_error( $attachment_id ) )
 						throw new Exception( $attachment_id->errors['upload_error']['0'] );
 					
+					$options = array( );
+					foreach( self::pdf_options as $option )
+						$options[$option] = null;
+					
 					return wp_send_json( array(
 						'success' => true,
 						'attachment_id' => $attachment_id,
 						'filename' => basename( get_attached_file( $attachment_id ) ),
+						'options' => $options,
 					) );
 				}
 			}
@@ -491,11 +534,18 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					throw new Exception( __( "Permission denied", 'wpcf7-pdf-forms' ) );
 				
 				$attachments = array();
-				foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id )
+				foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
+				{
+					$options = array();
+					if( isset( $attachment['options']) )
+						$options = $attachment['options'];
+					
 					$attachments[] = array(
 						'attachment_id' => $attachment_id,
 						'filename' => basename( get_attached_file( $attachment_id ) ),
+						'options' => $options,
 					);
+				}
 				
 				return wp_send_json( array(
 					'success' => true,

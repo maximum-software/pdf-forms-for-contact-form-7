@@ -99,22 +99,51 @@ jQuery(document).ready(function($) {
 	var deleteAttachment = function(attachment_id) {
 		
 		var attachments = getAttachments();
-		var i = attachments.indexOf(attachment_id);
-		if(i>-1)
-			attachments.splice(i, 1);
+		
+		for(var i=0, l=attachments.length; i<l; i++)
+			if(attachments[i].attachment_id == attachment_id)
+			{
+				attachments.splice(i, 1);
+				break;
+			}
+		
 		setAttachments(attachments);
 	};
 	
-	var addAttachment = function(attachment_id, filename) {
+	var setAttachmentOption = function(attachment_id, option, value) {
 		
 		var attachments = getAttachments();
-		attachments[attachments.length] = attachment_id;
+		
+		for(var i=0, l=attachments.length; i<l; i++)
+			if(attachments[i].attachment_id == attachment_id)
+			{
+				if(typeof attachments[i].options == 'undefined'
+				|| attachments[i].options == null)
+					attachments[i].options = {};
+				attachments[i].options[option] = value;
+				break;
+			}
+		
+		setAttachments(attachments);
+	};
+	
+	var addAttachment = function(attachment_id, filename, options) {
+		
+		var attachments = getAttachments();
+		attachments.push( { 'attachment_id': attachment_id, 'filename': filename, 'options': options } );
 		setAttachments(attachments);
 		
 		jQuery('.wpcf7-pdf-forms-admin .instructions').remove();
 		
-		var tag = jQuery('<tr><td class="filename"></td><td><a class="button button-primary get-tags-button" href="#">'+wpcf7_pdf_forms.__Get_Tags+'</a> <a class="button button-primary delete-button" href="#">'+wpcf7_pdf_forms.__Delete+'</a></td></tr>');
+		var tag = jQuery('<tr><td><span class="filename"></span><div style="float: right"><input class="skip-empty" type="checkbox"/> '+wpcf7_pdf_forms.__Skip_when_empty+'</div></td><td><a class="button button-primary get-tags-button" href="#">'+wpcf7_pdf_forms.__Get_Tags+'</a> <a class="button button-primary delete-button" href="#">'+wpcf7_pdf_forms.__Delete+'</a></td></tr>');
 		tag.find('.filename').text('['+attachment_id+'] '+filename);
+		if(typeof options != 'undefined' && options !== null)
+			tag.find('.skip-empty')[0].checked = options.skip_empty;
+		tag.find('.skip-empty').data('attachment_id', attachment_id);
+		tag.find('.skip-empty').change(function() {
+				setAttachmentOption(jQuery(this).data('attachment_id'), 'skip_empty', jQuery(this)[0].checked);
+			});
+		
 		var tags_button = tag.find('.get-tags-button');
 		tags_button.data('attachment_id', attachment_id);
 		tags_button.click(function(event) {
@@ -161,7 +190,7 @@ jQuery(document).ready(function($) {
 					return errorMessage(data.error_message);
 				
 				if(data.attachments)
-					jQuery.each(data.attachments, function(index, data) { addAttachment(data.attachment_id, data.filename); });
+					jQuery.each(data.attachments, function(index, data) { addAttachment(data.attachment_id, data.filename, data.options); });
 			},
 			
 			error: function (jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
@@ -229,7 +258,7 @@ jQuery(document).ready(function($) {
 					return errorMessage(data.error_message);
 				
 				if(data.attachment_id)
-					addAttachment(data.attachment_id, data.filename);
+					addAttachment(data.attachment_id, data.filename, data.options);
 				
 				file.val("");
 				
