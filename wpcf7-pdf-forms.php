@@ -51,6 +51,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_and_attach_pdfs' ) );
 			add_action( 'wpcf7_after_create', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_after_update', array( $this, 'update_post_attachments' ) );
+			
+			add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'action_links' ) );
 		}
 		
 		/*
@@ -62,6 +64,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				self::$instance = new self;
 			
 			return self::$instance;
+		}
+		
+		public function action_links( $links )
+		{
+			$links[] = '<a target="_blank" href="https://youtu.be/e4ur95rER6o">'.esc_html__( "How-To", 'wpcf7-pdf-forms' ).'</a>';
+			$links[] = '<a target="_blank" href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/">'.esc_html__( "Support", 'wpcf7-pdf-forms' ).'</a>';
+			return $links;
 		}
 		
 		/**
