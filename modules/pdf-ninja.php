@@ -372,6 +372,16 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	}
 	
 	/*
+	 * Generates PHP version specific options for json_encode function
+	 */
+	private static function get_json_encode_options()
+	{
+		if( version_compare( phpversion(), "5.4" ) < 0 )
+			return 0;
+		return JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+	}
+	
+	/*
 	 * Helper function for communicating with the API to fill fields in the PDF file
 	 */
 	private function api_fill_helper( $attachment_id, $data )
@@ -380,8 +390,8 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			if( ! $this->api_upload_file( $attachment_id ) )
 				return null;
 		
-		$encoded_data = json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
-		if( $encoded_data === FALSE )
+		$encoded_data = json_encode( $data, self::get_json_encode_options() );
+		if( $encoded_data === FALSE || $encoded_data === null )
 			throw new Exception( __( "Failed to encode JSON data", 'wpcf7-pdf-forms' ) );
 		
 		$params = array(
