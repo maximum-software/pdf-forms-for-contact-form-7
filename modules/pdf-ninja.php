@@ -45,7 +45,8 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	{
 		try
 		{
-			return $this->get_key() != null && WPCF7_Pdf_Forms::get_instance()->get_service() instanceof static;
+			$class = get_class();
+			return ($this->get_key() != null) && (WPCF7_Pdf_Forms::get_instance()->get_service() instanceof $class);
 		}
 		catch(Exception $e)
 		{
@@ -374,11 +375,18 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	/*
 	 * Generates PHP version specific options for json_encode function
 	 */
-	private static function get_json_encode_options()
+	private static function json_encode($value)
 	{
-		if( version_compare( phpversion(), "5.4" ) < 0 )
-			return 0;
-		return JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+		$php_version = phpversion();
+		
+		if( version_compare( $php_version, "5.3" ) < 0 )
+			return json_encode($value);
+		
+		$options = 0;
+		if( version_compare( $php_version, "5.4" ) >= 0 )
+			$options = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+		
+		return json_encode($value, $options);
 	}
 	
 	/*
@@ -390,7 +398,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			if( ! $this->api_upload_file( $attachment_id ) )
 				return null;
 		
-		$encoded_data = json_encode( $data, self::get_json_encode_options() );
+		$encoded_data = self::json_encode( $data );
 		if( $encoded_data === FALSE || $encoded_data === null )
 			throw new Exception( __( "Failed to encode JSON data", 'wpcf7-pdf-forms' ) );
 		

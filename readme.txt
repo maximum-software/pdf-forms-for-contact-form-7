@@ -3,6 +3,7 @@ Contributors: maximumsoftware
 Tags: pdf, form, filler, contact form, attachment, email
 Requires at least: 4.6
 Tested up to: 4.8
+Requires PHP: 5.2
 Stable tag: trunk
 Version: 0.2.2
 License: GPLv3

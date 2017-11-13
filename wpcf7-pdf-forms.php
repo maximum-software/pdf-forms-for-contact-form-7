@@ -594,13 +594,21 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return self::render_file( plugin_dir_path(__FILE__) . 'html/' . $template . '.html', $attributes );
 		}
 		
+		/*
+		 * Helper for render_file function
+		 */
+		private static function add_curly_braces($str)
+		{
+			return '{'.$str.'}';
+		}
+		
 		/**
 		 * Takes html template file and renders it with the given attributes
 		 */
 		public static function render_file( $template_filepath, $attributes = array() )
 		{
 			return str_replace(
-				array_map( function( $a ) { return '{'.$a.'}'; }, array_keys( $attributes ) ),
+				array_map( array( get_class(), 'add_curly_braces' ), array_keys( $attributes ) ),
 				array_values( $attributes ),
 				file_get_contents( $template_filepath )
 			);
