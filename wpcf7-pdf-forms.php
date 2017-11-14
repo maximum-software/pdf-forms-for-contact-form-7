@@ -2,7 +2,7 @@
 /*
 Plugin Name: PDF Forms Filler for Contact Form 7
 Plugin URI: https://github.com/maximum-software/wpcf7-pdf-forms
-Description: Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically and attached to email messages upon form submission on your website.  Uses https://pdf.ninja API for working with PDF files.
+Description: Create Contact Form 7 forms from PDF forms.  Get <strong>PDF forms filled automatically</strong> and <strong>attached to email messages</strong> upon form submission on your website.  Uses <a href="https://pdf.ninja">Pdf.Ninja</a> API for working with PDF files.  See <a href="https://youtu.be/e4ur95rER6o">How-To Video</a> for a demo.
 Version: 0.2.3
 Author: Maximum.Software
 Author URI: https://maximum.software/
@@ -66,6 +66,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return self::$instance;
 		}
 		
+		/**
+		 * Adds plugin action links
+		 */
 		public function action_links( $links )
 		{
 			$links[] = '<a target="_blank" href="https://youtu.be/e4ur95rER6o">'.esc_html__( "How-To", 'wpcf7-pdf-forms' ).'</a>';
