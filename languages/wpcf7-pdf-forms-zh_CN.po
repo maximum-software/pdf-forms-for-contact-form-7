@@ -3,8 +3,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/git\n"
-"POT-Creation-Date: 2017-08-17 19:21:12+00:00\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pdf-forms-for-"
+"contact-form-7/\n"
+"POT-Creation-Date: 2017-11-13 23:33:49+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -19,130 +20,146 @@ msgstr ""
 msgid "Pdf.Ninja API"
 msgstr "Pdf.Ninja API"
 
-#: modules/pdf-ninja.php:146 modules/pdf-ninja.php:178
+#: modules/pdf-ninja.php:147 modules/pdf-ninja.php:179
 msgid "Failed to get API server response"
 msgstr "无法获得API服务器响应"
 
-#: modules/pdf-ninja.php:151 modules/pdf-ninja.php:183
+#: modules/pdf-ninja.php:152 modules/pdf-ninja.php:184
 msgid "Failed to decode API server response"
 msgstr "无法解码API服务器响应"
 
-#: modules/pdf-ninja.php:199 modules/pdf-ninja.php:369
-#: modules/pdf-ninja.php:407
+#: modules/pdf-ninja.php:200 modules/pdf-ninja.php:370
+#: modules/pdf-ninja.php:429
 msgid "Pdf.Ninja API server did not send an expected response"
 msgstr "Pdf.Ninja API服务器没有预期的响应"
 
-#: modules/pdf-ninja.php:264 modules/pdf-ninja.php:295
+#: modules/pdf-ninja.php:265 modules/pdf-ninja.php:296
 msgid "File not found"
 msgstr "找不到文件"
 
-#: modules/pdf-ninja.php:413
+#: modules/pdf-ninja.php:403
+msgid "Failed to encode JSON data"
+msgstr "无法对JSON数据进行编码"
+
+#: modules/pdf-ninja.php:435
 msgid "Cannot download PDF file from the API server"
 msgstr "无法从API服务器下载PDF文件"
 
-#: modules/pdf-ninja.php:418
+#: modules/pdf-ninja.php:440
 msgid "Cannot open temporary PDF file for writing"
 msgstr "无法打开，无法写入临时PDF文件"
 
-#: modules/pdf-ninja.php:424
+#: modules/pdf-ninja.php:446
 msgid "Cannot create temporary PDF file"
 msgstr "无法创建临时PDF文件"
 
-#: modules/pdf-ninja.php:459 wpcf7-pdf-forms.php:325 wpcf7-pdf-forms.php:378
-#: wpcf7-pdf-forms.php:458
+#: modules/pdf-ninja.php:481 wpcf7-pdf-forms.php:371 wpcf7-pdf-forms.php:429
+#: wpcf7-pdf-forms.php:542
 msgid "Permission denied"
 msgstr "访问被拒绝"
 
-#: modules/pdf-ninja.php:505
+#: modules/pdf-ninja.php:527
 msgid ""
 "This service provides functionality for working with PDF forms via a web API."
 msgstr "此服务提供通过Web API处理PDF表单的功能。"
 
-#: modules/pdf-ninja.php:506 modules/pdf-ninja.php:533
+#: modules/pdf-ninja.php:528 modules/pdf-ninja.php:555
 msgid "API Key"
 msgstr "API密钥"
 
-#: modules/pdf-ninja.php:508 modules/pdf-ninja.php:521
+#: modules/pdf-ninja.php:530 modules/pdf-ninja.php:543
 msgid "Edit"
 msgstr "编辑"
 
-#: modules/pdf-ninja.php:519
+#: modules/pdf-ninja.php:541
 msgid "Error!"
 msgstr "错误！"
 
-#: modules/pdf-ninja.php:532
+#: modules/pdf-ninja.php:554
 msgid "The following form allows you to edit your API key."
 msgstr "下面的表格，您可以编辑您的API密钥。"
 
-#: modules/pdf-ninja.php:537
+#: modules/pdf-ninja.php:559
 msgid "Save"
 msgstr "保存"
 
-#: modules/pdf-ninja.php:538
+#: modules/pdf-ninja.php:560
 msgid "Get New Key"
 msgstr "获取新密钥"
 
-#: modules/pdf-ninja.php:549 modules/pdf-ninja.php:555
+#: modules/pdf-ninja.php:571 modules/pdf-ninja.php:577
 msgid "PDF Forms for CF7 plugin error"
 msgstr "PDF表单的CF7插件错误"
 
-#: modules/pdf-ninja.php:550
+#: modules/pdf-ninja.php:572
 msgid "Can't save new key."
 msgstr "无法保存新的密钥。"
 
-#: modules/pdf-ninja.php:561
+#: modules/pdf-ninja.php:583
 msgid "Key saved."
 msgstr "键保存。"
 
-#: modules/pdf-ninja.php:570 wpcf7-pdf-forms.php:75
+#: modules/pdf-ninja.php:592 wpcf7-pdf-forms.php:84
 msgid "PDF Forms Filler for CF7 plugin error"
 msgstr "PDF表单填充料CF7插件错误"
 
-#: modules/pdf-ninja.php:571
+#: modules/pdf-ninja.php:593
 msgid "Could not get a Pdf.Ninja API key."
 msgstr "无法获得Pdf.Ninja API密钥。"
 
-#: wpcf7-pdf-forms.php:76
+#: wpcf7-pdf-forms.php:71
+msgid "How-To"
+msgstr "怎么做"
+
+#: wpcf7-pdf-forms.php:72
+msgid "Support"
+msgstr "支持"
+
+#: wpcf7-pdf-forms.php:85
 msgid "The required plugin 'Contact Form 7' is not installed!"
 msgstr "所需插件“联系表7”未安装！"
 
-#: wpcf7-pdf-forms.php:133
+#: wpcf7-pdf-forms.php:142
 msgid "File not specified"
 msgstr "文件中未指定"
 
-#: wpcf7-pdf-forms.php:134
+#: wpcf7-pdf-forms.php:143
 msgid "Get Tags"
 msgstr "获取标签"
 
-#: wpcf7-pdf-forms.php:135
+#: wpcf7-pdf-forms.php:144
 msgid "Delete"
 msgstr "删除"
 
-#: wpcf7-pdf-forms.php:136
+#: wpcf7-pdf-forms.php:145
 msgid "Unknown error"
 msgstr "未知错误"
 
-#: wpcf7-pdf-forms.php:137
+#: wpcf7-pdf-forms.php:146
 msgid "Please copy/paste tags manually"
 msgstr "请手动复制/粘贴标签"
 
-#: wpcf7-pdf-forms.php:159
+#: wpcf7-pdf-forms.php:147
+msgid "Skip when empty"
+msgstr "空时忽略"
+
+#: wpcf7-pdf-forms.php:169
 msgid "PDF Forms"
 msgstr "PDF表单"
 
-#: wpcf7-pdf-forms.php:322 wpcf7-pdf-forms.php:370 wpcf7-pdf-forms.php:450
+#: wpcf7-pdf-forms.php:368 wpcf7-pdf-forms.php:421 wpcf7-pdf-forms.php:534
 msgid "Nonce mismatch"
 msgstr "随机数不匹配"
 
-#: wpcf7-pdf-forms.php:332
+#: wpcf7-pdf-forms.php:378
 msgid "Invalid file mime type, must be 'application/pdf'"
 msgstr "无效文件的MIME类型，必须是“应用程序/ PDF”"
 
-#: wpcf7-pdf-forms.php:375
+#: wpcf7-pdf-forms.php:426
 msgid "Invalid attachment ID"
 msgstr "无效附件ID"
 
-#: wpcf7-pdf-forms.php:388
+#: wpcf7-pdf-forms.php:439
 msgid ""
 "This PDF file does not appear to contain a PDF form.  See https://acrobat."
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
@@ -151,29 +168,37 @@ msgstr ""
 "此PDF文件似乎不包含PDF表单。 有关详细信息，请参阅https://acrobat.adobe.com/"
 "us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html。"
 
-#: wpcf7-pdf-forms.php:455
+#: wpcf7-pdf-forms.php:539
 msgid "Invalid post ID"
 msgstr "无效的帖子ID"
 
-#: wpcf7-pdf-forms.php:491 wpcf7-pdf-forms.php:500
+#: wpcf7-pdf-forms.php:582 wpcf7-pdf-forms.php:591
 msgid "PDF Form"
 msgstr "PDF格式"
 
-#: wpcf7-pdf-forms.php:536
+#: wpcf7-pdf-forms.php:635
 msgid ""
 "Attach a PDF file to your form and insert tags into your form that map to "
 "fields in the PDF file."
 msgstr "附加一个PDF文件到您的表单，并插入标签到您的形式映射到PDF文件中的字段。"
 
-#: wpcf7-pdf-forms.php:537
+#: wpcf7-pdf-forms.php:636
 msgid "Upload & Attach a PDF File"
 msgstr "上传和附加PDF文件"
 
-#: wpcf7-pdf-forms.php:538
+#: wpcf7-pdf-forms.php:637
 msgid "Insert Tags"
 msgstr "插入标签"
 
-#: wpcf7-pdf-forms.php:543
+#: wpcf7-pdf-forms.php:645
+msgid ""
+"Have a question/comment/problem?  Feel free to use {a-href-forum}the support "
+"forum{/a} and view {a-href-howto}the How-To video{/a}."
+msgstr ""
+"有问题/评论/问题？ 随意使用{a-href-forum}支持论坛{/a}，并查看{a-href-howto}如"
+"何做视频{/a}。"
+
+#: wpcf7-pdf-forms.php:651
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr "你CF7插件是太落伍了，请升级。"
 
