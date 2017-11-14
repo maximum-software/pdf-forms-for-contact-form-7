@@ -350,13 +350,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( count( $files ) > 0 )
 			{
 				$mail = $contact_form->prop( "mail" );
+				$mail2 = $contact_form->prop( "mail_2" );
 				foreach( $files as $id => $file )
 					if( file_exists( $file ) )
 					{
 						$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
 						$mail["attachments"] .= "[wpcf7-pdf-forms-$id]";
+						$mail2["attachments"] .= "[wpcf7-pdf-forms-$id]";
 					}
-				$contact_form->set_properties( array( "mail" => $mail ) );
+				$contact_form->set_properties( array( 'mail' => $mail, 'mail_2' => $mail2 ) );
 			}
 		}
 		
