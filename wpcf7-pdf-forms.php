@@ -189,11 +189,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$this->post_update_pdf( $post_id, $attachment_id, $options );
 		}
 		
-		private static $pdf_options = array('skip_empty');
+		private static $pdf_options = array('skip_empty' => false);
 		
 		public function post_update_pdf( $post_id, $attachment_id, $options )
 		{
-			foreach( self::$pdf_options as $option )
+			foreach( self::$pdf_options as $option => $default )
 				if( isset( $options[$option] ) )
 				{
 					$oldval = get_post_meta( $attachment_id, 'wpcf7-pdf-forms-'.$post_id.'-'.$option, true );
@@ -211,8 +211,16 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				$attachment_id = $attachment->ID;
 				$options = array();
-				foreach( self::$pdf_options as $option )
-					$options[$option] = json_decode( get_post_meta( $attachment_id, 'wpcf7-pdf-forms-'.$post_id.'-'.$option, true ), true );
+				foreach( self::$pdf_options as $option => $default )
+				{
+					$value = get_post_meta( $attachment_id, 'wpcf7-pdf-forms-'.$post_id.'-'.$option, true );
+					if( $value === '' )
+						$value = $default;
+					else
+						$value = json_decode( $value, true );
+					$options[$option] = $value;
+					
+				}
 				$pdfs[$attachment_id] = array( 'attachment_id' => $attachment_id, 'options' => $options );
 			}
 			return $pdfs;
@@ -225,7 +233,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			wp_update_post( array( 'ID' => $attachment_id, 'post_parent' => 0 ) );
 			
-			foreach( self::$pdf_options as $option )
+			foreach( self::$pdf_options as $option => $default )
 				delete_post_meta( $attachment_id, 'wpcf7-pdf-forms-'.$post_id.'-'.$option );
 		}
 		
@@ -395,8 +403,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						throw new Exception( $attachment_id->errors['upload_error']['0'] );
 					
 					$options = array( );
-					foreach( self::$pdf_options as $option )
-						$options[$option] = null;
+					foreach( self::$pdf_options as $option => $default )
+						$options[$option] = $default;
 					
 					return wp_send_json( array(
 						'success' => true,
