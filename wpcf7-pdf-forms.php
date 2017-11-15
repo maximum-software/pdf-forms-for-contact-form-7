@@ -3,7 +3,7 @@
 Plugin Name: PDF Forms Filler for Contact Form 7
 Plugin URI: https://github.com/maximum-software/wpcf7-pdf-forms
 Description: Create Contact Form 7 forms from PDF forms.  Get <strong>PDF forms filled automatically</strong> and <strong>attached to email messages</strong> upon form submission on your website.  Uses <a href="https://pdf.ninja">Pdf.Ninja</a> API for working with PDF files.  See <a href="https://youtu.be/e4ur95rER6o">How-To Video</a> for a demo.
-Version: 0.2.3
+Version: 0.2.4
 Author: Maximum.Software
 Author URI: https://maximum.software/
 Text Domain: wpcf7-pdf-forms
@@ -17,7 +17,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 {
 	class WPCF7_Pdf_Forms
 	{
-		const VERSION = '0.2.3';
+		const VERSION = '0.2.4';
 		
 		private static $instance = null;
 		private $pdf_ninja_service = null;
@@ -30,6 +30,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 			add_action( 'plugins_loaded', array( $this, 'plugin_init' ) );
 			add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'action_links' ) );
+			add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 99, 2);
 		}
 		
 		/*
@@ -52,6 +53,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_and_attach_pdfs' ) );
 			add_action( 'wpcf7_after_create', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_after_update', array( $this, 'update_post_attachments' ) );
+			
+			$this->upgrade_data();
 		}
 		
 		/*
@@ -63,6 +66,83 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				self::$instance = new self;
 			
 			return self::$instance;
+		}
+		
+		/*
+		 * Runs after plugin updates and triggers data migration
+		 */
+		public function upgrader_process_complete( $upgrader_object, $options )
+		{
+			$plugin_path = plugin_basename( __FILE__ );
+			
+			if( $options['action'] == 'update'
+			&& $options['type'] == 'plugin'
+			&& isset( $options['plugins'] ) )
+				foreach( $options['plugins'] as $plugin )
+					if( $plugin == $plugin_path )
+					{
+						set_transient( 'wpcf7_pdf_forms_updated_old_version', self::VERSION );
+						break;
+					}
+		}
+		
+		/*
+		 * Returns sorted list of data migration scripts in the migrations directory
+		 */
+		private function get_migrations()
+		{
+			$migrations = array();
+			
+			$dir = untrailingslashit( dirname( __FILE__ ) ) . DIRECTORY_SEPARATOR . 'migrations';
+			$contents = scandir( $dir );
+			
+			foreach( $contents as $file )
+			{
+				$extension = end( explode( ".", $file ) );
+				$filepath = $dir . DIRECTORY_SEPARATOR . $file;
+				if( is_file( $filepath ) )
+				if( preg_match("/^(\d+\.\d+\.\d+)\.php$/u", $file, $matches) )
+				{
+					$version = $matches[1];
+					$migrations[$version] = $filepath;
+				}
+			}
+			
+			uksort( $migrations, 'version_compare' );
+			
+			return $migrations;
+		}
+		
+		/*
+		 * Runs data migration when triggered
+		 */
+		private function upgrade_data()
+		{
+			// TODO: fix race condition by allowing users to run this manually
+			
+			$old_version = get_transient( 'wpcf7_pdf_forms_updated_old_version' );
+			if( !$old_version )
+				return;
+			
+			delete_transient( 'wpcf7_pdf_forms_updated_old_version' );
+			
+			$new_version = self::VERSION;
+			
+			$migrations = $this->get_migrations();
+			foreach($migrations as $version => $script)
+			{
+				if( version_compare( $version, $old_version ) > 0
+				&& version_compare( $version, $new_version ) <= 0 )
+					$this->run_data_migration( $script );
+			}
+		}
+		
+		/**
+		 * Runs data migration script
+		 */
+		private function run_data_migration( $script )
+		{
+			include( $script );
 		}
 		
 		/**
@@ -190,14 +270,20 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		
 		private static $pdf_options = array('skip_empty' => false);
 		
+		/**
+		 * Updates post attachment options
+		 */
 		public function post_update_pdf( $post_id, $attachment_id, $options )
 		{
+			$values = array();
 			foreach( self::$pdf_options as $option => $default )
-				if( isset( $options[$option] ) )
-				{
-					$oldval = get_post_meta( $attachment_id, 'wpcf7-pdf-forms-'.$post_id.'-'.$option, true );
-					update_post_meta( $attachment_id, 'wpcf7-pdf-forms-'.$post_id.'-'.$option, json_encode( $options[$option] ), $oldval );
-				}
+				if( array_key_exists( $option, $options ) )
+					$values[$option] = $options[$option];
+				else
+					$values[$option] = $default;
+			
+			$oldval = get_post_meta( $attachment_id, 'wpcf7-pdf-forms-options-'.$post_id, true );
+			update_post_meta( $attachment_id, 'wpcf7-pdf-forms-options-'.$post_id, json_encode( $values ), $oldval );
 		}
 		
 		/**
@@ -209,17 +295,21 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			foreach( get_attached_media( 'application/pdf', $post_id ) as $attachment )
 			{
 				$attachment_id = $attachment->ID;
+				
 				$options = array();
+				
+				$values = get_post_meta( $attachment_id, 'wpcf7-pdf-forms-options-'.$post_id, true );
+				if( $values !== '' )
+					$values = json_decode( $values, true );
+				if( !$values )
+					$values = array();
+				
 				foreach( self::$pdf_options as $option => $default )
-				{
-					$value = get_post_meta( $attachment_id, 'wpcf7-pdf-forms-'.$post_id.'-'.$option, true );
-					if( $value === '' )
-						$value = $default;
+					if( array_key_exists( $option, $values ) )
+						$options[$option] = $values[$option];
 					else
-						$value = json_decode( $value, true );
-					$options[$option] = $value;
-					
-				}
+						$options[$option] = $default;
+				
 				$pdfs[$attachment_id] = array( 'attachment_id' => $attachment_id, 'options' => $options );
 			}
 			return $pdfs;
@@ -231,9 +321,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public function post_del_pdf( $post_id, $attachment_id )
 		{
 			wp_update_post( array( 'ID' => $attachment_id, 'post_parent' => 0 ) );
-			
-			foreach( self::$pdf_options as $option => $default )
-				delete_post_meta( $attachment_id, 'wpcf7-pdf-forms-'.$post_id.'-'.$option );
+			delete_post_meta( $attachment_id, 'wpcf7-pdf-forms-options-'.$post_id );
 		}
 		
 		/**
