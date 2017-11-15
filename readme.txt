@@ -1,7 +1,7 @@
 === PDF Forms Filler for Contact Form 7 ===
 Contributors: maximumsoftware
 Tags: pdf, form, filler, contact form, attachment, email
-Requires at least: 4.6
+Requires at least: 4.3
 Tested up to: 4.8
 Requires PHP: 5.2
 Stable tag: trunk
