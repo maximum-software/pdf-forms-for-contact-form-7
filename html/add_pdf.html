@@ -14,6 +14,7 @@
 					<td>
 						<input type="button" name="upload" class="button button-primary upload-btn" value="{upload-button-label}"/>
 					</td>
+					<tr class="pdf-attachment-row-template"><td><span class="filename"></span><div style="float: right"><input class="skip-empty" type="checkbox"/> {skip-when-empty}</div></td><td><a class="button button-primary get-tags-button" href="#">{get-tags}</a> <a class="button button-primary delete-button" href="#">{delete}</a></td></tr>
 				</tr>
 			</tbody>
 		</table>
@@ -21,9 +22,9 @@
 		<div class="submitbox">
 			<input type="button" class="button button-primary insert-tags-btn" value="{insert-button-label}" />
 		</div>
-		<hr/>
-		<div class="helpbox">
-			{help-message}
-		</div>
 	</fieldset>
+	<hr/>
+	<div class="helpbox">
+		{help-message}
+	</div>
 </div>

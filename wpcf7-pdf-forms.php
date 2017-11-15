@@ -222,15 +222,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'ajax_url' => admin_url( 'admin-ajax.php' ),
 					'ajax_nonce' => wp_create_nonce( 'wpcf7-pdf-forms-ajax-nonce' ),
 					'__File_not_specified' => __( 'File not specified', 'wpcf7-pdf-forms' ),
-					'__Get_Tags' => __( 'Get Tags', 'wpcf7-pdf-forms' ),
-					'__Delete' => __( 'Delete', 'wpcf7-pdf-forms' ),
 					'__Unknown_error' => __( 'Unknown error', 'wpcf7-pdf-forms' ),
 					'__No_WPCF7' => __( 'Please copy/paste tags manually', 'wpcf7-pdf-forms' ),
-					'__Skip_when_empty' => __( 'Skip when empty', 'wpcf7-pdf-forms' ),
 				) );
 				
-				wp_enqueue_script( 'thickbox' );
-				wp_enqueue_style( 'thickbox' );
+				add_thickbox();
 				
 				wp_enqueue_script( 'wpcf7_pdf_forms_admin_script' );
 				wp_enqueue_style( 'wpcf7_pdf_forms_admin_style' );
@@ -735,6 +731,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'instructions' => esc_html__( "Attach a PDF file to your form and insert tags into your form that map to fields in the PDF file.", 'wpcf7-pdf-forms' ),
 					'upload-button-label' => esc_html__( "Upload & Attach a PDF File", 'wpcf7-pdf-forms' ),
 					'insert-button-label' => esc_html__( "Insert Tags", 'wpcf7-pdf-forms' ),
+					'skip-when-empty' => esc_html__( 'Skip when empty', 'wpcf7-pdf-forms' ),
+					'get-tags' => esc_html__( 'Get Tags', 'wpcf7-pdf-forms' ),
+					'delete' => esc_html__( 'Delete', 'wpcf7-pdf-forms' ),
 					'help-message' => str_replace(
 						array('{a-href-forum}','{a-href-howto}','{/a}'),
 						array(

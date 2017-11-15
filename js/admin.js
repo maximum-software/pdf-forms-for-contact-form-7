@@ -135,7 +135,8 @@ jQuery(document).ready(function($) {
 		
 		jQuery('.wpcf7-pdf-forms-admin .instructions').remove();
 		
-		var tag = jQuery('<tr><td><span class="filename"></span><div style="float: right"><input class="skip-empty" type="checkbox"/> '+wpcf7_pdf_forms.__Skip_when_empty+'</div></td><td><a class="button button-primary get-tags-button" href="#">'+wpcf7_pdf_forms.__Get_Tags+'</a> <a class="button button-primary delete-button" href="#">'+wpcf7_pdf_forms.__Delete+'</a></td></tr>');
+		var template = jQuery('.pdf-attachment-row-template');
+		var tag = template.clone().removeClass('pdf-attachment-row-template');
 		tag.find('.filename').text('['+attachment_id+'] '+filename);
 		if(typeof options != 'undefined' && options !== null)
 			tag.find('.skip-empty')[0].checked = options.skip_empty;
