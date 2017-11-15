@@ -264,7 +264,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$this->post_update_pdf( $post_id, $attachment_id, $options );
 		}
 		
-		private static $pdf_options = array('skip_empty' => false);
+		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false );
 		
 		/**
 		 * Updates post attachment options
@@ -411,6 +411,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( count( $data ) == 0 && $attachment['options']['skip_empty'] )
 					continue;
 				
+				$mail = $attachment['options']['attach_to_mail_1'];
+				$mail2 = $attachment['options']['attach_to_mail_2'];
+				
+				if( !$mail && !$mail2 )
+					continue;
+				
 				try
 				{
 					$service = $this->get_service();
@@ -419,13 +425,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						$filled = $service->api_fill( $destfile, $attachment_id, $data );
 					if( ! $filled )
 						copy( $filepath, $destfile );
-					$files[] = $destfile;
+					$files[] = array( 'file' => $destfile, 'mail' => $mail, 'mail2' => $mail2 );
 				}
 				catch(Exception $e)
 				{
 					if( ! file_exists( $destfile ) )
 						copy( $filepath, $destfile );
-					$files[] = $destfile;
+					$files[] = array( 'file' => $destfile, 'mail' => $mail, 'mail2' => $mail2 );
 					$destfile = self::create_wpcf7_tmp_filepath( basename( basename( $filepath . ".txt" ) ) );
 					$text = "Error generating PDF: " . $e->getMessage() . "\n"
 					      . "\n"
@@ -434,7 +440,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					foreach( $data as $field => $value )
 						$text .= "$field: $value\n";
 					file_put_contents( $destfile, $text );
-					$files[] = $destfile;
+					$files[] = array( 'file' => $destfile, 'mail' => $mail, 'mail2' => $mail2 );
 				}
 			}
 			
@@ -442,13 +448,20 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				$mail = $contact_form->prop( "mail" );
 				$mail2 = $contact_form->prop( "mail_2" );
-				foreach( $files as $id => $file )
+				foreach( $files as $id => $filedata )
+				{
+					$file = $filedata['file'];
 					if( file_exists( $file ) )
 					{
 						$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
-						$mail["attachments"] .= "[wpcf7-pdf-forms-$id]";
-						$mail2["attachments"] .= "[wpcf7-pdf-forms-$id]";
+						
+						if( $filedata['mail'] )
+							$mail["attachments"] .= "[wpcf7-pdf-forms-$id]";
+						
+						if( $filedata['mail2'] )
+							$mail2["attachments"] .= "[wpcf7-pdf-forms-$id]";
 					}
+				}
 				$contact_form->set_properties( array( 'mail' => $mail, 'mail_2' => $mail2 ) );
 			}
 		}
@@ -731,9 +744,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'instructions' => esc_html__( "Attach a PDF file to your form and insert tags into your form that map to fields in the PDF file.", 'wpcf7-pdf-forms' ),
 					'upload-button-label' => esc_html__( "Upload & Attach a PDF File", 'wpcf7-pdf-forms' ),
 					'insert-button-label' => esc_html__( "Insert Tags", 'wpcf7-pdf-forms' ),
-					'skip-when-empty' => esc_html__( 'Skip when empty', 'wpcf7-pdf-forms' ),
 					'get-tags' => esc_html__( 'Get Tags', 'wpcf7-pdf-forms' ),
 					'delete' => esc_html__( 'Delete', 'wpcf7-pdf-forms' ),
+					'options' => esc_html__( 'Options', 'wpcf7-pdf-forms' ),
+					'skip-when-empty' => esc_html__( 'Skip when empty', 'wpcf7-pdf-forms' ),
+					'attach-to-mail-1' => esc_html__( 'Attach to primary email message', 'wpcf7-pdf-forms' ),
+					'attach-to-mail-2' => esc_html__( 'Attach to secondary email message', 'wpcf7-pdf-forms' ),
 					'help-message' => str_replace(
 						array('{a-href-forum}','{a-href-howto}','{/a}'),
 						array(

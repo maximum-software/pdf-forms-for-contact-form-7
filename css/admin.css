@@ -57,7 +57,18 @@
 	100% { transform: rotate(360deg); }
 }
 
-.pdf-attachment-row-template
+.pdf-attachment-row-template,
+.pdf-options-hidden
 {
 	display: none;
+}
+
+table.pdf-attachments td.pdf-buttons
+{
+	vertical-align: top;
+}
+
+div.pdf-options
+{
+	padding: 10px;
 }

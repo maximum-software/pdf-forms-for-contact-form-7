@@ -139,10 +139,20 @@ jQuery(document).ready(function($) {
 		var tag = template.clone().removeClass('pdf-attachment-row-template');
 		tag.find('.filename').text('['+attachment_id+'] '+filename);
 		if(typeof options != 'undefined' && options !== null)
-			tag.find('.skip-empty')[0].checked = options.skip_empty;
-		tag.find('.skip-empty').data('attachment_id', attachment_id);
-		tag.find('.skip-empty').change(function() {
-				setAttachmentOption(jQuery(this).data('attachment_id'), 'skip_empty', jQuery(this)[0].checked);
+		{
+			tag.find('.pdf-options input[type=checkbox]').each(function(){
+					var option = jQuery(this).data('option');
+					jQuery(this)[0].checked = options[option];
+				});
+		}
+		tag.find('.pdf-options input').data('attachment_id', attachment_id);
+		tag.find('.pdf-options input[type=checkbox]').change(function() {
+				var attachment_id = jQuery(this).data('attachment_id');
+				var option = jQuery(this).data('option');
+				setAttachmentOption(attachment_id, option, jQuery(this)[0].checked);
+			});
+		tag.find('.pdf-options-button').click(function() {
+				jQuery(this).closest('.pdf-attachment-row').find('.pdf-options').toggle('.pdf-options-hidden');
 			});
 		
 		var tags_button = tag.find('.get-tags-button');
