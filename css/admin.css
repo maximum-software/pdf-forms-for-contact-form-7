@@ -72,3 +72,8 @@ div.pdf-options
 {
 	padding: 10px;
 }
+
+.pdf-buttons
+{
+	white-space: nowrap;
+}
