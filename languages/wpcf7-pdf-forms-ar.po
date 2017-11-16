@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pdf-forms-for-"
 "contact-form-7/\n"
-"POT-Creation-Date: 2017-11-13 23:33:49+00:00\n"
+"POT-Creation-Date: 2017-11-16 04:28:24+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -53,8 +53,8 @@ msgstr "لا يمكن فتح ملف PDF مؤقت للكتابة"
 msgid "Cannot create temporary PDF file"
 msgstr "لا يمكن إنشاء ملف PDF مؤقت"
 
-#: modules/pdf-ninja.php:481 wpcf7-pdf-forms.php:371 wpcf7-pdf-forms.php:429
-#: wpcf7-pdf-forms.php:542
+#: modules/pdf-ninja.php:481 wpcf7-pdf-forms.php:480 wpcf7-pdf-forms.php:538
+#: wpcf7-pdf-forms.php:651
 msgid "Permission denied"
 msgstr "طلب مرفوض"
 
@@ -100,7 +100,7 @@ msgstr "لا يمكن حفظ مفتاح جديد."
 msgid "Key saved."
 msgstr "المفتاح المحفوظ."
 
-#: modules/pdf-ninja.php:592 wpcf7-pdf-forms.php:84
+#: modules/pdf-ninja.php:592 wpcf7-pdf-forms.php:166
 msgid "PDF Forms Filler for CF7 plugin error"
 msgstr "أشكال PDF حشو للخطأ CF7 المساعد"
 
@@ -108,59 +108,47 @@ msgstr "أشكال PDF حشو للخطأ CF7 المساعد"
 msgid "Could not get a Pdf.Ninja API key."
 msgstr "لا يمكن الحصول على مفتاح API Pdf.Ninja."
 
-#: wpcf7-pdf-forms.php:71
+#: wpcf7-pdf-forms.php:153
 msgid "How-To"
 msgstr "كيف نفعل"
 
-#: wpcf7-pdf-forms.php:72
+#: wpcf7-pdf-forms.php:154
 msgid "Support"
 msgstr "الدعم"
 
-#: wpcf7-pdf-forms.php:85
+#: wpcf7-pdf-forms.php:167
 msgid "The required plugin 'Contact Form 7' is not installed!"
-msgstr "The required plugin 'Contact Form 7' is not installed!"
+msgstr "لم يتم تثبيت البرنامج المساعد المطلوب 'نموذج الاتصال 7'!"
 
-#: wpcf7-pdf-forms.php:142
+#: wpcf7-pdf-forms.php:224
 msgid "File not specified"
 msgstr "الملف غير محدد"
 
-#: wpcf7-pdf-forms.php:143
-msgid "Get Tags"
-msgstr "احصل على الكلمات"
-
-#: wpcf7-pdf-forms.php:144
-msgid "Delete"
-msgstr "حذف"
-
-#: wpcf7-pdf-forms.php:145
+#: wpcf7-pdf-forms.php:225
 msgid "Unknown error"
 msgstr "خطأ غير معروف"
 
-#: wpcf7-pdf-forms.php:146
+#: wpcf7-pdf-forms.php:226
 msgid "Please copy/paste tags manually"
 msgstr "يرجى نسخ / لصق العلامات يدويا"
 
-#: wpcf7-pdf-forms.php:147
-msgid "Skip when empty"
-msgstr "تخطي عندما تكون فارغة"
-
-#: wpcf7-pdf-forms.php:169
+#: wpcf7-pdf-forms.php:247
 msgid "PDF Forms"
 msgstr "نماذج PDF"
 
-#: wpcf7-pdf-forms.php:368 wpcf7-pdf-forms.php:421 wpcf7-pdf-forms.php:534
+#: wpcf7-pdf-forms.php:477 wpcf7-pdf-forms.php:530 wpcf7-pdf-forms.php:643
 msgid "Nonce mismatch"
 msgstr "عدم تطابق حالية"
 
-#: wpcf7-pdf-forms.php:378
+#: wpcf7-pdf-forms.php:487
 msgid "Invalid file mime type, must be 'application/pdf'"
 msgstr "صالح نوع الملف التمثيل الصامت، يجب أن يكون application/pdf"
 
-#: wpcf7-pdf-forms.php:426
+#: wpcf7-pdf-forms.php:535
 msgid "Invalid attachment ID"
 msgstr "ID مرفق غير صالح"
 
-#: wpcf7-pdf-forms.php:439
+#: wpcf7-pdf-forms.php:548
 msgid ""
 "This PDF file does not appear to contain a PDF form.  See https://acrobat."
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
@@ -170,15 +158,15 @@ msgstr ""
 "us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html لمزيد من "
 "المعلومات."
 
-#: wpcf7-pdf-forms.php:539
+#: wpcf7-pdf-forms.php:648
 msgid "Invalid post ID"
 msgstr "ID آخر غير صالح"
 
-#: wpcf7-pdf-forms.php:582 wpcf7-pdf-forms.php:591
+#: wpcf7-pdf-forms.php:691 wpcf7-pdf-forms.php:700
 msgid "PDF Form"
 msgstr "نموذج PDF"
 
-#: wpcf7-pdf-forms.php:635
+#: wpcf7-pdf-forms.php:744
 msgid ""
 "Attach a PDF file to your form and insert tags into your form that map to "
 "fields in the PDF file."
@@ -186,15 +174,39 @@ msgstr ""
 "إرفاق ملف PDF إلى النموذج الخاص بك وإدراج علامات في النموذج الذي تعيينه إلى "
 "الحقول في ملف PDF."
 
-#: wpcf7-pdf-forms.php:636
+#: wpcf7-pdf-forms.php:745
 msgid "Upload & Attach a PDF File"
 msgstr "تحميل وإرفاق ملف PDF"
 
-#: wpcf7-pdf-forms.php:637
+#: wpcf7-pdf-forms.php:746
 msgid "Insert Tags"
 msgstr "إدراج الكلمات"
 
-#: wpcf7-pdf-forms.php:645
+#: wpcf7-pdf-forms.php:747
+msgid "Get Tags"
+msgstr "احصل على الكلمات"
+
+#: wpcf7-pdf-forms.php:748
+msgid "Delete"
+msgstr "حذف"
+
+#: wpcf7-pdf-forms.php:749
+msgid "Options"
+msgstr "خيارات"
+
+#: wpcf7-pdf-forms.php:750
+msgid "Skip when empty"
+msgstr "تخطي عندما تكون فارغة"
+
+#: wpcf7-pdf-forms.php:751
+msgid "Attach to primary email message"
+msgstr "إرفاق رسالة البريد الإلكتروني الأساسية"
+
+#: wpcf7-pdf-forms.php:752
+msgid "Attach to secondary email message"
+msgstr "إرفاق رسالة بريد إلكتروني ثانوية"
+
+#: wpcf7-pdf-forms.php:760
 msgid ""
 "Have a question/comment/problem?  Feel free to use {a-href-forum}the support "
 "forum{/a} and view {a-href-howto}the How-To video{/a}."
@@ -202,7 +214,7 @@ msgstr ""
 "لديك سؤال / تعليق / مشكلة؟ لا تتردد في استخدام {a-href-forum} منتدى الدعم {/"
 "a} ومشاهدة {a-href-howto} فيديو كيف {/a}."
 
-#: wpcf7-pdf-forms.php:651
+#: wpcf7-pdf-forms.php:766
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr "بك CF7 البرنامج المساعد هو أيضا خارج التاريخ، الرجاء الترقية."
 
@@ -216,13 +228,17 @@ msgstr "https://github.com/maximum-software/wpcf7-pdf-forms"
 
 #. Description of the plugin/theme
 msgid ""
-"Create Contact Form 7 forms from PDF forms.  Get PDF forms filled "
-"automatically and attached to email messages upon form submission on your "
-"website.  Uses https://pdf.ninja API for working with PDF files."
+"Create Contact Form 7 forms from PDF forms.  Get <strong>PDF forms filled "
+"automatically</strong> and <strong>attached to email messages</strong> upon "
+"form submission on your website.  Uses <a href=\"https://pdf.ninja\">Pdf."
+"Ninja</a> API for working with PDF files.  See <a href=\"https://youtu.be/"
+"e4ur95rER6o\">How-To Video</a> for a demo."
 msgstr ""
-"إنشاء نموذج الاتصال 7 أشكال من أشكال PDF. الحصول على أشكال PDF تملأ تلقائيا "
-"وتعلق على رسائل البريد الإلكتروني عند تقديم نموذج على موقع الويب الخاص بك. "
-"يستخدم API https://pdf.ninja للعمل مع ملفات PDF."
+"إنشاء نموذج الاتصال 7 أشكال من أشكال بدف. احصل على <strong> نماذج بدف مملوءة "
+"تلقائيا </strong> و <strong> مرفقة برسائل البريد الإلكتروني </strong> عند "
+"إرسال النموذج على موقعك على الويب. يستخدم <a href=\"https://pdf.ninja\"> "
+"واجهة برمجة تطبيقات Pdf.Ninja </a> للعمل مع ملفات بدف. اطلع على <a href="
+"\"https://youtu.be/e4ur95rER6o\"> فيديو كيفية العرض </a> لعرض توضيحي."
 
 #. Author of the plugin/theme
 msgid "Maximum.Software"

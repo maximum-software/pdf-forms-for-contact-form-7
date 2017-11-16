@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pdf-forms-for-"
 "contact-form-7/\n"
-"POT-Creation-Date: 2017-11-13 23:33:49+00:00\n"
+"POT-Creation-Date: 2017-11-16 04:28:24+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -53,8 +53,8 @@ msgstr "无法打开，无法写入临时PDF文件"
 msgid "Cannot create temporary PDF file"
 msgstr "无法创建临时PDF文件"
 
-#: modules/pdf-ninja.php:481 wpcf7-pdf-forms.php:371 wpcf7-pdf-forms.php:429
-#: wpcf7-pdf-forms.php:542
+#: modules/pdf-ninja.php:481 wpcf7-pdf-forms.php:480 wpcf7-pdf-forms.php:538
+#: wpcf7-pdf-forms.php:651
 msgid "Permission denied"
 msgstr "访问被拒绝"
 
@@ -99,7 +99,7 @@ msgstr "无法保存新的密钥。"
 msgid "Key saved."
 msgstr "键保存。"
 
-#: modules/pdf-ninja.php:592 wpcf7-pdf-forms.php:84
+#: modules/pdf-ninja.php:592 wpcf7-pdf-forms.php:166
 msgid "PDF Forms Filler for CF7 plugin error"
 msgstr "PDF表单填充料CF7插件错误"
 
@@ -107,59 +107,47 @@ msgstr "PDF表单填充料CF7插件错误"
 msgid "Could not get a Pdf.Ninja API key."
 msgstr "无法获得Pdf.Ninja API密钥。"
 
-#: wpcf7-pdf-forms.php:71
+#: wpcf7-pdf-forms.php:153
 msgid "How-To"
 msgstr "怎么做"
 
-#: wpcf7-pdf-forms.php:72
+#: wpcf7-pdf-forms.php:154
 msgid "Support"
 msgstr "支持"
 
-#: wpcf7-pdf-forms.php:85
+#: wpcf7-pdf-forms.php:167
 msgid "The required plugin 'Contact Form 7' is not installed!"
 msgstr "所需插件“联系表7”未安装！"
 
-#: wpcf7-pdf-forms.php:142
+#: wpcf7-pdf-forms.php:224
 msgid "File not specified"
 msgstr "文件中未指定"
 
-#: wpcf7-pdf-forms.php:143
-msgid "Get Tags"
-msgstr "获取标签"
-
-#: wpcf7-pdf-forms.php:144
-msgid "Delete"
-msgstr "删除"
-
-#: wpcf7-pdf-forms.php:145
+#: wpcf7-pdf-forms.php:225
 msgid "Unknown error"
 msgstr "未知错误"
 
-#: wpcf7-pdf-forms.php:146
+#: wpcf7-pdf-forms.php:226
 msgid "Please copy/paste tags manually"
 msgstr "请手动复制/粘贴标签"
 
-#: wpcf7-pdf-forms.php:147
-msgid "Skip when empty"
-msgstr "空时忽略"
-
-#: wpcf7-pdf-forms.php:169
+#: wpcf7-pdf-forms.php:247
 msgid "PDF Forms"
 msgstr "PDF表单"
 
-#: wpcf7-pdf-forms.php:368 wpcf7-pdf-forms.php:421 wpcf7-pdf-forms.php:534
+#: wpcf7-pdf-forms.php:477 wpcf7-pdf-forms.php:530 wpcf7-pdf-forms.php:643
 msgid "Nonce mismatch"
 msgstr "随机数不匹配"
 
-#: wpcf7-pdf-forms.php:378
+#: wpcf7-pdf-forms.php:487
 msgid "Invalid file mime type, must be 'application/pdf'"
 msgstr "无效文件的MIME类型，必须是“应用程序/ PDF”"
 
-#: wpcf7-pdf-forms.php:426
+#: wpcf7-pdf-forms.php:535
 msgid "Invalid attachment ID"
 msgstr "无效附件ID"
 
-#: wpcf7-pdf-forms.php:439
+#: wpcf7-pdf-forms.php:548
 msgid ""
 "This PDF file does not appear to contain a PDF form.  See https://acrobat."
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
@@ -168,29 +156,53 @@ msgstr ""
 "此PDF文件似乎不包含PDF表单。 有关详细信息，请参阅https://acrobat.adobe.com/"
 "us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html。"
 
-#: wpcf7-pdf-forms.php:539
+#: wpcf7-pdf-forms.php:648
 msgid "Invalid post ID"
 msgstr "无效的帖子ID"
 
-#: wpcf7-pdf-forms.php:582 wpcf7-pdf-forms.php:591
+#: wpcf7-pdf-forms.php:691 wpcf7-pdf-forms.php:700
 msgid "PDF Form"
 msgstr "PDF格式"
 
-#: wpcf7-pdf-forms.php:635
+#: wpcf7-pdf-forms.php:744
 msgid ""
 "Attach a PDF file to your form and insert tags into your form that map to "
 "fields in the PDF file."
 msgstr "附加一个PDF文件到您的表单，并插入标签到您的形式映射到PDF文件中的字段。"
 
-#: wpcf7-pdf-forms.php:636
+#: wpcf7-pdf-forms.php:745
 msgid "Upload & Attach a PDF File"
 msgstr "上传和附加PDF文件"
 
-#: wpcf7-pdf-forms.php:637
+#: wpcf7-pdf-forms.php:746
 msgid "Insert Tags"
 msgstr "插入标签"
 
-#: wpcf7-pdf-forms.php:645
+#: wpcf7-pdf-forms.php:747
+msgid "Get Tags"
+msgstr "获取标签"
+
+#: wpcf7-pdf-forms.php:748
+msgid "Delete"
+msgstr "删除"
+
+#: wpcf7-pdf-forms.php:749
+msgid "Options"
+msgstr "选项"
+
+#: wpcf7-pdf-forms.php:750
+msgid "Skip when empty"
+msgstr "空时忽略"
+
+#: wpcf7-pdf-forms.php:751
+msgid "Attach to primary email message"
+msgstr "附加到主电子邮件"
+
+#: wpcf7-pdf-forms.php:752
+msgid "Attach to secondary email message"
+msgstr "附加到辅助电子邮件"
+
+#: wpcf7-pdf-forms.php:760
 msgid ""
 "Have a question/comment/problem?  Feel free to use {a-href-forum}the support "
 "forum{/a} and view {a-href-howto}the How-To video{/a}."
@@ -198,7 +210,7 @@ msgstr ""
 "有问题/评论/问题？ 随意使用{a-href-forum}支持论坛{/a}，并查看{a-href-howto}如"
 "何做视频{/a}。"
 
-#: wpcf7-pdf-forms.php:651
+#: wpcf7-pdf-forms.php:766
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr "你CF7插件是太落伍了，请升级。"
 
@@ -212,12 +224,16 @@ msgstr "https://github.com/maximum-software/wpcf7-pdf-forms"
 
 #. Description of the plugin/theme
 msgid ""
-"Create Contact Form 7 forms from PDF forms.  Get PDF forms filled "
-"automatically and attached to email messages upon form submission on your "
-"website.  Uses https://pdf.ninja API for working with PDF files."
+"Create Contact Form 7 forms from PDF forms.  Get <strong>PDF forms filled "
+"automatically</strong> and <strong>attached to email messages</strong> upon "
+"form submission on your website.  Uses <a href=\"https://pdf.ninja\">Pdf."
+"Ninja</a> API for working with PDF files.  See <a href=\"https://youtu.be/"
+"e4ur95rER6o\">How-To Video</a> for a demo."
 msgstr ""
-"创建联系表从PDF表单7所构成。获取PDF表单自动填写并连接到您的网站在电子邮件提交"
-"表单信息。用途https://pdf.ninja API与PDF文件的工作。"
+"从PDF表格创建联系表格7表格。 在您的网站上提交表单后，自动填写<strong>PDF表单"
+"</strong>和<strong>附加到电子邮件</strong>。 使用<a href=\"https://pdf.ninja"
+"\">Pdf.Ninja</a> API处理PDF文件。 有关演示，请参阅<a href=\"https://youtu.be/"
+"e4ur95rER6o\">使用指南</a>。"
 
 #. Author of the plugin/theme
 msgid "Maximum.Software"

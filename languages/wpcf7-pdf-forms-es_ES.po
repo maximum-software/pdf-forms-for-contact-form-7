@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pdf-forms-for-"
 "contact-form-7/\n"
-"POT-Creation-Date: 2017-11-13 23:33:49+00:00\n"
+"POT-Creation-Date: 2017-11-16 04:28:24+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -53,8 +53,8 @@ msgstr "No se puede abrir archivo PDF temporal para la escritura"
 msgid "Cannot create temporary PDF file"
 msgstr "No se puede crear el archivo PDF temporal"
 
-#: modules/pdf-ninja.php:481 wpcf7-pdf-forms.php:371 wpcf7-pdf-forms.php:429
-#: wpcf7-pdf-forms.php:542
+#: modules/pdf-ninja.php:481 wpcf7-pdf-forms.php:480 wpcf7-pdf-forms.php:538
+#: wpcf7-pdf-forms.php:651
 msgid "Permission denied"
 msgstr "Permiso denegado"
 
@@ -101,7 +101,7 @@ msgstr "No se puede guardar la llave."
 msgid "Key saved."
 msgstr "Clave guardada."
 
-#: modules/pdf-ninja.php:592 wpcf7-pdf-forms.php:84
+#: modules/pdf-ninja.php:592 wpcf7-pdf-forms.php:166
 msgid "PDF Forms Filler for CF7 plugin error"
 msgstr "Formularios PDF de relleno para el error CF7 plug-in"
 
@@ -109,59 +109,47 @@ msgstr "Formularios PDF de relleno para el error CF7 plug-in"
 msgid "Could not get a Pdf.Ninja API key."
 msgstr "No se pudo obtener una clave de API Pdf.Ninja."
 
-#: wpcf7-pdf-forms.php:71
+#: wpcf7-pdf-forms.php:153
 msgid "How-To"
 msgstr "Cómo hacer"
 
-#: wpcf7-pdf-forms.php:72
+#: wpcf7-pdf-forms.php:154
 msgid "Support"
 msgstr "Apoyo"
 
-#: wpcf7-pdf-forms.php:85
+#: wpcf7-pdf-forms.php:167
 msgid "The required plugin 'Contact Form 7' is not installed!"
 msgstr "El plug-in requerido 'Formulario de contacto 7' no está instalado!"
 
-#: wpcf7-pdf-forms.php:142
+#: wpcf7-pdf-forms.php:224
 msgid "File not specified"
 msgstr "Archivo no especificado"
 
-#: wpcf7-pdf-forms.php:143
-msgid "Get Tags"
-msgstr "Obtener Etiquetas"
-
-#: wpcf7-pdf-forms.php:144
-msgid "Delete"
-msgstr "Borrar"
-
-#: wpcf7-pdf-forms.php:145
+#: wpcf7-pdf-forms.php:225
 msgid "Unknown error"
 msgstr "Error desconocido"
 
-#: wpcf7-pdf-forms.php:146
+#: wpcf7-pdf-forms.php:226
 msgid "Please copy/paste tags manually"
 msgstr "Por favor, copie / pegue las etiquetas manualmente"
 
-#: wpcf7-pdf-forms.php:147
-msgid "Skip when empty"
-msgstr "Omitir cuando está vacío"
-
-#: wpcf7-pdf-forms.php:169
+#: wpcf7-pdf-forms.php:247
 msgid "PDF Forms"
 msgstr "formularios PDF"
 
-#: wpcf7-pdf-forms.php:368 wpcf7-pdf-forms.php:421 wpcf7-pdf-forms.php:534
+#: wpcf7-pdf-forms.php:477 wpcf7-pdf-forms.php:530 wpcf7-pdf-forms.php:643
 msgid "Nonce mismatch"
 msgstr "desajuste nonce"
 
-#: wpcf7-pdf-forms.php:378
+#: wpcf7-pdf-forms.php:487
 msgid "Invalid file mime type, must be 'application/pdf'"
 msgstr "Inválida tipo de archivo MIME, debe ser 'application / pdf'"
 
-#: wpcf7-pdf-forms.php:426
+#: wpcf7-pdf-forms.php:535
 msgid "Invalid attachment ID"
 msgstr "ID apego no es válida."
 
-#: wpcf7-pdf-forms.php:439
+#: wpcf7-pdf-forms.php:548
 msgid ""
 "This PDF file does not appear to contain a PDF form.  See https://acrobat."
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
@@ -171,15 +159,15 @@ msgstr ""
 "acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator."
 "html para obtener más información."
 
-#: wpcf7-pdf-forms.php:539
+#: wpcf7-pdf-forms.php:648
 msgid "Invalid post ID"
 msgstr "Invalid ID mensaje"
 
-#: wpcf7-pdf-forms.php:582 wpcf7-pdf-forms.php:591
+#: wpcf7-pdf-forms.php:691 wpcf7-pdf-forms.php:700
 msgid "PDF Form"
 msgstr "Formulario PDF"
 
-#: wpcf7-pdf-forms.php:635
+#: wpcf7-pdf-forms.php:744
 msgid ""
 "Attach a PDF file to your form and insert tags into your form that map to "
 "fields in the PDF file."
@@ -187,15 +175,39 @@ msgstr ""
 "Adjuntar un archivo PDF en su forma y en su insertar etiquetas de forma que "
 "se asignan a los campos en el archivo PDF."
 
-#: wpcf7-pdf-forms.php:636
+#: wpcf7-pdf-forms.php:745
 msgid "Upload & Attach a PDF File"
 msgstr "Sube y adjuntar un archivo PDF"
 
-#: wpcf7-pdf-forms.php:637
+#: wpcf7-pdf-forms.php:746
 msgid "Insert Tags"
 msgstr "insertar etiquetas"
 
-#: wpcf7-pdf-forms.php:645
+#: wpcf7-pdf-forms.php:747
+msgid "Get Tags"
+msgstr "Obtener Etiquetas"
+
+#: wpcf7-pdf-forms.php:748
+msgid "Delete"
+msgstr "Borrar"
+
+#: wpcf7-pdf-forms.php:749
+msgid "Options"
+msgstr "Opciones"
+
+#: wpcf7-pdf-forms.php:750
+msgid "Skip when empty"
+msgstr "Omitir cuando está vacío"
+
+#: wpcf7-pdf-forms.php:751
+msgid "Attach to primary email message"
+msgstr "Adjuntar al correo electrónico principal"
+
+#: wpcf7-pdf-forms.php:752
+msgid "Attach to secondary email message"
+msgstr "Adjuntar a un correo electrónico secundario"
+
+#: wpcf7-pdf-forms.php:760
 msgid ""
 "Have a question/comment/problem?  Feel free to use {a-href-forum}the support "
 "forum{/a} and view {a-href-howto}the How-To video{/a}."
@@ -203,7 +215,7 @@ msgstr ""
 "¿Tiene una pregunta / comentario / problema? Siéntase libre de usar el {a-"
 "href-forum}foro de soporte{/a} y ver {a-href-howto}cómo hacer videos{/a}."
 
-#: wpcf7-pdf-forms.php:651
+#: wpcf7-pdf-forms.php:766
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr "Tu lector CF7 es demasiado fuera de fecha, por favor, actualice."
 
@@ -217,14 +229,19 @@ msgstr "https://github.com/maximum-software/wpcf7-pdf-forms"
 
 #. Description of the plugin/theme
 msgid ""
-"Create Contact Form 7 forms from PDF forms.  Get PDF forms filled "
-"automatically and attached to email messages upon form submission on your "
-"website.  Uses https://pdf.ninja API for working with PDF files."
+"Create Contact Form 7 forms from PDF forms.  Get <strong>PDF forms filled "
+"automatically</strong> and <strong>attached to email messages</strong> upon "
+"form submission on your website.  Uses <a href=\"https://pdf.ninja\">Pdf."
+"Ninja</a> API for working with PDF files.  See <a href=\"https://youtu.be/"
+"e4ur95rER6o\">How-To Video</a> for a demo."
 msgstr ""
-"Crear Formulario de contacto 7 formas de formularios PDF. Obtener "
-"formularios PDF rellenan automáticamente y se unen a mensajes de correo "
-"electrónico sobre el envío de formularios en su sitio web. Utiliza la API "
-"https://pdf.ninja para trabajar con archivos PDF."
+"Crear formularios de Formulario de contacto 7 a partir de formularios en "
+"PDF. Obtenga <strong>formularios PDF rellenos automáticamente</strong> y "
+"<strong>adjuntos a los mensajes de correo electrónico</strong> tras la "
+"presentación del formulario en su sitio web. Utiliza <a href=\"https://pdf."
+"ninja\">Pdf.Ninja</a> API para trabajar con archivos PDF. Consulte <a href="
+"\"https://youtu.be/e4ur95rER6o\">Video de procedimientos</a> para obtener "
+"una demostración."
 
 #. Author of the plugin/theme
 msgid "Maximum.Software"
