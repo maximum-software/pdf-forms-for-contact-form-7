@@ -456,10 +456,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
 						
 						if( $filedata['mail'] )
-							$mail["attachments"] .= "[wpcf7-pdf-forms-$id]";
+							$mail["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
 						
 						if( $filedata['mail2'] )
-							$mail2["attachments"] .= "[wpcf7-pdf-forms-$id]";
+							$mail2["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
 					}
 				}
 				$contact_form->set_properties( array( 'mail' => $mail, 'mail_2' => $mail2 ) );
