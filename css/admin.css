@@ -18,7 +18,7 @@
 
 .wpcf7-pdf-forms-admin .tags-textarea
 {
-	min-height: 250px;
+	min-height: 200px;
 	width: 100%;
 	margin-top: 5px;
 }
@@ -58,7 +58,8 @@
 }
 
 .pdf-attachment-row-template,
-.pdf-options-hidden
+.pdf-options-hidden,
+.pdf-mapping-row-template
 {
 	display: none;
 }
@@ -76,4 +77,30 @@ div.pdf-options
 .pdf-buttons
 {
 	white-space: nowrap;
+}
+
+td.cf7-field,
+th.cf7-field,
+td.pdf-field,
+th.pdf-field
+{
+	text-align: center;
+	width: 40%;
+}
+
+select.cf7-field-list,
+select.pdf-field-list
+{
+	width: 100%;
+	text-overflow: ellipsis;
+}
+
+.helpbox
+{
+	padding-bottom: 15px;
+}
+
+.tag-hint
+{
+	font-weight: bold;
 }

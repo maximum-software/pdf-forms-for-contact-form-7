@@ -30,7 +30,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 			add_action( 'plugins_loaded', array( $this, 'plugin_init' ) );
 			add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'action_links' ) );
-			add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 99, 2);
+			add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 99, 2 );
 		}
 		
 		/*
@@ -44,8 +44,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			
 			add_action( 'wp_ajax_wpcf7_pdf_forms_upload', array( $this, 'wp_ajax_upload' ) );
-			add_action( 'wp_ajax_wpcf7_pdf_forms_query_fields', array( $this, 'wp_ajax_query_fields' ) );
+			add_action( 'wp_ajax_wpcf7_pdf_forms_query_tags', array( $this, 'wp_ajax_query_tags' ) );
 			add_action( 'wp_ajax_wpcf7_pdf_forms_query_attachments', array( $this, 'wp_ajax_query_attachments' ) );
+			add_action( 'wp_ajax_wpcf7_pdf_forms_query_mappings', array( $this, 'wp_ajax_query_mappings' ) );
+			add_action( 'wp_ajax_wpcf7_pdf_forms_query_pdf_fields', array( $this, 'wp_ajax_query_pdf_fields' ) );
+			add_action( 'wp_ajax_wpcf7_pdf_forms_query_cf7_fields', array( $this, 'wp_ajax_query_cf7_fields' ) );
+			add_action( 'wp_ajax_wpcf7_pdf_forms_query_tag_hint', array( $this, 'wp_ajax_query_tag_hint' ) );
 			
 			add_action( 'admin_init', array( $this, 'extend_tag_generator' ), 80 );
 			add_action( 'admin_menu', array( $this, 'register_services') );
@@ -224,6 +228,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__File_not_specified' => __( 'File not specified', 'wpcf7-pdf-forms' ),
 					'__Unknown_error' => __( 'Unknown error', 'wpcf7-pdf-forms' ),
 					'__No_WPCF7' => __( 'Please copy/paste tags manually', 'wpcf7-pdf-forms' ),
+					'__Confirm_Delete_Attachment' => __( 'Are you sure you want to delete this attachment?  This will break field mappings for this attachment.', 'wpcf7-pdf-forms' ),
+					'__Confirm_Delete_Mapping' => __( 'Are you sure you want to delete this mapping?', 'wpcf7-pdf-forms' ),
 				) );
 				
 				add_thickbox();
@@ -255,6 +261,39 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			do_action( 'wpcf7_pdf_forms_register_services' );
 		}
 		
+		/*
+		 * Function for working with metadata
+		 */
+		public static function get_meta( $post_id, $key )
+		{
+			$value = get_post_meta( $post_id, "wpcf7-pdf-forms-" . $key, $single=true );
+			if( $value === '' )
+				return null;
+			return $value;
+		}
+		
+		/*
+		 * Function for working with metadata
+		 */
+		public static function set_meta( $post_id, $key, $value )
+		{
+			$oldval = get_post_meta( $post_id, "wpcf7-pdf-forms-" . $key, true );
+			if( $oldval !== '' && $value === null)
+				delete_post_meta( $post_id, "wpcf7-pdf-forms-" . $key );
+			else
+				update_post_meta( $post_id, "wpcf7-pdf-forms-" . $key, $value, $oldval );
+			return $value;
+		}
+		
+		/*
+		 * Function for working with metadata
+		 */
+		public static function unset_meta( $post_id, $key )
+		{
+			delete_post_meta( $post_id, "wpcf7-pdf-forms-" . $key );
+			return $value;
+		}
+		
 		/**
 		 * Attaches an attachment to a post
 		 */
@@ -278,8 +317,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				else
 					$values[$option] = $default;
 			
-			$oldval = get_post_meta( $attachment_id, 'wpcf7-pdf-forms-options-'.$post_id, true );
-			update_post_meta( $attachment_id, 'wpcf7-pdf-forms-options-'.$post_id, json_encode( $values ), $oldval );
+			self::set_meta( $attachment_id, 'options-'.$post_id, self::json_encode( $values ) );
 		}
 		
 		/**
@@ -294,8 +332,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$options = array();
 				
-				$values = get_post_meta( $attachment_id, 'wpcf7-pdf-forms-options-'.$post_id, true );
-				if( $values !== '' )
+				$values = self::get_meta( $attachment_id, 'options-'.$post_id );
+				if( $values )
 					$values = json_decode( $values, true );
 				if( !$values )
 					$values = array();
@@ -317,7 +355,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public function post_del_pdf( $post_id, $attachment_id )
 		{
 			wp_update_post( array( 'ID' => $attachment_id, 'post_parent' => 0 ) );
-			delete_post_meta( $attachment_id, 'wpcf7-pdf-forms-options-'.$post_id );
+			self::unset_meta( $attachment_id, 'options-'.$post_id );
 		}
 		
 		/**
@@ -327,12 +365,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			$post_id = $contact_form->id();
 			
-			$post_var = wp_unslash( $_POST['wpcf7-pdf-forms-attachments'] );
-			$new_attachments = json_decode( $post_var, true );
-			$old_attachments = $this->post_get_all_pdfs( $post_id );
+			$post_var = wp_unslash( $_POST['wpcf7-pdf-forms-data'] );
+			$data = json_decode( $post_var, true );
+			
+			$new_attachments = $data['attachments'];
 			
 			if( is_array( $new_attachments ) )
 			{
+				$old_attachments = $this->post_get_all_pdfs( $post_id );
+				
 				$new_attachment_ids = array();
 				foreach( $new_attachments as $attachment )
 				{
@@ -358,6 +399,17 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( ! isset( $new_attachment_ids[$attachment_id] ) )
 						$this->post_del_pdf( $post_id, $attachment_id );
 				}
+			}
+			
+			$new_mappings = $data['mappings'];
+			if( is_array( $new_mappings ) )
+			{
+				$mappings = array();
+				foreach( $new_mappings as $mapping )
+					if( $mapping['cf7_field'] && $mapping['pdf_field'] )
+						if( self::wpcf7_field_name_decode( $mapping['cf7_field'] ) === FALSE )
+							$mappings[] = array( 'cf7_field' => $mapping['cf7_field'], 'pdf_field' => $mapping['pdf_field'] );
+				self::set_meta( $post_id, 'mappings', self::json_encode( $mappings ) );
 			}
 		}
 		
@@ -389,23 +441,82 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			$post_id = $contact_form->id();
 			
+			$mappings = self::get_meta( $post_id, 'mappings' );
+			if( $mappings )
+				$mappings = json_decode( $mappings, true );
+			if( !is_array( $mappings ) )
+				$mappings = array();
+			
 			$submission = WPCF7_Submission::get_instance();
 			
 			$files = array();
 			foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
 			{
-				$filepath = get_attached_file( $attachment_id );
-				$destfile = self::create_wpcf7_tmp_filepath( basename( $filepath ) );
+				$fields = $this->get_fields( $attachment_id );
+				
 				$data = array();
 				$posted_data = $submission->get_posted_data();
 				foreach( $posted_data as $key => $value )
 				{
-					$field = self::wpcf7_field_name_decode( $attachment_id, $key );
+					foreach( $mappings as $mapping )
+						if( $mapping["cf7_field"] == $key )
+						{
+							$i = strpos($mapping["pdf_field"], '-');
+							$aid = substr($mapping["pdf_field"], 0, $i);
+							
+							if( $aid != $attachment_id && $aid != 'all' )
+								continue;
+							
+							$field = substr($mapping["pdf_field"], $i+1);
+							$field = self::base64url_decode( $field );
+							
+							// TODO: optimize
+							$exists = false;
+							foreach( $fields as $f )
+								if( $f['name'] == $field )
+								{
+									$exists = true;
+									break;
+								}
+							if( !$exists )
+								continue;
+							
+							if( is_array( $value ) )
+								$value = array_shift( $value );
+							$value = strval( $value );
+							if( $value === '' )
+								continue;
+							
+							$data[$field] = $value;
+						}
+					
+					$field_data = self::wpcf7_field_name_decode( $key );
+					if( $field_data === FALSE )
+						continue;
+					if( $field_data['attachment_id'] != $attachment_id && $field_data['attachment_id'] != 'all' )
+						continue;
+					$field = $field_data['field'];
+					if( $field === '' )
+						continue;
+					
+					// TODO: optimize
+					$exists = false;
+					foreach( $fields as $f )
+						if( $f['name'] == $field)
+						{
+							$exists = true;
+							break;
+						}
+					if( !$exists )
+						continue;
+					
 					if( is_array( $value ) )
 						$value = array_shift( $value );
 					$value = strval( $value );
-					if( $field !== FALSE && $value !=="" )
-						$data[$field] = $value;
+					if( $value === '' )
+						continue;
+					
+					$data[$field] = $value;
 				}
 				
 				if( count( $data ) == 0 && $attachment['options']['skip_empty'] )
@@ -416,6 +527,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				if( !$mail && !$mail2 )
 					continue;
+				
+				$filepath = get_attached_file( $attachment_id );
+				$destfile = self::create_wpcf7_tmp_filepath( basename( $filepath ) );
 				
 				try
 				{
@@ -519,105 +633,210 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 		}
 		
+		/*
+		 * Returns (and computes, if necessary) the md5 sum of the media file
+		 */
+		public static function get_attachment_md5sum( $attachment_id )
+		{
+			$md5sum = self::get_meta( $attachment_id, 'md5sum' );
+			if( ! $md5sum )
+				return $this->update_attachment_md5sum( $attachment_id );
+			else
+				return $md5sum;
+		}
+		
+		/*
+		 * Computes, saves and returns the md5 sum of the media file
+		 */
+		public static function update_attachment_md5sum( $attachment_id )
+		{
+			$filepath = get_attached_file( $attachment_id );
+			
+			if( ! file_exists( $filepath ) )
+				throw new Exception( __( "File not found", 'wpcf7-pdf-forms' ) );
+			
+			// clear fields cache
+			self::unset_meta( $attachment_id, 'fields' );
+			
+			return self::set_meta( $attachment_id, 'md5sum', md5_file( $filepath ) );
+		}
+		
+		/*
+		 * Caching wrapper for $service->api_get_fields()
+		 */
+		public function get_fields( $attachment_id )
+		{
+			$fields = self::get_meta( $attachment_id, 'fields' );
+			if( $fields )
+			{
+				$filepath = get_attached_file( $attachment_id );
+				$new_md5sum = md5_file( $filepath );
+				$old_md5sum = self::get_attachment_md5sum( $attachment_id );
+				if($new_md5sum === $old_md5sum )
+					return json_decode( $fields, true );
+				else
+					self::update_attachment_md5sum( $attachment_id );
+			}
+			
+			$service = $this->get_service();
+			if( !$service )
+				throw new Exception( __( "No service", 'wpcf7-pdf-forms' ) );
+			
+			$fields = $service->api_get_fields( $attachment_id );
+			
+			// set fields cache
+			self::set_meta( $attachment_id, 'fields', self::json_encode( $fields ) );
+			
+			return $fields;
+		}
+		
+		/*
+		 * PHP version specific wrapper for json_encode function
+		 */
+		public static function json_encode($value)
+		{
+			$php_version = phpversion();
+			
+			if( version_compare( $php_version, "5.3" ) < 0 )
+				return json_encode($value);
+			
+			$options = 0;
+			if( version_compare( $php_version, "5.4" ) >= 0 )
+				$options = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+			
+			return json_encode($value, $options);
+		}
+		
+		/*
+		 * Multibyte trim
+		 */
+		public static function mb_trim($str)
+		{
+			return preg_replace( '/(^\s+)|(\s+$)/us', '', $str );
+		}
+		
+		/*
+		 * Generates CF7 field tag based on field data
+		 */
+		private static function generate_tag($field, $tagName)
+		{
+			$type = strval($field['type']);
+			
+			// sanity check
+			if( ! ( $type === 'text' || $type === 'radio' || $type === 'select' || $type === 'checkbox' ) )
+				return null;
+			
+			$tagType = $type;
+			$tagOptions = '';
+			$tagValues = '';
+			
+			if( $type == 'text' )
+				if( isset( $field['value'] ) )
+					$tagValues .= '"' . strval( $field['value'] ) . '" ';
+			
+			if( $type == 'radio' || $type == 'select' || $type == 'checkbox' )
+			{
+				if( isset( $field['options'] ) && is_array( $field['options'] ) )
+				{
+					$options = $field['options'];
+					
+					if( ( $off_key = array_search( 'Off', $options ) ) !== FALSE )
+						unset( $options[ $off_key ] );
+				
+					if( $type == 'radio' && count( $options ) == 1 )
+						$tagType = 'checkbox';
+					
+					foreach( $options as &$option )
+						$tagValues .= '"' . $option . '" ';
+				}
+				else
+					return null;
+			}
+			
+			if( isset( $field['flags'] ) && is_array( $field['flags'] ) )
+			{
+				$flags = $field['flags'];
+				
+				if( $type == 'text' )
+					if( in_array( 'Multiline', $flags ) )
+						$tagType = 'textarea';
+				
+				if( $type == 'select' )
+					if( in_array( 'MultiSelect', $flags ) )
+						$tagOptions .= 'multiple ';
+				
+				if( in_array( 'Required', $flags ) )
+				{
+					if( ! ( $tagType == 'radio' || $tagType == 'select' || $tagType == 'checkbox' ) )
+						$tagType .= '*';
+				}
+				else
+					if( $tagType == 'select' )
+						$tagOptions .= 'include_blank ';
+				
+				if( in_array( 'ReadOnly', $flags ) )
+					$tagOptions .= 'readonly ';
+			}
+			
+			return '[' . self::mb_trim( $tagType . ' ' . $tagName . ' ' . $tagOptions . $tagValues ) . ']';
+		}
+		
 		/**
 		 * Used for generating tags in wp-admin interface
 		 */
-		public function wp_ajax_query_fields()
+		public function wp_ajax_query_tags()
 		{
 			try
 			{
-				if ( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
+				if( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
 					throw new Exception( __( "Nonce mismatch", 'wpcf7-pdf-forms' ) );
 				
-				$attachment_id = isset( $_GET['attachment_id'] ) ? (int) $_GET['attachment_id'] : null;
+				$attachments = isset( $_GET['attachments'] ) ? $_GET['attachments'] : null;
+				$all = isset( $_GET['all'] ) ? $_GET['all'] : null;
 				
-				if( ! $attachment_id )
-					throw new Exception( __( "Invalid attachment ID", 'wpcf7-pdf-forms' ) );
+				if( !isset($attachments) || !is_array($attachments) )
+					$attachments = array();
 				
-				if ( ! current_user_can( 'edit_post', $attachment_id ) )
-					throw new Exception( __( "Permission denied", 'wpcf7-pdf-forms' ) );
-				
-				$service = $this->get_service();
-				if( $service )
-					$fields = $service->api_get_fields( $attachment_id );
-				
-				$tags = "";
-				if( is_array( $fields ) )
+				$fields = array();
+				foreach( $attachments as $attachment_id )
 				{
-					if( count($fields) == 0 )
-						$tags = __( "This PDF file does not appear to contain a PDF form.  See https://acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for more information.", 'wpcf7-pdf-forms' );
-					else
-						foreach ( $fields as &$field )
+					if ( ! current_user_can( 'edit_post', $attachment_id ) )
+						continue;
+					
+					$fields[$attachment_id] = $this->get_fields( $attachment_id );
+				}
+				
+				if( count($fields) == 0 )
+					$tags = __( "This PDF file does not appear to contain a PDF form.  See https://acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for more information.", 'wpcf7-pdf-forms' );
+				else
+				{
+					$tags = "";
+					
+					foreach ( $fields as $attachment_id => $fs )
+						foreach ( $fs as &$field )
 						{
 							if( isset( $field['type'] ) )
 							{
-								$type = strval($field['type']);
 								$name = strval($field['name']);
-								
-								// sanity check
-								if( ! ( $type === 'text' || $type === 'radio' || $type === 'select' || $type === 'checkbox' ) )
-									continue;
 								
 								$tag = '<label>' . esc_html( $name ) . '</label>' . "\n";
 								
-								$tagType = $type;
-								$tagName = self::wpcf7_field_name_encode( $attachment_id, $name );
-								$tagOptions = '';
-								$tagValues = '';
+								$tag_flag = $attachment_id;
+								if( $all == "true" )
+									$tag_flag = "all";
 								
-								if( $type == 'text' )
-									if( isset( $field['value'] ) )
-										$tagValues .= '"' . strval( $field['value'] ) . '" ';
+								$tagName = self::wpcf7_field_name_encode( $tag_flag, $name );
+								$generated_tag = self::generate_tag( $field, $tagName );
 								
-								if( $type == 'radio' || $type == 'select' || $type == 'checkbox' )
-								{
-									if( isset( $field['options'] ) && is_array( $field['options'] ) )
-									{
-										$options = $field['options'];
-										
-										if( ( $off_key = array_search( 'Off', $options ) ) !== FALSE )
-											unset( $options[ $off_key ] );
-									
-										if( $type == 'radio' && count( $options ) == 1 )
-											$tagType = 'checkbox';
-										
-										foreach( $options as &$option )
-											$tagValues .= '"' . $option . '" ';
-									}
-									else
-										continue;
-								}
+								if( $generated_tag === null)
+									continue;
 								
-								if( isset( $field['flags'] ) && is_array( $field['flags'] ) )
-								{
-									$flags = $field['flags'];
-									
-									if( $type == 'text' )
-										if( in_array( 'Multiline', $flags ) )
-											$tagType = 'textarea';
-									
-									if( $type == 'select' )
-										if( in_array( 'MultiSelect', $flags ) )
-											$tagOptions .= 'multiple ';
-									
-									if( in_array( 'Required', $flags ) )
-									{
-										if( ! ( $tagType == 'radio' || $tagType == 'select' || $tagType == 'checkbox' ) )
-											$tagType .= '*';
-									}
-									else
-										if( $tagType == 'select' )
-											$tagOptions .= 'include_blank ';
-									
-									if( in_array( 'ReadOnly', $flags ) )
-										$tagOptions .= 'readonly ';
-								}
-								
-								$tag .= '    [' . $tagType . ' ' . $tagName . ' ' . $tagOptions . $tagValues . ']';
+								$tag .= '    ' . $generated_tag;
 								$tags .= $tag . "\n\n";
 							}
 						}
 				}
+				
 				return wp_send_json( array(
 					'success' => true,
 					'tags' => $tags,
@@ -667,6 +886,208 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success' => true,
 					'attachments' => $attachments,
+				) );
+			}
+			catch( Exception $e )
+			{
+				return wp_send_json( array(
+					'success'  => false,
+					'error_message' => $e->getMessage(),
+				) );
+			}
+		}
+		
+		/**
+		 * Used for getting a list of mappings in wp-admin interface
+		 */
+		public function wp_ajax_query_mappings()
+		{
+			try
+			{
+				if ( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
+					throw new Exception( __( "Nonce mismatch", 'wpcf7-pdf-forms' ) );
+				
+				$post_id = isset( $_GET['post_id'] ) ? (int) $_GET['post_id'] : null;
+				
+				if( ! $post_id )
+					throw new Exception( __( "Invalid post ID", 'wpcf7-pdf-forms' ) );
+				
+				if ( ! current_user_can( 'wpcf7_edit_contact_form', $post_id ) )
+					throw new Exception( __( "Permission denied", 'wpcf7-pdf-forms' ) );
+				
+				$mappings = self::get_meta( $post_id, 'mappings' );
+				if( $mappings )
+					$mappings = json_decode( $mappings, true );
+				
+				return wp_send_json( array(
+					'success' => true,
+					'mappings' => $mappings,
+				) );
+			}
+			catch( Exception $e )
+			{
+				return wp_send_json( array(
+					'success'  => false,
+					'error_message' => $e->getMessage(),
+				) );
+			}
+		}
+		
+		/**
+		 * Used for getting a list of pdf fields in wp-admin interface
+		 */
+		public function wp_ajax_query_pdf_fields()
+		{
+			try
+			{
+				if ( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
+					throw new Exception( __( "Nonce mismatch", 'wpcf7-pdf-forms' ) );
+				
+				$attachments = isset( $_GET['attachments'] ) ? $_GET['attachments'] : null;
+				
+				if( !isset($attachments) || !is_array($attachments) )
+					$attachments = array();
+				
+				$fields1 = array();
+				$fields2 = array();
+				foreach( $attachments as $attachment_id )
+				{
+					if ( ! current_user_can( 'edit_post', $attachment_id ) )
+						continue;
+					
+					foreach( $this->get_fields( $attachment_id ) as $field )
+					{
+						$type = strval($field['type']);
+						$name = strval($field['name']);
+						
+						// sanity check
+						if( ! ( $type === 'text' || $type === 'radio' || $type === 'select' || $type === 'checkbox' ) )
+							continue;
+						
+						$encoded_name = self::base64url_encode( $name );
+						$id1= 'all-'.$encoded_name;
+						$fields1[$id1] = array(
+							'id' => $id1,
+							'name' => $name,
+							'caption' => $name,
+							'attachment_id' => $attachment_id,
+						);
+						$id2 = $attachment_id.'-'.$encoded_name;
+						$fields2[$id2] = array(
+							'id' => $id2,
+							'name' => $name,
+							'caption' => '['.$attachment_id.'] '.$name,
+							'attachment_id' => $attachment_id,
+						);
+					}
+				}
+				
+				return wp_send_json( array(
+					'success' => true,
+					'fields' => array_values(array_merge($fields1, $fields2)),
+				) );
+			}
+			catch( Exception $e )
+			{
+				return wp_send_json( array(
+					'success'  => false,
+					'error_message' => $e->getMessage(),
+				) );
+			}
+		}
+		
+		/**
+		 * Used for getting a list of cf7 fields in wp-admin interface
+		 */
+		public function wp_ajax_query_cf7_fields()
+		{
+			try
+			{
+				if ( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
+					throw new Exception( __( "Nonce mismatch", 'wpcf7-pdf-forms' ) );
+				
+				$form = isset( $_GET['wpcf7-form'] ) ? $_GET['wpcf7-form'] : null;
+				
+				$contact_form = WPCF7_ContactForm::get_template();
+				$properties = $contact_form->get_properties();
+				$properties['form'] = $form;
+				$contact_form->set_properties( $properties );
+				
+				$tags = $contact_form->collect_mail_tags();
+				
+				if( !is_array( $tags ) )
+					throw new Exception( __( "Failed to get Contact Form fields", 'wpcf7-pdf-forms' ) );
+				
+				$fields = array();
+				foreach( $tags as $tag )
+				{
+					$name = $tag;
+					$pdf_field = self::wpcf7_field_name_decode( $tag );
+					if( $pdf_field !== FALSE )
+						$pdf_field = $pdf_field['attachment_id'].'-'.$pdf_field['encoded_field'];
+					
+					$fields[] = array(
+						'id' => $tag,
+						'name' => $tag,
+						'caption' => $tag,
+						'pdf_field' => $pdf_field,
+					);
+				}
+				
+				return wp_send_json( array(
+					'success' => true,
+					'fields' => $fields,
+				) );
+			}
+			catch( Exception $e )
+			{
+				return wp_send_json( array(
+					'success'  => false,
+					'error_message' => $e->getMessage(),
+				) );
+			}
+		}
+		
+		/**
+		 * Used for getting a tag hint
+		 */
+		public function wp_ajax_query_tag_hint()
+		{
+			try
+			{
+				if( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
+					throw new Exception( __( "Nonce mismatch", 'wpcf7-pdf-forms' ) );
+				
+				$attachment_id = isset( $_GET['attachment_id'] ) ? intval( $_GET['attachment_id'] ) : null;
+				$field_name = isset( $_GET['field'] ) ? strval( $_GET['field'] ) : null;
+				
+				if( ! $attachment_id )
+					throw new Exception( __( "Invalid attachment ID", 'wpcf7-pdf-forms' ) );
+				
+				if( ! current_user_can( 'wpcf7_edit_contact_form', $attachment_id ) )
+					throw new Exception( __( "Permission denied", 'wpcf7-pdf-forms' ) );
+				
+				if( ! $field_name )
+					throw new Exception( __( "Invalid field", 'wpcf7-pdf-forms' ) );
+				
+				$fields = $this->get_fields( $attachment_id );
+				
+				$field = null;
+				foreach( $fields as &$f )
+					if( $f['name'] == $field_name )
+					{
+						$field = $f;
+						break;
+					}
+				
+				if( ! $field )
+					throw new Exception( __( "Invalid field", 'wpcf7-pdf-forms' ) );
+				
+				$slug = sanitize_title( $field['name'] );
+				
+				return wp_send_json( array(
+					'success' => true,
+					'tag_hint' => self::generate_tag($field, $slug),
 				) );
 			}
 			catch( Exception $e )
@@ -742,14 +1163,21 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				echo self::render( 'add_pdf', array(
 					'post-id' => esc_html( $contact_form->id() ),
 					'instructions' => esc_html__( "Attach a PDF file to your form and insert tags into your form that map to fields in the PDF file.", 'wpcf7-pdf-forms' ),
-					'upload-button-label' => esc_html__( "Upload & Attach a PDF File", 'wpcf7-pdf-forms' ),
-					'insert-button-label' => esc_html__( "Insert Tags", 'wpcf7-pdf-forms' ),
+					'upload-and-attach' => esc_html__( "Upload & Attach a PDF File", 'wpcf7-pdf-forms' ),
+					'insert-tags' => esc_html__( "Insert Tags", 'wpcf7-pdf-forms' ),
+					'insert-tag' => esc_html__( "Insert Tag", 'wpcf7-pdf-forms' ),
 					'get-tags' => esc_html__( 'Get Tags', 'wpcf7-pdf-forms' ),
 					'delete' => esc_html__( 'Delete', 'wpcf7-pdf-forms' ),
 					'options' => esc_html__( 'Options', 'wpcf7-pdf-forms' ),
 					'skip-when-empty' => esc_html__( 'Skip when empty', 'wpcf7-pdf-forms' ),
 					'attach-to-mail-1' => esc_html__( 'Attach to primary email message', 'wpcf7-pdf-forms' ),
 					'attach-to-mail-2' => esc_html__( 'Attach to secondary email message', 'wpcf7-pdf-forms' ),
+					'field-mapping' => esc_html__( 'Input Field Mapper Tool (simple)', 'wpcf7-pdf-forms' ),
+					'pdf-field' => esc_html__( 'PDF field', 'wpcf7-pdf-forms' ),
+					'cf7-field' => esc_html__( 'CF7 field', 'wpcf7-pdf-forms' ),
+					'add-mapping' => esc_html__( 'Add Mapping', 'wpcf7-pdf-forms' ),
+					'tag-hint' => esc_html__( 'Tag hint:', 'wpcf7-pdf-forms' ),
+					'tag-generator' => esc_html__( 'Tag Generator Tool (advanced)', 'wpcf7-pdf-forms' ),
 					'help-message' => str_replace(
 						array('{a-href-forum}','{a-href-howto}','{/a}'),
 						array(
@@ -783,18 +1211,17 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$slug = sanitize_title( $pdf_field_name );
 			return "pdf-field-" . $attachment_id . "-" . $slug . "-" . self::base64url_encode( $pdf_field_name );
 		}
-		public static function wpcf7_field_name_decode( $attachment_id, $wpcf7_field_name )
+		public static function wpcf7_field_name_decode( $wpcf7_field_name )
 		{
-			$flag = "pdf-field-" . $attachment_id . "-";
-			if( substr( $wpcf7_field_name, 0, strlen( $flag ) ) !== $flag )
+			if( !preg_match("/^pdf-field-(\d+|all)(-.+)?-([A-Za-z0-9\._]+)$/u", $wpcf7_field_name, $matches) )
 				return FALSE;
 			
-			$str = strrchr( $wpcf7_field_name, '-' );
-			if( $str == FALSE )
+			$attachment_id = $matches[1];
+			$field = self::base64url_decode( $matches[3] );
+			if( $field === FALSE )
 				return FALSE;
 			
-			$base64encoded_field_name = substr( $str, 1 );
-			return self::base64url_decode( $base64encoded_field_name );
+			return array( 'attachment_id' => $attachment_id, 'field' => $field, 'encoded_field' => $matches[3] );
 		}
 	}
 	

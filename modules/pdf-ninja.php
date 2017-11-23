@@ -203,32 +203,15 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	}
 	
 	/*
-	 * Helper function for working with media file metadata
-	 */
-	private function get_file_meta( $attachment_id, $key )
-	{
-		return get_post_meta( $attachment_id, "wpcf7-pdf-forms-" . $key, $single=true );
-	}
-	
-	/*
-	 * Helper function for working with media file metadata
-	 */
-	private function set_file_meta( $attachment_id, $key, $value )
-	{
-		update_post_meta( $attachment_id, "wpcf7-pdf-forms-" . $key, $value );
-		return $value;
-	}
-	
-	/*
 	 * Generates and returns file id to be used with the API server
 	 */
 	private function get_file_id( $attachment_id )
 	{
-		$file_id = $this->get_file_meta( $attachment_id, 'file_id' );
+		$file_id = WPCF7_Pdf_Forms::get_meta( $attachment_id, 'file_id' );
 		if( ! $file_id )
 		{
 			$file_id = $attachment_id . "-" . get_site_url();
-			return $this->set_file_meta( $attachment_id, 'file_id', $file_id );
+			return WPCF7_Pdf_Forms::set_meta( $attachment_id, 'file_id', $file_id );
 		}
 		else
 			return $file_id;
@@ -239,32 +222,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	private function is_new_file( $attachment_id )
 	{
-		return $this->get_file_meta( $attachment_id, 'file_id' ) == null;
-	}
-	
-	/*
-	 * Returns (and computes, if necessary) the md5 sum of the media file
-	 */
-	private function get_file_md5sum( $attachment_id )
-	{
-		$md5sum = $this->get_file_meta( $attachment_id, 'md5sum' );
-		if( ! $md5sum )
-			return $this->update_file_md5sum( $attachment_id );
-		else
-			return $md5sum;
-	}
-	
-	/*
-	 * Computes, saves and returns the md5 sum of the media file
-	 */
-	private function update_file_md5sum( $attachment_id )
-	{
-		$filepath = get_attached_file( $attachment_id );
-		
-		if( ! file_exists( $filepath ) )
-			throw new Exception( __( "File not found", 'wpcf7-pdf-forms' ) );
-		
-		return $this->set_file_meta( $attachment_id, 'md5sum', md5_file( $filepath ) );
+		return WPCF7_Pdf_Forms::get_meta( $attachment_id, 'file_id' ) == null;
 	}
 	
 	/*
@@ -272,7 +230,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function api_upload_file( $attachment_id )
 	{
-		$md5sum = $this->update_file_md5sum( $attachment_id );
+		$md5sum = WPCF7_Pdf_Forms::update_attachment_md5sum( $attachment_id );
 		
 		$params = array(
 			'fileId' => $this->get_file_id( $attachment_id ),
@@ -348,7 +306,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		
 		return $this->api_get( 'fields', array(
 			'fileId' => $this->get_file_id( $attachment_id ),
-			'md5sum' => $this->get_file_md5sum( $attachment_id ),
+			'md5sum' => WPCF7_Pdf_Forms::get_attachment_md5sum( $attachment_id ),
 			'key'    => $this->get_key(),
 		) );
 	}
@@ -373,23 +331,6 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	}
 	
 	/*
-	 * Generates PHP version specific options for json_encode function
-	 */
-	private static function json_encode($value)
-	{
-		$php_version = phpversion();
-		
-		if( version_compare( $php_version, "5.3" ) < 0 )
-			return json_encode($value);
-		
-		$options = 0;
-		if( version_compare( $php_version, "5.4" ) >= 0 )
-			$options = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
-		
-		return json_encode($value, $options);
-	}
-	
-	/*
 	 * Helper function for communicating with the API to fill fields in the PDF file
 	 */
 	private function api_fill_helper( $attachment_id, $data )
@@ -398,13 +339,13 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			if( ! $this->api_upload_file( $attachment_id ) )
 				return null;
 		
-		$encoded_data = self::json_encode( $data );
+		$encoded_data = WPCF7_Pdf_Forms::json_encode( $data );
 		if( $encoded_data === FALSE || $encoded_data === null )
 			throw new Exception( __( "Failed to encode JSON data", 'wpcf7-pdf-forms' ) );
 		
 		$params = array(
 			'fileId' => $this->get_file_id( $attachment_id ),
-			'md5sum' => $this->get_file_md5sum( $attachment_id ),
+			'md5sum' => WPCF7_Pdf_Forms::get_attachment_md5sum( $attachment_id ),
 			'key'    => $this->get_key(),
 			'data'   => $encoded_data
 		);
