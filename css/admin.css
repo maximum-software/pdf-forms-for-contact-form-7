@@ -64,6 +64,11 @@
 	display: none;
 }
 
+.pdf-attachment-row .filename
+{
+	word-break: break-all;
+}
+
 table.pdf-attachments td.pdf-buttons
 {
 	vertical-align: top;
