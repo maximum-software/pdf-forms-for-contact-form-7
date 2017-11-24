@@ -29,18 +29,24 @@ jQuery(document).ready(function($) {
 		location.href = '#wpcf7-pdf-form-messages';
 	};
 	
+	var spinners = 0;
 	var showSpinner = function() {
-		jQuery('.spinner-overlay-box')
-			.addClass('spinner-overlay')
-			.append('<div class="wpcf7-pdf-forms-spinner"></div>')
-		;
+		spinners++;
+		if(spinners==1)
+			jQuery('.spinner-overlay-box')
+				.addClass('spinner-overlay')
+				.append('<div class="wpcf7-pdf-forms-spinner"></div>')
+			;
 	}
 	
 	var hideSpinner = function() {
-		jQuery('.spinner-overlay-box')
-			.empty()
-			.removeClass('spinner-overlay')
-		;
+		if(spinners > 0)
+			spinners--;
+		if(spinners==0)
+			jQuery('.spinner-overlay-box')
+				.empty()
+				.removeClass('spinner-overlay')
+			;
 	}
 	
 	var getTags = function(attachments, all = false) {
