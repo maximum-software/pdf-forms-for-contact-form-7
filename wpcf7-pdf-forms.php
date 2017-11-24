@@ -693,18 +693,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		/*
 		 * PHP version specific wrapper for json_encode function
 		 */
-		public static function json_encode($value)
+		public static function json_encode( $value )
 		{
-			$php_version = phpversion();
+			if( version_compare( phpversion(), "5.4" ) < 0 )
+				return preg_replace( "/\\\\u([a-f0-9]{4})/e", "iconv('UCS-4LE','UTF-8',pack('V', hexdec('U$1')))", json_encode( $value ) );
 			
-			if( version_compare( $php_version, "5.3" ) < 0 )
-				return json_encode($value);
-			
-			$options = 0;
-			if( version_compare( $php_version, "5.4" ) >= 0 )
-				$options = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
-			
-			return json_encode($value, $options);
+			return json_encode( $value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 		}
 		
 		/*
