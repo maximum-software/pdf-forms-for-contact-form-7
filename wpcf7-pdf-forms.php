@@ -1088,6 +1088,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success' => true,
 					'tag_hint' => self::generate_tag($field, $slug),
+					'tag_name' => $slug,
 				) );
 			}
 			catch( Exception $e )
@@ -1165,7 +1166,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'instructions' => esc_html__( "Attach a PDF file to your form and insert tags into your form that map to fields in the PDF file.", 'wpcf7-pdf-forms' ),
 					'upload-and-attach' => esc_html__( "Upload & Attach a PDF File", 'wpcf7-pdf-forms' ),
 					'insert-tags' => esc_html__( "Insert Tags", 'wpcf7-pdf-forms' ),
-					'insert-tag' => esc_html__( "Insert Tag", 'wpcf7-pdf-forms' ),
+					'insert-tag' => esc_html__( "Insert and Link", 'wpcf7-pdf-forms' ),
 					'get-tags' => esc_html__( 'Get Tags', 'wpcf7-pdf-forms' ),
 					'delete' => esc_html__( 'Delete', 'wpcf7-pdf-forms' ),
 					'options' => esc_html__( 'Options', 'wpcf7-pdf-forms' ),
@@ -1176,7 +1177,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'pdf-field' => esc_html__( 'PDF field', 'wpcf7-pdf-forms' ),
 					'cf7-field' => esc_html__( 'CF7 field', 'wpcf7-pdf-forms' ),
 					'add-mapping' => esc_html__( 'Add Mapping', 'wpcf7-pdf-forms' ),
-					'tag-hint' => esc_html__( 'Tag hint:', 'wpcf7-pdf-forms' ),
+					'new-tag' => esc_html__( 'New Tag:', 'wpcf7-pdf-forms' ),
 					'tag-generator' => esc_html__( 'Tag Generator Tool (advanced)', 'wpcf7-pdf-forms' ),
 					'help-message' => str_replace(
 						array('{a-href-forum}','{a-href-howto}','{/a}'),

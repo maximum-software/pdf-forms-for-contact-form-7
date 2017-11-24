@@ -18,7 +18,7 @@
 
 .wpcf7-pdf-forms-admin .tags-textarea
 {
-	min-height: 200px;
+	min-height: 180px;
 	width: 100%;
 	margin-top: 5px;
 }
@@ -86,6 +86,7 @@ th.pdf-field
 {
 	text-align: center;
 	width: 40%;
+	word-break: break-all;
 }
 
 select.cf7-field-list,
@@ -103,4 +104,5 @@ select.pdf-field-list
 .tag-hint
 {
 	font-weight: bold;
+	word-break: break-all;
 }
