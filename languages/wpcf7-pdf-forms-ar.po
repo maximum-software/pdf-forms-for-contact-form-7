@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pdf-forms-for-"
 "contact-form-7/\n"
-"POT-Creation-Date: 2017-11-24 21:11:56+00:00\n"
+"POT-Creation-Date: 2017-11-25 00:49:22+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -33,7 +33,7 @@ msgstr "فشل في فك شفرة استجابة الملقم API"
 msgid "Pdf.Ninja API server did not send an expected response"
 msgstr "لم الخادم API Pdf.Ninja لم ترسل ردا المتوقع"
 
-#: modules/pdf-ninja.php:254 wpcf7-pdf-forms.php:656
+#: modules/pdf-ninja.php:254 wpcf7-pdf-forms.php:640
 msgid "File not found"
 msgstr "لم يتم العثور على الملف"
 
@@ -53,8 +53,8 @@ msgstr "لا يمكن فتح ملف PDF مؤقت للكتابة"
 msgid "Cannot create temporary PDF file"
 msgstr "لا يمكن إنشاء ملف PDF مؤقت"
 
-#: modules/pdf-ninja.php:422 wpcf7-pdf-forms.php:594 wpcf7-pdf-forms.php:864
-#: wpcf7-pdf-forms.php:910 wpcf7-pdf-forms.php:1062
+#: modules/pdf-ninja.php:422 wpcf7-pdf-forms.php:578 wpcf7-pdf-forms.php:850
+#: wpcf7-pdf-forms.php:896 wpcf7-pdf-forms.php:1048
 msgid "Permission denied"
 msgstr "طلب مرفوض"
 
@@ -147,21 +147,21 @@ msgstr "هل تريد بالتأكيد حذف هذا التعيين؟"
 msgid "PDF Forms"
 msgstr "نماذج PDF"
 
-#: wpcf7-pdf-forms.php:591 wpcf7-pdf-forms.php:786 wpcf7-pdf-forms.php:856
-#: wpcf7-pdf-forms.php:902 wpcf7-pdf-forms.php:938 wpcf7-pdf-forms.php:1001
-#: wpcf7-pdf-forms.php:1053
+#: wpcf7-pdf-forms.php:575 wpcf7-pdf-forms.php:772 wpcf7-pdf-forms.php:842
+#: wpcf7-pdf-forms.php:888 wpcf7-pdf-forms.php:924 wpcf7-pdf-forms.php:987
+#: wpcf7-pdf-forms.php:1039
 msgid "Nonce mismatch"
 msgstr "عدم تطابق حالية"
 
-#: wpcf7-pdf-forms.php:601
+#: wpcf7-pdf-forms.php:585
 msgid "Invalid file mime type, must be 'application/pdf'"
 msgstr "صالح نوع الملف التمثيل الصامت، يجب أن يكون application/pdf"
 
-#: wpcf7-pdf-forms.php:683
+#: wpcf7-pdf-forms.php:667
 msgid "No service"
 msgstr "لاتوجد خدمة"
 
-#: wpcf7-pdf-forms.php:804
+#: wpcf7-pdf-forms.php:790
 msgid ""
 "This PDF file does not appear to contain a PDF form.  See https://acrobat."
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
@@ -171,27 +171,27 @@ msgstr ""
 "us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html لمزيد من "
 "المعلومات."
 
-#: wpcf7-pdf-forms.php:861 wpcf7-pdf-forms.php:907
+#: wpcf7-pdf-forms.php:847 wpcf7-pdf-forms.php:893
 msgid "Invalid post ID"
 msgstr "ID آخر غير صالح"
 
-#: wpcf7-pdf-forms.php:1013
+#: wpcf7-pdf-forms.php:999
 msgid "Failed to get Contact Form fields"
 msgstr "أخفق الحصول على حقول نموذج الاتصال"
 
-#: wpcf7-pdf-forms.php:1059
+#: wpcf7-pdf-forms.php:1045
 msgid "Invalid attachment ID"
 msgstr "ID مرفق غير صالح"
 
-#: wpcf7-pdf-forms.php:1065 wpcf7-pdf-forms.php:1078
+#: wpcf7-pdf-forms.php:1051 wpcf7-pdf-forms.php:1056
 msgid "Invalid field"
 msgstr "حقل غير صالح"
 
-#: wpcf7-pdf-forms.php:1107 wpcf7-pdf-forms.php:1116
+#: wpcf7-pdf-forms.php:1087 wpcf7-pdf-forms.php:1096
 msgid "PDF Form"
 msgstr "نموذج PDF"
 
-#: wpcf7-pdf-forms.php:1160
+#: wpcf7-pdf-forms.php:1140
 msgid ""
 "Attach a PDF file to your form and insert tags into your form that map to "
 "fields in the PDF file."
@@ -199,67 +199,67 @@ msgstr ""
 "إرفاق ملف PDF إلى النموذج الخاص بك وإدراج علامات في النموذج الذي تعيينه إلى "
 "الحقول في ملف PDF."
 
-#: wpcf7-pdf-forms.php:1161
+#: wpcf7-pdf-forms.php:1141
 msgid "Upload & Attach a PDF File"
 msgstr "تحميل وإرفاق ملف PDF"
 
-#: wpcf7-pdf-forms.php:1162
+#: wpcf7-pdf-forms.php:1142
 msgid "Insert Tags"
 msgstr "إدراج الكلمات"
 
-#: wpcf7-pdf-forms.php:1163
+#: wpcf7-pdf-forms.php:1143
 msgid "Insert and Link"
 msgstr "إدراج والاتصال"
 
-#: wpcf7-pdf-forms.php:1164
+#: wpcf7-pdf-forms.php:1144
 msgid "Get Tags"
 msgstr "احصل على الكلمات"
 
-#: wpcf7-pdf-forms.php:1165
+#: wpcf7-pdf-forms.php:1145
 msgid "Delete"
 msgstr "حذف"
 
-#: wpcf7-pdf-forms.php:1166
+#: wpcf7-pdf-forms.php:1146
 msgid "Options"
 msgstr "خيارات"
 
-#: wpcf7-pdf-forms.php:1167
+#: wpcf7-pdf-forms.php:1147
 msgid "Skip when empty"
 msgstr "تخطي عندما تكون فارغة"
 
-#: wpcf7-pdf-forms.php:1168
+#: wpcf7-pdf-forms.php:1148
 msgid "Attach to primary email message"
 msgstr "إرفاق رسالة البريد الإلكتروني الأساسية"
 
-#: wpcf7-pdf-forms.php:1169
+#: wpcf7-pdf-forms.php:1149
 msgid "Attach to secondary email message"
 msgstr "إرفاق رسالة بريد إلكتروني ثانوية"
 
-#: wpcf7-pdf-forms.php:1170
+#: wpcf7-pdf-forms.php:1150
 msgid "Input Field Mapper Tool (simple)"
 msgstr "أداة تعيين حقل الإدخال (بسيطة)"
 
-#: wpcf7-pdf-forms.php:1171
+#: wpcf7-pdf-forms.php:1151
 msgid "PDF field"
 msgstr "بدف"
 
-#: wpcf7-pdf-forms.php:1172
+#: wpcf7-pdf-forms.php:1152
 msgid "CF7 field"
 msgstr "CF7 حقل الإدخال"
 
-#: wpcf7-pdf-forms.php:1173
+#: wpcf7-pdf-forms.php:1153
 msgid "Add Mapping"
 msgstr "إضافة تعيين"
 
-#: wpcf7-pdf-forms.php:1174
+#: wpcf7-pdf-forms.php:1154
 msgid "New Tag:"
 msgstr "احصل على الكلماتعلامة جديدة:"
 
-#: wpcf7-pdf-forms.php:1175
+#: wpcf7-pdf-forms.php:1155
 msgid "Tag Generator Tool (advanced)"
 msgstr "أداة مولد العلامات (متقدم)"
 
-#: wpcf7-pdf-forms.php:1183
+#: wpcf7-pdf-forms.php:1163
 msgid ""
 "Have a question/comment/problem?  Feel free to use {a-href-forum}the support "
 "forum{/a} and view {a-href-howto}the How-To video{/a}."
@@ -267,7 +267,7 @@ msgstr ""
 "لديك سؤال / تعليق / مشكلة؟ لا تتردد في استخدام {a-href-forum} منتدى الدعم {/"
 "a} ومشاهدة {a-href-howto} فيديو كيف {/a}."
 
-#: wpcf7-pdf-forms.php:1189
+#: wpcf7-pdf-forms.php:1169
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr "بك CF7 البرنامج المساعد هو أيضا خارج التاريخ، الرجاء الترقية."
 
