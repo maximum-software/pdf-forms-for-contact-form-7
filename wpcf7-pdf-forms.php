@@ -470,15 +470,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							$field = substr($mapping["pdf_field"], $i+1);
 							$field = self::base64url_decode( $field );
 							
-							// TODO: optimize
-							$exists = false;
-							foreach( $fields as $f )
-								if( $f['name'] == $field )
-								{
-									$exists = true;
-									break;
-								}
-							if( !$exists )
+							if( !isset( $fields[$field] ) )
 								continue;
 							
 							if( is_array( $value ) )
@@ -499,15 +491,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( $field === '' )
 						continue;
 					
-					// TODO: optimize
-					$exists = false;
-					foreach( $fields as $f )
-						if( $f['name'] == $field)
-						{
-							$exists = true;
-							break;
-						}
-					if( !$exists )
+					if( !isset( $fields[$field] ) )
 						continue;
 					
 					if( is_array( $value ) )
@@ -682,7 +666,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( !$service )
 				throw new Exception( __( "No service", 'wpcf7-pdf-forms' ) );
 			
-			$fields = $service->api_get_fields( $attachment_id );
+			$fields = array();
+			foreach( $service->api_get_fields( $attachment_id ) as $field )
+				$fields[$field['name']] = $field;
 			
 			// set fields cache
 			self::set_meta( $attachment_id, 'fields', self::json_encode( $fields ) );
@@ -1066,16 +1052,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$fields = $this->get_fields( $attachment_id );
 				
-				$field = null;
-				foreach( $fields as &$f )
-					if( $f['name'] == $field_name )
-					{
-						$field = $f;
-						break;
-					}
-				
-				if( ! $field )
+				if( !isset( $fields[$field_name] ) )
 					throw new Exception( __( "Invalid field", 'wpcf7-pdf-forms' ) );
+				
+				$field = $fields[$field_name];
 				
 				$slug = sanitize_title( $field['name'] );
 				
