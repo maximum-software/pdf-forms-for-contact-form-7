@@ -179,7 +179,7 @@ jQuery(document).ready(function($) {
 		
 		jQuery.ajax({
 			url: wpcf7_pdf_forms.ajax_url,
-			type: 'GET',
+			type: 'POST',
 			data: { 'action': 'wpcf7_pdf_forms_query_cf7_fields', 'wpcf7-form': form.val(), 'nonce': wpcf7_pdf_forms.ajax_nonce },
 			cache: false,
 			dataType: 'json',

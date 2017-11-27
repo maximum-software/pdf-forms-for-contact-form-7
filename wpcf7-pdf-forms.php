@@ -986,7 +986,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if ( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
 					throw new Exception( __( "Nonce mismatch", 'wpcf7-pdf-forms' ) );
 				
-				$form = isset( $_GET['wpcf7-form'] ) ? $_GET['wpcf7-form'] : null;
+				$form = isset( $_POST['wpcf7-form'] ) ? $_POST['wpcf7-form'] : null;
 				
 				$contact_form = WPCF7_ContactForm::get_template();
 				$properties = $contact_form->get_properties();
