@@ -720,7 +720,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				{
 					$options = $field['options'];
 					
-					if( ( $off_key = array_search( 'Off', $options ) ) !== FALSE )
+					if( ( $off_key = array_search( 'Off', $options, $strict=true ) ) !== FALSE )
 						unset( $options[ $off_key ] );
 				
 					if( $type == 'radio' && count( $options ) == 1 )
