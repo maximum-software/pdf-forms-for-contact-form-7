@@ -49,7 +49,9 @@ jQuery(document).ready(function($) {
 			;
 	}
 	
-	var getTags = function(attachments, all = false) {
+	var getTags = function(attachments, all) {
+		
+		if(!all) all = false;
 		
 		clearMessages();
 		
@@ -64,7 +66,7 @@ jQuery(document).ready(function($) {
 			cache: false,
 			dataType: 'json',
 			
-			success: function (data, textStatus, jqXHR) {
+			success: function(data, textStatus, jqXHR) {
 				
 				if(!data.success)
 					return errorMessage(data.error_message);
@@ -76,7 +78,7 @@ jQuery(document).ready(function($) {
 				}
 			},
 			
-			error: function (jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
+			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
 			
 			beforeSend: function() { showSpinner() },
 			complete: function() { hideSpinner(); }
@@ -107,7 +109,7 @@ jQuery(document).ready(function($) {
 			cache: false,
 			dataType: 'json',
 			
-			success: function (data, textStatus, jqXHR) {
+			success: function(data, textStatus, jqXHR) {
 				
 				reloadPdfFieldsXhr = null;
 				
@@ -126,7 +128,7 @@ jQuery(document).ready(function($) {
 				}
 			},
 			
-			error: function (jqXHR, textStatus, errorThrown) { if(!jqXHR.getAllResponseHeaders()) return; return errorMessage(textStatus); },
+			error: function(jqXHR, textStatus, errorThrown) { if(!jqXHR.getAllResponseHeaders()) return; return errorMessage(textStatus); },
 			
 			beforeSend: function() { showSpinner() },
 			complete: function() { hideSpinner(); }
@@ -149,7 +151,7 @@ jQuery(document).ready(function($) {
 		
 		var mappings = getMappings();
 		
-		jQuery.each(pdfFieldsCache, function (f, field) {
+		jQuery.each(pdfFieldsCache, function(f, field) {
 			
 			for(var i=0, l=mappings.length; i<l; i++)
 			{
@@ -171,7 +173,9 @@ jQuery(document).ready(function($) {
 	};
 	
 	var cf7FieldsCache = [];
-	var loadCf7Fields = function(callback = null) {
+	var loadCf7Fields = function(callback) {
+		
+		if(!callback) callback = null;
 		
 		var cf7_fields = jQuery('.wpcf7-pdf-forms-admin .cf7-field-list');
 		
@@ -184,7 +188,7 @@ jQuery(document).ready(function($) {
 			cache: false,
 			dataType: 'json',
 			
-			success: function (data, textStatus, jqXHR) {
+			success: function(data, textStatus, jqXHR) {
 				
 				if(!data.success)
 					return errorMessage(data.error_message);
@@ -195,7 +199,7 @@ jQuery(document).ready(function($) {
 					
 					cf7_fields.empty();
 					
-					jQuery.each(data.fields, function (i, field) {
+					jQuery.each(data.fields, function(i, field) {
 						
 						cf7_fields.append(jQuery('<option>', {
 							value: field.id,
@@ -210,7 +214,7 @@ jQuery(document).ready(function($) {
 				}
 			},
 			
-			error: function (jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
+			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
 			
 			beforeSend: function() { showSpinner() },
 			complete: function() { hideSpinner(); }
@@ -374,7 +378,7 @@ jQuery(document).ready(function($) {
 			cache: false,
 			dataType: 'json',
 			
-			success: function (data, textStatus, jqXHR) {
+			success: function(data, textStatus, jqXHR) {
 				
 				if(!data.success)
 					return errorMessage(data.error_message);
@@ -383,7 +387,7 @@ jQuery(document).ready(function($) {
 					jQuery.each(data.attachments, function(index, data) { addAttachment(data.attachment_id, data.filename, data.options); });
 			},
 			
-			error: function (jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
+			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
 			
 			beforeSend: function() { showSpinner() },
 			complete: function() { hideSpinner(); }
@@ -490,7 +494,7 @@ jQuery(document).ready(function($) {
 			cache: false,
 			dataType: 'json',
 			
-			success: function (data, textStatus, jqXHR) {
+			success: function(data, textStatus, jqXHR) {
 				
 				if(!data.success)
 					return errorMessage(data.error_message);
@@ -501,7 +505,7 @@ jQuery(document).ready(function($) {
 				refreshMappings();
 			},
 			
-			error: function (jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
+			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
 			
 			beforeSend: function() { showSpinner() },
 			complete: function() { hideSpinner(); }
@@ -522,7 +526,7 @@ jQuery(document).ready(function($) {
 	
 	var reloadDefaultMappings = function() {
 		
-		jQuery.each(cf7FieldsCache, function (i, field) {
+		jQuery.each(cf7FieldsCache, function(i, field) {
 			if(field.pdf_field)
 			{
 				var mappings = getMappings();
@@ -564,6 +568,8 @@ jQuery(document).ready(function($) {
 		tag.data('pdf_field', '');
 		tag.data('cf7_field', '');
 		
+		clearMessages();
+		
 		updateTagHintXhr = jQuery.ajax({
 			url: wpcf7_pdf_forms.ajax_url,
 			type: 'GET',
@@ -571,7 +577,7 @@ jQuery(document).ready(function($) {
 			cache: false,
 			dataType: 'json',
 			
-			success: function (data, textStatus, jqXHR) {
+			success: function(data, textStatus, jqXHR) {
 				
 				updateTagHintXhr = null;
 				
@@ -586,7 +592,7 @@ jQuery(document).ready(function($) {
 				}
 			},
 			
-			error: function (jqXHR, textStatus, errorThrown) { if(!jqXHR.getAllResponseHeaders()) return; clearMessages(); return errorMessage(textStatus); },
+			error: function(jqXHR, textStatus, errorThrown) { if(!jqXHR.getAllResponseHeaders()) return; return errorMessage(textStatus); },
 			
 			beforeSend: function() { showSpinner() },
 			complete: function() { hideSpinner(); }
@@ -690,7 +696,7 @@ jQuery(document).ready(function($) {
 			processData: false, // this is needed for file upload to work properly
 			contentType: false, // this is needed for file upload to work properly
 			
-			success: function (data, textStatus, jqXHR) {
+			success: function(data, textStatus, jqXHR) {
 				
 				if(!data.success)
 					return errorMessage(data.error_message);
@@ -701,7 +707,7 @@ jQuery(document).ready(function($) {
 				file.val("");
 			},
 			
-			error: function (jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
+			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
 			
 			beforeSend: function() { showSpinner(); },
 			complete: function() { hideSpinner(); }
