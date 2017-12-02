@@ -28,7 +28,7 @@
 	margin: 10px 0;
 }
 
-.spinner-overlay
+.wpcf7-pdf-forms-spinner-overlay
 {
 	background: rgba(0,0,0,.3);
 	position: absolute;
@@ -38,12 +38,18 @@
 	bottom: 0;
 }
 
+.wpcf7-pdf-forms-spinner-box
+{
+	position: absolute;
+	top: 50%;
+	width: 100%;
+}
+
 .wpcf7-pdf-forms-spinner
 {
 	position: relative;
-	top: 50%;
 	margin: 0 auto;
-	margin-top: -5px;
+	margin-top: -10px;
 	width: 10px;
 	height: 10px;
 	border: 5px solid #fff;

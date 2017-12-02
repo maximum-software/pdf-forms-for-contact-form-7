@@ -33,9 +33,9 @@ jQuery(document).ready(function($) {
 	var showSpinner = function() {
 		spinners++;
 		if(spinners==1)
-			jQuery('.spinner-overlay-box')
-				.addClass('spinner-overlay')
-				.append('<div class="wpcf7-pdf-forms-spinner"></div>')
+			jQuery('.wpcf7-pdf-forms-spinner-overlay-box')
+				.addClass('wpcf7-pdf-forms-spinner-overlay')
+				.append('<div class="wpcf7-pdf-forms-spinner-box"><div class="wpcf7-pdf-forms-spinner"></div></div>')
 			;
 	}
 	
@@ -43,9 +43,9 @@ jQuery(document).ready(function($) {
 		if(spinners > 0)
 			spinners--;
 		if(spinners==0)
-			jQuery('.spinner-overlay-box')
+			jQuery('.wpcf7-pdf-forms-spinner-overlay-box')
 				.empty()
-				.removeClass('spinner-overlay')
+				.removeClass('wpcf7-pdf-forms-spinner-overlay')
 			;
 	}
 	
