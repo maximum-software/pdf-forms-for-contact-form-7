@@ -281,7 +281,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( $oldval !== '' && $value === null)
 				delete_post_meta( $post_id, "wpcf7-pdf-forms-" . $key );
 			else
-				update_post_meta( $post_id, "wpcf7-pdf-forms-" . $key, $value, $oldval );
+			{
+				// wp bug workaround
+				// TODO: find a better solution
+				$fixed_value = wp_slash( $value );
+				
+				update_post_meta( $post_id, "wpcf7-pdf-forms-" . $key, $fixed_value, $oldval );
+			}
 			return $value;
 		}
 		
