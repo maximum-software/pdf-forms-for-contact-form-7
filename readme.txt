@@ -5,7 +5,7 @@ Requires at least: 4.3
 Tested up to: 4.9
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 0.3.1
+Version: 0.3.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -31,6 +31,12 @@ An external web API (https://pdf.ninja) is used for filling PDF forms (free usag
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 0.3.2 =
+
+* Release date: December 2, 2017
+
+* Bug fixes
 
 = 0.3.1 =
 
