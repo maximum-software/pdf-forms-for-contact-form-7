@@ -464,25 +464,29 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$posted_data = $submission->get_posted_data();
 				foreach( $posted_data as $key => $value )
 				{
+					if( is_array( $value ) )
+						$value = array_shift( $value );
+					$value = strval( $value );
+					if( $value === '' )
+						continue;
+					
+					$value = wp_unslash( $value );
+					
 					foreach( $mappings as $mapping )
 						if( $mapping["cf7_field"] == $key )
 						{
-							$i = strpos($mapping["pdf_field"], '-');
-							$aid = substr($mapping["pdf_field"], 0, $i);
+							$i = strpos( $mapping["pdf_field"], '-' );
+							if( $i === FALSE )
+								continue;
 							
+							$aid = substr( $mapping["pdf_field"], 0, $i );
 							if( $aid != $attachment_id && $aid != 'all' )
 								continue;
 							
-							$field = substr($mapping["pdf_field"], $i+1);
+							$field = substr( $mapping["pdf_field"], $i+1 );
 							$field = self::base64url_decode( $field );
 							
 							if( !isset( $fields[$field] ) )
-								continue;
-							
-							if( is_array( $value ) )
-								$value = array_shift( $value );
-							$value = strval( $value );
-							if( $value === '' )
 								continue;
 							
 							$data[$field] = $value;
@@ -498,12 +502,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						continue;
 					
 					if( !isset( $fields[$field] ) )
-						continue;
-					
-					if( is_array( $value ) )
-						$value = array_shift( $value );
-					$value = strval( $value );
-					if( $value === '' )
 						continue;
 					
 					$data[$field] = $value;
