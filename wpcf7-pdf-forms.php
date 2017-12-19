@@ -371,12 +371,16 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			$post_id = $contact_form->id();
 			
+			if( !isset( $_POST['wpcf7-pdf-forms-data'] ) )
+				return;
+			
 			$post_var = wp_unslash( $_POST['wpcf7-pdf-forms-data'] );
 			$data = json_decode( $post_var, true );
 			
-			$new_attachments = $data['attachments'];
+			if( !is_array( $data ) )
+				return;
 			
-			if( is_array( $new_attachments ) )
+			if( isset( $data['attachments'] ) && is_array( $new_attachments = $data['attachments'] ) )
 			{
 				$old_attachments = $this->post_get_all_pdfs( $post_id );
 				
@@ -407,8 +411,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				}
 			}
 			
-			$new_mappings = $data['mappings'];
-			if( is_array( $new_mappings ) )
+			if( isset( $data['mappings'] ) && is_array( $new_mappings = $data['mappings'] ) )
 			{
 				$mappings = array();
 				foreach( $new_mappings as $mapping )
