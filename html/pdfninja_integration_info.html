@@ -7,11 +7,20 @@
 			<td class="code">{key}</td>
 		</tr>
 		<tr>
-			<th scope="row">{no-ssl-verify-label}</th>
-			<td class="code">{no-ssl-verify-value}</td>
+			<th scope="row">{api-url-label}</th>
+			<td class="code">{api-url}</td>
+		</tr>
+		<tr>
+			<th scope="row">{security-label}</th>
+			<td>
+				<input type="checkbox" id="nosslverify" name="nosslverify" disabled {no-ssl-verify-value} />
+				<label for="nosslverify">{no-ssl-verify-label}</label>
+			</td>
 		</tr>
 	</tbody>
 </table>
+
+<p>{security-warning}</p>
 
 <p>
 	<a href="{edit-link}" class="button">{edit-label}</a>

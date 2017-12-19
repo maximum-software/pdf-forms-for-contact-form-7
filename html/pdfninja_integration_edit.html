@@ -9,11 +9,20 @@
 				<td><input type="text" value="{key}" id="key" name="key" class="regular-text code" /></td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="key">{no-ssl-verify-label}</label></th>
-				<td><input type="checkbox" value="1" id="nosslverify" name="nosslverify" {no-ssl-verify-value} /></td>
+				<th scope="row"><label for="api_url">{api-url-label}</label></th>
+				<td><input type="text" value="{api-url}" id="key" name="api_url" class="regular-text code" /></td>
+			</tr>
+			<tr>
+				<th scope="row">{security-label}</th>
+				<td>
+					<input type="checkbox" value="1" id="nosslverify" name="nosslverify" {no-ssl-verify-value} />
+					<label for="nosslverify">{no-ssl-verify-label}</label>
+				</td>
 			</tr>
 		</tbody>
 	</table>
+	
+	<p>{security-warning}</p>
 	
 	<p class="submit">
 		<input type="submit" class="button button-primary" value="{save-label}" name="submit" />
