@@ -117,7 +117,29 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( ! $email )
 			return null;
 		
-		return $this->api_get_key($email);
+		$key = null;
+		
+		// try to get the key the normal way
+		try { $key = $this->api_get_key( $email ); }
+		catch(Exception $e)
+		{
+			// if we are not running for the first time, throw on error
+			$old_key = WPCF7::get_option( 'wpcf7_pdf_forms_pdfninja_key' );
+			if( $old_key )
+				throw $e;
+			
+			// there might be an issue with certificate verification on this system, disable it and try again
+			$this->set_verify_ssl( false );
+			try { $key = $this->api_get_key( $email ); }
+			catch(Exception $e)
+			{
+				// if it still fails, revert and throw
+				$this->set_verify_ssl( true );
+				throw $e;
+			}
+		}
+		
+		return $key;
 	}
 	
 	/*
