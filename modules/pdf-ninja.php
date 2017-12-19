@@ -2,9 +2,10 @@
 
 class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 {
-	private static $instance;
-	private $key;
-	private $error;
+	private static $instance = null;
+	private $key = null;
+	private $verify_ssl = null;
+	private $error = null;
 	
 	const API_SERVER_URL = 'https://pdf.ninja';
 	
@@ -93,10 +94,32 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	/*
 	 * Sets the current API key
 	 */
-	public function set_key($key)
+	public function set_key( $value )
 	{
-		$this->key = $key;
-		WPCF7::update_option( 'wpcf7_pdf_forms_pdfninja_key', $key );
+		$this->key = $value;
+		WPCF7::update_option( 'wpcf7_pdf_forms_pdfninja_key', $value );
+		return true;
+	}
+	
+	public function get_verify_ssl()
+	{
+		if( $this->verify_ssl === null )
+		{
+			$value = WPCF7::get_option( 'wpcf7_pdf_forms_verify_ssl' );
+			if( $value == 'true' ) $this->verify_ssl = true;
+			if( $value == 'false' ) $this->verify_ssl = false;
+		}
+		
+		if( $this->verify_ssl === null )
+			$this->set_verify_ssl( true );
+		
+		return $this->verify_ssl;
+	}
+	
+	public function set_verify_ssl( $value )
+	{
+		$this->verify_ssl = $value;
+		WPCF7::update_option( 'wpcf7_pdf_forms_verify_ssl', $value ? 'true' : 'false' );
 		return true;
 	}
 	
@@ -126,7 +149,8 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'decompress'  => true,
 			'timeout'     => 10,
 			'redirection' => 5,
-			'user-agent'  => 'wpcf-pdf-forms/0.1'
+			'user-agent'  => 'wpcf-pdf-forms/0.1',
+			'sslverify'   => $this->get_verify_ssl(),
 		);
 	}
 	
@@ -424,9 +448,13 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 					if( $_POST['new'] )
 						$key = $this->generate_key();
 					else
-						$key = isset( $_POST['key'] ) ? trim( $_POST['key'] ) : null;
+						$key = isset( $_POST['key'] ) ? trim( wp_unslash( $_POST['key'] ) ) : null;
 					
-					if( $key && $this->set_key($key) )
+					$nosslverify = isset( $_POST['nosslverify'] ) ? trim( wp_unslash( $_POST['nosslverify'] ) ) : false;
+					
+					$this->set_verify_ssl( !(bool)$nosslverify );
+					
+					if( $key && $this->set_key( $key ) )
 						wp_safe_redirect( $this->menu_page_url( array( 'message' => 'success' ) ) );
 				}
 				catch(Exception $e)
@@ -468,6 +496,8 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'top-message' => esc_html__( "This service provides functionality for working with PDF forms via a web API.", 'wpcf7-pdf-forms' ),
 			'key-label' => esc_html__( 'API Key', 'wpcf7-pdf-forms' ),
 			'key' => esc_html( $this->get_key() ),
+			'no-ssl-verify-label' => esc_html__( 'Ignore security certificate verification errors', 'wpcf7-pdf-forms' ),
+			'no-ssl-verify-value' => !$this->get_verify_ssl() ? esc_html__( 'Yes' ) : esc_html__( 'No' ),
 			'edit-label' => esc_html__( "Edit", 'wpcf7-pdf-forms' ),
 			'edit-link' => esc_url( $this->menu_page_url( 'action=edit' ) ),
 		) );
@@ -495,6 +525,8 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'top-message' => esc_html__( "The following form allows you to edit your API key.", 'wpcf7-pdf-forms' ),
 			'key-label' => esc_html__( 'API Key', 'wpcf7-pdf-forms' ),
 			'key' => esc_html( $this->get_key() ),
+			'no-ssl-verify-label' => esc_html__( 'Ignore security certificate verification errors', 'wpcf7-pdf-forms' ),
+			'no-ssl-verify-value' => !$this->get_verify_ssl() ? esc_html__( 'checked' ) : '',
 			'edit-link' => esc_url( $this->menu_page_url( 'action=edit' ) ),
 			'nonce' => wp_nonce_field( 'wpcf7-pdfninja-edit' ),
 			'save-label' => esc_html__( "Save", 'wpcf7-pdf-forms' ),

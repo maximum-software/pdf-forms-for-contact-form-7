@@ -6,7 +6,11 @@
 		<tbody>
 			<tr>
 				<th scope="row"><label for="key">{key-label}</label></th>
-				<td><input type="text" aria-required="true" value="{key}" id="key" name="key" class="regular-text code" /></td>
+				<td><input type="text" value="{key}" id="key" name="key" class="regular-text code" /></td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="key">{no-ssl-verify-label}</label></th>
+				<td><input type="checkbox" value="1" id="nosslverify" name="nosslverify" {no-ssl-verify-value} /></td>
 			</tr>
 		</tbody>
 	</table>
