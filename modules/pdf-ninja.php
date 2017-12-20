@@ -632,4 +632,19 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'message' => esc_html__( "Could not get a Pdf.Ninja API key.", 'wpcf7-pdf-forms' ),
 		) );
 	}
+	
+	public function thickbox_messages()
+	{
+		$messages = '';
+		try
+		{
+			$url = $this->get_api_url();
+			$verify_ssl = $this->get_verify_ssl();
+			if( substr($url,0,5) == 'http:' || !$verify_ssl)
+				$messages .= "<p>" . esc_html__( 'Warning: Using plain HTTP or disabling certificate verification can lead to data leaks.', 'wpcf7-pdf-forms' ) . "</p>";
+		}
+		catch(Exception $e) { };
+		
+		return $messages;
+	}
 }

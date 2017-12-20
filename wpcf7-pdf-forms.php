@@ -1140,10 +1140,16 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function render_tag_generator( $contact_form, $args = '' )
 		{
+			$messages = '';
+			$service = $this->get_service();
+			if( $service && is_callable( array( $service, 'thickbox_messages' ) ) )
+				$messages .= $service->thickbox_messages();
+			
 			$args = wp_parse_args( $args, array() );
 			if( class_exists('WPCF7_TagGenerator') )
 				echo self::render( 'add_pdf', array(
 					'post-id' => esc_html( $contact_form->id() ),
+					'messages' => $messages,
 					'instructions' => esc_html__( "Attach a PDF file to your form and insert tags into your form that map to fields in the PDF file.", 'wpcf7-pdf-forms' ),
 					'upload-and-attach' => esc_html__( "Upload & Attach a PDF File", 'wpcf7-pdf-forms' ),
 					'insert-tags' => esc_html__( "Insert Tags", 'wpcf7-pdf-forms' ),
