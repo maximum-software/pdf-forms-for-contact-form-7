@@ -793,7 +793,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$fields[$attachment_id] = $this->get_fields( $attachment_id );
 				}
 				
-				if( count($fields) == 0 )
+				if( count($fields) == 1 && count(reset($fields)) == 0 )
 					$tags = __( "This PDF file does not appear to contain a PDF form.  See https://acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for more information.", 'wpcf7-pdf-forms' );
 				else
 				{
