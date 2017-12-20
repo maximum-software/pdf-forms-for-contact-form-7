@@ -7,6 +7,7 @@
 .wpcf7-pdf-form-integration-card .code
 {
 	overflow-wrap: break-word;
+	word-wrap: break-word;
 }
 
 .wpcf7-pdf-forms-admin table,
