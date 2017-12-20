@@ -149,11 +149,11 @@ No.  This plugin adds features to the [Contact Form 7](https://wordpress.org/plu
 
 = Does this plugin require special software installation on the web server? =
 
-No.  The plugin uses core WordPress features only.  No special software or PHP extensions are needed.  Working with PDF files is done through a HTTP JSON REST API.
+No.  The plugin uses core WordPress features only.  No special software or PHP extensions are needed.  Working with PDF files is done through a HTTP JSON REST API.  It is recommended to have a working SSL/TLS certificate verification with cURL.
 
 = How are the CF7 form fields mapped to the PDF form fields? =
 
-The fields in the PDF form are mapped using the random looking code in the CF7 field name.  Here is the format: pdf-field-{attachment-id}-{human-readable-field-name}-{random-looking-code}.  If you remove the random looking code, the field will no longer be mapped to the field in the PDF.
+There are two ways to map fields with this plugin.  The field mapper tool allows you to map fields individually and, when needed, generate new CF7 fields on the fly.  The tag generator tool maps to the fields in the PDF form using the random looking code in the CF7 field name that it generates.  Here is the format: pdf-field-{attachment-id}-{human-readable-field-name}-{random-looking-code}.  The '{attachment-id}' can be 'all' to allow it to map to all PDFs attached to the CF7 form (in case you ever want to swap out the PDF file without needing to fix the generated tags).  If you remove the random looking code, the field will no longer be mapped to the field in the PDF.
 
 = How do I remove the watermark in the filled PDF files? =
 
