@@ -28,3 +28,8 @@ An external web API (https://pdf.ninja) is used for filling PDF forms (free usag
 ![Form-tag Generator interface that allows users to upload and attach PDF files and generate tags](assets/screenshot-2.png?raw=true)
 
 ![Email message in Thunderbird with the attached PDF file](assets/screenshot-3.png?raw=true)
+
+## Special Thanks
+
+![BrowserStack](assets/BrowserStack.png)
+Special thanks to BrowserStack for sponsoring this plugin.
