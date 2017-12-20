@@ -31,5 +31,6 @@ An external web API (https://pdf.ninja) is used for filling PDF forms (free usag
 
 ## Special Thanks
 
-![BrowserStack](assets/BrowserStack.png)
-Special thanks to BrowserStack for sponsoring this plugin.
+[![BrowserStack](assets/BrowserStack.png)](https://www.browserstack.com/)
+
+Special thanks to [BrowserStack](https://www.browserstack.com/) for sponsoring this plugin.
