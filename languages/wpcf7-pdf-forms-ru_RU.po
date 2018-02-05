@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pdf-forms-for-"
 "contact-form-7/\n"
-"POT-Creation-Date: 2017-12-19 20:18:35+00:00\n"
+"POT-Creation-Date: 2018-02-05 22:09:12+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -29,11 +29,11 @@ msgid "Failed to decode API server response"
 msgstr "Не удалось декодировать ответ от сервера API"
 
 #: modules/pdf-ninja.php:277 modules/pdf-ninja.php:405
-#: modules/pdf-ninja.php:447
+#: modules/pdf-ninja.php:453
 msgid "Pdf.Ninja API server did not send an expected response"
 msgstr "Сервер API Pdf.Ninja не послал ожидаемый ответ"
 
-#: modules/pdf-ninja.php:331 wpcf7-pdf-forms.php:647
+#: modules/pdf-ninja.php:331 wpcf7-pdf-forms.php:654
 msgid "File not found"
 msgstr "Файл не найден"
 
@@ -41,47 +41,48 @@ msgstr "Файл не найден"
 msgid "Failed to encode JSON data"
 msgstr "Не удалось кодировать данные JSON"
 
-#: modules/pdf-ninja.php:453
+#: modules/pdf-ninja.php:459
 msgid "Cannot download PDF file from the API server"
 msgstr "Невозможно загрузить PDF файл с сервера API"
 
-#: modules/pdf-ninja.php:458
+#: modules/pdf-ninja.php:464
 msgid "Cannot open temporary PDF file for writing"
 msgstr "Невозможно открыть временный файл PDF для записи"
 
-#: modules/pdf-ninja.php:464
+#: modules/pdf-ninja.php:470
 msgid "Cannot create temporary PDF file"
 msgstr "Невозможно создать временный файл PDF"
 
-#: modules/pdf-ninja.php:499 wpcf7-pdf-forms.php:585 wpcf7-pdf-forms.php:857
-#: wpcf7-pdf-forms.php:903 wpcf7-pdf-forms.php:1055
+#: modules/pdf-ninja.php:505 wpcf7-pdf-forms.php:592 wpcf7-pdf-forms.php:864
+#: wpcf7-pdf-forms.php:910 wpcf7-pdf-forms.php:1062
 msgid "Permission denied"
 msgstr "Запрещено"
 
-#: modules/pdf-ninja.php:554
+#: modules/pdf-ninja.php:560
 msgid ""
 "This service provides functionality for working with PDF forms via a web API."
 msgstr ""
 "Эта служба обеспечивает функциональность для работы с формами PDF через веб-"
 "API."
 
-#: modules/pdf-ninja.php:555 modules/pdf-ninja.php:588
+#: modules/pdf-ninja.php:561 modules/pdf-ninja.php:594
 msgid "API Key"
 msgstr "Ключ API"
 
-#: modules/pdf-ninja.php:557 modules/pdf-ninja.php:590
+#: modules/pdf-ninja.php:563 modules/pdf-ninja.php:596
 msgid "API URL"
 msgstr "Адрес API"
 
-#: modules/pdf-ninja.php:559 modules/pdf-ninja.php:592
+#: modules/pdf-ninja.php:565 modules/pdf-ninja.php:598
 msgid "Data Security"
 msgstr "Безопасность данных"
 
-#: modules/pdf-ninja.php:560 modules/pdf-ninja.php:593
+#: modules/pdf-ninja.php:566 modules/pdf-ninja.php:599
 msgid "Ignore certificate verification errors"
 msgstr "Игнорировать ошибки проверки сертификата"
 
-#: modules/pdf-ninja.php:562 modules/pdf-ninja.php:595
+#: modules/pdf-ninja.php:568 modules/pdf-ninja.php:601
+#: modules/pdf-ninja.php:650
 msgid ""
 "Warning: Using plain HTTP or disabling certificate verification can lead to "
 "data leaks."
@@ -89,43 +90,43 @@ msgstr ""
 "Предупреждение: использование простого HTTP или отключения проверки "
 "сертификата может привести к утечке данных."
 
-#: modules/pdf-ninja.php:563 modules/pdf-ninja.php:576
+#: modules/pdf-ninja.php:569 modules/pdf-ninja.php:582
 msgid "Edit"
 msgstr "Редактировать"
 
-#: modules/pdf-ninja.php:574
+#: modules/pdf-ninja.php:580
 msgid "Error!"
 msgstr "Ошибка!"
 
-#: modules/pdf-ninja.php:587
+#: modules/pdf-ninja.php:593
 msgid "The following form allows you to edit your API key."
 msgstr "Следующая форма позволяет редактировать ключ API."
 
-#: modules/pdf-ninja.php:598
+#: modules/pdf-ninja.php:604
 msgid "Save"
 msgstr "Сохранить"
 
-#: modules/pdf-ninja.php:599
+#: modules/pdf-ninja.php:605
 msgid "Get New Key"
 msgstr "Получить новый ключ"
 
-#: modules/pdf-ninja.php:610 modules/pdf-ninja.php:616
+#: modules/pdf-ninja.php:616 modules/pdf-ninja.php:622
 msgid "PDF Forms for CF7 plugin error"
 msgstr "Ошибка в плагине PDF Forms for CF7"
 
-#: modules/pdf-ninja.php:611
+#: modules/pdf-ninja.php:617
 msgid "Can't save new key."
 msgstr "Невозможно сохранить новый ключ."
 
-#: modules/pdf-ninja.php:622
+#: modules/pdf-ninja.php:628
 msgid "Key saved."
 msgstr "Ключ сохранен."
 
-#: modules/pdf-ninja.php:631 wpcf7-pdf-forms.php:170
+#: modules/pdf-ninja.php:637 wpcf7-pdf-forms.php:170
 msgid "PDF Forms Filler for CF7 plugin error"
 msgstr "PDF Forms Filler для ошибки CF7 плагин"
 
-#: modules/pdf-ninja.php:632
+#: modules/pdf-ninja.php:638
 msgid "Could not get a Pdf.Ninja API key."
 msgstr "Не удалось получить ключ API Pdf.Ninja."
 
@@ -169,21 +170,21 @@ msgstr "Вы действительно хотите удалить это со�
 msgid "PDF Forms"
 msgstr "PDF формы"
 
-#: wpcf7-pdf-forms.php:582 wpcf7-pdf-forms.php:779 wpcf7-pdf-forms.php:849
-#: wpcf7-pdf-forms.php:895 wpcf7-pdf-forms.php:931 wpcf7-pdf-forms.php:994
-#: wpcf7-pdf-forms.php:1046
+#: wpcf7-pdf-forms.php:589 wpcf7-pdf-forms.php:786 wpcf7-pdf-forms.php:856
+#: wpcf7-pdf-forms.php:902 wpcf7-pdf-forms.php:938 wpcf7-pdf-forms.php:1001
+#: wpcf7-pdf-forms.php:1053
 msgid "Nonce mismatch"
 msgstr "Несоответствие нонса"
 
-#: wpcf7-pdf-forms.php:592
+#: wpcf7-pdf-forms.php:599
 msgid "Invalid file mime type, must be 'application/pdf'"
 msgstr "Неверный тип файла мим, должен быть «приложение / PDF»"
 
-#: wpcf7-pdf-forms.php:674
+#: wpcf7-pdf-forms.php:681
 msgid "No service"
 msgstr "Нет сервиса"
 
-#: wpcf7-pdf-forms.php:797
+#: wpcf7-pdf-forms.php:804
 msgid ""
 "This PDF file does not appear to contain a PDF form.  See https://acrobat."
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
@@ -193,27 +194,27 @@ msgstr ""
 "странице https://acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-"
 "forms-creator.html."
 
-#: wpcf7-pdf-forms.php:854 wpcf7-pdf-forms.php:900
+#: wpcf7-pdf-forms.php:861 wpcf7-pdf-forms.php:907
 msgid "Invalid post ID"
 msgstr "Недопустимый идентификатор сообщения"
 
-#: wpcf7-pdf-forms.php:1006
+#: wpcf7-pdf-forms.php:1013
 msgid "Failed to get Contact Form fields"
 msgstr "Не удалось получить поля контактной формы"
 
-#: wpcf7-pdf-forms.php:1052
+#: wpcf7-pdf-forms.php:1059
 msgid "Invalid attachment ID"
 msgstr "Недопустимый идентификатор вложения"
 
-#: wpcf7-pdf-forms.php:1058 wpcf7-pdf-forms.php:1063
+#: wpcf7-pdf-forms.php:1065 wpcf7-pdf-forms.php:1070
 msgid "Invalid field"
 msgstr "Неверное поле"
 
-#: wpcf7-pdf-forms.php:1094 wpcf7-pdf-forms.php:1103
+#: wpcf7-pdf-forms.php:1101 wpcf7-pdf-forms.php:1110
 msgid "PDF Form"
 msgstr "PDF форма"
 
-#: wpcf7-pdf-forms.php:1147
+#: wpcf7-pdf-forms.php:1160
 msgid ""
 "Attach a PDF file to your form and insert tags into your form that map to "
 "fields in the PDF file."
@@ -221,67 +222,71 @@ msgstr ""
 "Приложить файл PDF в форму и вставить тег в вашу форму, сопоставляемые с "
 "полей в файле PDF."
 
-#: wpcf7-pdf-forms.php:1148
+#: wpcf7-pdf-forms.php:1161
 msgid "Upload & Attach a PDF File"
 msgstr "Загрузить & Приложить PDF-файл"
 
-#: wpcf7-pdf-forms.php:1149
+#: wpcf7-pdf-forms.php:1162
 msgid "Insert Tags"
 msgstr "Вставить теги"
 
-#: wpcf7-pdf-forms.php:1150
+#: wpcf7-pdf-forms.php:1163
 msgid "Insert and Link"
 msgstr "Вставить и соотнести"
 
-#: wpcf7-pdf-forms.php:1151
+#: wpcf7-pdf-forms.php:1164
 msgid "Get Tags"
 msgstr "Получить теги"
 
-#: wpcf7-pdf-forms.php:1152
+#: wpcf7-pdf-forms.php:1165
 msgid "Delete"
 msgstr "Удалить"
 
-#: wpcf7-pdf-forms.php:1153
+#: wpcf7-pdf-forms.php:1166
 msgid "Options"
 msgstr "Опции"
 
-#: wpcf7-pdf-forms.php:1154
+#: wpcf7-pdf-forms.php:1167
 msgid "Skip when empty"
 msgstr "Пропустить когда пусто"
 
-#: wpcf7-pdf-forms.php:1155
+#: wpcf7-pdf-forms.php:1168
 msgid "Attach to primary email message"
 msgstr "Привязать к основному сообщению"
 
-#: wpcf7-pdf-forms.php:1156
+#: wpcf7-pdf-forms.php:1169
 msgid "Attach to secondary email message"
 msgstr "Привязать к вторичному сообщению"
 
-#: wpcf7-pdf-forms.php:1157
+#: wpcf7-pdf-forms.php:1170
+msgid "Flatten"
+msgstr "Сгладить"
+
+#: wpcf7-pdf-forms.php:1171
 msgid "Input Field Mapper Tool (simple)"
 msgstr "Инструмент сопоставления полей (просто)"
 
-#: wpcf7-pdf-forms.php:1158
+#: wpcf7-pdf-forms.php:1172
 msgid "PDF field"
 msgstr "Поле PDF"
 
-#: wpcf7-pdf-forms.php:1159
+#: wpcf7-pdf-forms.php:1173
 msgid "CF7 field"
 msgstr "Поле CF7"
 
-#: wpcf7-pdf-forms.php:1160
+#: wpcf7-pdf-forms.php:1174
 msgid "Add Mapping"
 msgstr "Добавить сопоставление"
 
-#: wpcf7-pdf-forms.php:1161
+#: wpcf7-pdf-forms.php:1175
 msgid "New Tag:"
 msgstr "Новый тег:"
 
-#: wpcf7-pdf-forms.php:1162
+#: wpcf7-pdf-forms.php:1176
 msgid "Tag Generator Tool (advanced)"
 msgstr "Инструмент генератора тегов (сложно)"
 
-#: wpcf7-pdf-forms.php:1170
+#: wpcf7-pdf-forms.php:1184
 msgid ""
 "Have a question/comment/problem?  Feel free to use {a-href-forum}the support "
 "forum{/a} and view {a-href-howto}the How-To video{/a}."
@@ -289,7 +294,7 @@ msgstr ""
 "У вас есть вопрос / комментарий / проблема? Используйте {a-href-forum}форум "
 "поддержки{/a} и просмотрите {a-href-howto}видео{/a}."
 
-#: wpcf7-pdf-forms.php:1176
+#: wpcf7-pdf-forms.php:1190
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr "Ваш CF7 плагин слишком устарел, пожалуйста, обновите."
 
