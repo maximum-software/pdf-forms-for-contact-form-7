@@ -202,7 +202,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'decompress'  => true,
 			'timeout'     => 300,
 			'redirection' => 5,
-			'user-agent'  => 'wpcf-pdf-forms/' . WPCF7_Pdf_Forms::VERSION,
+			'user-agent'  => 'wpcf7-pdf-forms/' . WPCF7_Pdf_Forms::VERSION,
 			'sslverify'   => $this->get_verify_ssl(),
 		);
 	}
