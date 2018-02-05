@@ -200,7 +200,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'headers'     => array( 'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8' ),
 			'compress'    => true,
 			'decompress'  => true,
-			'timeout'     => 10,
+			'timeout'     => 300,
 			'redirection' => 5,
 			'user-agent'  => 'wpcf-pdf-forms/' . WPCF7_Pdf_Forms::VERSION,
 			'sslverify'   => $this->get_verify_ssl(),
