@@ -410,7 +410,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	/*
 	 * Helper function for communicating with the API to fill fields in the PDF file
 	 */
-	private function api_fill_helper( $attachment_id, $data )
+	private function api_fill_helper( $attachment_id, $data, $options )
 	{
 		if( $this->is_new_file( $attachment_id ) )
 			if( ! $this->api_upload_file( $attachment_id ) )
@@ -427,18 +427,24 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'data'   => $encoded_data
 		);
 		
+		foreach( $options as $key => $value )
+		{
+			if( $key == 'flatten' )
+				$params[$key] = $value;
+		}
+		
 		return $this->api_post( 'fill', $params );
 	}
 	
 	/*
 	 * Communicates with the API to fill fields in the PDF file
 	 */
-	public function api_fill( $destfile, $attachment_id, $data )
+	public function api_fill( $destfile, $attachment_id, $data, $options = array() )
 	{
-		$result = $this->api_fill_helper( $attachment_id, $data );
+		$result = $this->api_fill_helper( $attachment_id, $data, $options );
 		
 		if( $this->api_check_retry( $result, $attachment_id ) )
-			$result = $this->api_fill_helper( $attachment_id, $data );
+			$result = $this->api_fill_helper( $attachment_id, $data, $options );
 		
 		if( $result['success'] != true )
 			throw new Exception( $result['error'] );
