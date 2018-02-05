@@ -5,7 +5,7 @@ Requires at least: 4.3
 Tested up to: 4.9
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 0.3.3
+Version: 0.4.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,14 @@ Special thanks to BrowserStack (https://www.browserstack.com/) for sponsoring th
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 0.4.0 =
+
+* Release date: February 5, 2017
+
+* Added flatten option
+* Fixed a possible timeout issue with large PDF files
+* Other minor fixes
 
 = 0.3.3 =
 
