@@ -56,10 +56,10 @@
 	border: 5px solid #fff;
 	border-top: 5px solid #0085ba;
 	border-radius: 50%;
-	animation: spin 2s linear infinite;
+	animation: wpcf7-pdf-forms-spin 2s linear infinite;
 }
 
-@keyframes spin {
+@keyframes wpcf7-pdf-forms-spin {
 	0% { transform: rotate(0deg); }
 	100% { transform: rotate(360deg); }
 }
@@ -108,12 +108,12 @@ select.pdf-field-list
 	text-overflow: ellipsis;
 }
 
-.helpbox
+.wpcf7-pdf-forms-admin .helpbox
 {
 	padding-bottom: 15px;
 }
 
-.tag-hint
+.wpcf7-pdf-forms-admin .tag-hint
 {
 	font-weight: bold;
 	word-break: break-all;

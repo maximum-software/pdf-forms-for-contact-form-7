@@ -456,6 +456,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$mappings = array();
 			
 			$submission = WPCF7_Submission::get_instance();
+			$posted_data = $submission->get_posted_data();
 			
 			$files = array();
 			foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
@@ -463,7 +464,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$fields = $this->get_fields( $attachment_id );
 				
 				$data = array();
-				$posted_data = $submission->get_posted_data();
 				foreach( $posted_data as $key => $value )
 				{
 					if( is_array( $value ) )
