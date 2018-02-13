@@ -5,7 +5,7 @@ Requires at least: 4.3
 Tested up to: 4.9
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 0.4.0
+Version: 0.4.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -23,7 +23,9 @@ When a website visitor submits the CF7 form, the form in the PDF file is filled 
 
 An external web API (https://pdf.ninja) is used for filling PDF forms (free usage has limitations).  An Enterprise Extension, which enables performing all PDF operations locally on the web server (no external web API), is available upon request.
 
-Special thanks to BrowserStack (https://www.browserstack.com/) for sponsoring this plugin.
+Special thanks to the following sponsors of this plugin,
+BrowserStack (https://www.browserstack.com/)
+Momentum3 (http://momentum3.biz/)
 
 == Installation ==
 
@@ -33,6 +35,13 @@ Special thanks to BrowserStack (https://www.browserstack.com/) for sponsoring th
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 0.4.1 =
+
+* Release date: February 13, 2017
+
+* Added bulk tag insertion feature to field mapper tool, special thanks to Momentum3 (http://momentum3.biz/) for sponsoring this feature
+* Bug fixes and improvements
 
 = 0.4.0 =
 
