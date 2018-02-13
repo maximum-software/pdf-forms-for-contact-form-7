@@ -556,6 +556,23 @@ jQuery(document).ready(function($) {
 		});
 	};
 	
+	var removeOldMappings = function() {
+		
+		var mappings = getMappings();
+		
+		for(var i=0; i<mappings.length; i++)
+		{
+			var cf7_field_data = getCf7FieldData(mappings[i].cf7_field);
+			if(!cf7_field_data)
+			{
+				mappings.splice(i, 1);
+				i--;
+			}
+		}
+		
+		setMappings(mappings);
+	};
+	
 	var updateTagHint = function() {
 		
 		var tag = jQuery('.wpcf7-pdf-forms-admin .tag-hint');
@@ -739,8 +756,8 @@ jQuery(document).ready(function($) {
 	
 	
 	var form = jQuery('textarea#wpcf7-form');
-	form.change(function(){
-		loadCf7Fields();
+	form.change(function() {
+		loadCf7Fields(removeOldMappings);
 	});
 	
 	loadCf7Fields(preloadAttachments);
