@@ -118,3 +118,8 @@ select.pdf-field-list
 	font-weight: bold;
 	word-break: break-all;
 }
+
+.wpcf7-pdf-forms-admin .marked-row-background
+{
+	background-color: rgba(100, 100, 100, 0.2);
+}

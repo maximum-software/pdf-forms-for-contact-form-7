@@ -45,7 +45,7 @@
 					<th></th>
 					<th class="pdf-field">{pdf-field}</th>
 				</tr>
-				<tr>
+				<tr class="marked-row-background">
 					<td class="cf7-field"><select class="cf7-field-list"></select></td>
 					<td><span class="dashicons dashicons-arrow-right-alt"></span></td>
 					<td class="pdf-field"><select class="pdf-field-list"></select></td>
@@ -56,6 +56,10 @@
 				<tr>
 					<td colspan="3">{new-tag} <span class="tag-hint"></span></td>
 					<td><input type="button" class="button button-primary insert-tag-hint-btn" value="{insert-tag}" /></td>
+				</tr>
+				<tr class="marked-row-background">
+					<td colspan="3">{generate-and-insert-all-tags-message}</td>
+					<td><input type="button" class="button button-primary insert-and-map-all-tags-btn" value="{insert-and-map-all-tags}" /></td>
 				</tr>
 				<tr class="pdf-mapping-row-template">
 					<td class="cf7-field"><span class="cf7-field-name"></span></td>
