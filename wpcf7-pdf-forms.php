@@ -637,7 +637,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			$md5sum = self::get_meta( $attachment_id, 'md5sum' );
 			if( ! $md5sum )
-				return $this->update_attachment_md5sum( $attachment_id );
+				return self::update_attachment_md5sum( $attachment_id );
 			else
 				return $md5sum;
 		}
