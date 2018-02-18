@@ -5,7 +5,7 @@ Requires at least: 4.3
 Tested up to: 4.9
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 0.4.1
+Version: 0.4.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -35,6 +35,12 @@ Momentum3 (http://momentum3.biz/)
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 0.4.2 =
+
+* Release date: February 17, 2017
+
+* Crash fix
 
 = 0.4.1 =
 
