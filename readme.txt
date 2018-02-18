@@ -38,20 +38,20 @@ Momentum3 (http://momentum3.biz/)
 
 = 0.4.2 =
 
-* Release date: February 17, 2017
+* Release date: February 17, 2018
 
 * Crash fix
 
 = 0.4.1 =
 
-* Release date: February 13, 2017
+* Release date: February 13, 2018
 
 * Added bulk tag insertion feature to field mapper tool, special thanks to Momentum3 (http://momentum3.biz/) for sponsoring this feature
 * Bug fixes and improvements
 
 = 0.4.0 =
 
-* Release date: February 5, 2017
+* Release date: February 5, 2018
 
 * Added flatten option
 * Fixed a possible timeout issue with large PDF files
