@@ -647,7 +647,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$url = $this->get_api_url();
 			$verify_ssl = $this->get_verify_ssl();
 			if( substr($url,0,5) == 'http:' || !$verify_ssl)
-				$messages .= "<p>" . esc_html__( 'Warning: Using plain HTTP or disabling certificate verification can lead to data leaks.', 'wpcf7-pdf-forms' ) . "</p>";
+				$messages .= "<div class='notice notice-warning'><p>" . esc_html__( 'Warning: Your integration settings indicate you are using an insecure connection to the API server.', 'wpcf7-pdf-forms' ) . "</p></div>";
 		}
 		catch(Exception $e) { };
 		

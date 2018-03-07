@@ -210,7 +210,7 @@ jQuery(document).ready(function($) {
 					
 					cf7_fields.empty();
 					
-					jQuery.each(data.fields, function(i, field) {
+					jQuery.each(cf7FieldsCache, function(i, field) {
 						
 						cf7_fields.append(jQuery('<option>', {
 							value: field.id,
@@ -374,7 +374,7 @@ jQuery(document).ready(function($) {
 			tag.remove();
 		});
 		
-		jQuery('.wpcf7-pdf-forms-admin .pdf-attachments').append(tag);
+		jQuery('.wpcf7-pdf-forms-admin .pdf-attachments tbody').append(tag);
 	};
 	
 	var preloadAttachments = function() {
@@ -484,7 +484,7 @@ jQuery(document).ready(function($) {
 			});
 		}
 		
-		jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper').append(tag);
+		jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper tbody').append(tag);
 	};
 	
 	var loadedMappings = false;
@@ -747,8 +747,8 @@ jQuery(document).ready(function($) {
 		
 		clearMessages();
 		
-		var cf7_field = jQuery('.wpcf7-pdf-forms-admin .cf7-field-list').val();
-		var pdf_field = jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').val();
+		var cf7_field = jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper .cf7-field-list').val();
+		var pdf_field = jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper .pdf-field-list').val();
 		
 		if(cf7_field && pdf_field)
 			addMapping(cf7_field, pdf_field);
