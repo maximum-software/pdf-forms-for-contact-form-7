@@ -207,6 +207,48 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		);
 	}
 	
+	private function is_function_disabled( $function_name )
+	{
+		$disabled_functions = ini_get('disable_functions');
+		if( $disabled_functions )
+			return in_array( $function_name, array_map( 'trim', explode( ',', $disabled_functions ) ) );
+		
+		return false;
+	}
+	
+	private function get_enterprise_extension_support()
+	{
+		if( strncasecmp(PHP_OS, 'WIN', 3) == 0)
+			return false;
+		
+		if( ini_get( 'safe_mode' ) )
+			return false;
+		
+		if( $this->is_function_disabled( 'exec' ) )
+			return false;
+		
+		$pdftk_binary = exec( 'which pdftk', $output, $retval );
+		if( $retval === 0 )
+			return true;
+		
+		// check version
+		if( $pdftk_binary )
+		{
+			exec( $pdftk_binary.' --version', $output, $retval );
+			if( $retval !== 0
+			|| !preg_match_all( '/^.*pdftk (\d\.[\d]+)[^d].*$/sumi', implode( "\n", $output ), $matches )
+			|| !isset( $matches[1][0] )
+			|| version_compare( $matches[1][0], "2.0", ">=") )
+				return true;
+		}
+		
+		$arch = php_uname( "m" );
+		if( $arch == 'x86_64' )
+			return true;
+		
+		return false;
+	}
+	
 	/*
 	 * Helper function for communicating with the API via the GET request
 	 */
@@ -607,6 +649,8 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'no-ssl-verify-label' => esc_html__( 'Ignore certificate verification errors', 'wpcf7-pdf-forms' ),
 			'no-ssl-verify-value' => !$this->get_verify_ssl() ? 'checked' : '',
 			'security-warning' => esc_html__( 'Warning: Using plain HTTP or disabling certificate verification can lead to data leaks.', 'wpcf7-pdf-forms' ),
+			'enterprise-extension-support-label' => esc_html__( 'Enterprise Extension', 'wpcf7-pdf-forms' ),
+			'enterprise-extension-support-value' => $this->get_enterprise_extension_support() ? esc_html__( 'Supported', 'wpcf7-pdf-forms' ) : esc_html__( 'Not supported', 'wpcf7-pdf-forms' ),
 			'edit-label' => esc_html__( "Edit", 'wpcf7-pdf-forms' ),
 			'edit-link' => esc_url( $this->menu_page_url( 'action=edit' ) ),
 		) );
