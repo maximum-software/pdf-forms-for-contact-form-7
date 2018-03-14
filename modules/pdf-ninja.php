@@ -223,12 +223,35 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( ! $body )
 			throw new Exception( __( "Failed to get API server response", 'wpcf7-pdf-forms' ) );
 		
-		$response = json_decode( $body , true );
+		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
 		
-		if( ! $response )
-			throw new Exception( __( "Failed to decode API server response", 'wpcf7-pdf-forms' ) );
+		if( strpos($content_type, 'application/json' ) !== FALSE )
+		{
+			$response = json_decode( $body , true );
+			
+			if( ! $response )
+				throw new Exception( __( "Failed to decode API server response", 'wpcf7-pdf-forms' ) );
+			
+			if( $response['success'] == true && isset( $response['fileUrl'] ) )
+			{
+				$args2 = $this->wp_remote_args();
+				$args2['timeout'] = 100;
+				$response2 = wp_remote_get( $response['fileUrl'], $args2 );
+				if( is_wp_error( $response2 ) )
+					throw new Exception( __( "Cannot download file from the API server", 'wpcf7-pdf-forms' ) );
+				
+				$response['content_type'] = wp_remote_retrieve_header( $response2, 'content-type' );
+				$response['content_response'] = $response2;
+			}
+			
+			return $response;
+		}
 		
-		return $response;
+		return array(
+			'success' => true,
+			'content_type' => $content_type,
+			'content_response' => $response,
+		);
 	}
 	
 	/*
@@ -270,20 +293,20 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 				$args2['timeout'] = 100;
 				$response2 = wp_remote_get( $response['fileUrl'], $args2 );
 				if( is_wp_error( $response2 ) )
-					throw new Exception( __( "Cannot download PDF file from the API server", 'wpcf7-pdf-forms' ) );
+					throw new Exception( __( "Cannot download file from the API server", 'wpcf7-pdf-forms' ) );
 				
+				$response['content_type'] = wp_remote_retrieve_header( $response2, 'content-type' );
 				$response['content_response'] = $response2;
 			}
 			
 			return $response;
 		}
 		
-		if( strpos($content_type, 'application/pdf' ) !== FALSE )
-		{
-			return array( 'success' => true, 'content_response' => $response );
-		}
-		
-		throw new Exception( __( "Unexpected content type received from the API server", 'wpcf7-pdf-forms' ) );
+		return array(
+			'success' => true,
+			'content_type' => $content_type,
+			'content_response' => $response,
+		);
 	}
 	
 	/*
@@ -473,7 +496,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( $result['success'] != true )
 			throw new Exception( $result['error'] );
 		
-		if( ! $result['content_response'] )
+		if( ! $result['content_response'] || $result['content_type'] != 'application/pdf' )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'wpcf7-pdf-forms' ) );
 		
 		$handle = @fopen( $destfile, 'w' );
