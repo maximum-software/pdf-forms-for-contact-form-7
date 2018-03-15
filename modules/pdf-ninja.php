@@ -283,7 +283,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 					throw new Exception( __( "Cannot download file from the API server", 'wpcf7-pdf-forms' ) );
 				
 				$response['content_type'] = wp_remote_retrieve_header( $response2, 'content-type' );
-				$response['content_response'] = $response2;
+				$response['content'] = wp_remote_retrieve_body( $response2 );
 			}
 			
 			return $response;
@@ -292,7 +292,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		return array(
 			'success' => true,
 			'content_type' => $content_type,
-			'content_response' => $response,
+			'content' => $body,
 		);
 	}
 	
@@ -338,7 +338,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 					throw new Exception( __( "Cannot download file from the API server", 'wpcf7-pdf-forms' ) );
 				
 				$response['content_type'] = wp_remote_retrieve_header( $response2, 'content-type' );
-				$response['content_response'] = $response2;
+				$response['content'] = wp_remote_retrieve_body( $response2 );
 			}
 			
 			return $response;
@@ -347,7 +347,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		return array(
 			'success' => true,
 			'content_type' => $content_type,
-			'content_response' => $response,
+			'content' => $body,
 		);
 	}
 	
@@ -538,15 +538,15 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( $result['success'] != true )
 			throw new Exception( $result['error'] );
 		
-		if( ! $result['content_response'] || $result['content_type'] != 'application/pdf' )
+		if( ! $result['content'] || $result['content_type'] != 'application/pdf' )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'wpcf7-pdf-forms' ) );
 		
 		$handle = @fopen( $destfile, 'w' );
 		
 		if( ! $handle )
-			throw new Exception( __( "Cannot open temporary PDF file for writing", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Cannot open file for writing", 'wpcf7-pdf-forms' ) );
 		
-		fwrite( $handle, $result['content_response']['body'] );
+		fwrite( $handle, $result['content'] );
 		fclose( $handle );
 		
 		if( ! file_exists( $destfile ) )
