@@ -64,47 +64,67 @@
 	100% { transform: rotate(360deg); }
 }
 
-.pdf-attachment-row-template,
-.pdf-options-hidden,
-.pdf-mapping-row-template
+.wpcf7-pdf-forms-admin .pdf-options-hidden,
+.wpcf7-pdf-forms-admin .pdf-attachment-row-template,
+.wpcf7-pdf-forms-admin .pdf-mapping-row-template,
+.wpcf7-pdf-forms-admin .image-embeds-row-template
 {
 	display: none;
 }
 
-.pdf-attachment-row .filename
+.wpcf7-pdf-forms-admin .pdf-attachment-row .filename
 {
 	word-break: break-all;
 }
 
-table.pdf-attachments td.pdf-buttons
-{
-	vertical-align: top;
-}
-
-div.pdf-options
+.wpcf7-pdf-forms-admin div.pdf-options
 {
 	padding: 10px;
 }
 
-.pdf-buttons
+.wpcf7-pdf-forms-admin .pdf-buttons
 {
+	vertical-align: top;
 	white-space: nowrap;
 }
 
-td.cf7-field,
-th.cf7-field,
-td.pdf-field,
-th.pdf-field
+.wpcf7-pdf-forms-admin .mapping-table
 {
+	width: 100%;
+}
+
+.wpcf7-pdf-forms-admin .mapping-table th,
+.wpcf7-pdf-forms-admin .mapping-table td
+{
+	vertical-align: top;
 	text-align: center;
-	width: 40%;
+	width: auto;
 	word-break: break-all;
 }
 
-select.cf7-field-list,
-select.pdf-field-list
+.wpcf7-pdf-forms-admin .mapping-table td.buttons
+{
+	text-align: left;
+	white-space: nowrap;
+}
+
+.wpcf7-pdf-forms-admin .mapping-table td.mapping-arrow
+{
+	vertical-align: middle;
+}
+
+.wpcf7-pdf-forms-admin .pdf-fields-mapper td.cf7-field,
+.wpcf7-pdf-forms-admin .pdf-fields-mapper th.cf7-field,
+.wpcf7-pdf-forms-admin .pdf-fields-mapper td.pdf-field,
+.wpcf7-pdf-forms-admin .pdf-fields-mapper th.pdf-field
+{
+	width: 40%;
+}
+
+.wpcf7-pdf-forms-admin select
 {
 	width: 100%;
+	min-width: 50px;
 	text-overflow: ellipsis;
 }
 
@@ -122,4 +142,38 @@ select.pdf-field-list
 .wpcf7-pdf-forms-admin .marked-row-background
 {
 	background-color: rgba(100, 100, 100, 0.2);
+}
+
+.wpcf7-pdf-forms-admin .image-embeds td.cf7-field,
+.wpcf7-pdf-forms-admin .image-embeds th.cf7-field,
+.wpcf7-pdf-forms-admin .image-embeds td.pdf-file,
+.wpcf7-pdf-forms-admin .image-embeds th.pdf-file
+{
+	width: 30%;
+}
+
+.wpcf7-pdf-forms-admin .jcrop-container
+{
+	margin: 0 auto;
+	width: 500px;
+}
+
+.wpcf7-pdf-forms-admin .jcrop-page
+{
+	width: 500px;
+}
+
+.wpcf7-pdf-forms-admin input.coordinate
+{
+	width: 50px !important;
+}
+
+.wpcf7-pdf-forms-admin .page-coordinates span
+{
+	margin: 0 5px;
+}
+
+.wpcf7-pdf-forms-admin .image-region-selection-hint
+{
+	font-style: italic;
 }

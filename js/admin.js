@@ -98,7 +98,11 @@ jQuery(document).ready(function($) {
 		var attachments = getAttachments();
 		jQuery.each(attachments, function(a, attachment) {
 			
-			jQuery.each(attachment.fields, function(f, field) {
+			var info = getAttachmentInfo(attachment.attachment_id);
+			if(!info || !info.fields)
+				return;
+			
+			jQuery.each(info.fields, function(f, field) {
 				pdfFieldsA.push({
 					'id': 'all-' + field.id,
 					'name': field.name,
@@ -271,6 +275,16 @@ jQuery(document).ready(function($) {
 			return [];
 	};
 	
+	var getAttachment = function(attachment_id) {
+		var attachments = getAttachments();
+		
+		for(var i=0, l=attachments.length; i<l; i++)
+			if(attachments[i].attachment_id == attachment_id)
+				return attachments[i];
+		
+		return null;
+	};
+	
 	var setAttachments = function(attachments) {
 		setData('attachments', attachments);
 		reloadPdfFields();
@@ -288,6 +302,8 @@ jQuery(document).ready(function($) {
 			}
 		
 		setAttachments(attachments);
+		
+		deleteAttachmentInfo(attachment_id);
 	};
 	
 	var setAttachmentOption = function(attachment_id, option, value) {
@@ -306,6 +322,20 @@ jQuery(document).ready(function($) {
 		
 		setAttachments(attachments);
 	};
+	
+	var attachmentInfo = {};
+	var getAttachmentInfo = function(attachment_id)
+	{
+		return attachmentInfo[attachment_id];
+	}
+	var setAttachmentInfo = function(attachment_id, data)
+	{
+		attachmentInfo[attachment_id] = data;
+	}
+	var deleteAttachmentInfo = function(attachment_id)
+	{
+		delete attachmentInfo[attachment_id];
+	}
 	
 	var addAttachment = function(data) {
 		
@@ -364,12 +394,28 @@ jQuery(document).ready(function($) {
 			if(!confirm(wpcf7_pdf_forms.__Confirm_Delete_Attachment))
 				return;
 			
-			deleteAttachment(jQuery(this).data('attachment_id'));
+			var attachment_id = jQuery(this).data('attachment_id');
+			if(!attachment_id)
+				return false;
+			
+			deleteAttachment(attachment_id);
 			
 			tag.remove();
+			
+			jQuery('.wpcf7-pdf-forms-admin .pdf-files-list option[value='+attachment_id+']').remove();
+			
+			return false;
 		});
 		
 		jQuery('.wpcf7-pdf-forms-admin .pdf-attachments tbody').append(tag);
+		
+		var pdf_files = jQuery('.wpcf7-pdf-forms-admin .pdf-files-list');
+		pdf_files.append(jQuery('<option>', {
+			value: attachment_id,
+			text : '[' + attachment_id + '] ' + filename
+		}));
+		if(pdf_files.children().length==1)
+			refreshPageList();
 	};
 	
 	var preloadData = function() {
@@ -398,6 +444,11 @@ jQuery(document).ready(function($) {
 				
 				if(data.attachments)
 					jQuery.each(data.attachments, function(index, data) {
+						if(data.info)
+						{
+							setAttachmentInfo(data.attachment_id, data.info);
+							delete data.info;
+						}
 						addAttachment(data);
 					});
 				
@@ -412,6 +463,13 @@ jQuery(document).ready(function($) {
 					jQuery.each(data.mappings, function(index, data) { addMapping(data.cf7_field, data.pdf_field); });
 					refreshMappings();
 				}
+				
+				if(data.embeds)
+				{
+					jQuery.each(data.embeds, function(index, embed) { if(embed.id && embed_id_autoinc < embed.id) embed_id_autoinc = embed.id; });
+					jQuery.each(data.embeds, function(index, embed) { addEmbed(embed); });
+				}
+				
 			},
 			
 			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
@@ -574,6 +632,289 @@ jQuery(document).ready(function($) {
 	
 	jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').change(updateTagHint);
 	
+	var getEmbeds = function() {
+		var embeds = getData('embeds');
+		if(embeds)
+			return embeds;
+		else
+			return [];
+	};
+	
+	var setEmbeds = function(embeds) {
+		setData('embeds', embeds);
+	};
+	
+	var embed_id_autoinc = 0;
+	var addEmbed = function(embed) {
+		
+		var cf7_field = embed.cf7_field;
+		var attachment_id = embed.attachment_id;
+		var page = embed.page;
+		
+		if(!cf7_field || !attachment_id || !page || page < 0)
+			return;
+		
+		var attachment = getAttachment(attachment_id);
+		var cf7_field_data = getCf7FieldData(cf7_field);
+		
+		if(!attachment || !cf7_field_data)
+			return;
+		
+		if(!embed.id)
+			embed.id = ++embed_id_autoinc;
+			
+		var embeds = getEmbeds();
+		embeds.push(embed);
+		setEmbeds(embeds);
+		
+		addEmbedEntry(cf7_field_data, attachment, embed);
+	};
+	
+	var addEmbedEntry = function(cf7_field_data, attachment, embed) {
+		
+		var page = embed.page;
+		
+		var template = jQuery('.wpcf7-pdf-forms-admin .image-embeds-row-template');
+		var tag = template.clone().removeClass('image-embeds-row-template').addClass('image-embeds-row');
+		
+		var delete_button = tag.find('.delete-cf7-field-embed-button');
+		delete_button.data('embed_id', embed.id);
+		delete_button.click(function(event) {
+			
+			// prevent running default button click handlers
+			event.stopPropagation();
+			event.preventDefault();
+			
+			if(!confirm(wpcf7_pdf_forms.__Confirm_Delete_Embed))
+				return;
+			
+			deleteEmbed(jQuery(this).data('embed_id'));
+			
+			tag.remove();
+			
+			return false;
+		});
+		
+		tag.find('.cf7-field-caption').text(cf7_field_data.caption);
+		tag.find('.pdf-file-caption').text('[' + attachment.attachment_id + '] ' + attachment.filename);
+		tag.find('.page-caption').text(page > 0 ? page : 'all');
+		
+		if(page > 0)
+			loadPageSnapshot(attachment, embed, tag);
+		else
+			tag.find('.page-selector-row').addBack('.page-selector-row').hide();
+		
+		jQuery('.wpcf7-pdf-forms-admin .image-embeds tbody').append(tag);
+	};
+	
+	var deleteEmbed = function(embed_id) {
+		
+		var embeds = getEmbeds();
+		
+		for(var i=0, l=embeds.length; i<l; i++)
+			if(embeds[i].id == embed_id)
+			{
+				embeds.splice(i, 1);
+				break;
+			}
+		
+		setEmbeds(embeds);
+	};
+	
+	var loadPageSnapshot = function(attachment, embed, tag) {
+		
+		var info = getAttachmentInfo(attachment.attachment_id);
+		if(!info)
+			return;
+		
+		var pages = info.pages;
+		var pageData = null;
+		for(var p=0;p<pages.length;p++)
+		{
+			if(pages[p].number == embed.page)
+			{
+				pageData = pages[p];
+				break;
+			}
+		}
+		if(!pageData || !pageData.width || !pageData.height)
+			return;
+		
+		jQuery.ajax({
+			url: wpcf7_pdf_forms.ajax_url,
+			type: 'POST',
+			data: {
+				'action': 'wpcf7_pdf_forms_query_page_image',
+				'attachment_id': attachment.attachment_id,
+				'page': embed.page,
+				'nonce': wpcf7_pdf_forms.ajax_nonce
+			},
+			cache: false,
+			dataType: 'json',
+			
+			success: function(data, textStatus, jqXHR) {
+				
+				if(!data.success)
+					return errorMessage(data.error_message);
+				
+				if(data.snapshot)
+				{
+					var image = tag.find('.jcrop-page');
+					
+					var width = 500;
+					var height = Math.round((pageData.height / pageData.width) * width);
+					
+					jQuery(image).attr('width', width.toString()+'px');
+					jQuery(image).attr('height', height.toString()+'px');
+					
+					var xPixelsPerPoint = width / pageData.width;
+					var yPixelsPerPoint = height / pageData.height;
+					
+					var leftInput = tag.find('input[name=left]');
+					var topInput = tag.find('input[name=top]');
+					var widthInput = tag.find('input[name=width]');
+					var heightInput = tag.find('input[name=height]');
+					
+					leftInput.attr('max', width / xPixelsPerPoint);
+					topInput.attr('max', height / yPixelsPerPoint);
+					widthInput.attr('max', width / xPixelsPerPoint);
+					heightInput.attr('max', height / yPixelsPerPoint);
+					
+					var updateEmbedCoordinates = function(x, y, w, h)
+					{
+						var embeds = getEmbeds();
+						for(var i=0, l=embeds.length; i<l; i++)
+							if(embeds[i].id == embed.id)
+							{
+								embeds[i].left = embed.left = x;
+								embeds[i].top = embed.top = y;
+								embeds[i].width = embed.width = w;
+								embeds[i].height = embed.height = h;
+								
+								break;
+							}
+						setEmbeds(embeds);
+					};
+					
+					var updateCoordinates = function(c)
+					{
+						leftInput.val(Math.round(c.x / xPixelsPerPoint));
+						topInput.val(Math.round(c.y / yPixelsPerPoint));
+						widthInput.val(Math.round(c.w / xPixelsPerPoint));
+						heightInput.val(Math.round(c.h / yPixelsPerPoint));
+						
+						updateEmbedCoordinates(
+							leftInput.val(),
+							topInput.val(),
+							widthInput.val(),
+							heightInput.val()
+						);
+					};
+					
+					var jcropApi;
+					
+					var updateRegion = function() {
+						
+						var leftValue = parseFloat(leftInput.val());
+						var topValue = parseFloat(topInput.val());
+						var widthValue = parseFloat(widthInput.val());
+						var heightValue = parseFloat(heightInput.val());
+						
+						if(typeof leftValue == 'number'
+						&& typeof topValue == 'number'
+						&& typeof widthValue == 'number'
+						&& typeof heightValue == 'number')
+						{
+							jcropApi.setSelect([
+								leftValue * xPixelsPerPoint,
+								topValue * yPixelsPerPoint,
+								(leftValue + widthValue) * xPixelsPerPoint,
+								(topValue + heightValue) * yPixelsPerPoint
+							]);
+							
+							updateEmbedCoordinates(
+								leftValue,
+								topValue,
+								widthValue,
+								heightValue
+							);
+						}
+					}
+					
+					jQuery(image).one('load', function() {
+						image.Jcrop({
+							onChange: updateCoordinates,
+							onSelect: updateCoordinates,
+							onRelease: updateCoordinates
+						}, function() {
+							
+							jcropApi = this;
+							
+							if(!embed.left)
+								embed.left = Math.round(pageData.width * 0.25);
+							if(!embed.top)
+								embed.top = Math.round(pageData.height * 0.25);
+							if(!embed.width)
+								embed.width = Math.round(pageData.width * 0.5);
+							if(!embed.height)
+								embed.height = Math.round(pageData.height * 0.5);
+							
+							updateCoordinates({
+								x: Math.round(embed.left * xPixelsPerPoint),
+								y: Math.round(embed.top * yPixelsPerPoint),
+								w: Math.round(embed.width * xPixelsPerPoint),
+								h: Math.round(embed.height * yPixelsPerPoint)
+							});
+							
+							updateRegion();
+						});
+					});
+					
+					tag.find('input.coordinate').change(updateRegion);
+					
+					jQuery(image).attr('src', data.snapshot);
+				}
+				
+			},
+			
+			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
+			
+			beforeSend: function() { showSpinner() },
+			complete: function() { hideSpinner(); }
+			
+		});
+	};
+	
+	var refreshPageList = function()
+	{
+		var pages = jQuery('.wpcf7-pdf-forms-admin .page-list');
+		var files = jQuery('.wpcf7-pdf-forms-admin .pdf-files-list');
+		
+		pages.empty();
+		
+		pages.append(jQuery('<option>', { 
+			value: 0,
+			text : 'all'
+		}));
+		
+		var info = getAttachmentInfo(files.val());
+		if(info)
+		{
+			jQuery.each(info.pages, function(p, page){
+				pages.append(jQuery('<option>', { 
+					value: page.number,
+					text : page.number
+				}));
+			});
+			
+			if(info.pages.length > 0)
+				pages.find('option:eq(1)').prop('selected', true);
+		}
+	};
+	
+	jQuery('.pdf-files-list').change(refreshPageList);
+	
+	
 	// set up global 'Get Tags' button handler
 	jQuery('.wpcf7-pdf-forms-admin .get-tags-all-button').click(function(event) {
 		
@@ -696,7 +1037,7 @@ jQuery(document).ready(function($) {
 		
 		var file = jQuery(document).find('.wpcf7-pdf-forms-admin input.file');
 		
-		if( ! file[0].files[0])
+		if(!file || !file[0] || !file[0].files || !file[0].files[0])
 			return errorMessage(wpcf7_pdf_forms.__File_not_specified);
 		
 		var data = new FormData();
@@ -724,7 +1065,14 @@ jQuery(document).ready(function($) {
 				delete data.success;
 				
 				if(data.attachment_id)
+				{
+					if(data.info)
+					{
+						setAttachmentInfo(data.attachment_id, data.info);
+						delete data.info;
+					}
 					addAttachment(data);
+				}
 				
 				file.val("");
 			},
@@ -758,6 +1106,25 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
+	// set up 'Embed Image' button handler
+	jQuery('.wpcf7-pdf-forms-admin .add-cf7-field-embed-button').click(function(event) {
+		
+		// prevent running default button click handlers
+		event.stopPropagation();
+		event.preventDefault();
+		
+		var cf7_field = jQuery('.wpcf7-pdf-forms-admin .image-embeds .cf7-field-list').val();
+		var attachment_id = jQuery('.wpcf7-pdf-forms-admin .image-embeds .pdf-files-list').val();
+		var page = jQuery('.wpcf7-pdf-forms-admin .image-embeds .page-list').val();
+		
+		addEmbed({
+			'cf7_field': cf7_field,
+			'attachment_id': attachment_id,
+			'page': page
+		});
+		
+		return false;
+	});
 	
 	var form = jQuery('textarea#wpcf7-form');
 	form.change(function() {

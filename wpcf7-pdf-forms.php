@@ -47,6 +47,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wp_ajax_wpcf7_pdf_forms_query_tags', array( $this, 'wp_ajax_query_tags' ) );
 			add_action( 'wp_ajax_wpcf7_pdf_forms_preload_data', array( $this, 'wp_ajax_preload_data' ) );
 			add_action( 'wp_ajax_wpcf7_pdf_forms_query_cf7_fields', array( $this, 'wp_ajax_query_cf7_fields' ) );
+			add_action( 'wp_ajax_wpcf7_pdf_forms_query_page_image', array( $this, 'wp_ajax_query_page_image' ) );
 			
 			add_action( 'admin_init', array( $this, 'extend_tag_generator' ), 80 );
 			add_action( 'admin_menu', array( $this, 'register_services') );
@@ -216,8 +217,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			if( false !== strpos($hook, 'wpcf7') )
 			{
-				wp_register_script( 'wpcf7_pdf_forms_admin_script', plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery' ), self::VERSION );
-				wp_register_style( 'wpcf7_pdf_forms_admin_style', plugin_dir_url( __FILE__ ) . 'css/admin.css', array( ), self::VERSION );
+				wp_register_script( 'wpcf7_pdf_forms_admin_script', plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery', 'jcrop' ), self::VERSION );
+				wp_register_style( 'wpcf7_pdf_forms_admin_style', plugin_dir_url( __FILE__ ) . 'css/admin.css', array( 'jcrop' ), self::VERSION );
 				
 				wp_localize_script( 'wpcf7_pdf_forms_admin_script', 'wpcf7_pdf_forms', array(
 					'ajax_url' => admin_url( 'admin-ajax.php' ),
@@ -226,6 +227,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__Unknown_error' => __( 'Unknown error', 'wpcf7-pdf-forms' ),
 					'__No_WPCF7' => __( 'Please copy/paste tags manually', 'wpcf7-pdf-forms' ),
 					'__Confirm_Delete_Attachment' => __( 'Are you sure you want to delete this attachment?  This will break field mappings for this attachment.', 'wpcf7-pdf-forms' ),
+					'__Confirm_Delete_Embed' => __( 'Are you sure you want to delete this embeded image setting?', 'wpcf7-pdf-forms' ),
 					'__Confirm_Delete_Mapping' => __( 'Are you sure you want to delete this mapping?', 'wpcf7-pdf-forms' ),
 				) );
 				
@@ -417,6 +419,57 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							$mappings[] = array( 'cf7_field' => $mapping['cf7_field'], 'pdf_field' => $mapping['pdf_field'] );
 				self::set_meta( $post_id, 'mappings', self::json_encode( $mappings ) );
 			}
+			
+			if( isset( $data['embeds'] ) && is_array( $new_embeds = $data['embeds'] ) )
+			{
+				$embeds = array();
+				foreach( $new_embeds as $embed )
+					if( isset( $embed['cf7_field'] ) && isset( $embed['attachment_id'] ) )
+						$embeds[] = $embed;
+				self::set_meta( $post_id, 'embeds', self::json_encode( $embeds ) );
+			}
+		}
+		
+		private static function download_file( $url, $filepath )
+		{
+			// if this url points to the site, copy the file directly
+			$site_url = trailingslashit( get_site_url() );
+			if( substr( $url, 0, strlen( $site_url ) ) == $site_url )
+			{
+				$path = substr( $url, strlen( $site_url ) );
+				$home_path = trailingslashit( realpath( dirname(__FILE__) . '/../../../' ) );
+				$sourcepath = realpath( $home_path . $path );
+				if( $home_path && $sourcepath && substr( $sourcepath, 0, strlen( $home_path ) ) == $home_path )
+					if( file_exists( $sourcepath ) )
+						if( copy($sourcepath, $filepath) )
+							return;
+			}
+			
+			$args = array(
+				'compress'    => true,
+				'decompress'  => true,
+				'timeout'     => 100,
+				'redirection' => 5,
+				'user-agent'  => 'wpcf7-pdf-forms/' . WPCF7_Pdf_Forms::VERSION,
+			);
+			
+			$response = wp_remote_get( $url, $args );
+			
+			if( is_wp_error( $response ) )
+				throw new Exception( __( "Cannot download file", 'wpcf7-pdf-forms' ) );
+			
+			$body = wp_remote_retrieve_body( $response );
+			
+			$handle = @fopen( $filepath, 'w' );
+			
+			if( ! $handle )
+				throw new Exception( __( "Cannot open file for writing", 'wpcf7-pdf-forms' ) );
+			
+			fwrite( $handle, $body );
+			fclose( $handle );
+			
+			if( ! file_exists( $filepath ) )
+				throw new Exception( __( "Cannot create file", 'wpcf7-pdf-forms' ) );
 		}
 		
 		/**
@@ -453,8 +506,58 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( !is_array( $mappings ) )
 				$mappings = array();
 			
+			$embeds = self::get_meta( $post_id, 'embeds' );
+			if( $embeds )
+				$embeds = json_decode( $embeds, true );
+			if( !is_array( $embeds ) )
+				$embeds = array();
+			
 			$submission = WPCF7_Submission::get_instance();
 			$posted_data = $submission->get_posted_data();
+			$uploaded_files = $submission->uploaded_files();
+			
+			// preprocess posted data
+			$processed_data = array();
+			foreach( $posted_data as $key => $value )
+			{
+				if( is_array( $value ) )
+					$value = array_shift( $value );
+				$value = strval( $value );
+				if( $value === '' )
+					continue;
+				
+				$value = wp_unslash( $value );
+				
+				$processed_data[$key] = $value;
+			}
+			
+			// preprocess embedded images
+			$embed_fields = array();
+			foreach( $embeds as $embed )
+				$embed_fields[] = $embed["cf7_field"];
+			$embed_files = array();
+			foreach( $embed_fields as $cf7_field )
+			{
+				if( isset( $processed_data[$cf7_field] ) )
+				{
+					$value = $processed_data[$cf7_field];
+					if( filter_var( $value, FILTER_VALIDATE_URL ) !== FALSE )
+					if( substr( $value, 0, 5 ) === 'http:' || substr( $value, 0, 6 ) === 'https:' )
+					{
+						try
+						{
+							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.tmp' );
+							self::download_file( $value, $filepath );
+							
+							$embed_files[$cf7_field] = $filepath;
+						}
+						catch(Exception $e) { }
+					}
+				}
+				if( isset( $uploaded_files[$cf7_field] ) )
+					$embed_files[$cf7_field] = $uploaded_files[$cf7_field];
+			}
+			
 			
 			$files = array();
 			foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
@@ -462,16 +565,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$fields = $this->get_fields( $attachment_id );
 				
 				$data = array();
-				foreach( $posted_data as $key => $value )
+				foreach( $processed_data as $key => $value )
 				{
-					if( is_array( $value ) )
-						$value = array_shift( $value );
-					$value = strval( $value );
-					if( $value === '' )
-						continue;
-					
-					$value = wp_unslash( $value );
-					
+					// processs mappings
 					foreach( $mappings as $mapping )
 						if( $mapping["cf7_field"] == $key )
 						{
@@ -492,22 +588,54 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							$data[$field] = $value;
 						}
 					
-					$field_data = self::wpcf7_field_name_decode( $key );
-					if( $field_data === FALSE )
-						continue;
-					if( $field_data['attachment_id'] != $attachment_id && $field_data['attachment_id'] != 'all' )
-						continue;
-					$field = $field_data['field'];
-					if( $field === '' )
-						continue;
-					
-					if( !isset( $fields[$field] ) )
-						continue;
-					
-					$data[$field] = $value;
+					// processs old style tag generator fields
+					try
+					{
+						$field_data = self::wpcf7_field_name_decode( $key );
+						if( $field_data === FALSE )
+							throw new Exception();
+						if( $field_data['attachment_id'] != $attachment_id && $field_data['attachment_id'] != 'all' )
+							throw new Exception();
+						$field = $field_data['field'];
+						if( $field === '' )
+							throw new Exception();
+						
+						if( !isset( $fields[$field] ) )
+							throw new Exception();
+						
+						$data[$field] = $value;
+					}
+					catch(Exception $e) { }
 				}
 				
-				if( count( $data ) == 0 && $attachment['options']['skip_empty'] )
+				// process image embeds
+				$embeds_data = array();
+				foreach($embeds as $embed)
+					if( $embed['attachment_id'] == $attachment_id )
+					{
+						$cf7_field = $embed['cf7_field'];
+						if( isset( $embed_files[$cf7_field] ) )
+						{
+							$embed_data = array(
+								'image' => $embed_files[$cf7_field],
+								'page' => $embed['page'],
+							);
+							
+							if($embed['page'] > 0)
+							{
+								$embed_data['left'] = $embed['left'];
+								$embed_data['top'] = $embed['top'];
+								$embed_data['width'] = $embed['width'];
+								$embed_data['height'] = $embed['height'];
+							};
+							
+							$embeds_data[] = $embed_data;
+						}
+					}
+				
+				if( count( $data ) == 0
+				&& count( $embeds_data ) == 0
+				&& $attachment['options']['skip_empty'] )
 					continue;
 				
 				$mail = $attachment['options']['attach_to_mail_1'];
@@ -531,7 +659,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$service = $this->get_service();
 					$filled = false;
 					if( $service && count( $data ) > 0 )
-						$filled = $service->api_fill( $destfile, $attachment_id, $data, $options );
+						$filled = $service->api_fill_embed( $destfile, $attachment_id, $data, $embeds_data, $options );
 					if( ! $filled )
 						copy( $filepath, $destfile );
 					$files[] = array( 'file' => $destfile, 'mail' => $mail, 'mail2' => $mail2 );
@@ -611,14 +739,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					foreach( self::$pdf_options as $option => $default )
 						$options[$option] = $default;
 					
-					$fields = $this->query_pdf_fields( $attachment_id );
+					$info = $this->get_info( $attachment_id );
+					$info['fields'] = $this->query_pdf_fields( $attachment_id );
 					
 					return wp_send_json( array(
 						'success' => true,
 						'attachment_id' => $attachment_id,
 						'filename' => basename( get_attached_file( $attachment_id ) ),
 						'options' => $options,
-						'fields' => $fields,
+						'info' => $info,
 					) );
 				}
 			}
@@ -653,25 +782,36 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( ! file_exists( $filepath ) )
 				throw new Exception( __( "File not found", 'wpcf7-pdf-forms' ) );
 			
-			// clear fields cache
-			self::unset_meta( $attachment_id, 'fields' );
+			// clear info cache
+			self::unset_meta( $attachment_id, 'info' );
+			
+			// delete page snapshots
+			$args = array(
+				'post_parent' => $attachment_id,
+				'meta_key' => 'wpcf7-pdf-forms-page',
+				'post_type' => 'attachment',
+				'post_status' => 'any',
+				'posts_per_page' => -1,
+			);
+			foreach( get_posts( $args ) as $post )
+				wp_delete_post( $post->ID, $force_delete = true );
 			
 			return self::set_meta( $attachment_id, 'md5sum', md5_file( $filepath ) );
 		}
 		
 		/*
-		 * Caching wrapper for $service->api_get_fields()
+		 * Caching wrapper for $service->api_get_info()
 		 */
-		public function get_fields( $attachment_id )
+		public function get_info( $attachment_id )
 		{
-			$fields = self::get_meta( $attachment_id, 'fields' );
-			if( $fields )
+			$info = self::get_meta( $attachment_id, 'info' );
+			if( $info )
 			{
 				$filepath = get_attached_file( $attachment_id );
 				$new_md5sum = md5_file( $filepath );
 				$old_md5sum = self::get_attachment_md5sum( $attachment_id );
 				if($new_md5sum === $old_md5sum )
-					return json_decode( $fields, true );
+					return json_decode( $info, true );
 				else
 					self::update_attachment_md5sum( $attachment_id );
 			}
@@ -680,14 +820,32 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( !$service )
 				throw new Exception( __( "No service", 'wpcf7-pdf-forms' ) );
 			
+			$info = $service->api_get_info( $attachment_id );
+			
+			// set up array keys so it is easier to search
 			$fields = array();
-			foreach( $service->api_get_fields( $attachment_id ) as $field )
+			foreach( $info['fields'] as $field )
 				$fields[$field['name']] = $field;
+			$info['fields'] = $fields;
+			
+			$pages = array();
+			foreach( $info['pages'] as $page )
+				$pages[$page['number']] = $page;
+			$info['page'] = $pages;
 			
 			// set fields cache
-			self::set_meta( $attachment_id, 'fields', self::json_encode( $fields ) );
+			self::set_meta( $attachment_id, 'info', self::json_encode( $info ) );
 			
-			return $fields;
+			return $info;
+		}
+		
+		/*
+		 * Caches and returns fields for an attachment
+		 */
+		public function get_fields( $attachment_id )
+		{
+			$info = $this->get_info( $attachment_id );
+			return $info['fields'];
 		}
 		
 		/*
@@ -895,13 +1053,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( isset( $attachment['options']) )
 						$options = $attachment['options'];
 					
-					$fields = $this->query_pdf_fields( $attachment_id );
+					$info = $this->get_info( $attachment_id );
+					$info['fields'] = $this->query_pdf_fields( $attachment_id );
 					
 					$attachments[] = array(
 						'attachment_id' => $attachment_id,
 						'filename' => basename( get_attached_file( $attachment_id ) ),
 						'options' => $options,
-						'fields' => $fields,
+						'info' => $info,
 					);
 					$attachment_ids[] = $attachment_id;
 				}
@@ -911,12 +1070,21 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$mappings = self::get_meta( $post_id, 'mappings' );
 				if( $mappings )
 					$mappings = json_decode( $mappings, true );
+				if( !is_array( $mappings ) )
+					$mappings = array();
+				
+				$embeds = self::get_meta( $post_id, 'embeds' );
+				if( $embeds )
+					$embeds = json_decode( $embeds, true );
+				if( !is_array( $embeds ) )
+					$embeds = array();
 				
 				return wp_send_json( array(
 					'success' => true,
 					'attachments' => $attachments,
 					'cf7_fields' => $cf7_fields,
 					'mappings' => $mappings,
+					'embeds' => $embeds,
 				) );
 			}
 			catch( Exception $e )
@@ -979,6 +1147,91 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success' => true,
 					'fields' => $fields,
+				) );
+			}
+			catch( Exception $e )
+			{
+				return wp_send_json( array(
+					'success'  => false,
+					'error_message' => $e->getMessage(),
+				) );
+			}
+		}
+		
+		public function get_pdf_snapshot( $attachment_id, $page )
+		{
+			$args = array(
+				'post_parent' => $attachment_id,
+				'meta_key' => 'wpcf7-pdf-forms-page',
+				'meta_value' => $page,
+				'post_type' => 'attachment',
+				'post_status' => 'any',
+				'posts_per_page' => 1,
+			);
+			$posts = get_posts( $args );
+			
+			if( count( $posts ) > 0 )
+			{
+				$old_attachment_id = reset( $posts )->ID;
+				return $old_attachment_id;
+			}
+			
+			if( ! ( ( $wp_upload_dir = wp_upload_dir() ) && false === $wp_upload_dir['error'] ) )
+				throw new Exception( $wp_upload_dir['error'] );
+			
+			$attachment_path = get_attached_file( $attachment_id );
+			
+			if( ! file_exists( $attachment_path ) )
+				throw new Exception( __( "File not found", 'wpcf7-pdf-forms' ) );
+			
+			$filename = wp_unique_filename( $wp_upload_dir['path'], basename( $attachment_path ).'.page'.intval($page).'.jpg' );
+			$filepath = $wp_upload_dir['path'] . "/$filename";
+			$filetype = wp_check_filetype( $filename, null );
+			
+			$service = $this->get_service();
+			if( $service )
+				$service->api_image( $filepath, $attachment_id, $page );
+			
+			$attachment = array(
+				'guid'           => $wp_upload_dir['url'] . '/' . $filename,
+				'post_mime_type' => $filetype['type'],
+				'post_title'     => preg_replace( '/\.[^.]+$/', '', $filename ),
+				'post_content'   => '',
+				'post_status'    => 'inherit'
+			);
+			
+			$new_attachment_id = wp_insert_attachment( $attachment, $filepath, $attachment_id );
+			
+			self::set_meta( $new_attachment_id, 'page', $page );
+			
+			return $new_attachment_id;
+		}
+		
+		public function wp_ajax_query_page_image()
+		{
+			try
+			{
+				if ( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
+					throw new Exception( __( "Nonce mismatch", 'wpcf7-pdf-forms' ) );
+				
+				$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : null;
+				$page = isset( $_POST['page'] ) ? (int) $_POST['page'] : null;
+				
+				if ( $page < 1 )
+					throw new Exception( __( "Invalid page number", 'wpcf7-pdf-forms' ) );
+				
+				if( ! current_user_can( 'edit_post', $attachment_id ) )
+					throw new Exception( __( "Permission denied", 'wpcf7-pdf-forms' ) );
+				
+				$attachment_id = $this->get_pdf_snapshot( $attachment_id, $page );
+				$snapshot = wp_get_attachment_image_src( $attachment_id, array( 500, 500 ) );
+				
+				if( !$snapshot || !is_array( $snapshot ) )
+					throw new Exception( __( "Failed to retrieve page snapshot", 'wpcf7-pdf-forms' ) );
+				
+				return wp_send_json( array(
+					'success' => true,
+					'snapshot' => reset( $snapshot ),
 				) );
 			}
 			catch( Exception $e )
@@ -1078,6 +1331,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'add-mapping' => esc_html__( 'Add Mapping', 'wpcf7-pdf-forms' ),
 					'new-tag' => esc_html__( 'New Tag:', 'wpcf7-pdf-forms' ),
 					'tag-generator' => esc_html__( 'Tag Generator Tool (advanced)', 'wpcf7-pdf-forms' ),
+					'image-embedding' => esc_html__( 'Image Embedding Tool', 'wpcf7-pdf-forms' ),
+					'image-embedding-description' => esc_html__( 'Image embedding tool allows embedding images into PDF files.  Images are taken from field attachments or field values that are URLs.  You must select a page in the PDF file and draw a bounding box for the image.', 'wpcf7-pdf-forms' ),
+					'add-cf7-field-embed' => esc_html__( 'Embed Image', 'wpcf7-pdf-forms' ),
+					'delete-cf7-field-embed' => esc_html__( 'Delete', 'wpcf7-pdf-forms' ),
+					'pdf-file' => esc_html__( 'PDF file', 'wpcf7-pdf-forms' ),
+					'page' => esc_html__( 'Page', 'wpcf7-pdf-forms' ),
+					'image-region-selection-hint' => esc_html__( 'Select a region where the image needs to be embeded.', 'wpcf7-pdf-forms' ),
 					'help-message' => str_replace(
 						array('{a-href-forum}','{a-href-howto}','{/a}'),
 						array(
