@@ -412,7 +412,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				$mappings = array();
 				foreach( $new_mappings as $mapping )
-					if( $mapping['cf7_field'] && $mapping['pdf_field'] )
+					if( isset( $mapping['cf7_field'] ) && isset( $mapping['pdf_field'] ) )
 						if( self::wpcf7_field_name_decode( $mapping['cf7_field'] ) === FALSE )
 							$mappings[] = array( 'cf7_field' => $mapping['cf7_field'], 'pdf_field' => $mapping['pdf_field'] );
 				self::set_meta( $post_id, 'mappings', self::json_encode( $mappings ) );

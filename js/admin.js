@@ -660,7 +660,7 @@ jQuery(document).ready(function($) {
 		if(wpcf7obj)
 		{
 			jQuery.each(pdf_fields, function(f, field) {
-				if(field.attachment_id == 'all')
+				if(field.attachment_id == 'all' && field.tag_hint)
 					tagText +=
 						'<label>' + $("<div>").text(field.name).html() + '</label>\n' +
 						'    ' + field.tag_hint + '\n\n';
@@ -672,7 +672,7 @@ jQuery(document).ready(function($) {
 				loadCf7Fields();
 				
 				jQuery.each(pdf_fields, function(f, field) {
-					if(field.attachment_id == 'all')
+					if(field.attachment_id == 'all' && field.tag_hint)
 						addMapping(field.tag_name, field.id);
 				});
 				
