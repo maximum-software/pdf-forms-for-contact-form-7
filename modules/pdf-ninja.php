@@ -218,6 +218,9 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	
 	private function get_enterprise_extension_support()
 	{
+		if( version_compare( PHP_VERSION, '5.3.0' ) < 0 )
+			return false;
+		
 		if( strncasecmp(PHP_OS, 'WIN', 3) == 0)
 			return false;
 		
