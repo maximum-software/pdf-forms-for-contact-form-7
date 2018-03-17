@@ -658,8 +658,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				{
 					$service = $this->get_service();
 					$filled = false;
-					if( $service && count( $data ) > 0 )
-						$filled = $service->api_fill_embed( $destfile, $attachment_id, $data, $embeds_data, $options );
+					if( $service )
+						// we only want to use the API when there is actual data to be embedded into the PDF file
+						if( count( $data ) > 0 || $options['flatten'] || count( $embeds_data ) > 0 )
+							$filled = $service->api_fill_embed( $destfile, $attachment_id, $data, $embeds_data, $options );
 					if( ! $filled )
 						copy( $filepath, $destfile );
 					$files[] = array( 'file' => $destfile, 'mail' => $mail, 'mail2' => $mail2 );
