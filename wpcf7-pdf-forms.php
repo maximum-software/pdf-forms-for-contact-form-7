@@ -1005,6 +1005,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 		}
 		
+		/**
+		 * Helper function used in wp-admin interface
+		 */
 		private function query_pdf_fields( $attachment_id )
 		{
 			$fields = $this->get_fields( $attachment_id );
@@ -1160,6 +1163,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 		}
 		
+		/**
+		 * Downloads and caches PDF page images, returns image attachment id
+		 */
 		public function get_pdf_snapshot( $attachment_id, $page )
 		{
 			$args = array(
@@ -1209,6 +1215,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $new_attachment_id;
 		}
 		
+		/**
+		 * Used for getting PDF page images in wp-admin interface
+		 */
 		public function wp_ajax_query_page_image()
 		{
 			try

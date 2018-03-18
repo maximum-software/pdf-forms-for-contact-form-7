@@ -194,6 +194,9 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		return true;
 	}
 	
+	/*
+	 * Generates common set of arguments to be used with remote http requests
+	 */
 	private function wp_remote_args()
 	{
 		return array(
@@ -207,6 +210,9 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		);
 	}
 	
+	/*
+	 * Returns true if specified function is disabled with PHP security settings
+	 */
 	private function is_function_disabled( $function_name )
 	{
 		$disabled_functions = ini_get('disable_functions');
@@ -216,6 +222,9 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		return false;
 	}
 	
+	/*
+	 * Returns true if the Enterprise Extension is supported on the system
+	 */
 	private function get_enterprise_extension_support()
 	{
 		if( version_compare( PHP_VERSION, '5.3.0' ) < 0 )
@@ -873,6 +882,9 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			) );
 	}
 	
+	/*
+	 * This function gets called to display admin notices
+	 */
 	public function admin_notices()
 	{
 		try { $key = $this->get_key(); } catch(Exception $e) { };
@@ -883,6 +895,9 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		) );
 	}
 	
+	/*
+	 * Returns thickbox messages that need to be displayed
+	 */
 	public function thickbox_messages()
 	{
 		$messages = '';
