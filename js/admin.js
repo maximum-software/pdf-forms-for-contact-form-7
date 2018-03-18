@@ -764,8 +764,8 @@ jQuery(document).ready(function($) {
 					var width = 500;
 					var height = Math.round((pageData.height / pageData.width) * width);
 					
-					jQuery(image).attr('width', width.toString()+'px');
-					jQuery(image).attr('height', height.toString()+'px');
+					jQuery(image).attr('width', width.toString());
+					jQuery(image).attr('height', height.toString());
 					
 					var xPixelsPerPoint = width / pageData.width;
 					var yPixelsPerPoint = height / pageData.height;
