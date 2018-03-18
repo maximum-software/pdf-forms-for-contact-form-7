@@ -352,7 +352,7 @@ jQuery(document).ready(function($) {
 		var template = jQuery('.wpcf7-pdf-forms-admin .pdf-attachment-row-template');
 		var tag = template.clone().removeClass('pdf-attachment-row-template').addClass('pdf-attachment-row');
 		
-		tag.find('.filename').text('['+attachment_id+'] '+filename);
+		tag.find('.pdf-filename').text('['+attachment_id+'] '+filename);
 		
 		if(typeof options != 'undefined' && options !== null)
 		{

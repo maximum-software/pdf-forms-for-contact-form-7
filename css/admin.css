@@ -72,7 +72,12 @@
 	display: none;
 }
 
-.wpcf7-pdf-forms-admin .pdf-attachment-row .filename
+.wpcf7-pdf-forms-admin .filename-column
+{
+	width: 100%
+}
+
+.wpcf7-pdf-forms-admin .pdf-attachment-row .pdf-filename
 {
 	word-break: break-all;
 }
@@ -111,6 +116,11 @@
 .wpcf7-pdf-forms-admin .mapping-table td.mapping-arrow
 {
 	vertical-align: middle;
+}
+
+.wpcf7-pdf-forms-admin .normal-word-break
+{
+	word-break: normal !important;
 }
 
 .wpcf7-pdf-forms-admin .pdf-fields-mapper td.cf7-field,

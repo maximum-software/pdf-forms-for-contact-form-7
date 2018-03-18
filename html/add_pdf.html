@@ -12,14 +12,14 @@
 	<table class="form-table pdf-attachments">
 		<tbody>
 			<tr>
-				<td><input type="file" name="file" class="file" size="50" /></td>
+				<td class="filename-column"><input type="file" name="file" class="file" size="50" /></td>
 				<td class="pdf-buttons">
 					<input type="button" name="upload" class="button button-primary upload-btn" value="{upload-and-attach}"/>
 				</td>
 			</tr>
 			<tr class="pdf-attachment-row-template">
-				<td>
-					<span class="filename"></span>
+				<td class="filename-column">
+					<span class="pdf-filename"></span>
 					<div class="pdf-options pdf-options-hidden" style="display:none">
 						<div><input data-option="skip_empty" type="checkbox"/> {skip-when-empty}</div>
 						<div><input data-option="attach_to_mail_1" type="checkbox"/> {attach-to-mail-1}</div>
@@ -59,7 +59,7 @@
 				<td class="buttons"><input type="button" class="button button-primary insert-tag-hint-btn" value="{insert-tag}" /></td>
 			</tr>
 			<tr class="marked-row-background">
-				<td colspan="3">{generate-and-insert-all-tags-message}</td>
+				<td colspan="3" class="normal-word-break">{generate-and-insert-all-tags-message}</td>
 				<td class="buttons"><input type="button" class="button button-primary insert-and-map-all-tags-btn" value="{insert-and-map-all-tags}" /></td>
 			</tr>
 			<tr class="pdf-mapping-row-template">
