@@ -156,6 +156,7 @@
 {
 	margin: 0 auto;
 	width: 500px;
+	overflow: hidden;
 }
 
 .wpcf7-pdf-forms-admin .jcrop-page

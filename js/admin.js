@@ -759,13 +759,21 @@ jQuery(document).ready(function($) {
 				
 				if(data.snapshot)
 				{
-					var image = tag.find('.jcrop-page');
-					
 					var width = 500;
 					var height = Math.round((pageData.height / pageData.width) * width);
 					
-					jQuery(image).attr('width', width.toString());
-					jQuery(image).attr('height', height.toString());
+					var container = tag.find('.jcrop-container');
+					var image = tag.find('.jcrop-page');
+					
+					var widthStr = width.toString();
+					var heightStr = height.toString();
+					var widthCss = widthStr + 'px';
+					var heightCss = heightStr + 'px';
+					
+					jQuery(image).attr('width', widthStr).css('width', widthCss);
+					jQuery(image).attr('height', heightStr).css('height', heightCss);
+					jQuery(container).css('width', widthCss);
+					jQuery(container).css('height', heightCss);
 					
 					var xPixelsPerPoint = width / pageData.width;
 					var yPixelsPerPoint = height / pageData.height;
@@ -845,7 +853,11 @@ jQuery(document).ready(function($) {
 						image.Jcrop({
 							onChange: updateCoordinates,
 							onSelect: updateCoordinates,
-							onRelease: updateCoordinates
+							onRelease: updateCoordinates,
+							boxWidth: width,
+							boxHeight: height,
+							trueSize: [width, height],
+							minSize: [1, 1]
 						}, function() {
 							
 							jcropApi = this;
