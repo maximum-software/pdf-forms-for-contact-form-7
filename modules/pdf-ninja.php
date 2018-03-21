@@ -87,7 +87,14 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$this->key = WPCF7::get_option( 'wpcf7_pdf_forms_pdfninja_key' );
 		
 		if( ! $this->key )
+		{
+			// don't try to get the key from the API on every page load!
+			$fail = get_transient( 'wpcf7_pdf_forms_pdfninja_key_failure' );
+			if( $fail )
+				throw new Exception( __( "Could not get the Pdf.Ninja API key on last attempt.  Please retry manually.", 'wpcf7-pdf-forms' ) );
+			
 			$this->set_key( $this->generate_key() );
+		}
 		
 		return $this->key;
 	}
@@ -99,6 +106,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	{
 		$this->key = $value;
 		WPCF7::update_option( 'wpcf7_pdf_forms_pdfninja_key', $value );
+		delete_transient( 'wpcf7_pdf_forms_pdfninja_key_failure' );
 		return true;
 	}
 	
@@ -107,39 +115,45 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function generate_key()
 	{
-		$current_user = wp_get_current_user();
-		
-		if( ! $current_user )
-			return null;
-		
-		$email = sanitize_email($current_user->user_email);
-		
-		if( ! $email )
-			return null;
-		
-		$key = null;
-		
-		// try to get the key the normal way
-		try { $key = $this->api_get_key( $email ); }
-		catch(Exception $e)
+		try
 		{
-			// if we are not running for the first time, throw on error
-			$old_key = WPCF7::get_option( 'wpcf7_pdf_forms_pdfninja_key' );
-			if( $old_key )
-				throw $e;
+			$current_user = wp_get_current_user();
+			if( ! $current_user )
+				throw new Exception( __( "Could not determine the current user.", 'wpcf7-pdf-forms' ) );
 			
-			// there might be an issue with certificate verification on this system, disable it and try again
-			$this->set_verify_ssl( false );
+			$email = sanitize_email( $current_user->user_email );
+			if( ! $email )
+				throw new Exception( __( "Could not determine the current user's email.", 'wpcf7-pdf-forms' ) );
+			
+			$key = null;
+			
+			// try to get the key the normal way
 			try { $key = $this->api_get_key( $email ); }
 			catch(Exception $e)
 			{
-				// if it still fails, revert and throw
-				$this->set_verify_ssl( true );
-				throw $e;
+				// if we are not running for the first time, throw on error
+				$old_key = WPCF7::get_option( 'wpcf7_pdf_forms_pdfninja_key' );
+				if( $old_key )
+					throw $e;
+				
+				// there might be an issue with certificate verification on this system, disable it and try again
+				$this->set_verify_ssl( false );
+				try { $key = $this->api_get_key( $email ); }
+				catch(Exception $e)
+				{
+					// if it still fails, revert and throw
+					$this->set_verify_ssl( true );
+					throw $e;
+				}
 			}
+			
+			return $key;
 		}
-		
-		return $key;
+		catch(Exception $e)
+		{
+			set_transient( 'wpcf7_pdf_forms_pdfninja_key_failure', true, 12 * HOUR_IN_SECONDS );
+			throw $e;
+		}
 	}
 	
 	/*
@@ -807,10 +821,12 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function display_info()
 	{
+		try { $key = $this->get_key(); } catch(Exception $e) { }
+		
 		echo WPCF7_Pdf_Forms::render( 'pdfninja_integration_info', array(
 			'top-message' => esc_html__( "This service provides functionality for working with PDF files via a web API.", 'wpcf7-pdf-forms' ),
 			'key-label' => esc_html__( 'API Key', 'wpcf7-pdf-forms' ),
-			'key' => esc_html( $this->get_key() ),
+			'key' => esc_html( $key ),
 			'api-url-label' => esc_html__( 'API URL', 'wpcf7-pdf-forms' ),
 			'api-url' => esc_html( $this->get_api_url() ),
 			'security-label' => esc_html__( 'Data Security', 'wpcf7-pdf-forms' ),
@@ -842,10 +858,12 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function display_edit()
 	{
+		try { $key = $this->get_key(); } catch(Exception $e) { }
+		
 		echo WPCF7_Pdf_Forms::render( 'pdfninja_integration_edit', array(
 			'top-message' => esc_html__( "The following form allows you to edit your API key.", 'wpcf7-pdf-forms' ),
 			'key-label' => esc_html__( 'API Key', 'wpcf7-pdf-forms' ),
-			'key' => esc_html( $this->get_key() ),
+			'key' => esc_html( $key ),
 			'api-url-label' => esc_html__( 'API URL', 'wpcf7-pdf-forms' ),
 			'api-url' => esc_html( $this->get_api_url() ),
 			'security-label' => esc_html__( 'Data Security', 'wpcf7-pdf-forms' ),
@@ -888,11 +906,12 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	public function admin_notices()
 	{
 		try { $key = $this->get_key(); } catch(Exception $e) { };
-		if( ! $key )
-		echo WPCF7_Pdf_Forms::render( 'notice_error', array(
-			'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'wpcf7-pdf-forms' ),
-			'message' => esc_html__( "Could not get a Pdf.Ninja API key.", 'wpcf7-pdf-forms' ),
-		) );
+		$fail = get_transient( 'wpcf7_pdf_forms_pdfninja_key_failure' );
+		if( isset( $fail ) && $fail )
+			echo WPCF7_Pdf_Forms::render( 'notice_error', array(
+				'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'wpcf7-pdf-forms' ),
+				'message' => esc_html__( "Could not get the Pdf.Ninja API key on last attempt.  Please retry manually.", 'wpcf7-pdf-forms' ),
+			) );
 	}
 	
 	/*
