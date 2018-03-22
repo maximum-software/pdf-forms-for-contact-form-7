@@ -117,7 +117,7 @@ jQuery(document).ready(function($) {
 					'caption': '[' + attachment.attachment_id + '] ' + field.name,
 					'attachment_id': attachment.attachment_id,
 					'tag_hint': field.tag_hint,
-					'tag_name': field.slug,
+					'tag_name': field.tag_name,
 				});
 			});
 		});
@@ -460,7 +460,7 @@ jQuery(document).ready(function($) {
 				
 				if(data.mappings)
 				{
-					jQuery.each(data.mappings, function(index, data) { addMapping(data.cf7_field, data.pdf_field); });
+					jQuery.each(data.mappings, function(index, mapping) { addMapping(mapping.cf7_field, mapping.pdf_field); });
 					refreshMappings();
 				}
 				
@@ -998,7 +998,7 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
-	// set up 'Insert & Link All' button handler
+	// set up 'Insert and Link' button handler
 	jQuery('.wpcf7-pdf-forms-admin .insert-and-map-all-tags-btn').click(function(event) {
 		
 		// prevent running default button click handlers
