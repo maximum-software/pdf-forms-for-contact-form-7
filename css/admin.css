@@ -198,3 +198,13 @@
 {
 	font-style: italic;
 }
+
+.wpcf7-pdf-forms-admin .return-to-form-button
+{
+	float: right;
+}
+
+.wpcf7-pdf-forms-admin .tag-generator-tool .pdf-files-list
+{
+	width: 20%;
+}

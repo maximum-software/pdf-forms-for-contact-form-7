@@ -29,7 +29,6 @@
 				</td>
 				<td class="pdf-buttons">
 					<a class="button button-secondary pdf-options-button" href="#">{options}</a>
-					<a class="button button-primary get-tags-button" href="#">{get-tags}</a>
 					<a class="button button-secondary delete-button" href="#">{delete}</a>
 				</td>
 			</tr>
@@ -38,7 +37,7 @@
 	
 	<hr/>
 	
-	<div>
+	<div class="field-mapping-tool">
 		<div>
 			<span class="dashicons dashicons-randomize"></span>
 			<strong>{field-mapping}</strong>
@@ -86,32 +85,7 @@
 	
 	<hr/>
 	
-	<div>
-		
-		<a name="wpcf7-pdf-form-tags-textarea"></a>
-		
-		<div>
-			<span class="dashicons dashicons-welcome-write-blog"></span>
-			<strong>{tag-generator}</strong>
-			<a class="help-button" href="#">{hide-help}</a>
-			
-			<div class="helpbox">
-				<span class="dashicons dashicons-editor-help"></span>
-				{tag-generator-help}
-			</div>
-		</div>
-		
-		<textarea wrap="hard" name="text" class="tag code tags-textarea"></textarea>
-		
-	</div>
-	
-	<div class="submitbox">
-		<a class="button button-primary get-tags-all-button" href="#">{get-tags}</a> <input type="button" class="button button-primary insert-tags-btn" value="{insert-tags}" />
-	</div>
-	
-	<hr/>
-	
-	<div>
+	<div class="image-embedding-tool">
 		
 		<div>
 			<span class="dashicons dashicons-media-document"></span>
@@ -180,6 +154,34 @@
 				</tr>
 			</tbody>
 		</table>
+		
+	</div>
+	
+	<hr/>
+	
+	<div class="tag-generator-tool">
+		
+		<a name="wpcf7-pdf-form-tags-textarea"></a>
+		
+		<div>
+			<span class="dashicons dashicons-welcome-write-blog"></span>
+			<strong>{tag-generator}</strong>
+			<a class="help-button" href="#">{hide-help}</a>
+			
+			<div class="helpbox">
+				<span class="dashicons dashicons-editor-help"></span>
+				{tag-generator-help}
+			</div>
+		</div>
+		
+		<textarea wrap="hard" name="text" class="tag code tags-textarea"></textarea>
+		
+		<div class="submitbox">
+			<select class="pdf-files-list" name="tag-generator-pdf-list"><option value="all">{all-pdfs}</option></select>
+			<a class="button button-primary get-tags-all-button" href="#">{get-tags}</a>
+			<input type="button" class="button button-primary insert-tags-button" value="{insert-tags}" />
+			<a class="button button-primary return-to-form-button" href="#">{return-to-form}</a>
+		</div>
 		
 	</div>
 	
