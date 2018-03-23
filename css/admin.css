@@ -138,9 +138,19 @@
 	text-overflow: ellipsis;
 }
 
-.wpcf7-pdf-forms-admin .helpbox
+.wpcf7-pdf-forms-admin .footer
 {
 	padding-bottom: 15px;
+}
+
+.wpcf7-pdf-forms-admin .helpbox
+{
+	margin-top: 15px;
+}
+
+.wpcf7-pdf-forms-admin .help-button
+{
+	float: right;
 }
 
 .wpcf7-pdf-forms-admin .tag-hint

@@ -416,6 +416,12 @@ jQuery(document).ready(function($) {
 		}));
 		if(pdf_files.children().length==1)
 			refreshPageList();
+		
+		jQuery('.wpcf7-pdf-forms-admin .help-button').each(function(){
+			var button = jQuery(this);
+			var helpbox = button.parent().find('.helpbox');
+			hideHelp(button, helpbox);
+		});
 	};
 	
 	var preloadData = function() {
@@ -1142,6 +1148,36 @@ jQuery(document).ready(function($) {
 	form.change(function() {
 		loadCf7Fields(removeOldMappings);
 	});
+	
+	var showHelp = function(button, helpbox)
+	{
+		helpbox.show();
+		button.text(wpcf7_pdf_forms.__Hide_Help);
+	}
+	
+	var hideHelp = function(button, helpbox)
+	{
+		helpbox.hide();
+		button.text(wpcf7_pdf_forms.__Show_Help);
+	}
+	
+	// set up help buttons
+	jQuery('.help-button').click(function(event) {
+		
+		// prevent running default button click handlers
+		event.stopPropagation();
+		event.preventDefault();
+		
+		var button = jQuery(this);
+		var helpbox = button.parent().find('.helpbox');
+		
+		if(helpbox.is(":visible"))
+			hideHelp(button, helpbox);
+		else
+			showHelp(button, helpbox);
+		
+		return false;
+	})
 	
 	preloadData();
 });
