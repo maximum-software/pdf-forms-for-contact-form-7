@@ -52,6 +52,38 @@ jQuery(document).ready(function($) {
 			;
 	}
 	
+	var strtr = function(str, replacements)
+	{
+		for(i in replacements)
+			if(replacements.hasOwnProperty(i))
+				str = str.replace(i, replacements[i]);
+		return str;
+	}
+	
+	// https://github.com/uxitten/polyfill/blob/master/string.polyfill.js
+	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padEnd
+	if (!String.prototype.padEnd) {
+		String.prototype.padEnd = function padEnd(targetLength,padString) {
+			targetLength = targetLength>>0; //floor if number or convert non-number to 0;
+			padString = String((typeof padString !== 'undefined' ? padString : ' '));
+			if (this.length > targetLength) {
+				return String(this);
+			}
+			else {
+				targetLength = targetLength-this.length;
+				if (targetLength > padString.length) {
+					padString += padString.repeat(targetLength/padString.length); //append to original to ensure we are longer than needed
+				}
+				return String(this) + padString.slice(0,targetLength);
+			}
+		};
+	}
+	
+	var base64urldecode = function(data)
+	{
+		return window.atob(strtr(data, {'.': '+', '_': '/'}).padEnd(data.length % 4, '='));
+	}
+	
 	var getTags = function(attachments, all) {
 		
 		if(!all) all = false;
@@ -292,6 +324,19 @@ jQuery(document).ready(function($) {
 	
 	var deleteAttachment = function(attachment_id) {
 		
+		var mappings = getMappings();
+		jQuery.each(mappings, function(index, mapping) {
+			var pdf_field_data = getPdfFieldData(mapping.pdf_field);
+			if(!pdf_field_data || pdf_field_data.attachment_id == attachment_id)
+				deleteMapping(mapping.cf7_field, mapping.pdf_field);
+		});
+		
+		var embeds = getEmbeds();
+		jQuery.each(embeds, function(index, embed) {
+			if(embed.attachment_id == attachment_id)
+				deleteEmbed(embed.id);
+		});
+		
 		var attachments = getAttachments();
 		
 		for(var i=0, l=attachments.length; i<l; i++)
@@ -304,6 +349,9 @@ jQuery(document).ready(function($) {
 		setAttachments(attachments);
 		
 		deleteAttachmentInfo(attachment_id);
+		
+		refreshMappings();
+		refreshEmbeds();
 	};
 	
 	var setAttachmentOption = function(attachment_id, option, value) {
@@ -514,22 +562,29 @@ jQuery(document).ready(function($) {
 	var addMappingEntry = function(cf7_field, pdf_field) {
 		
 		var cf7_field_data = getCf7FieldData(cf7_field);
-		if(!cf7_field_data)
-			return;
+		var cf7_field_caption = cf7_field;
+		if(cf7_field_data)
+			cf7_field_caption = cf7_field_data.caption;
 		
 		var pdf_field_data = getPdfFieldData(pdf_field);
-		if(!pdf_field_data)
-			return;
+		var pdf_field_caption;
+		if(pdf_field_data)
+			pdf_field_caption = pdf_field_data.caption;
+		else
+		{
+			var field_id = pdf_field.substr(pdf_field.indexOf('-')+1);
+			pdf_field_caption = base64urldecode(field_id);
+		}
 		
 		var template = jQuery('.wpcf7-pdf-forms-admin .pdf-mapping-row-template');
 		var tag = template.clone().removeClass('pdf-mapping-row-template').addClass('pdf-mapping-row');
 		
-		tag.find('.cf7-field-name').text(cf7_field_data.caption);
-		tag.find('.pdf-field-name').text(pdf_field_data.caption);
+		tag.find('.cf7-field-name').text(cf7_field_caption);
+		tag.find('.pdf-field-name').text(pdf_field_caption);
 		
 		var delete_button = tag.find('.delete-mapping-button');
 		
-		var virtual = cf7_field_data.pdf_field == pdf_field;
+		var virtual = cf7_field_data && cf7_field_data.pdf_field == pdf_field;
 		
 		if(virtual)
 			delete_button.remove();
@@ -602,6 +657,8 @@ jQuery(document).ready(function($) {
 		}
 		
 		setMappings(mappings);
+		
+		refreshMappings();
 	};
 	
 	var updateTagHint = function() {
@@ -662,6 +719,24 @@ jQuery(document).ready(function($) {
 		setEmbeds(embeds);
 		
 		addEmbedEntry(cf7_field_data, attachment, embed);
+	};
+	
+	var refreshEmbeds = function() {
+		
+		jQuery('.wpcf7-pdf-forms-admin .image-embeds-row').remove();
+		
+		var embeds = getEmbeds();
+		for(var i=0, l=embeds.length; i<l; i++)
+		{
+			var embed = embeds[i];
+			var attachment = getAttachment(embed.attachment_id);
+			var cf7_field_data = getCf7FieldData(embed.cf7_field);
+			
+			if(!attachment || !cf7_field_data)
+				continue;
+			
+			addEmbedEntry(cf7_field_data, attachment, embed);
+		}
 	};
 	
 	var addEmbedEntry = function(cf7_field_data, attachment, embed) {
