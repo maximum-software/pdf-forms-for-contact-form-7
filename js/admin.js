@@ -1,6 +1,7 @@
 jQuery(document).ready(function($) {
 	
-	if(jQuery('textarea#wpcf7-form').length==0)
+	var wpcf7_form = jQuery('textarea#wpcf7-form');
+	if(!wpcf7_form)
 		return;
 	
 	var post_id = jQuery('.wpcf7-pdf-forms-admin input[name=post_id]').val();
@@ -106,7 +107,7 @@ jQuery(document).ready(function($) {
 				if(!data.success)
 					return errorMessage(data.error_message);
 				
-				if(data.tags)
+				if(data.hasOwnProperty('tags'))
 				{
 					textarea.val(data.tags);
 					location.href = '#wpcf7-pdf-form-tags-textarea';
@@ -211,12 +212,10 @@ jQuery(document).ready(function($) {
 		
 		if(!callback) callback = null;
 		
-		var form = jQuery('textarea#wpcf7-form');
-		
 		jQuery.ajax({
 			url: wpcf7_pdf_forms.ajax_url,
 			type: 'POST',
-			data: { 'action': 'wpcf7_pdf_forms_query_cf7_fields', 'wpcf7-form': form.val(), 'nonce': wpcf7_pdf_forms.ajax_nonce },
+			data: { 'action': 'wpcf7_pdf_forms_query_cf7_fields', 'wpcf7-form': wpcf7_form.val(), 'nonce': wpcf7_pdf_forms.ajax_nonce },
 			cache: false,
 			dataType: 'json',
 			
@@ -225,7 +224,7 @@ jQuery(document).ready(function($) {
 				if(!data.success)
 					return errorMessage(data.error_message);
 				
-				if(data.fields)
+				if(data.hasOwnProperty('fields'))
 				{
 					cf7FieldsCache = data.fields;
 					
@@ -269,7 +268,7 @@ jQuery(document).ready(function($) {
 	};
 	
 	var getData = function(field) {
-		var data = jQuery('textarea#wpcf7-form').closest('form').find('input[name=wpcf7-pdf-forms-data]').val();
+		var data = wpcf7_form.closest('form').find('input[name=wpcf7-pdf-forms-data]').val();
 		if(data)
 			data = JSON.parse(data);
 		else
@@ -278,25 +277,23 @@ jQuery(document).ready(function($) {
 	};
 	
 	var setData = function(field, value) {
-		jQuery('textarea#wpcf7-form').each(function() {
-			var form = jQuery('textarea#wpcf7-form').closest('form');
-			if(form[0])
+		var form = wpcf7_form.closest('form');
+		if(form)
+		{
+			var input = form.find('input[name=wpcf7-pdf-forms-data]');
+			if(!input[0])
 			{
-				var input = form.find('input[name=wpcf7-pdf-forms-data]');
-				if(!input[0])
-				{
-					input = jQuery("<input type='hidden' name='wpcf7-pdf-forms-data'/>");
-					jQuery(form).append(input);
-				}
-				var data = input.val();
-				if(data)
-					data = JSON.parse(data);
-				else
-					data = {};
-				data[field] = value;
-				input.val(JSON.stringify(data));
+				input = jQuery("<input type='hidden' name='wpcf7-pdf-forms-data'/>");
+				jQuery(form).append(input);
 			}
-		});
+			var data = input.val();
+			if(data)
+				data = JSON.parse(data);
+			else
+				data = {};
+			data[field] = value;
+			input.val(JSON.stringify(data));
+		}
 	};
 	
 	var getAttachments = function() {
@@ -462,8 +459,6 @@ jQuery(document).ready(function($) {
 	
 	var preloadData = function() {
 		
-		var form = jQuery('textarea#wpcf7-form');
-		
 		if(!post_id)
 			return;
 		
@@ -473,7 +468,7 @@ jQuery(document).ready(function($) {
 			data: {
 				'action': 'wpcf7_pdf_forms_preload_data',
 				'post_id': post_id,
-				'wpcf7-form': form.val(),
+				'wpcf7-form': wpcf7_form.val(),
 				'nonce': wpcf7_pdf_forms.ajax_nonce
 			},
 			cache: false,
@@ -484,9 +479,9 @@ jQuery(document).ready(function($) {
 				if(!data.success)
 					return errorMessage(data.error_message);
 				
-				if(data.attachments)
+				if(data.hasOwnProperty('attachments'))
 					jQuery.each(data.attachments, function(index, data) {
-						if(data.info)
+						if(data.hasOwnProperty('info'))
 						{
 							setAttachmentInfo(data.attachment_id, data.info);
 							delete data.info;
@@ -494,19 +489,19 @@ jQuery(document).ready(function($) {
 						addAttachment(data);
 					});
 				
-				if(data.cf7_fields)
+				if(data.hasOwnProperty('cf7_fields'))
 				{
 					cf7FieldsCache = data.cf7_fields;
 					refreshCf7Fields();
 				}
 				
-				if(data.mappings)
+				if(data.hasOwnProperty('mappings'))
 				{
 					jQuery.each(data.mappings, function(index, mapping) { addMapping(mapping.cf7_field, mapping.pdf_field); });
 					refreshMappings();
 				}
 				
-				if(data.embeds)
+				if(data.hasOwnProperty('embeds'))
 				{
 					jQuery.each(data.embeds, function(index, embed) { if(embed.id && embed_id_autoinc < embed.id) embed_id_autoinc = embed.id; });
 					jQuery.each(data.embeds, function(index, embed) { addEmbed(embed); });
@@ -826,7 +821,7 @@ jQuery(document).ready(function($) {
 				if(!data.success)
 					return errorMessage(data.error_message);
 				
-				if(data.snapshot)
+				if(data.hasOwnProperty('snapshot'))
 				{
 					var width = 500;
 					var height = Math.round((pageData.height / pageData.width) * width);
@@ -1154,9 +1149,9 @@ jQuery(document).ready(function($) {
 				
 				delete data.success;
 				
-				if(data.attachment_id)
+				if(data.hasOwnProperty('attachment_id'))
 				{
-					if(data.info)
+					if(data.hasOwnProperty('info'))
 					{
 						setAttachmentInfo(data.attachment_id, data.info);
 						delete data.info;
@@ -1216,11 +1211,6 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
-	var form = jQuery('textarea#wpcf7-form');
-	form.change(function() {
-		loadCf7Fields(removeOldMappings);
-	});
-	
 	var showHelp = function(button, helpbox)
 	{
 		helpbox.show();
@@ -1261,6 +1251,10 @@ jQuery(document).ready(function($) {
 		tb_remove();
 		
 		return false;
+	});
+	
+	wpcf7_form.change(function() {
+		loadCf7Fields(removeOldMappings);
 	});
 	
 	preloadData();
