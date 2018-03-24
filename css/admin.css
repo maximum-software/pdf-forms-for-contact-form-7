@@ -118,9 +118,10 @@
 	vertical-align: middle;
 }
 
-.wpcf7-pdf-forms-admin .normal-word-break
+.wpcf7-pdf-forms-admin .generate-and-insert-all-tags-message
 {
 	word-break: normal !important;
+	text-align: left !important;
 }
 
 .wpcf7-pdf-forms-admin .pdf-fields-mapper td.cf7-field,
@@ -129,6 +130,7 @@
 .wpcf7-pdf-forms-admin .pdf-fields-mapper th.pdf-field
 {
 	width: 40%;
+	vertical-align: middle;
 }
 
 .wpcf7-pdf-forms-admin select
@@ -153,6 +155,12 @@
 	float: right;
 }
 
+.wpcf7-pdf-forms-admin .tag-hint-row
+{
+	vertical-align: middle !important;
+	text-align: left !important;
+}
+
 .wpcf7-pdf-forms-admin .tag-hint
 {
 	font-weight: bold;
@@ -170,6 +178,7 @@
 .wpcf7-pdf-forms-admin .image-embeds th.pdf-file
 {
 	width: 30%;
+	vertical-align: middle;
 }
 
 .wpcf7-pdf-forms-admin .jcrop-container
