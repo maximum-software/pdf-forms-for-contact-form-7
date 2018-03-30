@@ -1208,6 +1208,8 @@ jQuery(document).ready(function($) {
 			'page': page
 		});
 		
+		$(this).closest('#TB_ajaxContent').animate({scrollTop: $(".wpcf7-pdf-forms-admin .image-embeds-row").last().position().top}, 1000);
+		
 		return false;
 	});
 	
