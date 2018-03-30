@@ -1024,6 +1024,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$encoded_name = self::base64url_encode( $name );
 				$slug = sanitize_title( $name );
+				if( preg_match( '/^[a-zA-Z]$/', $slug[0] ) === 0 )
+					$slug = 'f-'.$slug;
 				$tag_hint = self::generate_tag( $field, $slug );
 				$field['id'] = $encoded_name;
 				$field['tag_hint'] = $tag_hint;
