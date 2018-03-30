@@ -239,19 +239,36 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	/*
 	 * Returns true if the Enterprise Extension is supported on the system
 	 */
+	private $enterprise_extension_support_error = '';
 	private function get_enterprise_extension_support()
 	{
+		$this->enterprise_extension_support_error = '';
+		
 		if( version_compare( PHP_VERSION, '5.3.0' ) < 0 )
+		{
+			$this->enterprise_extension_support_error = __( 'PHP version 5.3 or higher is required.', 'wpcf7-pdf-forms' );
 			return false;
+		}
 		
 		if( strncasecmp(PHP_OS, 'WIN', 3) == 0)
+		{
+			$this->enterprise_extension_support_error = __( 'Windows platform is not supported.', 'wpcf7-pdf-forms' );
 			return false;
+		}
 		
 		if( ini_get( 'safe_mode' ) )
+		{
+			$this->enterprise_extension_support_error = __( 'PHP safe mode is not supported.', 'wpcf7-pdf-forms' );
 			return false;
+		}
 		
-		if( $this->is_function_disabled( 'exec' ) )
+		if( $this->is_function_disabled( 'exec' )
+		|| $this->is_function_disabled( 'proc_open' )
+		|| $this->is_function_disabled( 'proc_close' ) )
+		{
+			$this->enterprise_extension_support_error = __( 'PHP execute functions (exec, proc_open, proc_close) are disabled.', 'wpcf7-pdf-forms' );
 			return false;
+		}
 		
 		$pdftk_binary = exec( 'which pdftk', $output, $retval );
 		if( $retval === 0 )
@@ -272,6 +289,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( $arch == 'x86_64' )
 			return true;
 		
+		$this->enterprise_extension_support_error = __( 'Required binaries are not available on this platform.', 'wpcf7-pdf-forms' );
 		return false;
 	}
 	
@@ -834,7 +852,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'no-ssl-verify-value' => !$this->get_verify_ssl() ? 'checked' : '',
 			'security-warning' => esc_html__( 'Warning: Using plain HTTP or disabling certificate verification can lead to data leaks.', 'wpcf7-pdf-forms' ),
 			'enterprise-extension-support-label' => esc_html__( 'Enterprise Extension', 'wpcf7-pdf-forms' ),
-			'enterprise-extension-support-value' => $this->get_enterprise_extension_support() ? esc_html__( 'Supported', 'wpcf7-pdf-forms' ) : esc_html__( 'Not supported', 'wpcf7-pdf-forms' ),
+			'enterprise-extension-support-value' => $this->get_enterprise_extension_support() ? esc_html__( 'Supported', 'wpcf7-pdf-forms' ) : esc_html__( 'Not supported.', 'wpcf7-pdf-forms' ).' '.$this->enterprise_extension_support_error,
 			'edit-label' => esc_html__( "Edit", 'wpcf7-pdf-forms' ),
 			'edit-link' => esc_url( $this->menu_page_url( 'action=edit' ) ),
 		) );
@@ -896,7 +914,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		
 		if( 'success' == $message )
 			echo WPCF7_Pdf_Forms::render( 'notice_success', array(
-				'message' => esc_html__( "Key saved.", 'wpcf7-pdf-forms' ),
+				'message' => esc_html__( "Settings saved.", 'wpcf7-pdf-forms' ),
 			) );
 	}
 	
@@ -925,7 +943,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$url = $this->get_api_url();
 			$verify_ssl = $this->get_verify_ssl();
 			if( substr($url,0,5) == 'http:' || !$verify_ssl)
-				$messages .= "<div class='notice notice-warning'><p>" . esc_html__( 'Warning: Your integration settings indicate you are using an insecure connection to the API server.', 'wpcf7-pdf-forms' ) . "</p></div>";
+				$messages .= "<div class='notice notice-warning'><p>" . esc_html__( 'Warning: Your integration settings indicate you are using an insecure connection to the Pdf.Ninja API server.', 'wpcf7-pdf-forms' ) . "</p></div>";
 		}
 		catch(Exception $e) { };
 		

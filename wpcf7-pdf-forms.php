@@ -1329,7 +1329,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'upload-and-attach' => esc_html__( "Upload & Attach a PDF File", 'wpcf7-pdf-forms' ),
 					'insert-tags' => esc_html__( "Insert Tags", 'wpcf7-pdf-forms' ),
 					'insert-tag' => esc_html__( "Insert and Link", 'wpcf7-pdf-forms' ),
-					'generate-and-insert-all-tags-message' => esc_html__( "With this button, you can generate tags for all remaining unmapped PDF fields, insert them into the form and match them to their corresponding fields.", 'wpcf7-pdf-forms' ),
+					'generate-and-insert-all-tags-message' => esc_html__( "This button allows you to generate tags for all remaining unmapped PDF fields, insert them into the form and match them to their corresponding fields.", 'wpcf7-pdf-forms' ),
 					'insert-and-map-all-tags' => esc_html__( "Insert & Link All", 'wpcf7-pdf-forms' ),
 					'delete' => esc_html__( 'Delete', 'wpcf7-pdf-forms' ),
 					'options' => esc_html__( 'Options', 'wpcf7-pdf-forms' ),
