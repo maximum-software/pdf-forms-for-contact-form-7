@@ -2,7 +2,7 @@
 /*
 Plugin Name: PDF Forms Filler for Contact Form 7
 Plugin URI: https://github.com/maximum-software/wpcf7-pdf-forms
-Description: Create Contact Form 7 forms from PDF forms.  Get <strong>PDF forms filled automatically</strong> and <strong>attached to email messages</strong> upon form submission on your website.  <strong>Embed images</strong> in PDF files.  Uses <a href="https://pdf.ninja">Pdf.Ninja</a> API for working with PDF files.  See <a href="https://youtu.be/e4ur95rER6o">How-To Video</a> for a demo.
+Description: Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically and attached to email messages upon form submission on your website.  Embed images in PDF files.  Uses Pdf.Ninja API for working with PDF files.  See tutorial video for a demo.
 Version: 1.0.0
 Author: Maximum.Software
 Author URI: https://maximum.software/
@@ -152,7 +152,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function action_links( $links )
 		{
-			$links[] = '<a target="_blank" href="https://youtu.be/e4ur95rER6o">'.esc_html__( "How-To", 'wpcf7-pdf-forms' ).'</a>';
+			$links[] = '<a target="_blank" href="https://youtu.be/e4ur95rER6o">'.esc_html__( "Tutorial", 'wpcf7-pdf-forms' ).'</a>';
 			$links[] = '<a target="_blank" href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/">'.esc_html__( "Support", 'wpcf7-pdf-forms' ).'</a>';
 			return $links;
 		}
@@ -226,9 +226,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__File_not_specified' => __( 'File not specified', 'wpcf7-pdf-forms' ),
 					'__Unknown_error' => __( 'Unknown error', 'wpcf7-pdf-forms' ),
 					'__No_WPCF7' => __( 'Please copy/paste tags manually', 'wpcf7-pdf-forms' ),
-					'__Confirm_Delete_Attachment' => __( 'Are you sure you want to delete this attachment?  This will delete field mappings and image embeds for this attachment.', 'wpcf7-pdf-forms' ),
+					'__Confirm_Delete_Attachment' => __( 'Are you sure you want to delete this file?  This will delete field mappings and image embeds associated with this file.', 'wpcf7-pdf-forms' ),
 					'__Confirm_Delete_Mapping' => __( 'Are you sure you want to delete this mapping?', 'wpcf7-pdf-forms' ),
-					'__Confirm_Delete_Embed' => __( 'Are you sure you want to delete this embeded image setting?', 'wpcf7-pdf-forms' ),
+					'__Confirm_Delete_Embed' => __( 'Are you sure you want to delete this embeded image?', 'wpcf7-pdf-forms' ),
 					'__Show_Help' => __( 'Show Help', 'wpcf7-pdf-forms' ),
 					'__Hide_Help' => __( 'Hide Help', 'wpcf7-pdf-forms' ),
 				) );
@@ -458,20 +458,20 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$response = wp_remote_get( $url, $args );
 			
 			if( is_wp_error( $response ) )
-				throw new Exception( __( "Cannot download file", 'wpcf7-pdf-forms' ) );
+				throw new Exception( __( "Failed to download file", 'wpcf7-pdf-forms' ) );
 			
 			$body = wp_remote_retrieve_body( $response );
 			
 			$handle = @fopen( $filepath, 'w' );
 			
 			if( ! $handle )
-				throw new Exception( __( "Cannot open file for writing", 'wpcf7-pdf-forms' ) );
+				throw new Exception( __( "Failed to open file for writing", 'wpcf7-pdf-forms' ) );
 			
 			fwrite( $handle, $body );
 			fclose( $handle );
 			
 			if( ! file_exists( $filepath ) )
-				throw new Exception( __( "Cannot create file", 'wpcf7-pdf-forms' ) );
+				throw new Exception( __( "Failed to create file", 'wpcf7-pdf-forms' ) );
 		}
 		
 		/**
@@ -1334,7 +1334,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'upload-and-attach' => esc_html__( "Upload & Attach a PDF File", 'wpcf7-pdf-forms' ),
 					'insert-tags' => esc_html__( "Insert Tags", 'wpcf7-pdf-forms' ),
 					'insert-tag' => esc_html__( "Insert and Link", 'wpcf7-pdf-forms' ),
-					'generate-and-insert-all-tags-message' => esc_html__( "This button allows you to generate tags for all remaining unmapped PDF fields, insert them into the form and match them to their corresponding fields.", 'wpcf7-pdf-forms' ),
+					'generate-and-insert-all-tags-message' => esc_html__( "This button allows you to generate tags for all remaining unlinked PDF fields, insert them into the form and link them to their corresponding fields.", 'wpcf7-pdf-forms' ),
 					'insert-and-map-all-tags' => esc_html__( "Insert & Link All", 'wpcf7-pdf-forms' ),
 					'delete' => esc_html__( 'Delete', 'wpcf7-pdf-forms' ),
 					'options' => esc_html__( 'Options', 'wpcf7-pdf-forms' ),
@@ -1358,13 +1358,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'page' => esc_html__( 'Page', 'wpcf7-pdf-forms' ),
 					'image-region-selection-hint' => esc_html__( 'Select a region where the image needs to be embeded.', 'wpcf7-pdf-forms' ),
 					'help-message' => str_replace(
-						array('{a-href-forum}','{a-href-howto}','{/a}'),
+						array('{a-href-forum}','{a-href-tutorial}','{/a}'),
 						array(
 							'<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
 							'<a href="https://youtu.be/e4ur95rER6o" target="_blank">',
 							'</a>'
 						),
-						esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-howto}the How-To video{/a}.", 'wpcf7-pdf-forms' )
+						esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'wpcf7-pdf-forms' )
 					),
 					'show-help' => esc_html__( 'Show Help', 'wpcf7-pdf-forms' ),
 					'hide-help' => esc_html__( 'Hide Help', 'wpcf7-pdf-forms' ),
