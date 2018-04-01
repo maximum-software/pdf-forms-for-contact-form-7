@@ -1013,14 +1013,17 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		private function query_pdf_fields( $attachment_id )
 		{
 			$fields = $this->get_fields( $attachment_id );
-			foreach( $fields as &$field )
+			foreach( $fields as $id => &$field )
 			{
 				$type = strval($field['type']);
 				$name = strval($field['name']);
 				
 				// sanity check
 				if( ! ( $type === 'text' || $type === 'radio' || $type === 'select' || $type === 'checkbox' ) )
+				{
+					unset($fields[$id]);
 					continue;
+				}
 				
 				$encoded_name = self::base64url_encode( $name );
 				$slug = sanitize_title( $name );
