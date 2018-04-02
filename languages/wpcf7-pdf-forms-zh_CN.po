@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pdf-forms-for-"
 "contact-form-7/\n"
-"POT-Creation-Date: 2018-02-13 20:32:04+00:00\n"
+"POT-Creation-Date: 2018-04-03 02:18:05+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -20,164 +20,234 @@ msgstr ""
 msgid "Pdf.Ninja API"
 msgstr "Pdf.Ninja API"
 
-#: modules/pdf-ninja.php:224 modules/pdf-ninja.php:256
+#: modules/pdf-ninja.php:94 modules/pdf-ninja.php:931
+msgid ""
+"Failed to get the Pdf.Ninja API key on last attempt.  Please retry manually."
+msgstr "在上次尝试时未能获得Pdf.Ninja API密钥。 请手动重试。"
+
+#: modules/pdf-ninja.php:122
+msgid "Failed to determine the current user."
+msgstr "无法确定当前用户。"
+
+#: modules/pdf-ninja.php:126
+msgid "Failed to determine the current user's email address."
+msgstr "无法确定当前用户的电子邮件地址。"
+
+#: modules/pdf-ninja.php:249
+msgid "PHP version 5.3 or higher is required."
+msgstr "PHP版本5.3或更高版本是必需的。"
+
+#: modules/pdf-ninja.php:255
+msgid "Windows platform is not supported."
+msgstr "Windows平台不受支持。"
+
+#: modules/pdf-ninja.php:261
+msgid "PHP safe mode is not supported."
+msgstr "PHP安全模式不受支持。"
+
+#: modules/pdf-ninja.php:269
+msgid "PHP execute functions (exec, proc_open, proc_close) are disabled."
+msgstr "PHP执行函数（exec，proc_open，proc_close）被禁用。"
+
+#: modules/pdf-ninja.php:292
+msgid "Required binaries are not available on this platform."
+msgstr "必需的二进制文件在此平台上不可用。"
+
+#: modules/pdf-ninja.php:310 modules/pdf-ninja.php:365
 msgid "Failed to get API server response"
 msgstr "无法获得API服务器响应"
 
-#: modules/pdf-ninja.php:229 modules/pdf-ninja.php:261
+#: modules/pdf-ninja.php:319 modules/pdf-ninja.php:374
 msgid "Failed to decode API server response"
 msgstr "无法解码API服务器响应"
 
-#: modules/pdf-ninja.php:277 modules/pdf-ninja.php:405
-#: modules/pdf-ninja.php:453
+#: modules/pdf-ninja.php:327 modules/pdf-ninja.php:382
+msgid "Failed to download a file from the API server"
+msgstr "无法从API服务器下载文件"
+
+#: modules/pdf-ninja.php:409 modules/pdf-ninja.php:537
+#: modules/pdf-ninja.php:556 modules/pdf-ninja.php:598
+#: modules/pdf-ninja.php:712 modules/pdf-ninja.php:742
 msgid "Pdf.Ninja API server did not send an expected response"
 msgstr "Pdf.Ninja API服务器没有预期的响应"
 
-#: modules/pdf-ninja.php:331 wpcf7-pdf-forms.php:653
+#: modules/pdf-ninja.php:463 wpcf7-pdf-forms.php:787 wpcf7-pdf-forms.php:1200
 msgid "File not found"
 msgstr "找不到文件"
 
-#: modules/pdf-ninja.php:421
+#: modules/pdf-ninja.php:603 modules/pdf-ninja.php:717
+#: modules/pdf-ninja.php:747 wpcf7-pdf-forms.php:468
+msgid "Failed to open file for writing"
+msgstr "无法打开文件进行写入"
+
+#: modules/pdf-ninja.php:609 modules/pdf-ninja.php:723
+#: modules/pdf-ninja.php:753 wpcf7-pdf-forms.php:474
+msgid "Failed to create file"
+msgstr "文件创建失败"
+
+#: modules/pdf-ninja.php:647 modules/pdf-ninja.php:651
 msgid "Failed to encode JSON data"
 msgstr "无法对JSON数据进行编码"
 
-#: modules/pdf-ninja.php:459
-msgid "Cannot download PDF file from the API server"
-msgstr "无法从API服务器下载PDF文件"
-
-#: modules/pdf-ninja.php:464
-msgid "Cannot open temporary PDF file for writing"
-msgstr "无法打开，无法写入临时PDF文件"
-
-#: modules/pdf-ninja.php:470
-msgid "Cannot create temporary PDF file"
-msgstr "无法创建临时PDF文件"
-
-#: modules/pdf-ninja.php:505 wpcf7-pdf-forms.php:591 wpcf7-pdf-forms.php:863
-#: wpcf7-pdf-forms.php:909
+#: modules/pdf-ninja.php:788 wpcf7-pdf-forms.php:721 wpcf7-pdf-forms.php:1058
+#: wpcf7-pdf-forms.php:1242
 msgid "Permission denied"
 msgstr "访问被拒绝"
 
-#: modules/pdf-ninja.php:560
+#: modules/pdf-ninja.php:845
 msgid ""
-"This service provides functionality for working with PDF forms via a web API."
-msgstr "此服务提供通过Web API处理PDF表单的功能。"
+"This service provides functionality for working with PDF files via a web API."
+msgstr "此服务提供了通过Web API处理PDF文件的功能。"
 
-#: modules/pdf-ninja.php:561 modules/pdf-ninja.php:594
+#: modules/pdf-ninja.php:846 modules/pdf-ninja.php:883
 msgid "API Key"
 msgstr "API密钥"
 
-#: modules/pdf-ninja.php:563 modules/pdf-ninja.php:596
+#: modules/pdf-ninja.php:848 modules/pdf-ninja.php:885
 msgid "API URL"
 msgstr "API网址"
 
-#: modules/pdf-ninja.php:565 modules/pdf-ninja.php:598
+#: modules/pdf-ninja.php:850 modules/pdf-ninja.php:887
 msgid "Data Security"
 msgstr "数据安全"
 
-#: modules/pdf-ninja.php:566 modules/pdf-ninja.php:599
+#: modules/pdf-ninja.php:851 modules/pdf-ninja.php:888
 msgid "Ignore certificate verification errors"
 msgstr "忽略证书验证错误"
 
-#: modules/pdf-ninja.php:568 modules/pdf-ninja.php:601
-#: modules/pdf-ninja.php:650
+#: modules/pdf-ninja.php:853 modules/pdf-ninja.php:890
 msgid ""
 "Warning: Using plain HTTP or disabling certificate verification can lead to "
 "data leaks."
 msgstr "警告：使用纯HTTP或禁用证书验证可能会导致数据泄漏。"
 
-#: modules/pdf-ninja.php:569 modules/pdf-ninja.php:582
+#: modules/pdf-ninja.php:854
+msgid "Enterprise Extension"
+msgstr "企业扩展"
+
+#: modules/pdf-ninja.php:855
+msgid "Extension is supported."
+msgstr "支持扩展。"
+
+#: modules/pdf-ninja.php:855
+msgid "Extension is not supported."
+msgstr "扩展不受支持。"
+
+#: modules/pdf-ninja.php:856 modules/pdf-ninja.php:869
 msgid "Edit"
 msgstr "编辑"
 
-#: modules/pdf-ninja.php:580
+#: modules/pdf-ninja.php:867
 msgid "Error!"
 msgstr "错误！"
 
-#: modules/pdf-ninja.php:593
+#: modules/pdf-ninja.php:882
 msgid "The following form allows you to edit your API key."
 msgstr "下面的表格，您可以编辑您的API密钥。"
 
-#: modules/pdf-ninja.php:604
+#: modules/pdf-ninja.php:893
 msgid "Save"
 msgstr "保存"
 
-#: modules/pdf-ninja.php:605
+#: modules/pdf-ninja.php:894
 msgid "Get New Key"
 msgstr "获取新密钥"
 
-#: modules/pdf-ninja.php:616 modules/pdf-ninja.php:622
+#: modules/pdf-ninja.php:905 modules/pdf-ninja.php:911
 msgid "PDF Forms for CF7 plugin error"
 msgstr "PDF表单的CF7插件错误"
 
-#: modules/pdf-ninja.php:617
+#: modules/pdf-ninja.php:906
 msgid "Can't save new key."
 msgstr "无法保存新的密钥。"
 
-#: modules/pdf-ninja.php:628
-msgid "Key saved."
-msgstr "键保存。"
+#: modules/pdf-ninja.php:917
+msgid "Settings saved."
+msgstr "设置已保存。"
 
-#: modules/pdf-ninja.php:637 wpcf7-pdf-forms.php:169
+#: modules/pdf-ninja.php:930 wpcf7-pdf-forms.php:168
 msgid "PDF Forms Filler for CF7 plugin error"
 msgstr "PDF表单填充料CF7插件错误"
 
-#: modules/pdf-ninja.php:638
-msgid "Could not get a Pdf.Ninja API key."
-msgstr "无法获得Pdf.Ninja API密钥。"
+#: modules/pdf-ninja.php:946
+msgid ""
+"Warning: Your integration settings indicate you are using an insecure "
+"connection to the Pdf.Ninja API server."
+msgstr "警告：您的集成设置表明您正在使用Pdf.Ninja API服务器的不安全连接。"
+
+#: modules/service.php:7 modules/service.php:12 modules/service.php:17
+#: modules/service.php:22 modules/service.php:27
+msgid "Missing feature"
+msgstr "缺少功能"
+
+#: wpcf7-pdf-forms.php:155
+msgid "Tutorial Video"
+msgstr "教程视频"
 
 #: wpcf7-pdf-forms.php:156
-msgid "How-To"
-msgstr "怎么做"
-
-#: wpcf7-pdf-forms.php:157
 msgid "Support"
 msgstr "支持"
 
-#: wpcf7-pdf-forms.php:170
+#: wpcf7-pdf-forms.php:169
 msgid "The required plugin 'Contact Form 7' is not installed!"
 msgstr "所需插件“联系表7”未安装！"
 
-#: wpcf7-pdf-forms.php:227
+#: wpcf7-pdf-forms.php:226
 msgid "File not specified"
 msgstr "文件中未指定"
 
-#: wpcf7-pdf-forms.php:228
+#: wpcf7-pdf-forms.php:227
 msgid "Unknown error"
 msgstr "未知错误"
 
-#: wpcf7-pdf-forms.php:229
+#: wpcf7-pdf-forms.php:228
 msgid "Please copy/paste tags manually"
 msgstr "请手动复制/粘贴标签"
 
-#: wpcf7-pdf-forms.php:230
+#: wpcf7-pdf-forms.php:229
 msgid ""
-"Are you sure you want to delete this attachment?  This will break field "
-"mappings for this attachment."
-msgstr "您确定要删除此附件吗？ 这将打破这个附件的字段映射。"
+"Are you sure you want to delete this file?  This will delete field mappings "
+"and image embeds associated with this file."
+msgstr "你确定要删除这个文件吗？ 这将删除与此文件关联的字段映射和图像嵌入。"
 
-#: wpcf7-pdf-forms.php:231
+#: wpcf7-pdf-forms.php:230
 msgid "Are you sure you want to delete this mapping?"
 msgstr "你确定要删除这个映射吗？"
 
-#: wpcf7-pdf-forms.php:252
+#: wpcf7-pdf-forms.php:231
+msgid "Are you sure you want to delete this embeded image?"
+msgstr "你确定要删除这个嵌入的图像吗？"
+
+#: wpcf7-pdf-forms.php:232 wpcf7-pdf-forms.php:1370
+msgid "Show Help"
+msgstr "显示帮助"
+
+#: wpcf7-pdf-forms.php:233 wpcf7-pdf-forms.php:1371
+msgid "Hide Help"
+msgstr "隐藏帮助"
+
+#: wpcf7-pdf-forms.php:254
 msgid "PDF Forms"
 msgstr "PDF表单"
 
-#: wpcf7-pdf-forms.php:588 wpcf7-pdf-forms.php:785 wpcf7-pdf-forms.php:855
-#: wpcf7-pdf-forms.php:901 wpcf7-pdf-forms.php:937 wpcf7-pdf-forms.php:1006
+#: wpcf7-pdf-forms.php:461
+msgid "Failed to download file"
+msgstr "无法下载文件"
+
+#: wpcf7-pdf-forms.php:718 wpcf7-pdf-forms.php:948 wpcf7-pdf-forms.php:1049
+#: wpcf7-pdf-forms.php:1153 wpcf7-pdf-forms.php:1233
 msgid "Nonce mismatch"
 msgstr "随机数不匹配"
 
-#: wpcf7-pdf-forms.php:598
-msgid "Invalid file mime type, must be 'application/pdf'"
-msgstr "无效文件的MIME类型，必须是“应用程序/ PDF”"
+#: wpcf7-pdf-forms.php:728
+msgid "Invalid file type, must be a PDF file"
+msgstr "无效的文件类型必须是PDF文件"
 
-#: wpcf7-pdf-forms.php:680
+#: wpcf7-pdf-forms.php:825
 msgid "No service"
 msgstr "没有信号"
 
-#: wpcf7-pdf-forms.php:803
+#: wpcf7-pdf-forms.php:966
 msgid ""
 "This PDF file does not appear to contain a PDF form.  See https://acrobat."
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
@@ -186,110 +256,182 @@ msgstr ""
 "此PDF文件似乎不包含PDF表单。 有关详细信息，请参阅https://acrobat.adobe.com/"
 "us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html。"
 
-#: wpcf7-pdf-forms.php:860 wpcf7-pdf-forms.php:906
+#: wpcf7-pdf-forms.php:1055
 msgid "Invalid post ID"
 msgstr "无效的帖子ID"
 
-#: wpcf7-pdf-forms.php:1018
+#: wpcf7-pdf-forms.php:1124
 msgid "Failed to get Contact Form fields"
 msgstr "无法获取联系人窗体字段"
 
-#: wpcf7-pdf-forms.php:1060 wpcf7-pdf-forms.php:1069
+#: wpcf7-pdf-forms.php:1239
+msgid "Invalid page number"
+msgstr "无效的页码"
+
+#: wpcf7-pdf-forms.php:1248
+msgid "Failed to retrieve page snapshot"
+msgstr "无法检索页面快照"
+
+#: wpcf7-pdf-forms.php:1274 wpcf7-pdf-forms.php:1283
 msgid "PDF Form"
 msgstr "PDF格式"
 
-#: wpcf7-pdf-forms.php:1119
+#: wpcf7-pdf-forms.php:1333
 msgid ""
-"Attach a PDF file to your form and insert tags into your form that map to "
-"fields in the PDF file."
-msgstr "附加一个PDF文件到您的表单，并插入标签到您的形式映射到PDF文件中的字段。"
+"You can use this tag generator to attach a PDF file to your form, insert "
+"tags into your form and link them to fields in the PDF file.  You can also "
+"embed images (generated by other Contact Form 7 tags or fields) into the PDF "
+"file.  Changes here are applied when the contact form is saved."
+msgstr ""
+"您可以使用此标记生成器将PDF文件附加到表单中，将标记插入到表单中并将它们链接到"
+"PDF文件中的字段。 您还可以将图像（由其他联系表格7标签或字段生成）嵌入到PDF文"
+"件中。 当联系表单被保存时，此处的更改将被应用。"
 
-#: wpcf7-pdf-forms.php:1120
+#: wpcf7-pdf-forms.php:1334
 msgid "Upload & Attach a PDF File"
 msgstr "上传和附加PDF文件"
 
-#: wpcf7-pdf-forms.php:1121
+#: wpcf7-pdf-forms.php:1335
 msgid "Insert Tags"
 msgstr "插入标签"
 
-#: wpcf7-pdf-forms.php:1122
+#: wpcf7-pdf-forms.php:1336
 msgid "Insert and Link"
 msgstr "插入并链接"
 
-#: wpcf7-pdf-forms.php:1123
+#: wpcf7-pdf-forms.php:1337
 msgid ""
-"With this button, you can generate tags for all remaining unmapped PDF "
-"fields, insert them into the form and match them to their corresponding "
+"This button allows you to generate tags for all remaining unlinked PDF "
+"fields, insert them into the form and link them to their corresponding "
 "fields."
 msgstr ""
-"使用此按钮，您可以为所有剩余的未链接PDF字段生成标签，将它们插入到表单中并将它"
-"们与相应的字段进行匹配。"
+"此按钮允许您为所有剩余未链接的PDF字段生成标签，将它们插入表单并将其链接到相应"
+"的字段。"
 
-#: wpcf7-pdf-forms.php:1124
+#: wpcf7-pdf-forms.php:1338
 msgid "Insert & Link All"
 msgstr "插入并链接所有"
 
-#: wpcf7-pdf-forms.php:1125
-msgid "Get Tags"
-msgstr "获取标签"
-
-#: wpcf7-pdf-forms.php:1126
+#: wpcf7-pdf-forms.php:1339 wpcf7-pdf-forms.php:1357
 msgid "Delete"
 msgstr "删除"
 
-#: wpcf7-pdf-forms.php:1127
+#: wpcf7-pdf-forms.php:1340
 msgid "Options"
 msgstr "选项"
 
-#: wpcf7-pdf-forms.php:1128
+#: wpcf7-pdf-forms.php:1341
 msgid "Skip when empty"
 msgstr "空时忽略"
 
-#: wpcf7-pdf-forms.php:1129
+#: wpcf7-pdf-forms.php:1342
 msgid "Attach to primary email message"
 msgstr "附加到主电子邮件"
 
-#: wpcf7-pdf-forms.php:1130
+#: wpcf7-pdf-forms.php:1343
 msgid "Attach to secondary email message"
 msgstr "附加到辅助电子邮件"
 
-#: wpcf7-pdf-forms.php:1131
+#: wpcf7-pdf-forms.php:1344
 msgid "Flatten"
 msgstr "拼合"
 
-#: wpcf7-pdf-forms.php:1132
-msgid "Input Field Mapper Tool (simple)"
-msgstr "输入字段映射工具（简单）"
+#: wpcf7-pdf-forms.php:1345
+msgid "Field Mapper Tool"
+msgstr "字段映射工具"
 
-#: wpcf7-pdf-forms.php:1133
+#: wpcf7-pdf-forms.php:1346
+msgid ""
+"This tool can be used to link Contact Form 7 fields with fields within the "
+"PDF files.  Contact Form 7 fields can also be generated.  When the user "
+"submits the form, data from Contact Form 7 fields will be inserted into "
+"correspoinding fields in the PDF file."
+msgstr ""
+"此工具可用于将联系表单7字段与PDF文件中的字段链接。 也可以生成联系表单7字段。 "
+"当用户提交表格时，联系表格7字段中的数据将被插入到PDF文件中的相应字段中。"
+
+#: wpcf7-pdf-forms.php:1347
 msgid "PDF field"
 msgstr "PDF字段"
 
-#: wpcf7-pdf-forms.php:1134
+#: wpcf7-pdf-forms.php:1348
 msgid "CF7 field"
 msgstr "CF7字段"
 
-#: wpcf7-pdf-forms.php:1135
+#: wpcf7-pdf-forms.php:1349
 msgid "Add Mapping"
 msgstr "添加映射"
 
-#: wpcf7-pdf-forms.php:1136
+#: wpcf7-pdf-forms.php:1350
+msgid "Delete All"
+msgstr "删除所有"
+
+#: wpcf7-pdf-forms.php:1351
 msgid "New Tag:"
 msgstr "新标签："
 
-#: wpcf7-pdf-forms.php:1137
-msgid "Tag Generator Tool (advanced)"
-msgstr "代码生成器工具（高级）"
+#: wpcf7-pdf-forms.php:1352
+msgid "Tag Generator Tool (deprecated)"
+msgstr "代码生成器工具（不建议使用）"
 
-#: wpcf7-pdf-forms.php:1145
+#: wpcf7-pdf-forms.php:1353
+msgid ""
+"This tool allows one to create CF7 fields that are linked to PDF fields by "
+"name.  This feature is deprecated in favor of the field mapper tool."
+msgstr ""
+"该工具允许创建按名称链接到PDF字段的CF7字段。 此功能已弃用，以支持字段映射器工"
+"具。"
+
+#: wpcf7-pdf-forms.php:1354
+msgid "Image Embedding Tool"
+msgstr "图像嵌入工具"
+
+#: wpcf7-pdf-forms.php:1355
+msgid ""
+"This tool allows embedding images into PDF files.  Images are taken from "
+"field attachments or field values that are URLs.  You must select a PDF "
+"file, its page and draw a bounding box for image insertion."
+msgstr ""
+"该工具允许将图像嵌入到PDF文件中。 图像取自现场附件或作为URL的字段值。 您必须"
+"选择PDF文件，其页面并绘制图像插入的边界框。"
+
+#: wpcf7-pdf-forms.php:1356
+msgid "Embed Image"
+msgstr "嵌入图片"
+
+#: wpcf7-pdf-forms.php:1358
+msgid "PDF file"
+msgstr "PDF文件"
+
+#: wpcf7-pdf-forms.php:1359
+msgid "Page"
+msgstr "页"
+
+#: wpcf7-pdf-forms.php:1360
+msgid "Select a region where the image needs to be embeded."
+msgstr "选择需要嵌入图像的区域。"
+
+#: wpcf7-pdf-forms.php:1368
 msgid ""
 "Have a question/comment/problem?  Feel free to use {a-href-forum}the support "
-"forum{/a} and view {a-href-howto}the How-To video{/a}."
+"forum{/a} and view {a-href-tutorial}the tutorial video{/a}."
 msgstr ""
-"有问题/评论/问题？ 随意使用{a-href-forum}支持论坛{/a}，并查看{a-href-howto}如"
-"何做视频{/a}。"
+"有问题/评论/问题？ 随意使用{a-href-forum}支持论坛{/a}并查看{a-href-tutorial}"
+"教程视频{/a}。"
 
-#: wpcf7-pdf-forms.php:1151
+#: wpcf7-pdf-forms.php:1372
+msgid "Get Tags"
+msgstr "获取标签"
+
+#: wpcf7-pdf-forms.php:1373
+msgid "All PDFs"
+msgstr "所有PDF文件"
+
+#: wpcf7-pdf-forms.php:1374
+msgid "Return to Form"
+msgstr "返回到表格"
+
+#: wpcf7-pdf-forms.php:1379
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr "你CF7插件是太落伍了，请升级。"
 
@@ -303,16 +445,14 @@ msgstr "https://github.com/maximum-software/wpcf7-pdf-forms"
 
 #. Description of the plugin/theme
 msgid ""
-"Create Contact Form 7 forms from PDF forms.  Get <strong>PDF forms filled "
-"automatically</strong> and <strong>attached to email messages</strong> upon "
-"form submission on your website.  Uses <a href=\"https://pdf.ninja\">Pdf."
-"Ninja</a> API for working with PDF files.  See <a href=\"https://youtu.be/"
-"e4ur95rER6o\">How-To Video</a> for a demo."
+"Create Contact Form 7 forms from PDF forms.  Get PDF forms filled "
+"automatically and attached to email messages upon form submission on your "
+"website.  Embed images in PDF files.  Uses Pdf.Ninja API for working with "
+"PDF files.  See tutorial video for a demo."
 msgstr ""
-"从PDF表格创建联系表格7表格。 在您的网站上提交表单后，自动填写<strong>PDF表单"
-"</strong>和<strong>附加到电子邮件</strong>。 使用<a href=\"https://pdf.ninja"
-"\">Pdf.Ninja</a> API处理PDF文件。 有关演示，请参阅<a href=\"https://youtu.be/"
-"e4ur95rER6o\">使用指南</a>。"
+"从PDF表单创建联系表格7表格。 在您的网站上提交表格后，自动填入PDF表格并附加到"
+"电子邮件中。 将图像嵌入PDF文件。 使用Pdf.Ninja API处理PDF文件。 查看演示视频"
+"教程。"
 
 #. Author of the plugin/theme
 msgid "Maximum.Software"
@@ -321,6 +461,21 @@ msgstr "Maximum.Software"
 #. Author URI of the plugin/theme
 msgid "https://maximum.software/"
 msgstr "https://maximum.software/"
+
+#~ msgid "Cannot create temporary PDF file"
+#~ msgstr "无法创建临时PDF文件"
+
+#~ msgid "Could not get a Pdf.Ninja API key."
+#~ msgstr "无法获得Pdf.Ninja API密钥。"
+
+#~ msgid "How-To"
+#~ msgstr "怎么做"
+
+#~ msgid ""
+#~ "Attach a PDF file to your form and insert tags into your form that map to "
+#~ "fields in the PDF file."
+#~ msgstr ""
+#~ "附加一个PDF文件到您的表单，并插入标签到您的形式映射到PDF文件中的字段。"
 
 #~ msgid "Invalid attachment ID"
 #~ msgstr "无效附件ID"

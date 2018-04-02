@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pdf-forms-for-"
 "contact-form-7/\n"
-"POT-Creation-Date: 2018-02-13 20:32:04+00:00\n"
+"POT-Creation-Date: 2018-04-03 02:18:05+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -20,68 +20,104 @@ msgstr ""
 msgid "Pdf.Ninja API"
 msgstr "Pdf.Ninja API"
 
-#: modules/pdf-ninja.php:224 modules/pdf-ninja.php:256
+#: modules/pdf-ninja.php:94 modules/pdf-ninja.php:931
+msgid ""
+"Failed to get the Pdf.Ninja API key on last attempt.  Please retry manually."
+msgstr ""
+"تعذّر الحصول على مفتاح Pdf.Ninja API في آخر محاولة. يرجى إعادة المحاولة يدويًا."
+
+#: modules/pdf-ninja.php:122
+msgid "Failed to determine the current user."
+msgstr "فشل في تحديد المستخدم الحالي."
+
+#: modules/pdf-ninja.php:126
+msgid "Failed to determine the current user's email address."
+msgstr "فشل تحديد عنوان البريد الإلكتروني للمستخدم الحالي."
+
+#: modules/pdf-ninja.php:249
+msgid "PHP version 5.3 or higher is required."
+msgstr "PHP الإصدار 5.3 أو أعلى مطلوب."
+
+#: modules/pdf-ninja.php:255
+msgid "Windows platform is not supported."
+msgstr "نظام Windows الأساسي غير مدعوم."
+
+#: modules/pdf-ninja.php:261
+msgid "PHP safe mode is not supported."
+msgstr "الوضع الآمن PHP غير مدعوم."
+
+#: modules/pdf-ninja.php:269
+msgid "PHP execute functions (exec, proc_open, proc_close) are disabled."
+msgstr "يتم تعطيل وظائف تنفيذ PHP (exec و proc_open و proc_close)."
+
+#: modules/pdf-ninja.php:292
+msgid "Required binaries are not available on this platform."
+msgstr "الثنائيات المطلوبة غير متوفرة على هذا النظام الأساسي."
+
+#: modules/pdf-ninja.php:310 modules/pdf-ninja.php:365
 msgid "Failed to get API server response"
 msgstr "فشل في الحصول على استجابة الخادم API"
 
-#: modules/pdf-ninja.php:229 modules/pdf-ninja.php:261
+#: modules/pdf-ninja.php:319 modules/pdf-ninja.php:374
 msgid "Failed to decode API server response"
 msgstr "فشل في فك شفرة استجابة الملقم API"
 
-#: modules/pdf-ninja.php:277 modules/pdf-ninja.php:405
-#: modules/pdf-ninja.php:453
+#: modules/pdf-ninja.php:327 modules/pdf-ninja.php:382
+msgid "Failed to download a file from the API server"
+msgstr "أخفق تنزيل ملف من خادم واجهة برمجة التطبيقات"
+
+#: modules/pdf-ninja.php:409 modules/pdf-ninja.php:537
+#: modules/pdf-ninja.php:556 modules/pdf-ninja.php:598
+#: modules/pdf-ninja.php:712 modules/pdf-ninja.php:742
 msgid "Pdf.Ninja API server did not send an expected response"
 msgstr "لم الخادم API Pdf.Ninja لم ترسل ردا المتوقع"
 
-#: modules/pdf-ninja.php:331 wpcf7-pdf-forms.php:653
+#: modules/pdf-ninja.php:463 wpcf7-pdf-forms.php:787 wpcf7-pdf-forms.php:1200
 msgid "File not found"
 msgstr "لم يتم العثور على الملف"
 
-#: modules/pdf-ninja.php:421
+#: modules/pdf-ninja.php:603 modules/pdf-ninja.php:717
+#: modules/pdf-ninja.php:747 wpcf7-pdf-forms.php:468
+msgid "Failed to open file for writing"
+msgstr "فشل في فتح الملف للكتابة"
+
+#: modules/pdf-ninja.php:609 modules/pdf-ninja.php:723
+#: modules/pdf-ninja.php:753 wpcf7-pdf-forms.php:474
+msgid "Failed to create file"
+msgstr "فشل في إنشاء الملف"
+
+#: modules/pdf-ninja.php:647 modules/pdf-ninja.php:651
 msgid "Failed to encode JSON data"
 msgstr "أخفق ترميز بيانات جسون"
 
-#: modules/pdf-ninja.php:459
-msgid "Cannot download PDF file from the API server"
-msgstr "لا يمكن تحميل ملف PDF من خادم API"
-
-#: modules/pdf-ninja.php:464
-msgid "Cannot open temporary PDF file for writing"
-msgstr "لا يمكن فتح ملف PDF مؤقت للكتابة"
-
-#: modules/pdf-ninja.php:470
-msgid "Cannot create temporary PDF file"
-msgstr "لا يمكن إنشاء ملف PDF مؤقت"
-
-#: modules/pdf-ninja.php:505 wpcf7-pdf-forms.php:591 wpcf7-pdf-forms.php:863
-#: wpcf7-pdf-forms.php:909
+#: modules/pdf-ninja.php:788 wpcf7-pdf-forms.php:721 wpcf7-pdf-forms.php:1058
+#: wpcf7-pdf-forms.php:1242
 msgid "Permission denied"
 msgstr "طلب مرفوض"
 
-#: modules/pdf-ninja.php:560
+#: modules/pdf-ninja.php:845
 msgid ""
-"This service provides functionality for working with PDF forms via a web API."
+"This service provides functionality for working with PDF files via a web API."
 msgstr ""
-"توفر هذه الخدمة وظائف للعمل مع نماذج بدف عبر واجهة برمجة تطبيقات الويب."
+"توفر هذه الخدمة وظائف للعمل مع ملفات PDF عبر واجهة برمجة تطبيقات الويب."
 
-#: modules/pdf-ninja.php:561 modules/pdf-ninja.php:594
+#: modules/pdf-ninja.php:846 modules/pdf-ninja.php:883
 msgid "API Key"
 msgstr "API مفتاح"
 
-#: modules/pdf-ninja.php:563 modules/pdf-ninja.php:596
+#: modules/pdf-ninja.php:848 modules/pdf-ninja.php:885
 msgid "API URL"
 msgstr "API URL"
 
-#: modules/pdf-ninja.php:565 modules/pdf-ninja.php:598
+#: modules/pdf-ninja.php:850 modules/pdf-ninja.php:887
 msgid "Data Security"
 msgstr "أمن البيانات"
 
-#: modules/pdf-ninja.php:566 modules/pdf-ninja.php:599
+#: modules/pdf-ninja.php:851 modules/pdf-ninja.php:888
 msgid "Ignore certificate verification errors"
 msgstr "تجاهل أخطاء التحقق من الشهادة"
 
-#: modules/pdf-ninja.php:568 modules/pdf-ninja.php:601
-#: modules/pdf-ninja.php:650
+#: modules/pdf-ninja.php:853 modules/pdf-ninja.php:890
 msgid ""
 "Warning: Using plain HTTP or disabling certificate verification can lead to "
 "data leaks."
@@ -89,99 +125,136 @@ msgstr ""
 "تحذير: يمكن أن يؤدي استخدام هتب عادي أو تعطيل التحقق من الشهادة إلى تسرب "
 "البيانات."
 
-#: modules/pdf-ninja.php:569 modules/pdf-ninja.php:582
+#: modules/pdf-ninja.php:854
+msgid "Enterprise Extension"
+msgstr "المؤسسة التمديد"
+
+#: modules/pdf-ninja.php:855
+msgid "Extension is supported."
+msgstr "التمديد هو معتمد."
+
+#: modules/pdf-ninja.php:855
+msgid "Extension is not supported."
+msgstr "التمديد غير معتمد."
+
+#: modules/pdf-ninja.php:856 modules/pdf-ninja.php:869
 msgid "Edit"
 msgstr "تعديل"
 
-#: modules/pdf-ninja.php:580
+#: modules/pdf-ninja.php:867
 msgid "Error!"
 msgstr "خطأ!"
 
-#: modules/pdf-ninja.php:593
+#: modules/pdf-ninja.php:882
 msgid "The following form allows you to edit your API key."
 msgstr "النموذج التالي يسمح لك لتعديل مفتاح API الخاص بك."
 
-#: modules/pdf-ninja.php:604
+#: modules/pdf-ninja.php:893
 msgid "Save"
 msgstr "حفظ"
 
-#: modules/pdf-ninja.php:605
+#: modules/pdf-ninja.php:894
 msgid "Get New Key"
 msgstr "الحصول على مفتاح جديد"
 
-#: modules/pdf-ninja.php:616 modules/pdf-ninja.php:622
+#: modules/pdf-ninja.php:905 modules/pdf-ninja.php:911
 msgid "PDF Forms for CF7 plugin error"
 msgstr "أشكال PDF للخطأ CF7 المساعد"
 
-#: modules/pdf-ninja.php:617
+#: modules/pdf-ninja.php:906
 msgid "Can't save new key."
 msgstr "لا يمكن حفظ مفتاح جديد."
 
-#: modules/pdf-ninja.php:628
-msgid "Key saved."
-msgstr "المفتاح المحفوظ."
+#: modules/pdf-ninja.php:917
+msgid "Settings saved."
+msgstr "الإعدادات المحفوظة."
 
-#: modules/pdf-ninja.php:637 wpcf7-pdf-forms.php:169
+#: modules/pdf-ninja.php:930 wpcf7-pdf-forms.php:168
 msgid "PDF Forms Filler for CF7 plugin error"
 msgstr "أشكال PDF حشو للخطأ CF7 المساعد"
 
-#: modules/pdf-ninja.php:638
-msgid "Could not get a Pdf.Ninja API key."
-msgstr "لا يمكن الحصول على مفتاح API Pdf.Ninja."
+#: modules/pdf-ninja.php:946
+msgid ""
+"Warning: Your integration settings indicate you are using an insecure "
+"connection to the Pdf.Ninja API server."
+msgstr ""
+"تحذير: تشير إعدادات الدمج إلى أنك تستخدم اتصال غير آمن بخادم Pdf.Ninja API."
+
+#: modules/service.php:7 modules/service.php:12 modules/service.php:17
+#: modules/service.php:22 modules/service.php:27
+msgid "Missing feature"
+msgstr "ميزة مفقودة"
+
+#: wpcf7-pdf-forms.php:155
+msgid "Tutorial Video"
+msgstr "فيديو تعليمي"
 
 #: wpcf7-pdf-forms.php:156
-msgid "How-To"
-msgstr "كيف نفعل"
-
-#: wpcf7-pdf-forms.php:157
 msgid "Support"
 msgstr "الدعم"
 
-#: wpcf7-pdf-forms.php:170
+#: wpcf7-pdf-forms.php:169
 msgid "The required plugin 'Contact Form 7' is not installed!"
 msgstr "لم يتم تثبيت البرنامج المساعد المطلوب 'نموذج الاتصال 7'!"
 
-#: wpcf7-pdf-forms.php:227
+#: wpcf7-pdf-forms.php:226
 msgid "File not specified"
 msgstr "الملف غير محدد"
 
-#: wpcf7-pdf-forms.php:228
+#: wpcf7-pdf-forms.php:227
 msgid "Unknown error"
 msgstr "خطأ غير معروف"
 
-#: wpcf7-pdf-forms.php:229
+#: wpcf7-pdf-forms.php:228
 msgid "Please copy/paste tags manually"
 msgstr "يرجى نسخ / لصق العلامات يدويا"
 
-#: wpcf7-pdf-forms.php:230
+#: wpcf7-pdf-forms.php:229
 msgid ""
-"Are you sure you want to delete this attachment?  This will break field "
-"mappings for this attachment."
+"Are you sure you want to delete this file?  This will delete field mappings "
+"and image embeds associated with this file."
 msgstr ""
-"هل تريد بالتأكيد حذف هذا المرفق؟ سيؤدي هذا إلى كسر تعيينات الحقل لهذا المرفق."
+"هل أنت متأكد من أنك تريد حذف هذا الملف؟ سيؤدي هذا إلى حذف روابط الحقول "
+"والصور المرتبطة بهذا الملف."
 
-#: wpcf7-pdf-forms.php:231
+#: wpcf7-pdf-forms.php:230
 msgid "Are you sure you want to delete this mapping?"
 msgstr "هل تريد بالتأكيد حذف هذا التعيين؟"
 
-#: wpcf7-pdf-forms.php:252
+#: wpcf7-pdf-forms.php:231
+msgid "Are you sure you want to delete this embeded image?"
+msgstr "هل أنت متأكد من أنك تريد حذف هذه الصورة المتضمنة؟"
+
+#: wpcf7-pdf-forms.php:232 wpcf7-pdf-forms.php:1370
+msgid "Show Help"
+msgstr "عرض المساعدة"
+
+#: wpcf7-pdf-forms.php:233 wpcf7-pdf-forms.php:1371
+msgid "Hide Help"
+msgstr "إخفاء المساعدة"
+
+#: wpcf7-pdf-forms.php:254
 msgid "PDF Forms"
 msgstr "نماذج PDF"
 
-#: wpcf7-pdf-forms.php:588 wpcf7-pdf-forms.php:785 wpcf7-pdf-forms.php:855
-#: wpcf7-pdf-forms.php:901 wpcf7-pdf-forms.php:937 wpcf7-pdf-forms.php:1006
+#: wpcf7-pdf-forms.php:461
+msgid "Failed to download file"
+msgstr "فشلت في تحميل الملف"
+
+#: wpcf7-pdf-forms.php:718 wpcf7-pdf-forms.php:948 wpcf7-pdf-forms.php:1049
+#: wpcf7-pdf-forms.php:1153 wpcf7-pdf-forms.php:1233
 msgid "Nonce mismatch"
 msgstr "عدم تطابق حالية"
 
-#: wpcf7-pdf-forms.php:598
-msgid "Invalid file mime type, must be 'application/pdf'"
-msgstr "صالح نوع الملف التمثيل الصامت، يجب أن يكون application/pdf"
+#: wpcf7-pdf-forms.php:728
+msgid "Invalid file type, must be a PDF file"
+msgstr "نوع ملف غير صالح ، يجب أن يكون ملف PDF"
 
-#: wpcf7-pdf-forms.php:680
+#: wpcf7-pdf-forms.php:825
 msgid "No service"
 msgstr "لاتوجد خدمة"
 
-#: wpcf7-pdf-forms.php:803
+#: wpcf7-pdf-forms.php:966
 msgid ""
 "This PDF file does not appear to contain a PDF form.  See https://acrobat."
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
@@ -191,112 +264,185 @@ msgstr ""
 "us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html لمزيد من "
 "المعلومات."
 
-#: wpcf7-pdf-forms.php:860 wpcf7-pdf-forms.php:906
+#: wpcf7-pdf-forms.php:1055
 msgid "Invalid post ID"
 msgstr "ID آخر غير صالح"
 
-#: wpcf7-pdf-forms.php:1018
+#: wpcf7-pdf-forms.php:1124
 msgid "Failed to get Contact Form fields"
 msgstr "أخفق الحصول على حقول نموذج الاتصال"
 
-#: wpcf7-pdf-forms.php:1060 wpcf7-pdf-forms.php:1069
+#: wpcf7-pdf-forms.php:1239
+msgid "Invalid page number"
+msgstr "رقم الصفحة غير صالح"
+
+#: wpcf7-pdf-forms.php:1248
+msgid "Failed to retrieve page snapshot"
+msgstr "فشل في استرداد لقطة الصفحة"
+
+#: wpcf7-pdf-forms.php:1274 wpcf7-pdf-forms.php:1283
 msgid "PDF Form"
 msgstr "نموذج PDF"
 
-#: wpcf7-pdf-forms.php:1119
+#: wpcf7-pdf-forms.php:1333
 msgid ""
-"Attach a PDF file to your form and insert tags into your form that map to "
-"fields in the PDF file."
+"You can use this tag generator to attach a PDF file to your form, insert "
+"tags into your form and link them to fields in the PDF file.  You can also "
+"embed images (generated by other Contact Form 7 tags or fields) into the PDF "
+"file.  Changes here are applied when the contact form is saved."
 msgstr ""
-"إرفاق ملف PDF إلى النموذج الخاص بك وإدراج علامات في النموذج الذي تعيينه إلى "
-"الحقول في ملف PDF."
+"يمكنك استخدام مولد العلامة هذا لإرفاق ملف PDF إلى النموذج الخاص بك ، وإدراج "
+"العلامات في النموذج الخاص بك وربطها بالحقول الموجودة في ملف PDF. يمكنك أيضًا "
+"تضمين الصور (التي تم إنشاؤها بواسطة علامات أو نماذج جهات الاتصال 7 الأخرى) "
+"في ملف PDF. يتم تطبيق التغييرات هنا عند حفظ نموذج الاتصال."
 
-#: wpcf7-pdf-forms.php:1120
+#: wpcf7-pdf-forms.php:1334
 msgid "Upload & Attach a PDF File"
 msgstr "تحميل وإرفاق ملف PDF"
 
-#: wpcf7-pdf-forms.php:1121
+#: wpcf7-pdf-forms.php:1335
 msgid "Insert Tags"
 msgstr "إدراج الكلمات"
 
-#: wpcf7-pdf-forms.php:1122
+#: wpcf7-pdf-forms.php:1336
 msgid "Insert and Link"
 msgstr "إدراج والاتصال"
 
-#: wpcf7-pdf-forms.php:1123
+#: wpcf7-pdf-forms.php:1337
 msgid ""
-"With this button, you can generate tags for all remaining unmapped PDF "
-"fields, insert them into the form and match them to their corresponding "
+"This button allows you to generate tags for all remaining unlinked PDF "
+"fields, insert them into the form and link them to their corresponding "
 "fields."
 msgstr ""
-"باستخدام هذا الزر، يمكنك إنشاء علامات لجميع حقول بدف غير المرتبطة المتبقية "
-"وإدراجها في النموذج ومطابقتها مع الحقول المناظرة لها."
+"يتيح لك هذا الزر إنشاء علامات لكافة حقول PDF غير المرتبطة المتبقية ، "
+"وإدراجها في النموذج وربطها بالحقول المقابلة لها."
 
-#: wpcf7-pdf-forms.php:1124
+#: wpcf7-pdf-forms.php:1338
 msgid "Insert & Link All"
 msgstr "إدراج وربط كل شيء"
 
-#: wpcf7-pdf-forms.php:1125
-msgid "Get Tags"
-msgstr "احصل على الكلمات"
-
-#: wpcf7-pdf-forms.php:1126
+#: wpcf7-pdf-forms.php:1339 wpcf7-pdf-forms.php:1357
 msgid "Delete"
 msgstr "حذف"
 
-#: wpcf7-pdf-forms.php:1127
+#: wpcf7-pdf-forms.php:1340
 msgid "Options"
 msgstr "خيارات"
 
-#: wpcf7-pdf-forms.php:1128
+#: wpcf7-pdf-forms.php:1341
 msgid "Skip when empty"
 msgstr "تخطي عندما تكون فارغة"
 
-#: wpcf7-pdf-forms.php:1129
+#: wpcf7-pdf-forms.php:1342
 msgid "Attach to primary email message"
 msgstr "إرفاق رسالة البريد الإلكتروني الأساسية"
 
-#: wpcf7-pdf-forms.php:1130
+#: wpcf7-pdf-forms.php:1343
 msgid "Attach to secondary email message"
 msgstr "إرفاق رسالة بريد إلكتروني ثانوية"
 
-#: wpcf7-pdf-forms.php:1131
+#: wpcf7-pdf-forms.php:1344
 msgid "Flatten"
 msgstr "تسطح"
 
-#: wpcf7-pdf-forms.php:1132
-msgid "Input Field Mapper Tool (simple)"
-msgstr "أداة تعيين حقل الإدخال (بسيطة)"
+#: wpcf7-pdf-forms.php:1345
+msgid "Field Mapper Tool"
+msgstr "مجال ربط أداة"
 
-#: wpcf7-pdf-forms.php:1133
+#: wpcf7-pdf-forms.php:1346
+msgid ""
+"This tool can be used to link Contact Form 7 fields with fields within the "
+"PDF files.  Contact Form 7 fields can also be generated.  When the user "
+"submits the form, data from Contact Form 7 fields will be inserted into "
+"correspoinding fields in the PDF file."
+msgstr ""
+"هذه الأداة يمكن أن تستخدم لربط الاتصال نموذج 7 الحقول الحقول داخل ملفات PDF. "
+"نموذج الاتصال 7 حقول ويمكن أيضا أن تتولد. عندما يكون المستخدم على شكل بيانات "
+"من نموذج الاتصال 7 الحقول سيتم إدراجها في الحقول المقابلة في ملف PDF."
+
+#: wpcf7-pdf-forms.php:1347
 msgid "PDF field"
 msgstr "بدف"
 
-#: wpcf7-pdf-forms.php:1134
+#: wpcf7-pdf-forms.php:1348
 msgid "CF7 field"
 msgstr "CF7 حقل الإدخال"
 
-#: wpcf7-pdf-forms.php:1135
+#: wpcf7-pdf-forms.php:1349
 msgid "Add Mapping"
 msgstr "إضافة تعيين"
 
-#: wpcf7-pdf-forms.php:1136
+#: wpcf7-pdf-forms.php:1350
+msgid "Delete All"
+msgstr "حذف الكل"
+
+#: wpcf7-pdf-forms.php:1351
 msgid "New Tag:"
 msgstr "احصل على الكلماتعلامة جديدة:"
 
-#: wpcf7-pdf-forms.php:1137
-msgid "Tag Generator Tool (advanced)"
-msgstr "أداة مولد العلامات (متقدم)"
+#: wpcf7-pdf-forms.php:1352
+msgid "Tag Generator Tool (deprecated)"
+msgstr "الوسم أداة مولد (إهمال)"
 
-#: wpcf7-pdf-forms.php:1145
+#: wpcf7-pdf-forms.php:1353
+msgid ""
+"This tool allows one to create CF7 fields that are linked to PDF fields by "
+"name.  This feature is deprecated in favor of the field mapper tool."
+msgstr ""
+"تسمح هذه الأداة بإنشاء حقول CF7 المرتبطة بحقول PDF بالاسم. تم إيقاف هذه "
+"الميزة لصالح أداة معين الموقع."
+
+#: wpcf7-pdf-forms.php:1354
+msgid "Image Embedding Tool"
+msgstr "صورة تضمين أداة"
+
+#: wpcf7-pdf-forms.php:1355
+msgid ""
+"This tool allows embedding images into PDF files.  Images are taken from "
+"field attachments or field values that are URLs.  You must select a PDF "
+"file, its page and draw a bounding box for image insertion."
+msgstr ""
+"هذه الأداة تسمح بتضمين الصور في ملفات PDF. يتم التقاط الصور من المرفقات "
+"الميدانية أو قيم الحقول التي هي عناوين URL. يجب تحديد ملف PDF وصفحته ورسم "
+"مربعًا محيطًا لإدراج الصورة."
+
+#: wpcf7-pdf-forms.php:1356
+msgid "Embed Image"
+msgstr "تضمين صورة"
+
+#: wpcf7-pdf-forms.php:1358
+msgid "PDF file"
+msgstr "ملف PDF"
+
+#: wpcf7-pdf-forms.php:1359
+msgid "Page"
+msgstr "صفحة"
+
+#: wpcf7-pdf-forms.php:1360
+msgid "Select a region where the image needs to be embeded."
+msgstr "حدد منطقة تحتاج إلى تضمين الصورة فيها."
+
+#: wpcf7-pdf-forms.php:1368
 msgid ""
 "Have a question/comment/problem?  Feel free to use {a-href-forum}the support "
-"forum{/a} and view {a-href-howto}the How-To video{/a}."
+"forum{/a} and view {a-href-tutorial}the tutorial video{/a}."
 msgstr ""
 "لديك سؤال / تعليق / مشكلة؟ لا تتردد في استخدام {a-href-forum} منتدى الدعم {/"
-"a} ومشاهدة {a-href-howto} فيديو كيف {/a}."
+"a} واعرض {a-href-tutorial} الفيديو التعليمي {/a}."
 
-#: wpcf7-pdf-forms.php:1151
+#: wpcf7-pdf-forms.php:1372
+msgid "Get Tags"
+msgstr "احصل على الكلمات"
+
+#: wpcf7-pdf-forms.php:1373
+msgid "All PDFs"
+msgstr "جميع ملفات PDF"
+
+#: wpcf7-pdf-forms.php:1374
+msgid "Return to Form"
+msgstr "العودة إلى النموذج"
+
+#: wpcf7-pdf-forms.php:1379
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr "بك CF7 البرنامج المساعد هو أيضا خارج التاريخ، الرجاء الترقية."
 
@@ -310,17 +456,15 @@ msgstr "https://github.com/maximum-software/wpcf7-pdf-forms"
 
 #. Description of the plugin/theme
 msgid ""
-"Create Contact Form 7 forms from PDF forms.  Get <strong>PDF forms filled "
-"automatically</strong> and <strong>attached to email messages</strong> upon "
-"form submission on your website.  Uses <a href=\"https://pdf.ninja\">Pdf."
-"Ninja</a> API for working with PDF files.  See <a href=\"https://youtu.be/"
-"e4ur95rER6o\">How-To Video</a> for a demo."
+"Create Contact Form 7 forms from PDF forms.  Get PDF forms filled "
+"automatically and attached to email messages upon form submission on your "
+"website.  Embed images in PDF files.  Uses Pdf.Ninja API for working with "
+"PDF files.  See tutorial video for a demo."
 msgstr ""
-"إنشاء نموذج الاتصال 7 أشكال من أشكال بدف. احصل على <strong> نماذج بدف مملوءة "
-"تلقائيا </strong> و <strong> مرفقة برسائل البريد الإلكتروني </strong> عند "
-"إرسال النموذج على موقعك على الويب. يستخدم <a href=\"https://pdf.ninja\"> "
-"واجهة برمجة تطبيقات Pdf.Ninja </a> للعمل مع ملفات بدف. اطلع على <a href="
-"\"https://youtu.be/e4ur95rER6o\"> فيديو كيفية العرض </a> لعرض توضيحي."
+"إنشاء نموذج الاتصال 7 أشكال من أشكال PDF. احصل على نماذج PDF تملأ تلقائيا "
+"وتعلق على رسائل البريد الإلكتروني عند تقديم النموذج على موقع الويب الخاص بك. "
+"تضمين الصور في ملفات PDF. يستخدم Pdf.Ninja API للعمل مع ملفات PDF. انظر "
+"الفيديو التعليمي للحصول على عرض توضيحي."
 
 #. Author of the plugin/theme
 msgid "Maximum.Software"
@@ -329,6 +473,22 @@ msgstr "Maximum.Software"
 #. Author URI of the plugin/theme
 msgid "https://maximum.software/"
 msgstr "https://maximum.software/"
+
+#~ msgid "Cannot create temporary PDF file"
+#~ msgstr "لا يمكن إنشاء ملف PDF مؤقت"
+
+#~ msgid "Could not get a Pdf.Ninja API key."
+#~ msgstr "لا يمكن الحصول على مفتاح API Pdf.Ninja."
+
+#~ msgid "How-To"
+#~ msgstr "كيف نفعل"
+
+#~ msgid ""
+#~ "Attach a PDF file to your form and insert tags into your form that map to "
+#~ "fields in the PDF file."
+#~ msgstr ""
+#~ "إرفاق ملف PDF إلى النموذج الخاص بك وإدراج علامات في النموذج الذي تعيينه "
+#~ "إلى الحقول في ملف PDF."
 
 #~ msgid "Invalid attachment ID"
 #~ msgstr "ID مرفق غير صالح"
