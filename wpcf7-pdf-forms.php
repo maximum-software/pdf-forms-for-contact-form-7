@@ -1347,6 +1347,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'pdf-field' => esc_html__( 'PDF field', 'wpcf7-pdf-forms' ),
 					'cf7-field' => esc_html__( 'CF7 field', 'wpcf7-pdf-forms' ),
 					'add-mapping' => esc_html__( 'Add Mapping', 'wpcf7-pdf-forms' ),
+					'delete-all-mappings' => esc_html__( 'Delete All', 'wpcf7-pdf-forms' ),
 					'new-tag' => esc_html__( 'New Tag:', 'wpcf7-pdf-forms' ),
 					'tag-generator' => esc_html__( 'Tag Generator Tool (deprecated)', 'wpcf7-pdf-forms' ),
 					'tag-generator-help' => esc_html__( 'This tool allows one to create CF7 fields that are linked to PDF fields by name.  This feature is deprecated in favor of the field mapper tool.', 'wpcf7-pdf-forms' ),

@@ -545,6 +545,11 @@ jQuery(document).ready(function($) {
 		setMappings(mappings);
 	};
 	
+	var deleteAllMappings = function() {
+		setMappings([]);
+		refreshMappings();
+	};
+	
 	var addMapping = function(cf7_field, pdf_field) {
 		
 		var mappings = getMappings();
@@ -602,7 +607,8 @@ jQuery(document).ready(function($) {
 			});
 		}
 		
-		jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper tbody').append(tag);
+		tag.insertBefore(jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper .delete-all-row'));
+		jQuery('.wpcf7-pdf-forms-admin .delete-all-row').show();
 	};
 	
 	var refreshMappings = function() {
@@ -614,6 +620,11 @@ jQuery(document).ready(function($) {
 		var mappings = getMappings();
 		for(var i=0, l=mappings.length; i<l; i++)
 			addMappingEntry(mappings[i].cf7_field, mappings[i].pdf_field);
+		
+		if(mappings.length==0)
+			jQuery('.wpcf7-pdf-forms-admin .delete-all-row').hide();
+		else
+			jQuery('.wpcf7-pdf-forms-admin .delete-all-row').show();
 	};
 	
 	var reloadDefaultMappings = function() {
@@ -1187,6 +1198,20 @@ jQuery(document).ready(function($) {
 		
 		if(cf7_field && pdf_field)
 			addMapping(cf7_field, pdf_field);
+		
+		return false;
+	});
+	
+	// set up 'Delete All Mappings' button handler
+	jQuery('.wpcf7-pdf-forms-admin .delete-all-mappings-button').click(function(event) {
+		
+		// prevent running default button click handlers
+		event.stopPropagation();
+		event.preventDefault();
+		
+		clearMessages();
+		
+		deleteAllMappings();
 		
 		return false;
 	});
