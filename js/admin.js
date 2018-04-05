@@ -155,7 +155,16 @@ jQuery(document).ready(function($) {
 			});
 		});
 		
-		pdfFields = pdfFieldsA.concat(pdfFieldsB);
+		var ids = [];
+		pdfFields = [];
+		
+		jQuery.each(pdfFieldsA.concat(pdfFieldsB), function(f, field) {
+			if(ids.indexOf(field.id) == -1)
+			{
+				ids.push(field.id);
+				pdfFields.push(field);
+			}
+		});
 		
 		refreshPdfFields();
 	};
@@ -175,13 +184,18 @@ jQuery(document).ready(function($) {
 		
 		jQuery.each(pdfFields, function(f, field) {
 			
+			var field_pdf_field = String(field.id);
+			var field_attachment_id = field_pdf_field.substr(0, field_pdf_field.indexOf('-'));
+			var field_pdf_field_name = field_pdf_field.substr(field_pdf_field.indexOf('-')+1);
+			
 			for(var i=0, l=mappings.length; i<l; i++)
 			{
-				mapped_id = String(mappings[i].pdf_field);
-				field_id = String(field.id);
-				mapped_id = mapped_id.substr(mapped_id.indexOf('-')+1);
-				field_id = field_id.substr(field_id.indexOf('-')+1);
-				if(mapped_id == field_id)
+				var mapping_pdf_field = String(mappings[i].pdf_field);
+				var mapping_attachment_id = mapping_pdf_field.substr(0, mapping_pdf_field.indexOf('-'));
+				var mapping_pdf_field_name = mapping_pdf_field.substr(mapping_pdf_field.indexOf('-')+1);
+				
+				if( (mapping_attachment_id == 'all' || field_attachment_id == 'all' || mapping_attachment_id == field_attachment_id)
+					&& mapping_pdf_field_name == field_pdf_field_name)
 					return;
 			}
 			
@@ -198,7 +212,7 @@ jQuery(document).ready(function($) {
 		
 		jQuery.each(getUnmappedPdfFields(), function(f, field) {
 			
-			pdf_fields.append(jQuery('<option>', { 
+			pdf_fields.append(jQuery('<option>', {
 				value: field.id,
 				text : field.caption
 			}));
@@ -1061,7 +1075,7 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
-	// set up 'Insert Tag' button handler
+	// set up 'Insert And Link' button handler
 	jQuery('.wpcf7-pdf-forms-admin .insert-tag-hint-btn').click(function(event) {
 		
 		// prevent running default button click handlers
@@ -1082,7 +1096,7 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
-	// set up 'Insert and Link' button handler
+	// set up 'Insert & Link All' button handler
 	jQuery('.wpcf7-pdf-forms-admin .insert-and-map-all-tags-btn').click(function(event) {
 		
 		// prevent running default button click handlers
