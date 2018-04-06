@@ -618,6 +618,10 @@ jQuery(document).ready(function($) {
 				deleteMapping(jQuery(this).data('cf7_field'), jQuery(this).data('pdf_field'));
 				
 				tag.remove();
+				
+				var mappings = getMappings();
+				if(mappings.length==0)
+					jQuery('.wpcf7-pdf-forms-admin .delete-all-row').hide();
 			});
 		}
 		
