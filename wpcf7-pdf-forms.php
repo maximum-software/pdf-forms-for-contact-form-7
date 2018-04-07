@@ -152,7 +152,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function action_links( $links )
 		{
-			$links[] = '<a target="_blank" href="https://youtu.be/e4ur95rER6o">'.esc_html__( "Tutorial Video", 'wpcf7-pdf-forms' ).'</a>';
+			$links[] = '<a target="_blank" href="https://youtu.be/jy84xqnj0Zk">'.esc_html__( "Tutorial Video", 'wpcf7-pdf-forms' ).'</a>';
 			$links[] = '<a target="_blank" href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/">'.esc_html__( "Support", 'wpcf7-pdf-forms' ).'</a>';
 			return $links;
 		}
@@ -1362,7 +1362,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						array('{a-href-forum}','{a-href-tutorial}','{/a}'),
 						array(
 							'<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
-							'<a href="https://youtu.be/e4ur95rER6o" target="_blank">',
+							'<a href="https://youtu.be/jy84xqnj0Zk" target="_blank">',
 							'</a>'
 						),
 						esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'wpcf7-pdf-forms' )

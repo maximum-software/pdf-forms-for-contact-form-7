@@ -13,7 +13,7 @@ Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically 
 
 == Description ==
 
-[youtube http://www.youtube.com/watch?v=e4ur95rER6o]
+[youtube http://www.youtube.com/watch?v=jy84xqnj0Zk]
 
 This plugin gives WordPress Admin Panel users the ability to add fillable PDF attachments to email messages of Contact Form 7.
 
@@ -38,7 +38,7 @@ Special thanks to the following sponsors of this plugin,
 
 = 1.0.0 =
 
-* Release date: April 1, 2018
+* Release date: April 6, 2018
 
 * Major plugin refactoring
 * Added image embedding tool
