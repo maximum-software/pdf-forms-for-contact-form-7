@@ -298,7 +298,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public static function unset_meta( $post_id, $key )
 		{
 			delete_post_meta( $post_id, "wpcf7-pdf-forms-" . $key );
-			return $value;
 		}
 		
 		/**
