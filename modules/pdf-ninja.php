@@ -359,6 +359,9 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		
 		$response = wp_remote_post( $this->get_api_url() . '/api/v1/' . $endpoint, $args );
 		
+		if( is_wp_error( $response ) )
+			throw new Exception( implode( ', ', $response->get_error_messages() ) );
+		
 		$body = wp_remote_retrieve_body( $response );
 		
 		if( ! $body )
