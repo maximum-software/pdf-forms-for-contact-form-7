@@ -903,6 +903,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					
 					foreach( $options as &$option )
 						$tagValues .= '"' . $option . '" ';
+					
+					if( $type == 'checkbox' && count($options) > 1 )
+						$tagOptions .= 'exclusive ';
 				}
 				else
 					return null;
