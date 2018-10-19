@@ -1017,8 +1017,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$fields = $this->get_fields( $attachment_id );
 			foreach( $fields as $id => &$field )
 			{
+				if(!isset($field['type']))
+					return;
+				
 				$type = strval($field['type']);
-				$name = strval($field['name']);
 				
 				// sanity check
 				if( ! ( $type === 'text' || $type === 'radio' || $type === 'select' || $type === 'checkbox' ) )
@@ -1026,6 +1028,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					unset($fields[$id]);
 					continue;
 				}
+				
+				$name = strval($field['name']);
 				
 				$encoded_name = self::base64url_encode( $name );
 				$slug = sanitize_title( $name );
