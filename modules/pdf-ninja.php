@@ -285,6 +285,14 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 				return true;
 		}
 		
+		// check /proc/self/stat (required for pdftk)
+		if( !file_exists( '/proc/self/stat' ) )
+		{
+			$this->enterprise_extension_support_error = __( 'Chroot environments are not supported', 'wpcf7-pdf-forms' );
+			return false;
+		}
+		
+		
 		$arch = php_uname( "m" );
 		if( $arch == 'x86_64' )
 			return true;
