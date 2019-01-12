@@ -292,7 +292,6 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			return false;
 		}
 		
-		
 		$arch = php_uname( "m" );
 		if( $arch == 'x86_64' )
 			return true;
