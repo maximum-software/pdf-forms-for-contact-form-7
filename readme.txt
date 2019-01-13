@@ -23,6 +23,11 @@ When your website visitor submits the CF7 form, the form in the PDF file is fill
 
 An external web API (https://pdf.ninja) is used for filling PDF forms (free usage has limitations).  An Enterprise Extension, which enables performing all PDF operations locally on your web server (no external web API), is available upon request.
 
+Known incompatible plugins,
+* [Contact Form 7 Live Preview](https://wordpress.org/plugins/cf7-live-preview/)
+* [Smart Grid-Layout Design for Contact Form 7](https://wordpress.org/plugins/cf7-grid-layout/)
+* [Open external links in a new window](https://wordpress.org/plugins/open-external-links-in-a-new-window/)
+
 Special thanks to the following sponsors of this plugin,
 * [BrowserStack](https://www.browserstack.com/)
 * [Momentum3](http://momentum3.biz/)
