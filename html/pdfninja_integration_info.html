@@ -4,7 +4,7 @@
 	<tbody>
 		<tr>
 			<th scope="row">{key-label}</th>
-			<td class="code">{key}</td>
+			<td class="code"><span id="pdf-ninja-key">{key}</span> <button id="copy-pdf-ninja-key-btn">{key-copy-btn-label}</button></td>
 		</tr>
 		<tr>
 			<th scope="row">{api-url-label}</th>
@@ -23,6 +23,21 @@
 		</tr>
 	</tbody>
 </table>
+
+<script type="text/javascript">
+	jQuery(document).ready(function($) {
+		jQuery("#copy-pdf-ninja-key-btn").click(function() {
+			var tmp = jQuery("<input>");
+			jQuery("body").append(tmp);
+			tmp.val(jQuery("#pdf-ninja-key").text()).select();
+			document.execCommand("copy");
+			tmp.remove();
+			var btn = this;
+			setTimeout(function() { jQuery(btn).text("{key-copied-btn-label}"); }, 1);
+			setTimeout(function() { jQuery(btn).text("{key-copy-btn-label}"); }, 1000);
+		});
+	});
+</script>
 
 <p>{security-warning}</p>
 

@@ -855,6 +855,8 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'top-message' => esc_html__( "This service provides functionality for working with PDF files via a web API.", 'wpcf7-pdf-forms' ),
 			'key-label' => esc_html__( 'API Key', 'wpcf7-pdf-forms' ),
 			'key' => esc_html( $key ),
+			'key-copy-btn-label' => esc_html__( 'copy key', 'wpcf7-pdf-forms' ),
+			'key-copied-btn-label' => esc_html__( 'copied!', 'wpcf7-pdf-forms' ),
 			'api-url-label' => esc_html__( 'API URL', 'wpcf7-pdf-forms' ),
 			'api-url' => esc_html( $this->get_api_url() ),
 			'security-label' => esc_html__( 'Data Security', 'wpcf7-pdf-forms' ),
