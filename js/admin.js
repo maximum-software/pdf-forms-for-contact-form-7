@@ -1117,7 +1117,7 @@ jQuery(document).ready(function($) {
 			jQuery.each(pdf_fields, function(f, field) {
 				if(field.attachment_id == 'all' && field.tag_hint)
 					tagText +=
-						'<label>' + $("<div>").text(field.name).html() + '</label>\n' +
+						'<label>' + jQuery("<div>").text(field.name).html() + '</label>\n' +
 						'    ' + field.tag_hint + '\n\n';
 			});
 			
@@ -1251,7 +1251,9 @@ jQuery(document).ready(function($) {
 			'page': page
 		});
 		
-		$(this).closest('#TB_ajaxContent').animate({scrollTop: $(".wpcf7-pdf-forms-admin .image-embeds-row").last().position().top}, 1000);
+		var embedRowPosition = jQuery(".wpcf7-pdf-forms-admin .image-embeds-row").last().position();
+		if(embedRowPosition)
+			jQuery(this).closest('#TB_ajaxContent').animate({scrollTop: embedRowPosition.top}, 1000);
 		
 		return false;
 	});
