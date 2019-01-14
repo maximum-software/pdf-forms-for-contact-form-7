@@ -17,7 +17,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 {
 	class WPCF7_Pdf_Forms
 	{
-		const VERSION = '1.0.0';
+		const VERSION = '1.0.1';
 		
 		private static $instance = null;
 		private $pdf_ninja_service = null;

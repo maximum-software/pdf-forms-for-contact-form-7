@@ -2,10 +2,10 @@
 Contributors: maximumsoftware
 Tags: pdf, form, filler, contact form, attachment, email
 Requires at least: 4.3
-Tested up to: 4.9
+Tested up to: 5.0.3
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.0.0
+Version: 1.0.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -40,6 +40,12 @@ Special thanks to the following sponsors of this plugin,
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.0.1 =
+
+* Release date: January 14, 2018
+
+* Bug fixes and improvements
 
 = 1.0.0 =
 
