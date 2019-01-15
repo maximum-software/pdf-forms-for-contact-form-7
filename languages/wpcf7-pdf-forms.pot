@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the PDF Forms Filler for Contact Form 7 package.
 msgid ""
 msgstr ""
-"Project-Id-Version: PDF Forms Filler for Contact Form 7 1.0.0\n"
+"Project-Id-Version: PDF Forms Filler for Contact Form 7 1.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pdf-forms-for-"
 "contact-form-7/\n"
 "POT-Creation-Date: 2019-01-14 16:06:39+00:00\n"

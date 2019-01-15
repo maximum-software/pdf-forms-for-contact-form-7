@@ -43,7 +43,7 @@ Special thanks to the following sponsors of this plugin,
 
 = 1.0.1 =
 
-* Release date: January 15, 2018
+* Release date: January 15, 2019
 
 * Bug fixes and improvements
 
