@@ -309,7 +309,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$this->post_update_pdf( $post_id, $attachment_id, $options );
 		}
 		
-		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false );
+		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "" );
 		
 		/**
 		 * Updates post attachment options
@@ -489,7 +489,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$filename = wp_unique_filename( $uploads_dir, $filename );
 			return trailingslashit( $uploads_dir ) . $filename;
 		}
-		
 		/**
 		 * When form data is posted, this function communicates with the API
 		 * to fill the form data and get the PDF file with filled form fields
@@ -561,6 +560,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			
 			$files = array();
+			$files_count = 0;
+			$name_destfile ="";
 			foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
 			{
 				$fields = $this->get_fields( $attachment_id );
@@ -641,6 +642,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$mail = $attachment['options']['attach_to_mail_1'];
 				$mail2 = $attachment['options']['attach_to_mail_2'];
+
 				
 				if( !$mail && !$mail2 )
 					continue;
@@ -651,10 +653,41 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					isset($attachment['options']) &&
 					isset($attachment['options']['flatten']) &&
 					$attachment['options']['flatten'] == true;
-				
+
+
 				$filepath = get_attached_file( $attachment_id );
-				$destfile = self::create_wpcf7_tmp_filepath( basename( $filepath ) );
-				
+
+				$filename = $attachment['options']['filename'];
+
+				if ( !empty( $filename )){
+					$pattern = '/\[(.+?)\]/';
+					preg_match_all($pattern, $filename, $matches_str, PREG_PATTERN_ORDER);
+					if ( is_array($matches_str[1]) && !empty($matches_str[1]) ){  // if str contains [tags][tags]
+						$name_destfile ="";
+						foreach ( $matches_str[1] as $key => $value ) {
+
+							if ( is_array( $value ) )
+								$value = array_shift($value );
+							$value = strval( $value );
+							if ( $value === '' )
+								continue;
+							if ( array_key_exists( $value,$processed_data) ){
+								$name_destfile .= sanitize_file_name( $processed_data[$value] );
+							}else {
+								$name_destfile = "invalid tag value";
+							}
+						}
+					}
+					else {
+						$name_destfile = sanitize_file_name( $filename );;  //if str contains string
+					}
+
+				}else {
+					$name_destfile = pathinfo( $filepath )['filename']; // if str is empty take name from attachment
+				}
+
+				$destfile = self::create_wpcf7_tmp_filepath( $name_destfile.'.pdf' );
+
 				try
 				{
 					$service = $this->get_service();
@@ -1351,6 +1384,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'attach-to-mail-1' => esc_html__( 'Attach to primary email message', 'wpcf7-pdf-forms' ),
 					'attach-to-mail-2' => esc_html__( 'Attach to secondary email message', 'wpcf7-pdf-forms' ),
 					'flatten' => esc_html__( 'Flatten', 'wpcf7-pdf-forms' ),
+					'filename' => esc_html__( 'Filename ([tags] allowed)', 'wpcf7-pdf-forms' ),
 					'field-mapping' => esc_html__( 'Field Mapper Tool', 'wpcf7-pdf-forms' ),
 					'field-mapping-help' => esc_html__( 'This tool can be used to link Contact Form 7 fields with fields within the PDF files.  Contact Form 7 fields can also be generated.  When the user submits the form, data from Contact Form 7 fields will be inserted into correspoinding fields in the PDF file.', 'wpcf7-pdf-forms' ),
 					'pdf-field' => esc_html__( 'PDF field', 'wpcf7-pdf-forms' ),
