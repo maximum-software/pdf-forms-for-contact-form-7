@@ -489,6 +489,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$filename = wp_unique_filename( $uploads_dir, $filename );
 			return trailingslashit( $uploads_dir ) . $filename;
 		}
+
+
 		/**
 		 * When form data is posted, this function communicates with the API
 		 * to fill the form data and get the PDF file with filled form fields
@@ -517,20 +519,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$uploaded_files = $submission->uploaded_files();
 			
 			// preprocess posted data
-			$processed_data = array();
-			foreach( $posted_data as $key => $value )
-			{
-				if( is_array( $value ) )
-					$value = array_shift( $value );
-				$value = strval( $value );
-				if( $value === '' )
-					continue;
-				
-				$value = wp_unslash( $value );
-				
-				$processed_data[$key] = $value;
-			}
-			
+			$processed_data = $this->get_array_keys($posted_data);
+
 			// preprocess embedded images
 			$embed_fields = array();
 			foreach( $embeds as $embed )
@@ -654,39 +644,18 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					isset($attachment['options']['flatten']) &&
 					$attachment['options']['flatten'] == true;
 
-
 				$filepath = get_attached_file( $attachment_id );
 
 				$filename = $attachment['options']['filename'];
 
-				if ( !empty( $filename )){
-					$pattern = '/\[(.+?)\]/';
-					preg_match_all($pattern, $filename, $matches_str, PREG_PATTERN_ORDER);
-					if ( is_array($matches_str[1]) && !empty($matches_str[1]) ){  // if str contains [tags][tags]
-						$name_destfile ="";
-						foreach ( $matches_str[1] as $key => $value ) {
-
-							if ( is_array( $value ) )
-								$value = array_shift($value );
-							$value = strval( $value );
-							if ( $value === '' )
-								continue;
-							if ( array_key_exists( $value,$processed_data) ){
-								$name_destfile .= sanitize_file_name( $processed_data[$value] );
-							}else {
-								$name_destfile = "invalid tag value";
-							}
-						}
-					}
-					else {
-						$name_destfile = sanitize_file_name( $filename );;  //if str contains string
-					}
-
-				}else {
-					$name_destfile = pathinfo( $filepath )['filename']; // if str is empty take name from attachment
+				if ( !empty( $filename ))
+				{
+					$filename = $this->normalize( $filename );
+					$name_destfile = sanitize_file_name( $filename );
 				}
+				else $name_destfile = pathinfo( $filepath )['filename'];
 
-				$destfile = self::create_wpcf7_tmp_filepath( $name_destfile.'.pdf' );
+				$destfile = self::create_wpcf7_tmp_filepath( $name_destfile.'.pdf' ); //if $name_destfile is empty create_wpcf7_tmp_filepath generate unnamed-file.pdf
 
 				try
 				{
@@ -738,7 +707,51 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$contact_form->set_properties( array( 'mail' => $mail, 'mail_2' => $mail2 ) );
 			}
 		}
-		
+
+		public function normalize( $content ) {
+			$pattern = '/\[(.+?)\]/';
+			$content = preg_replace_callback(
+				$pattern,
+				array( $this, 'normalize_callback'),
+				$content );
+
+			return $content;
+		}
+
+		/*
+		 * get tags[keys]
+		 */
+		public function get_array_keys($posted_data){
+			$processed_data = array();
+			foreach ($posted_data as $key => $value) {
+				if (is_array($value))
+					$value = array_shift($value);
+				$value = strval($value);
+				if ($value === '')
+					continue;
+
+				$value = wp_unslash($value);
+
+				$processed_data[$key] = $value;
+			}
+			return $processed_data;
+		}
+
+		private function normalize_callback( $matches_str  ) {
+
+				$submission = WPCF7_Submission::get_instance();
+				$posted_data = $submission->get_posted_data();
+				// preprocess posted data
+				$processed_data = $this->get_array_keys($posted_data);
+				$name_destfile = "";
+				if (is_array($matches_str) && !empty($matches_str))
+				{  // if str contains [tags][tags]
+					if (array_key_exists($matches_str[1], $processed_data)) {
+						$name_destfile = sanitize_file_name($processed_data[$matches_str[1]]);
+					}
+				}
+				return $name_destfile;
+		}
 		/**
 		 * Used for uploading a pdf file to the server in wp-admin interface
 		 */
