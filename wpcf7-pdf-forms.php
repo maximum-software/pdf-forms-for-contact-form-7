@@ -653,7 +653,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$filename = $this->normalize( $filename );
 					$name_destfile = sanitize_file_name( $filename );
 				}
-				else $name_destfile = pathinfo( $filepath )['filename'];
+				else $name_destfile = basename( $filepath,'.pdf' );
 
 				$destfile = self::create_wpcf7_tmp_filepath( $name_destfile.'.pdf' ); //if $name_destfile is empty create_wpcf7_tmp_filepath generate unnamed-file.pdf
 
