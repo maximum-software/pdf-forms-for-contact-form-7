@@ -5,7 +5,7 @@ Requires at least: 4.3
 Tested up to: 5.0.3
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.0.1
+Version: 1.0.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -40,6 +40,13 @@ Special thanks to the following sponsors of this plugin,
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.0.2 =
+
+* Release date: February 12, 2019
+
+* Added filename option with mail-tags feature
+* Minor fixes and improvements
 
 = 1.0.1 =
 
