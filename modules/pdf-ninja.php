@@ -805,7 +805,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 					$nosslverify = isset( $_POST['nosslverify'] ) ? trim( wp_unslash( $_POST['nosslverify'] ) ) : false;
 					if( $success ) $success = $this->set_verify_ssl( !(bool)$nosslverify );
 					
-					if( $_POST['new'] )
+					if( isset( $_POST['new'] ) && $_POST['new'] )
 						$key = $this->generate_key();
 					else
 						$key = isset( $_POST['key'] ) ? trim( wp_unslash( $_POST['key'] ) ) : null;
