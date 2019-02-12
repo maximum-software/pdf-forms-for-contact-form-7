@@ -681,10 +681,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						copy( $filepath, $destfile );
 					$files[] = array( 'file' => $destfile, 'mail' => $mail, 'mail2' => $mail2 );
 					$destfile = self::create_wpcf7_tmp_filepath( $destfilename . ".txt" );
-					$text = "Error generating PDF: " . $e->getMessage() . " at " . basename( $e->getFile() ) . ":" . $e->getLine() . "\n"
-					      . "\n"
-					      . "Form data:\n"
-					      . "\n";
+					$text = str_replace(
+						array( '{error-message}', '{error-file}', '{error-line}' ),
+						array( $e->getMessage(), basename( $e->getFile() ), $e->getLine() ),
+						__( "Error generating PDF: {error-message} at {error-file}:{error-line}\n\nForm data:\n\n", 'wpcf7-pdf-forms' )
+					);
 					foreach( $data as $field => $value )
 						$text .= "$field: $value\n";
 					file_put_contents( $destfile, $text );
