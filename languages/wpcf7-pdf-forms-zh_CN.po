@@ -2,10 +2,10 @@
 # This file is distributed under the same license as the PDF Forms Filler for Contact Form 7 package.
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: PDF Forms Filler for Contact Form 7 1.0.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pdf-forms-for-"
 "contact-form-7/\n"
-"POT-Creation-Date: 2019-01-14 16:06:39+00:00\n"
+"POT-Creation-Date: 2019-02-12 11:00:47+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -75,7 +75,7 @@ msgstr "无法从API服务器下载文件"
 msgid "Pdf.Ninja API server did not send an expected response"
 msgstr "Pdf.Ninja API服务器没有预期的响应"
 
-#: modules/pdf-ninja.php:473 wpcf7-pdf-forms.php:786 wpcf7-pdf-forms.php:1209
+#: modules/pdf-ninja.php:473 wpcf7-pdf-forms.php:795 wpcf7-pdf-forms.php:1218
 msgid "File not found"
 msgstr "找不到文件"
 
@@ -93,8 +93,8 @@ msgstr "文件创建失败"
 msgid "Failed to encode JSON data"
 msgstr "无法对JSON数据进行编码"
 
-#: modules/pdf-ninja.php:798 wpcf7-pdf-forms.php:720 wpcf7-pdf-forms.php:1067
-#: wpcf7-pdf-forms.php:1251
+#: modules/pdf-ninja.php:798 wpcf7-pdf-forms.php:729 wpcf7-pdf-forms.php:1076
+#: wpcf7-pdf-forms.php:1260
 msgid "Permission denied"
 msgstr "访问被拒绝"
 
@@ -230,11 +230,11 @@ msgstr "你确定要删除这个映射吗？"
 msgid "Are you sure you want to delete this embeded image?"
 msgstr "你确定要删除这个嵌入的图像吗？"
 
-#: wpcf7-pdf-forms.php:232 wpcf7-pdf-forms.php:1379
+#: wpcf7-pdf-forms.php:232 wpcf7-pdf-forms.php:1389
 msgid "Show Help"
 msgstr "显示帮助"
 
-#: wpcf7-pdf-forms.php:233 wpcf7-pdf-forms.php:1380
+#: wpcf7-pdf-forms.php:233 wpcf7-pdf-forms.php:1390
 msgid "Hide Help"
 msgstr "隐藏帮助"
 
@@ -246,20 +246,32 @@ msgstr "PDF表单"
 msgid "Failed to download file"
 msgstr "无法下载文件"
 
-#: wpcf7-pdf-forms.php:717 wpcf7-pdf-forms.php:950 wpcf7-pdf-forms.php:1058
-#: wpcf7-pdf-forms.php:1162 wpcf7-pdf-forms.php:1242
+#: wpcf7-pdf-forms.php:687
+msgid ""
+"Error generating PDF: {error-message} at {error-file}:{error-line}\n"
+"\n"
+"Form data:\n"
+"\n"
+msgstr ""
+"生成PDF时出错：{error-message}位于{error-file}：{error-line}\n"
+"\n"
+"表格数据：\n"
+"\n"
+
+#: wpcf7-pdf-forms.php:726 wpcf7-pdf-forms.php:959 wpcf7-pdf-forms.php:1067
+#: wpcf7-pdf-forms.php:1171 wpcf7-pdf-forms.php:1251
 msgid "Nonce mismatch"
 msgstr "随机数不匹配"
 
-#: wpcf7-pdf-forms.php:727
+#: wpcf7-pdf-forms.php:736
 msgid "Invalid file type, must be a PDF file"
 msgstr "无效的文件类型必须是PDF文件"
 
-#: wpcf7-pdf-forms.php:824
+#: wpcf7-pdf-forms.php:833
 msgid "No service"
 msgstr "没有信号"
 
-#: wpcf7-pdf-forms.php:968
+#: wpcf7-pdf-forms.php:977
 msgid ""
 "This PDF file does not appear to contain a PDF form.  See https://acrobat."
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
@@ -268,27 +280,27 @@ msgstr ""
 "此PDF文件似乎不包含PDF表单。 有关详细信息，请参阅https://acrobat.adobe.com/"
 "us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html。"
 
-#: wpcf7-pdf-forms.php:1064
+#: wpcf7-pdf-forms.php:1073
 msgid "Invalid post ID"
 msgstr "无效的帖子ID"
 
-#: wpcf7-pdf-forms.php:1133
+#: wpcf7-pdf-forms.php:1142
 msgid "Failed to get Contact Form fields"
 msgstr "无法获取联系人窗体字段"
 
-#: wpcf7-pdf-forms.php:1248
+#: wpcf7-pdf-forms.php:1257
 msgid "Invalid page number"
 msgstr "无效的页码"
 
-#: wpcf7-pdf-forms.php:1257
+#: wpcf7-pdf-forms.php:1266
 msgid "Failed to retrieve page snapshot"
 msgstr "无法检索页面快照"
 
-#: wpcf7-pdf-forms.php:1283 wpcf7-pdf-forms.php:1292
+#: wpcf7-pdf-forms.php:1292 wpcf7-pdf-forms.php:1301
 msgid "PDF Form"
 msgstr "PDF格式"
 
-#: wpcf7-pdf-forms.php:1342
+#: wpcf7-pdf-forms.php:1351
 msgid ""
 "You can use this tag generator to attach a PDF file to your form, insert "
 "tags into your form and link them to fields in the PDF file.  You can also "
@@ -299,19 +311,19 @@ msgstr ""
 "PDF文件中的字段。 您还可以将图像（由其他联系表格7标签或字段生成）嵌入到PDF文"
 "件中。 当联系表单被保存时，此处的更改将被应用。"
 
-#: wpcf7-pdf-forms.php:1343
+#: wpcf7-pdf-forms.php:1352
 msgid "Upload & Attach a PDF File"
 msgstr "上传和附加PDF文件"
 
-#: wpcf7-pdf-forms.php:1344
+#: wpcf7-pdf-forms.php:1353
 msgid "Insert Tags"
 msgstr "插入标签"
 
-#: wpcf7-pdf-forms.php:1345
+#: wpcf7-pdf-forms.php:1354
 msgid "Insert and Link"
 msgstr "插入并链接"
 
-#: wpcf7-pdf-forms.php:1346
+#: wpcf7-pdf-forms.php:1355
 msgid ""
 "This button allows you to generate tags for all remaining unlinked PDF "
 "fields, insert them into the form and link them to their corresponding "
@@ -320,39 +332,43 @@ msgstr ""
 "此按钮允许您为所有剩余未链接的PDF字段生成标签，将它们插入表单并将其链接到相应"
 "的字段。"
 
-#: wpcf7-pdf-forms.php:1347
+#: wpcf7-pdf-forms.php:1356
 msgid "Insert & Link All"
 msgstr "插入并链接所有"
 
-#: wpcf7-pdf-forms.php:1348 wpcf7-pdf-forms.php:1366
+#: wpcf7-pdf-forms.php:1357 wpcf7-pdf-forms.php:1376
 msgid "Delete"
 msgstr "删除"
 
-#: wpcf7-pdf-forms.php:1349
+#: wpcf7-pdf-forms.php:1358
 msgid "Options"
 msgstr "选项"
 
-#: wpcf7-pdf-forms.php:1350
+#: wpcf7-pdf-forms.php:1359
 msgid "Skip when empty"
 msgstr "空时忽略"
 
-#: wpcf7-pdf-forms.php:1351
+#: wpcf7-pdf-forms.php:1360
 msgid "Attach to primary email message"
 msgstr "附加到主电子邮件"
 
-#: wpcf7-pdf-forms.php:1352
+#: wpcf7-pdf-forms.php:1361
 msgid "Attach to secondary email message"
 msgstr "附加到辅助电子邮件"
 
-#: wpcf7-pdf-forms.php:1353
+#: wpcf7-pdf-forms.php:1362
 msgid "Flatten"
 msgstr "拼合"
 
-#: wpcf7-pdf-forms.php:1354
+#: wpcf7-pdf-forms.php:1363
+msgid "Filename (mail-tags can be used)"
+msgstr "文件名（可以使用邮件标签）"
+
+#: wpcf7-pdf-forms.php:1364
 msgid "Field Mapper Tool"
 msgstr "字段映射工具"
 
-#: wpcf7-pdf-forms.php:1355
+#: wpcf7-pdf-forms.php:1365
 msgid ""
 "This tool can be used to link Contact Form 7 fields with fields within the "
 "PDF files.  Contact Form 7 fields can also be generated.  When the user "
@@ -362,31 +378,31 @@ msgstr ""
 "此工具可用于将联系表单7字段与PDF文件中的字段链接。 也可以生成联系表单7字段。 "
 "当用户提交表格时，联系表格7字段中的数据将被插入到PDF文件中的相应字段中。"
 
-#: wpcf7-pdf-forms.php:1356
+#: wpcf7-pdf-forms.php:1366
 msgid "PDF field"
 msgstr "PDF字段"
 
-#: wpcf7-pdf-forms.php:1357
+#: wpcf7-pdf-forms.php:1367
 msgid "CF7 field"
 msgstr "CF7字段"
 
-#: wpcf7-pdf-forms.php:1358
+#: wpcf7-pdf-forms.php:1368
 msgid "Add Mapping"
 msgstr "添加映射"
 
-#: wpcf7-pdf-forms.php:1359
+#: wpcf7-pdf-forms.php:1369
 msgid "Delete All"
 msgstr "删除所有"
 
-#: wpcf7-pdf-forms.php:1360
+#: wpcf7-pdf-forms.php:1370
 msgid "New Tag:"
 msgstr "新标签："
 
-#: wpcf7-pdf-forms.php:1361
+#: wpcf7-pdf-forms.php:1371
 msgid "Tag Generator Tool (deprecated)"
 msgstr "代码生成器工具（不建议使用）"
 
-#: wpcf7-pdf-forms.php:1362
+#: wpcf7-pdf-forms.php:1372
 msgid ""
 "This tool allows one to create CF7 fields that are linked to PDF fields by "
 "name.  This feature is deprecated in favor of the field mapper tool."
@@ -394,11 +410,11 @@ msgstr ""
 "该工具允许创建按名称链接到PDF字段的CF7字段。 此功能已弃用，以支持字段映射器工"
 "具。"
 
-#: wpcf7-pdf-forms.php:1363
+#: wpcf7-pdf-forms.php:1373
 msgid "Image Embedding Tool"
 msgstr "图像嵌入工具"
 
-#: wpcf7-pdf-forms.php:1364
+#: wpcf7-pdf-forms.php:1374
 msgid ""
 "This tool allows embedding images into PDF files.  Images are taken from "
 "field attachments or field values that are URLs.  You must select a PDF "
@@ -407,23 +423,23 @@ msgstr ""
 "该工具允许将图像嵌入到PDF文件中。 图像取自现场附件或作为URL的字段值。 您必须"
 "选择PDF文件，其页面并绘制图像插入的边界框。"
 
-#: wpcf7-pdf-forms.php:1365
+#: wpcf7-pdf-forms.php:1375
 msgid "Embed Image"
 msgstr "嵌入图片"
 
-#: wpcf7-pdf-forms.php:1367
+#: wpcf7-pdf-forms.php:1377
 msgid "PDF file"
 msgstr "PDF文件"
 
-#: wpcf7-pdf-forms.php:1368
+#: wpcf7-pdf-forms.php:1378
 msgid "Page"
 msgstr "页"
 
-#: wpcf7-pdf-forms.php:1369
+#: wpcf7-pdf-forms.php:1379
 msgid "Select a region where the image needs to be embeded."
 msgstr "选择需要嵌入图像的区域。"
 
-#: wpcf7-pdf-forms.php:1377
+#: wpcf7-pdf-forms.php:1387
 msgid ""
 "Have a question/comment/problem?  Feel free to use {a-href-forum}the support "
 "forum{/a} and view {a-href-tutorial}the tutorial video{/a}."
@@ -431,19 +447,19 @@ msgstr ""
 "有问题/评论/问题？ 随意使用{a-href-forum}支持论坛{/a}并查看{a-href-tutorial}"
 "教程视频{/a}。"
 
-#: wpcf7-pdf-forms.php:1381
+#: wpcf7-pdf-forms.php:1391
 msgid "Get Tags"
 msgstr "获取标签"
 
-#: wpcf7-pdf-forms.php:1382
+#: wpcf7-pdf-forms.php:1392
 msgid "All PDFs"
 msgstr "所有PDF文件"
 
-#: wpcf7-pdf-forms.php:1383
+#: wpcf7-pdf-forms.php:1393
 msgid "Return to Form"
 msgstr "返回到表格"
 
-#: wpcf7-pdf-forms.php:1388
+#: wpcf7-pdf-forms.php:1398
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr "你CF7插件是太落伍了，请升级。"
 

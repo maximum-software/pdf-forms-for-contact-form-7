@@ -2,10 +2,10 @@
 # This file is distributed under the same license as the PDF Forms Filler for Contact Form 7 package.
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: PDF Forms Filler for Contact Form 7 1.0.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pdf-forms-for-"
 "contact-form-7/\n"
-"POT-Creation-Date: 2019-01-14 16:06:39+00:00\n"
+"POT-Creation-Date: 2019-02-12 11:00:47+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -80,7 +80,7 @@ msgstr "Error al descargar un archivo del servidor API"
 msgid "Pdf.Ninja API server did not send an expected response"
 msgstr "El servidor de la API Pdf.Ninja no envió una respuesta esperada"
 
-#: modules/pdf-ninja.php:473 wpcf7-pdf-forms.php:786 wpcf7-pdf-forms.php:1209
+#: modules/pdf-ninja.php:473 wpcf7-pdf-forms.php:795 wpcf7-pdf-forms.php:1218
 msgid "File not found"
 msgstr "Archivo no encontrado"
 
@@ -98,8 +98,8 @@ msgstr "Fracasado en la creación de archivos"
 msgid "Failed to encode JSON data"
 msgstr "Error al codificar datos JSON"
 
-#: modules/pdf-ninja.php:798 wpcf7-pdf-forms.php:720 wpcf7-pdf-forms.php:1067
-#: wpcf7-pdf-forms.php:1251
+#: modules/pdf-ninja.php:798 wpcf7-pdf-forms.php:729 wpcf7-pdf-forms.php:1076
+#: wpcf7-pdf-forms.php:1260
 msgid "Permission denied"
 msgstr "Permiso denegado"
 
@@ -120,7 +120,7 @@ msgstr "clave de copia"
 
 #: modules/pdf-ninja.php:859
 msgid "copied!"
-msgstr "copiado"
+msgstr "¡copiado!"
 
 #: modules/pdf-ninja.php:860 modules/pdf-ninja.php:897
 msgid "API URL"
@@ -243,11 +243,11 @@ msgstr "¿Estás seguro de que deseas eliminar esta asignación?"
 msgid "Are you sure you want to delete this embeded image?"
 msgstr "¿Seguro que quieres eliminar esta imagen embebida?"
 
-#: wpcf7-pdf-forms.php:232 wpcf7-pdf-forms.php:1379
+#: wpcf7-pdf-forms.php:232 wpcf7-pdf-forms.php:1389
 msgid "Show Help"
 msgstr "Mostrar ayuda"
 
-#: wpcf7-pdf-forms.php:233 wpcf7-pdf-forms.php:1380
+#: wpcf7-pdf-forms.php:233 wpcf7-pdf-forms.php:1390
 msgid "Hide Help"
 msgstr "Ocultar Ayuda"
 
@@ -259,20 +259,32 @@ msgstr "Formularios PDF"
 msgid "Failed to download file"
 msgstr "Error al descargar el archivo"
 
-#: wpcf7-pdf-forms.php:717 wpcf7-pdf-forms.php:950 wpcf7-pdf-forms.php:1058
-#: wpcf7-pdf-forms.php:1162 wpcf7-pdf-forms.php:1242
+#: wpcf7-pdf-forms.php:687
+msgid ""
+"Error generating PDF: {error-message} at {error-file}:{error-line}\n"
+"\n"
+"Form data:\n"
+"\n"
+msgstr ""
+"Error al generar PDF: {error-message} en {error-file}:{error-line}\n"
+"\n"
+"Datos del formulario:\n"
+"\n"
+
+#: wpcf7-pdf-forms.php:726 wpcf7-pdf-forms.php:959 wpcf7-pdf-forms.php:1067
+#: wpcf7-pdf-forms.php:1171 wpcf7-pdf-forms.php:1251
 msgid "Nonce mismatch"
 msgstr "Falta de coincidencia de nonce"
 
-#: wpcf7-pdf-forms.php:727
+#: wpcf7-pdf-forms.php:736
 msgid "Invalid file type, must be a PDF file"
 msgstr "Tipo de archivo inválido, debe ser un archivo PDF"
 
-#: wpcf7-pdf-forms.php:824
+#: wpcf7-pdf-forms.php:833
 msgid "No service"
 msgstr "Sin servicio"
 
-#: wpcf7-pdf-forms.php:968
+#: wpcf7-pdf-forms.php:977
 msgid ""
 "This PDF file does not appear to contain a PDF form.  See https://acrobat."
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
@@ -282,27 +294,27 @@ msgstr ""
 "acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator."
 "html para obtener más información."
 
-#: wpcf7-pdf-forms.php:1064
+#: wpcf7-pdf-forms.php:1073
 msgid "Invalid post ID"
 msgstr "Invalid ID mensaje"
 
-#: wpcf7-pdf-forms.php:1133
+#: wpcf7-pdf-forms.php:1142
 msgid "Failed to get Contact Form fields"
 msgstr "Error al obtener campos de Formulario de contacto"
 
-#: wpcf7-pdf-forms.php:1248
+#: wpcf7-pdf-forms.php:1257
 msgid "Invalid page number"
 msgstr "Número de página inválido"
 
-#: wpcf7-pdf-forms.php:1257
+#: wpcf7-pdf-forms.php:1266
 msgid "Failed to retrieve page snapshot"
 msgstr "Error al recuperar la instantánea de la página"
 
-#: wpcf7-pdf-forms.php:1283 wpcf7-pdf-forms.php:1292
+#: wpcf7-pdf-forms.php:1292 wpcf7-pdf-forms.php:1301
 msgid "PDF Form"
 msgstr "Formulario PDF"
 
-#: wpcf7-pdf-forms.php:1342
+#: wpcf7-pdf-forms.php:1351
 msgid ""
 "You can use this tag generator to attach a PDF file to your form, insert "
 "tags into your form and link them to fields in the PDF file.  You can also "
@@ -315,19 +327,19 @@ msgstr ""
 "o campos del Formulario de contacto 7) en el archivo PDF. Los cambios aquí "
 "se aplican cuando se guarda el formulario de contacto."
 
-#: wpcf7-pdf-forms.php:1343
+#: wpcf7-pdf-forms.php:1352
 msgid "Upload & Attach a PDF File"
 msgstr "Sube y adjuntar un archivo PDF"
 
-#: wpcf7-pdf-forms.php:1344
+#: wpcf7-pdf-forms.php:1353
 msgid "Insert Tags"
 msgstr "Insertar etiquetas"
 
-#: wpcf7-pdf-forms.php:1345
+#: wpcf7-pdf-forms.php:1354
 msgid "Insert and Link"
 msgstr "Insertar y vincular"
 
-#: wpcf7-pdf-forms.php:1346
+#: wpcf7-pdf-forms.php:1355
 msgid ""
 "This button allows you to generate tags for all remaining unlinked PDF "
 "fields, insert them into the form and link them to their corresponding "
@@ -337,39 +349,43 @@ msgstr ""
 "vinculados restantes, insertarlos en el formulario y vincularlos a sus "
 "campos correspondientes."
 
-#: wpcf7-pdf-forms.php:1347
+#: wpcf7-pdf-forms.php:1356
 msgid "Insert & Link All"
 msgstr "Insertar y vincular todo"
 
-#: wpcf7-pdf-forms.php:1348 wpcf7-pdf-forms.php:1366
+#: wpcf7-pdf-forms.php:1357 wpcf7-pdf-forms.php:1376
 msgid "Delete"
 msgstr "Borrar"
 
-#: wpcf7-pdf-forms.php:1349
+#: wpcf7-pdf-forms.php:1358
 msgid "Options"
 msgstr "Opciones"
 
-#: wpcf7-pdf-forms.php:1350
+#: wpcf7-pdf-forms.php:1359
 msgid "Skip when empty"
 msgstr "Omitir cuando está vacío"
 
-#: wpcf7-pdf-forms.php:1351
+#: wpcf7-pdf-forms.php:1360
 msgid "Attach to primary email message"
 msgstr "Adjuntar al correo electrónico principal"
 
-#: wpcf7-pdf-forms.php:1352
+#: wpcf7-pdf-forms.php:1361
 msgid "Attach to secondary email message"
 msgstr "Adjuntar a un correo electrónico secundario"
 
-#: wpcf7-pdf-forms.php:1353
+#: wpcf7-pdf-forms.php:1362
 msgid "Flatten"
 msgstr "Aplanar"
 
-#: wpcf7-pdf-forms.php:1354
+#: wpcf7-pdf-forms.php:1363
+msgid "Filename (mail-tags can be used)"
+msgstr "Nombre de archivo (se pueden usar etiquetas de correo)"
+
+#: wpcf7-pdf-forms.php:1364
 msgid "Field Mapper Tool"
 msgstr "Herramienta Field Mapper"
 
-#: wpcf7-pdf-forms.php:1355
+#: wpcf7-pdf-forms.php:1365
 msgid ""
 "This tool can be used to link Contact Form 7 fields with fields within the "
 "PDF files.  Contact Form 7 fields can also be generated.  When the user "
@@ -382,31 +398,31 @@ msgstr ""
 "formulario, los datos de los campos de Formulario de contacto 7 se "
 "insertarán en los campos de creación de concordancia en el archivo PDF."
 
-#: wpcf7-pdf-forms.php:1356
+#: wpcf7-pdf-forms.php:1366
 msgid "PDF field"
 msgstr "Campo PDF"
 
-#: wpcf7-pdf-forms.php:1357
+#: wpcf7-pdf-forms.php:1367
 msgid "CF7 field"
 msgstr "Campo CF7"
 
-#: wpcf7-pdf-forms.php:1358
+#: wpcf7-pdf-forms.php:1368
 msgid "Add Mapping"
 msgstr "Agregar asignación"
 
-#: wpcf7-pdf-forms.php:1359
+#: wpcf7-pdf-forms.php:1369
 msgid "Delete All"
 msgstr "Eliminar todos"
 
-#: wpcf7-pdf-forms.php:1360
+#: wpcf7-pdf-forms.php:1370
 msgid "New Tag:"
 msgstr "Nueva etiqueta:"
 
-#: wpcf7-pdf-forms.php:1361
+#: wpcf7-pdf-forms.php:1371
 msgid "Tag Generator Tool (deprecated)"
 msgstr "Tag Generator Tool (obsoleto)"
 
-#: wpcf7-pdf-forms.php:1362
+#: wpcf7-pdf-forms.php:1372
 msgid ""
 "This tool allows one to create CF7 fields that are linked to PDF fields by "
 "name.  This feature is deprecated in favor of the field mapper tool."
@@ -415,11 +431,11 @@ msgstr ""
 "por nombre. Esta característica está en desuso en favor de la herramienta "
 "mapeador de campo."
 
-#: wpcf7-pdf-forms.php:1363
+#: wpcf7-pdf-forms.php:1373
 msgid "Image Embedding Tool"
 msgstr "Herramienta de incrustación de imágenes"
 
-#: wpcf7-pdf-forms.php:1364
+#: wpcf7-pdf-forms.php:1374
 msgid ""
 "This tool allows embedding images into PDF files.  Images are taken from "
 "field attachments or field values that are URLs.  You must select a PDF "
@@ -430,23 +446,23 @@ msgstr ""
 "seleccionar un archivo PDF, su página y dibujar un cuadro delimitador para "
 "la inserción de imágenes."
 
-#: wpcf7-pdf-forms.php:1365
+#: wpcf7-pdf-forms.php:1375
 msgid "Embed Image"
 msgstr "Insertar imagen"
 
-#: wpcf7-pdf-forms.php:1367
+#: wpcf7-pdf-forms.php:1377
 msgid "PDF file"
 msgstr "Archivo PDF"
 
-#: wpcf7-pdf-forms.php:1368
+#: wpcf7-pdf-forms.php:1378
 msgid "Page"
 msgstr "Página"
 
-#: wpcf7-pdf-forms.php:1369
+#: wpcf7-pdf-forms.php:1379
 msgid "Select a region where the image needs to be embeded."
 msgstr "Seleccione una región donde la imagen debe ser embebida."
 
-#: wpcf7-pdf-forms.php:1377
+#: wpcf7-pdf-forms.php:1387
 msgid ""
 "Have a question/comment/problem?  Feel free to use {a-href-forum}the support "
 "forum{/a} and view {a-href-tutorial}the tutorial video{/a}."
@@ -454,19 +470,19 @@ msgstr ""
 "¿Tiene una pregunta/comentario/problema? Siéntase libre de usar {a-href-"
 "forum}el foro de soporte{/a} y ver {a-href-tutorial}el video tutorial{/a}."
 
-#: wpcf7-pdf-forms.php:1381
+#: wpcf7-pdf-forms.php:1391
 msgid "Get Tags"
 msgstr "Obtener Etiquetas"
 
-#: wpcf7-pdf-forms.php:1382
+#: wpcf7-pdf-forms.php:1392
 msgid "All PDFs"
 msgstr "Todos los archivos PDF"
 
-#: wpcf7-pdf-forms.php:1383
+#: wpcf7-pdf-forms.php:1393
 msgid "Return to Form"
 msgstr "Regresar a la forma"
 
-#: wpcf7-pdf-forms.php:1388
+#: wpcf7-pdf-forms.php:1398
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr "Tu lector CF7 es demasiado fuera de fecha, por favor, actualice."
 
