@@ -231,9 +231,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__Confirm_Delete_Embed' => __( 'Are you sure you want to delete this embeded image?', 'wpcf7-pdf-forms' ),
 					'__Show_Help' => __( 'Show Help', 'wpcf7-pdf-forms' ),
 					'__Hide_Help' => __( 'Hide Help', 'wpcf7-pdf-forms' ),
+					'__PDF_Frame_Title' => __( 'Select a PDF file to upload', 'wpcf7_pdf_forms'),
+					'__PDF_Frame_Button' => __( 'Select', 'wpcf7_pdf_forms')
 				) );
 				
 				add_thickbox();
+
+				if ( ! did_action( 'wp_enqueue_media' ) ) {
+					wp_enqueue_media();
+				}
 				
 				wp_enqueue_script( 'wpcf7_pdf_forms_admin_script' );
 				wp_enqueue_style( 'wpcf7_pdf_forms_admin_style' );
@@ -728,21 +734,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if ( ! current_user_can( 'upload_files' ) )
 					throw new Exception( __( "Permission denied", 'wpcf7-pdf-forms' ) );
 				
-				$file = $_FILES[ 'file' ];
+				$file = wp_get_attachment_url($_POST[ 'file_id' ]);
 				if( $file )
 				{
 					// TODO: check type of contents of the file instead of just extension
-					if( ( $type = wp_check_filetype( $file['name'] ) ) && isset( $type['type'] ) && $type['type'] !== 'application/pdf' )
+					if( ( $type = wp_check_filetype( $file ) ) && isset( $type['type'] ) && $type['type'] !== 'application/pdf' )
 						throw new Exception( __( "Invalid file type, must be a PDF file", 'wpcf7-pdf-forms' ) );
-					
-					$overrides = array(
-						'mimes'  => array( 'pdf' => 'application/pdf' ),
-						'ext'    => array( 'pdf' ),
-						'type'   => true,
-						'action' => 'wpcf7_pdf_forms_upload',
-					);
-					
-					$attachment_id = media_handle_upload( 'file', 0, array(), $overrides );
+
+					$attachment_id = $_POST[ 'file_id' ];
 					
 					if( is_wp_error( $attachment_id ) )
 						throw new Exception( $attachment_id->errors['upload_error']['0'] );
