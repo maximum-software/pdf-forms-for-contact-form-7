@@ -768,6 +768,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success'  => false,
 					'error_message' => $e->getMessage(),
+					'error_location' => basename( $e->getFile() ) . ":". $e->getLine(),
 				) );
 			}
 		}
@@ -1014,6 +1015,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success'  => false,
 					'error_message' => $e->getMessage(),
+					'error_location' => basename( $e->getFile() ) . ":". $e->getLine(),
 				) );
 			}
 		}
@@ -1122,6 +1124,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success'  => false,
 					'error_message' => $e->getMessage(),
+					'error_location' => basename( $e->getFile() ) . ":". $e->getLine(),
 				) );
 			}
 		}
@@ -1184,6 +1187,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success'  => false,
 					'error_message' => $e->getMessage(),
+					'error_location' => basename( $e->getFile() ) . ":". $e->getLine(),
 				) );
 			}
 		}
@@ -1275,6 +1279,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success'  => false,
 					'error_message' => $e->getMessage(),
+					'error_location' => basename( $e->getFile() ) . ":". $e->getLine(),
 				) );
 			}
 		}
