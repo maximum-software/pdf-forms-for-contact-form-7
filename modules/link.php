@@ -77,19 +77,37 @@ if( ! class_exists( 'WPCF7_Pdf_Ninja_Link_Storage' ) ){
 			if ( wp_mkdir_p( $this->download_tmp_path ) )return $ram_number;
 		}
 
-		private function check_downloand_dir() {
+		private function check_downloand_dir()
+		{
 
-			wp_mkdir_p( $this->download_tmp_path );
+			wp_mkdir_p($this->download_tmp_path);
 
-			$htaccess_file = path_join( $this->download_tmp_path, '.htaccess' );
+			$sSoftware = strtolower($_SERVER["SERVER_SOFTWARE"]);
+			if (strpos($sSoftware, "apache") !== false)
+			{
+				$htaccess_file = path_join($this->download_tmp_path, '.htaccess');
 
-			if ( file_exists( $htaccess_file ) ) {
-				return;
+				if (file_exists($htaccess_file)) {
+					return;
+				}
+
+				if ($handle = fopen($htaccess_file, 'w')) {
+					fwrite($handle, "Options All -Indexes\n");
+					fclose($handle);
+				}
 			}
+			if (strpos($sSoftware, "nginx") !== false)
+			{
+				$htaccess_file = path_join($this->download_tmp_path, 'index.php');
 
-			if ( $handle = fopen( $htaccess_file, 'w' ) ) {
-				fwrite( $handle, "Options All -Indexes\n" );
-				fclose( $handle );
+				if (file_exists($htaccess_file)) {
+					return;
+				}
+
+				if ($handle = fopen($htaccess_file, 'w')) {
+					fwrite($handle, "<?php \n");
+					fclose($handle);
+				}
 			}
 		}
 
@@ -114,13 +132,21 @@ if( ! class_exists( 'WPCF7_Pdf_Ninja_Link_Storage' ) ){
 			return $this->links;
 		}
 
+	    public function get_file_size( $url )
+	    {
+			$response = wp_remote_get( $url );
+		    if ( !$response ) return "Error, please contact the administrator ";
+		    $result = $response['headers']['content-length'];
+		    return round($result / 1024, 2);
+		}
+
 		public function delete_dir( $path )
 		{
 			// set the default files lifetime
-			if (defined('PDF_FORMS_FILES_LIFETIME'))
-				$seconds = PDF_FORMS_FILES_LIFETIME;
+			if (defined('PDF_FORMS_FOR_CF7_TMP_FILES_LIFETIME'))
+				$seconds = PDF_FORMS_FOR_CF7_TMP_FILES_LIFETIME;
 			else
-				$seconds = 600;
+				$seconds = 60*60*24;
 
 			if ( file_exists( $path ) AND is_dir( $path ) ) {
 				// open the folder

@@ -22,6 +22,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		private static $instance = null;
 		private $pdf_ninja_service = null;
 		private $link = null;
+		private $storage = null;
 		private $service = null;
 		private $registered_services = false;
 		
@@ -43,6 +44,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return;
 			
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'fontawesome' ) );
 			
 			add_action( 'wp_ajax_wpcf7_pdf_forms_upload', array( $this, 'wp_ajax_upload' ) );
 			add_action( 'wp_ajax_wpcf7_pdf_forms_query_tags', array( $this, 'wp_ajax_query_tags' ) );
@@ -61,8 +63,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$this->upgrade_data();
 		}
 
-
-		
 		/*
 		 * Returns a global instance of this class
 		 */
@@ -174,7 +174,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				) );
 				return;
 			}
-			
+
+			if (defined('PDF_FORMS_STORAGE_TMP_DIR'))
+			{
+				require_once untrailingslashit( dirname( __FILE__ ) ) . '/modules/storage.php';
+				$this->storage = WPCF7_Pdf_Ninja_File_Storage::get_instance();
+				// test check dir whether we can write
+			}
+
 			if( ( $service = $this->get_service() ) )
 				$service->admin_notices();
 		}
@@ -704,7 +711,17 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				}
 
 				$directory = $attachment['options']['directory'];
-				$directory = wpcf7_mail_replace_tags($directory);
+				if ( !empty( $directory ))
+				{
+					$directory = wpcf7_mail_replace_tags($directory);
+					require_once untrailingslashit( dirname( __FILE__ ) ) . '/modules/storage.php';
+					$this->storage = WPCF7_Pdf_Ninja_File_Storage::get_instance();
+					$directory = sanitize_file_name($directory);
+					$directory = wpcf7_canonicalize($directory);
+					$this->storage->init_dir($directory);
+					$this->storage->save($destfile, $destfilename . '.pdf');
+				}
+
 
 				if ( $attachment['options']['download_link'] )
 				{
@@ -1375,7 +1392,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'attach-to-mail-2' => esc_html__( 'Attach to secondary email message', 'wpcf7-pdf-forms' ),
 					'flatten' => esc_html__( 'Flatten', 'wpcf7-pdf-forms' ),
 					'filename' => esc_html__( 'Filename (mail-tags can be used)', 'wpcf7-pdf-forms' ),
-					'directory'=> esc_html__( 'Directory (mail-tags can be used) if empty there is no saving', 'wpcf7-pdf-forms' ),
+					'directory'=> esc_html__( 'Save PDF file on disk (mail-tags can be used), if empty PDF file is not save on disk (path relative to wp-content/uploads) ', 'wpcf7-pdf-forms' ),
 					'download_link' => esc_html__( 'Add download link to response message', 'wpcf7-pdf-forms' ),
 					'field-mapping' => esc_html__( 'Field Mapper Tool', 'wpcf7-pdf-forms' ),
 					'field-mapping-help' => esc_html__( 'This tool can be used to link Contact Form 7 fields with fields within the PDF files.  Contact Form 7 fields can also be generated.  When the user submits the form, data from Contact Form 7 fields will be inserted into correspoinding fields in the PDF file.', 'wpcf7-pdf-forms' ),
@@ -1455,9 +1472,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if ( isset($_REQUEST['rest_route']) && $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest'  )  //if ajax request
 				{
 					if(!empty($response))$response .= '</br>';
-					foreach ($this->link->get_links() as $var) {
-						foreach ($var as $filename => $url) {
-						$response .= '<a href="' . $url . '" download>'.$filename.'</a>';
+					foreach ($this->link->get_links() as $var)
+					{
+						foreach ($var as $filename => $url)
+						{
+						$size = $this->link->get_file_size($url);
+						$icon = '<i class=\'fas fa-download\'> </i> ';
+						$response .= '<a href="' . $url . '" download >'.$icon.$filename.'</a>'.' ('.$size.') kB';
 						$response .= '</br>';
 						}
 					}
@@ -1487,6 +1508,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$this->link->init_dir();
 			}
 			return $this->link;
+		}
+
+		public function fontawesome()
+		{
+			wp_enqueue_style( 'font-awesome-free', '//use.fontawesome.com/releases/v5.2.0/css/all.css' );
 		}
 	}
 	
