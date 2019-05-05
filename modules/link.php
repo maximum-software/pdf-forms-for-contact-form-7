@@ -146,14 +146,15 @@ if( ! class_exists( 'WPCF7_Pdf_Ninja_Link_Storage' ) ){
 			if (defined('PDF_FORMS_FOR_CF7_TMP_FILES_LIFETIME'))
 				$seconds = PDF_FORMS_FOR_CF7_TMP_FILES_LIFETIME;
 			else
-				$seconds = 60*60*24;
+				$seconds = 60*60*24; //one day 
 
 			if ( file_exists( $path ) AND is_dir( $path ) ) {
 				// open the folder
 				$dir = opendir($path);
 				while ( false !== ( $element = readdir( $dir ) ) ) {
 					// delete only the contents of the folder
-					if ( $element != '.' AND $element != '..' AND $element !='.htaccess')  {
+					if ( $element != '.' AND $element != '..' AND $element != '.htaccess' AND $element != 'index.php')
+					{
 						$tmp = $path . DIRECTORY_SEPARATOR . $element;
 						@chmod( $tmp, 0777 );
 
