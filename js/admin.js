@@ -463,7 +463,7 @@ jQuery(document).ready(function($) {
 			return false;
 		});
 		
-		jQuery('.wpcf7-pdf-forms-admin .pdf-attachments tbody').append(tag);
+		jQuery('.wpcf7-pdf-forms-admin .pdf-attachments tbody').prepend(tag);
 		
 		var pdf_files = jQuery('.wpcf7-pdf-forms-admin .pdf-files-list');
 		pdf_files.append(jQuery('<option>', {
@@ -1148,7 +1148,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Upload PDF' button handler
-	jQuery('.wpcf7-pdf-forms-admin .upload-btn').click(function(event) {
+	var uploadPDFbutton = function (file_id) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1156,16 +1156,9 @@ jQuery(document).ready(function($) {
 		
 		clearMessages();
 		
-		// prepare request
-		
-		var file = jQuery(document).find('.wpcf7-pdf-forms-admin input.file');
-		
-		if(!file || !file[0] || !file[0].files || !file[0].files[0])
-			return errorMessage(wpcf7_pdf_forms.__File_not_specified);
-		
 		var data = new FormData();
 		data.append("post_id", post_id);
-		data.append("file", file[0].files[0]);
+		data.append("file_id", file_id);
 		data.append("action", 'wpcf7_pdf_forms_upload');
 		data.append("nonce", wpcf7_pdf_forms.ajax_nonce);
 		
@@ -1197,7 +1190,6 @@ jQuery(document).ready(function($) {
 					addAttachment(data);
 				}
 				
-				file.val("");
 			},
 			
 			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
@@ -1208,7 +1200,7 @@ jQuery(document).ready(function($) {
 		});
 		
 		return false;
-	});
+	};
 	
 	
 	// set up 'Add Mapping' button handler
@@ -1312,6 +1304,45 @@ jQuery(document).ready(function($) {
 	wpcf7_form.change(function() {
 		loadCf7Fields(removeOldMappings);
 	});
-	
+
+	jQuery('.wpcf7-pdf-forms-admin .upload-btn').click(function(event){
+
+		event.preventDefault();
+
+		var pdf_frame;
+		var wp_media_post_id = wp.media.model.settings.post.id;
+
+		// If the pdf-frame exists, reopen it.
+		if ( pdf_frame ) {
+			pdf_frame.open();
+			return;
+		}
+		// Create the pdf frame.
+		pdf_frame = wp.media.frames.pdf_frame = wp.media({
+			title: wpcf7_pdf_forms.__PDF_Frame_Title,
+			multiple: false, // Set multiple select
+			library: {
+				order: 'DESC',
+				// we can used [ 'author', 'id', 'name', , 'date',
+				// 'title', 'modified', 'uploadedTo', 'id', 'post__in', 'menuOrder']
+				orderby: 'date',
+				// mime type
+				type: 'application/pdf',
+				search: null,
+				uploadedTo: null
+			},
+			button: {
+				text: wpcf7_pdf_forms.__PDF_Frame_Button
+			}
+		});
+		// it is callback on frame
+		pdf_frame.on( 'select', function() {
+			attachment = pdf_frame.state().get('selection').first().toJSON();
+			uploadPDFbutton(attachment.id);
+			wp.media.model.settings.post.id = wp_media_post_id;
+		});
+		pdf_frame.open();
+	});
+
 	preloadData();
 });

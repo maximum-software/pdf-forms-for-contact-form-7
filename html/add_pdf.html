@@ -12,7 +12,8 @@
 	<table class="form-table pdf-attachments">
 		<tbody>
 			<tr>
-				<td class="filename-column"><input type="file" name="file" class="file" size="50" /></td>
+				<td class="filename-column">
+
 				<td class="pdf-buttons">
 					<input type="button" name="upload" class="button button-primary upload-btn" value="{upload-and-attach}"/>
 				</td>
@@ -25,7 +26,9 @@
 						<div><input data-option="attach_to_mail_1" type="checkbox"/> {attach-to-mail-1}</div>
 						<div><input data-option="attach_to_mail_2" type="checkbox"/> {attach-to-mail-2}</div>
 						<div><input data-option="flatten" type="checkbox"/> {flatten}</div>
+						<div><input data-option="download_link" type="checkbox"/> {download_link}</div>
 						<div>{filename}<br/><input data-option="filename" type="text"/>.pdf</div>
+						<div>{directory}<br/><input data-option="directory" type="text"/></div>
 					</div>
 				</td>
 				<td class="pdf-buttons">

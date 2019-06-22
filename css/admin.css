@@ -87,6 +87,11 @@
 	padding: 10px;
 }
 
+.wpcf7-pdf-forms-admin div.pdf-options div
+{
+	padding-bottom: 10px;
+}
+
 .wpcf7-pdf-forms-admin .pdf-buttons
 {
 	vertical-align: top;
