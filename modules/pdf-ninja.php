@@ -270,19 +270,11 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			return false;
 		}
 		
-		$pdftk_binary = exec( 'which pdftk', $output, $retval );
-		if( $retval === 0 )
-			return true;
-		
-		// check version
-		if( $pdftk_binary )
+		exec( 'which which', $output, $retval );
+		if( $retval !== 0 )
 		{
-			exec( $pdftk_binary.' --version', $output, $retval );
-			if( $retval !== 0
-			|| !preg_match_all( '/^.*pdftk (\d\.[\d]+)[^d].*$/sumi', implode( "\n", $output ), $matches )
-			|| !isset( $matches[1][0] )
-			|| version_compare( $matches[1][0], "2.0", ">=") )
-				return true;
+			$this->enterprise_extension_support_error = __( 'PHP execute functions (exec, proc_open, proc_close) are disabled.', 'wpcf7-pdf-forms' );
+			return false;
 		}
 		
 		// check /proc/self/stat (required for pdftk)
@@ -429,7 +421,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		$file_id = WPCF7_Pdf_Forms::get_meta( $attachment_id, 'file_id' );
 		if( ! $file_id )
 		{
-			$file_id = $attachment_id . "-" . get_site_url();
+			$file_id = substr($attachment_id . "-" . get_site_url(), 0, 40);
 			return WPCF7_Pdf_Forms::set_meta( $attachment_id, 'file_id', $file_id );
 		}
 		else
