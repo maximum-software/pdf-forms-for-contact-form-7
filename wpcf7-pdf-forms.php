@@ -21,26 +21,32 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		
 		private static $instance = null;
 		private $pdf_ninja_service = null;
-		private $link = null;
-		private $storage = null;
 		private $service = null;
 		private $registered_services = false;
+		private $downloads = null;
+		private $storage = null;
 		
 		private function __construct()
 		{
 			load_plugin_textdomain( 'wpcf7-pdf-forms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 			add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 			add_action( 'plugins_loaded', array( $this, 'plugin_init' ) );
-			add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'action_links' ) );
+			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'action_links' ) );
 			add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 99, 2 );
+			add_action( 'activate_'.plugin_basename( __FILE__ ), array( $this, 'plugin_activated') );
+			add_action( 'deactivate_'.plugin_basename( __FILE__ ), array( $this, 'plugin_deactivated') );
+			add_action( 'wpcf7_pdf_forms_cron', array( $this, 'cron') );
 		}
-
-		public function true_moi_interval( $raspisanie ) {
-			$raspisanie['kajd_2_chas'] = array(
-				'interval' => 7200,
-				'display' => 'Every two hours'
-			);
-			return $raspisanie;
+		
+		/*
+		 * Returns a global instance of this class
+		 */
+		public static function get_instance()
+		{
+			if( !self::$instance )
+				self::$instance = new self;
+			
+			return self::$instance;
 		}
 		
 		/*
@@ -50,21 +56,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			if( ! class_exists('WPCF7') )
 				return;
-
-			//cron_schedules hook
-			add_filter( 'cron_schedules', array( $this, 'true_moi_interval'));
-			// enable cron task if it is not already included.
-			// It is better to do this once when the plug-in is activated, for example
-			if ( ! wp_next_scheduled( 'pdf_forms_delete_files' ) )
-			{
-				wp_schedule_event( time(), 'kajd_2_chas', 'pdf_forms_delete_files' );
-			}
-
-			// add cron hook
-			add_action( 'pdf_forms_delete_files', array( $this, 'pdf_forms_task_function') );
 			
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-			add_action( 'wp_enqueue_scripts', array( $this, 'fontawesome' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 			
 			add_action( 'wp_ajax_wpcf7_pdf_forms_get_attachment_info', array( $this, 'wp_ajax_get_attachment_info' ) );
 			add_action( 'wp_ajax_wpcf7_pdf_forms_query_tags', array( $this, 'wp_ajax_query_tags' ) );
@@ -79,19 +73,35 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_after_create', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_after_update', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_mail_sent', array( $this, 'change_response_message' ) );
-
-			$this->upgrade_data();
-		}
-
-		/*
-		 * Returns a global instance of this class
-		 */
-		public static function get_instance()
-		{
-			if( !self::$instance )
-				self::$instance = new self;
 			
-			return self::$instance;
+			// TODO: allow users to run this manually
+			//$this->upgrade_data();
+		}
+		
+		/*
+		 * Runs after the plugin have been activated/deactivated
+		 */
+		public function plugin_activated()
+		{
+			$this->enable_cron();
+		}
+		public function plugin_deactivated()
+		{
+			$this->disable_cron();
+		}
+		
+		/*
+		 * Enables/disables cron
+		 */
+		private function enable_cron()
+		{
+			if( ! wp_next_scheduled( 'wpcf7_pdf_forms_cron' ) )
+				wp_schedule_event( time(), 'daily', 'wpcf7_pdf_forms_cron' );
+		}
+		private function disable_cron()
+		{
+			if( wp_next_scheduled( 'wpcf7_pdf_forms_cron' ) )
+				wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
 		}
 		
 		/*
@@ -108,6 +118,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( $plugin == $plugin_path )
 					{
 						set_transient( 'wpcf7_pdf_forms_updated_old_version', self::VERSION );
+						
 						break;
 					}
 		}
@@ -144,8 +155,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		private function upgrade_data()
 		{
-			// TODO: fix race condition by allowing users to run this manually
-			
 			$old_version = get_transient( 'wpcf7_pdf_forms_updated_old_version' );
 			if( !$old_version )
 				return;
@@ -194,14 +203,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				) );
 				return;
 			}
-
-			if (defined('PDF_FORMS_STORAGE_TMP_DIR'))
-			{
-				require_once untrailingslashit( dirname( __FILE__ ) ) . '/modules/storage.php';
-				$this->storage = WPCF7_Pdf_Ninja_File_Storage::get_instance();
-				// test check dir whether we can write
-			}
-
+			
 			if( ( $service = $this->get_service() ) )
 				$service->admin_notices();
 		}
@@ -219,6 +221,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			return $this->pdf_ninja_service;
 		}
+		
 		
 		/**
 		 * Returns the service module instance
@@ -239,6 +242,33 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public function set_service( $service )
 		{
 			return $this->service = $service;
+		}
+		
+		/**
+		 * Loads and returns the storage module
+		 */
+		private function get_storage()
+		{
+			if( ! $this->storage )
+			{
+				require_once untrailingslashit( dirname( __FILE__ ) ) . '/modules/storage.php';
+				$this->storage = WPCF7_Pdf_Forms_Storage::get_instance();
+			}
+			
+			return $this->storage;
+		}
+		
+		/**
+		 * Loads and returns the downloads module
+		 */
+		private function get_downloads()
+		{
+			if( !$this->downloads )
+			{
+				require_once untrailingslashit( dirname( __FILE__ ) ) . '/modules/downloads.php';
+				$this->downloads = WPCF7_Pdf_Forms_Downloads::get_instance();
+			}
+			return $this->downloads;
 		}
 		
 		/**
@@ -272,6 +302,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				wp_enqueue_script( 'wpcf7_pdf_forms_admin_script' );
 				wp_enqueue_style( 'wpcf7_pdf_forms_admin_style' );
 			}
+		}
+		
+		/**
+		 * Adds necessary scripts and styles
+		 */
+		public function enqueue_scripts( $hook )
+		{
+			wp_enqueue_style( 'font-awesome-free', '//use.fontawesome.com/releases/v5.2.0/css/all.css' );
 		}
 		
 		/**
@@ -343,7 +381,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$this->post_update_pdf( $post_id, $attachment_id, $options );
 		}
 		
-		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'directory'=>"", 'download_link' => false );
+		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false );
 		
 		/**
 		 * Updates post attachment options
@@ -546,7 +584,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$embeds = json_decode( $embeds, true );
 			if( !is_array( $embeds ) )
 				$embeds = array();
-
+			
 			$submission = WPCF7_Submission::get_instance();
 			$posted_data = $submission->get_posted_data();
 			$uploaded_files = $submission->uploaded_files();
@@ -593,9 +631,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$embed_files[$cf7_field] = $uploaded_files[$cf7_field];
 			}
 			
-			
 			$files = array();
-
 			foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
 			{
 				$fields = $this->get_fields( $attachment_id );
@@ -708,7 +744,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( ! $filled )
 						copy( $filepath, $destfile );
 					$files[] = array( 'file' => $destfile, 'mail' => $mail, 'mail2' => $mail2 );
-
 				}
 				catch(Exception $e)
 				{
@@ -726,41 +761,61 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					file_put_contents( $destfile, $text );
 					$files[] = array( 'file' => $destfile, 'mail' => $mail, 'mail2' => $mail2 );
 				}
-
-				$directory = $attachment['options']['directory'];
-				if ( !empty( $directory ))
+				
+				$save_directory = $attachment['options']['save_directory'];
+				if( !empty( $save_directory ) )
 				{
-					require_once untrailingslashit( dirname( __FILE__ ) ) . '/modules/storage.php';
-					$this->storage = WPCF7_Pdf_Ninja_File_Storage::get_instance();
-					$directory = $this->storage->sanitize_dir_name($directory);
-					$directory = $this->storage->replace_tags($directory);
-					$directory = wpcf7_canonicalize($directory);
-					$directory = $this->storage->path_is($directory);
-					$directory = $this->storage->sanitize_dir_name($directory);
-					$this->storage->init_dir($directory);
-					$this->storage->save($destfile, $destfilename . '.pdf');
+					$storage = $this->get_storage();
+					
+					// standardize directory separator
+					$save_directory = str_replace( '\\', '/', $save_directory );
+					
+					// remove preceeding slashes and dots and space characters
+					$trim_characters = "/\\. \t\n\r\0\x0B";
+					$save_directory = trim( $save_directory, $trim_characters );
+					
+					// replace WPCF7 tags in path elements
+					$path_elements = explode( "/", $save_directory );
+					foreach( $path_elements as &$element )
+					{
+						$text = new WPCF7_MailTaggedText( $element );
+						$new_element = $text->replace_tags();
+						
+						// sanitize
+						$new_element = trim( sanitize_file_name( wpcf7_canonicalize( $new_element ) ), $trim_characters );
+						
+						// if replaced and sanitized filename is blank then attempt to use the non-replaced version
+						if( $new_element === "" )
+							$new_element = trim( sanitize_file_name( wpcf7_canonicalize( $element ) ), $trim_characters );
+						
+						$element = $new_element;
+					}
+					$save_directory = implode( "/", $path_elements );
+					$path = preg_replace( '|/+|', '/', $path ); // remove double slashes
+					
+					// remove preceeding slashes and dots and space characters
+					$save_directory = trim( $save_directory, $trim_characters );
+					
+					$storage->set_subpath( $save_directory );
+					$storage->save( $destfile, $destfilename.'.pdf' );
 				}
-
-
+				
 				if ( $attachment['options']['download_link'] )
-				{
-					$this->init_link();
-					$this->link->add_link($destfile, $destfilename . '.pdf');
-				}
+					$this->get_downloads()->add_file( $destfile, $destfilename.'.pdf' );
 			}
 			
 			if( count( $files ) > 0 )
 			{
 				$mail = $contact_form->prop( "mail" );
 				$mail2 = $contact_form->prop( "mail_2" );
-
+				
 				foreach( $files as $id => $filedata )
 				{
 					$file = $filedata['file'];
 					if( file_exists( $file ) )
 					{
 						$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
-
+						
 						if( $filedata['mail'] )
 							$mail["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
 						
@@ -1365,7 +1420,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/*
-		 * Helper for render_file function
+		 * Helper for replace_tags function
 		 */
 		private static function add_curly_braces($str)
 		{
@@ -1373,15 +1428,23 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/**
+		 * Takes a string with tags and replaces tags in the string with the given values in $tags array
+		 */
+		public static function replace_tags( $string, $tags = array() )
+		{
+			return str_replace(
+				array_map( array( get_class(), 'add_curly_braces' ), array_keys( $tags ) ),
+				array_values( $tags ),
+				$string
+			);
+		}
+		
+		/**
 		 * Takes html template file and renders it with the given attributes
 		 */
 		public static function render_file( $template_filepath, $attributes = array() )
 		{
-			return str_replace(
-				array_map( array( get_class(), 'add_curly_braces' ), array_keys( $attributes ) ),
-				array_values( $attributes ),
-				file_get_contents( $template_filepath )
-			);
+			return self::replace_tags( file_get_contents( $template_filepath ) , $attributes );
 		}
 		
 		/**
@@ -1412,8 +1475,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'attach-to-mail-2' => esc_html__( 'Attach to secondary email message', 'wpcf7-pdf-forms' ),
 					'flatten' => esc_html__( 'Flatten', 'wpcf7-pdf-forms' ),
 					'filename' => esc_html__( 'Filename (mail-tags can be used)', 'wpcf7-pdf-forms' ),
-					'directory'=> esc_html__( 'Save PDF file on disk (mail-tags can be used), if empty PDF file is not save on disk (path relative to wp-content/uploads) ', 'wpcf7-pdf-forms' ),
-					'download_link' => esc_html__( 'Add download link to response message', 'wpcf7-pdf-forms' ),
+					'save-directory'=> esc_html__( 'Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)', 'wpcf7-pdf-forms' ),
+					'download-link' => esc_html__( 'Add filled PDF download link to form submission response', 'wpcf7-pdf-forms' ),
 					'field-mapping' => esc_html__( 'Field Mapper Tool', 'wpcf7-pdf-forms' ),
 					'field-mapping-help' => esc_html__( 'This tool can be used to link Contact Form 7 fields with fields within the PDF files.  Contact Form 7 fields can also be generated.  When the user submits the form, data from Contact Form 7 fields will be inserted into correspoinding fields in the PDF file.', 'wpcf7-pdf-forms' ),
 					'pdf-field' => esc_html__( 'PDF field', 'wpcf7-pdf-forms' ),
@@ -1430,14 +1493,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'pdf-file' => esc_html__( 'PDF file', 'wpcf7-pdf-forms' ),
 					'page' => esc_html__( 'Page', 'wpcf7-pdf-forms' ),
 					'image-region-selection-hint' => esc_html__( 'Select a region where the image needs to be embeded.', 'wpcf7-pdf-forms' ),
-					'help-message' => str_replace(
-						array('{a-href-forum}','{a-href-tutorial}','{/a}'),
+					'help-message' => self::replace_tags(
+						esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'wpcf7-pdf-forms' ),
 						array(
-							'<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
-							'<a href="https://youtu.be/jy84xqnj0Zk" target="_blank">',
-							'</a>'
-						),
-						esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'wpcf7-pdf-forms' )
+							'a-href-forum' => '<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
+							'a-href-tutorial' => '<a href="https://youtu.be/jy84xqnj0Zk" target="_blank">',
+							'/a' => '</a>',
+						)
 					),
 					'show-help' => esc_html__( 'Show Help', 'wpcf7-pdf-forms' ),
 					'hide-help' => esc_html__( 'Hide Help', 'wpcf7-pdf-forms' ),
@@ -1480,69 +1542,57 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			return array( 'attachment_id' => $attachment_id, 'field' => $field, 'encoded_field' => $matches[3] );
 		}
+		
 		/*
-		 * WPCF7 hook add some more information to response message
+		 * WPCF7 hook for adding some more information to response message
 		 */
 		public function change_response_message( $contact_form )
 		{
-			if( $this->link )
+			// if downloads variable is not initialized then we don't need to do anything
+			if( $this->downloads )
 			{
 				$submission = WPCF7_Submission::get_instance();
 				$response = $submission->get_response();
-				if ( isset($_REQUEST['rest_route']) && $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest'  )  //if ajax request
+				if( isset($_REQUEST['rest_route']) && $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest' )
 				{
-					if(!empty($response))$response .= '</br>';
-					foreach ($this->link->get_links() as $var)
-					{
-						foreach ($var as $filename => $url)
-						{
-						$size = $this->link->get_file_size($url);
-						$response .= '<i class=\'fas fa-download\'> </i> ';
-						$response .= '<a href="' . $url . '" download >'.$filename.'</a>'.' ( '.$size.' kB )';
-						$response .= '</br>';
-						}
-					}
-					$submission->set_response($response);
+					// ajax request
+					$response .= "<br/>";
+					foreach( $this->downloads->get_files() as $file )
+						$response .= "<br/>" .
+							self::replace_tags(
+								esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'wpcf7-pdf-forms' ),
+								array(
+									'icon' => '<span class="dashicons dashicons-download"></span>',
+									'a-href-url' => '<a href="' . esc_html( $file['url'] ) . '" download>',
+									'filename' => esc_html( $file['filename'] ),
+									'/a' => '</a>',
+									'i' => '<i>',
+									'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
+									'/i' => '</i>',
+								)
+							);
 				}
 				else
 				{
-					foreach ($this->link->get_links() as $var) {
-						foreach ($var as $filename => $url) {
-							$response .= " ".__( "Download:", 'wpcf7-pdf-forms' ) ." ". $url;
-						}
-					}
+					// non-ajax request
+					$response .= "\n";
+					foreach( $this->downloads->get_files() as $file )
+						// no need to escape html because output gets escaped by WPCF7 code in this case, $response is plain text
+						$response .= "\n" . self::replace_tags( __( "Download {filename} at {url}", 'wpcf7-pdf-forms' ), array( 'filename' => $file['filename'], 'url' => $file['url'] ) );
 				}
-				$submission->set_response($response);
-				$this->link->delete_dir($this->link->set_tmp_path());
+				$submission->set_response( $response );
+				
+				// make sure to enable cron if it is down so that old download files get cleaned up
+				$this->enable_cron();
 			}
 		}
+		
 		/**
-		 * Loads the Pdf.Ninja link module
+		 * Executes scheduled tasks
 		 */
-		private function init_link()
+		public function cron()
 		{
-			if( ! $this->link )
-			{
-				require_once untrailingslashit( dirname( __FILE__ ) ) . '/modules/link.php';
-				$this->link = WPCF7_Pdf_Ninja_Link_Storage::get_instance();
-				$this->link->init_dir();
-			}
-			return $this->link;
-		}
-
-		public function fontawesome()
-		{
-			wp_enqueue_style( 'font-awesome-free', '//use.fontawesome.com/releases/v5.2.0/css/all.css' );
-		}
-
-		public function pdf_forms_task_function()
-		{
-			$this->init_link();
-
-			if( $this->link )
-			{
-				$this->link->delete_dir($this->link->set_tmp_path());
-			}
+			$this->get_downloads()->delete_old_downloads();
 		}
 	}
 	

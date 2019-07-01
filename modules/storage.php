@@ -1,15 +1,16 @@
 <?php
 
-if( ! class_exists( 'WPCF7_Pdf_Ninja_File_Storage' ) ){
-
-	class WPCF7_Pdf_Ninja_File_Storage
+if( ! class_exists( 'WPCF7_Pdf_Forms_Storage' ) )
+{
+	class WPCF7_Pdf_Forms_Storage
 	{
-
-		private  static $instance = null;
-
-		private  $storage_path = null;
-
-		private function __construct() {}
+		private static $instance = null;
+		
+		private $storage_path = null;
+		private $subpath = null;
+		
+		private function __construct() { }
+		
 		/*
 		 * Returns a global instance of this class
 		 */
@@ -17,100 +18,93 @@ if( ! class_exists( 'WPCF7_Pdf_Ninja_File_Storage' ) ){
 		{
 			if ( empty( self::$instance ) )
 				self::$instance = new self;
-
+			
 			return self::$instance;
 		}
-
-		public function set_tmp_path($directory)
+		
+		/**
+		 * Returns a storage path
+		 */
+		private function generate_storage_path()
 		{
-			// set the default url and dir path
-			if (defined('PDF_FORMS_STORAGE_TMP_DIR'))
-				$this->storage_path = PDF_FORMS_STORAGE_TMP_DIR;
+			// override path (if defined)
+			if( defined( 'WPCF7_PDF_FORMS_STORAGE_PATH' ) )
+				$storage_path = WPCF7_PDF_FORMS_STORAGE_PATH;
 			else
 			{
-				$defailt_path = 'pdf_form_storage';
-				$this->storage_path = path_join($this->get_base_path('dir'), $defailt_path);
+				$uploads = wp_get_upload_dir();
+				$storage_path = $uploads['basedir'];
 			}
-			$this->storage_path = path_join($this->storage_path, $directory);
+			
+			return $storage_path;
 		}
-
+		
+		/**
+		 * Returns storage path
+		 */
 		public function get_storage_path()
 		{
+			if( ! $this->storage_path )
+				$this->set_storage_path( $this->generate_storage_path() );
+			
 			return $this->storage_path;
 		}
-
-		private function get_base_path( $type = false )
-		{
-			$uploads = wp_get_upload_dir();
-			if ( 'dir' == $type )return $uploads['basedir'];
-		}
-
-		private function check_downloand_dir() {
-
-			$this->storage_path = wp_normalize_path($this->storage_path);
-
-			wp_mkdir_p( $this->storage_path );
-
-			$htaccess_file = path_join( $this->storage_path, '.htaccess' );
-
-			if ( file_exists( $htaccess_file ) ) {
-				return;
-			}
-
-			if ( $handle = fopen( $htaccess_file, 'w' ) ) {
-				fwrite( $handle, "Options All -Indexes\n" );
-				fclose( $handle );
-				return true;
-			}
-		}
-
-		public function sanitize_dir_name($dangerous_filename)
-		{
-			$dangerous_characters = array(" ", '"', "'", "&", "//", ".", "..", "\\", "?", "#");
-			return str_replace($dangerous_characters, '', $dangerous_filename);
-		}
-
-		public function init_dir( $directory )
-		{
-			$this->set_tmp_path($directory);
-			$this->check_downloand_dir(); // Confirm download dir
-		}
-
+		
 		/**
-		 * Copy a temporary download file path and add path to links
+		 * Sets subpath, automatically removing preceeding invalid special characters
+		 */
+		private function set_storage_path( $path )
+		{
+			$this->storage_path = wp_normalize_path( $path );
+			return $this;
+		}
+		
+		/**
+		 * Sets subpath, automatically removing preceeding invalid special characters
+		 */
+		public function set_subpath( $subpath )
+		{
+			$this->subpath = ltrim( $subpath, "/\\." );
+		}
+		
+		/**
+		 * Returns subpath
+		 */
+		public function get_subpath()
+		{
+			return $this->subpath;
+		}
+		
+		/**
+		 * Returns full path, including the subpath
+		 */
+		public function get_full_path()
+		{
+			return path_join( $this->get_storage_path(), $this->get_subpath() );
+		}
+		
+		/**
+		 * Recurively creates path directories and prevents directory listing
+		 */
+		private function initialize_path( $path )
+		{
+			$path = wp_normalize_path( $path );
+			wp_mkdir_p( $path );
+		}
+		
+		/**
+		 * Copy a source file to the storage location, ensuring a unique file name
 		 */
 		public function save( $srcfile, $filename )
 		{
+			$full_path = $this->get_full_path();
+			
+			$this->initialize_path( $full_path );
+			
 			$filename = sanitize_file_name( wpcf7_canonicalize( $filename ) );
-			$filename = wp_unique_filename( $this->storage_path, $filename );
-
-			copy($srcfile, trailingslashit( $this->storage_path ) . $filename);
+			$filename = wp_unique_filename( $full_path, $filename );
+			
+			copy($srcfile, trailingslashit( $full_path ) . $filename);
 		}
-
-		/**
-		 * wp_upload_dir check the path if there is / then finish the absolute path
-		 * so delete all characters / in front
-		 */
-		public function path_is( $directory )
-		{
-			while (substr($directory,0,1) =='/'){
-				$directory = substr($directory, 1);
-			}
-			return $directory;
-		}
-
-		public function replace_tags( $content )
-		{
-			$content = explode( "/", $content );
-			foreach ( $content as $num => $line ) {
-				$line = new WPCF7_MailTaggedText( $line);
-				$replaced = $line->replace_tags();
-				$content[$num] = sanitize_file_name( wpcf7_canonicalize( $replaced ));
-				unset($line);
-			}
-			$content = implode( "/", $content );
-			return $content;
-		}
-
 	}
 }
