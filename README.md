@@ -46,6 +46,9 @@ Known incompatible plugins,
 Special thanks to the following sponsors of this plugin,
 
 [![BrowserStack](assets/BrowserStack.png)](https://www.browserstack.com/)
+
 [BrowserStack](https://www.browserstack.com/)
+
 [Momentum3](http://momentum3.biz/)
+
 [G-FITTINGS GmbH](http://www.g-fittings.com/)
