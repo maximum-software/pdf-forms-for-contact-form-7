@@ -23,6 +23,11 @@ When your website visitor submits the CF7 form, the form in the PDF file is fill
 
 An external web API (https://pdf.ninja) is used for filling PDF forms (free usage has limitations).  An Enterprise Extension, which enables performing all PDF operations locally on your web server (no external web API), is available upon request.
 
+Known problems,
+ * Many UTF-8 (non-latin) characters don't render properly after being filled.  Almost always the problem lies with the PDF viewers not rendering the text correctly.  There is a workaround in the works, however, currently it remains unimplemented.
+ * Some third party plugins break the functionality of this plugin (see a list below).  Try troubleshooting the problem by disabling likely plugins that may cause issues, such as plugins that modify WordPress or Contact Form 7 in radical ways.
+ * Possible issues with checkbox multiselect
+
 Known incompatible plugins,
 * [Contact Form 7 Live Preview](https://wordpress.org/plugins/cf7-live-preview/)
 * [Smart Grid-Layout Design for Contact Form 7](https://wordpress.org/plugins/cf7-grid-layout/)
