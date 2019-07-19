@@ -1012,8 +1012,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( $type == 'radio' && count( $options ) == 1 )
 						$tagType = 'checkbox';
 					
-					foreach( $options as &$option )
-						$tagValues .= '"' . $option . '" ';
+					if( count( $options ) == 1 )
+						// add pipe to prevent user confusion with singular options
+						$tagValues .= '"' . strval( $field['name'] ) . '|' . strval( reset( $options ) ) . '" ';
+					else
+						foreach( $options as &$option )
+							$tagValues .= '"' . $option . '" ';
 					
 					if( $type == 'checkbox' && count($options) > 1 )
 						$tagOptions .= 'exclusive ';
