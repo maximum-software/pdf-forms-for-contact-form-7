@@ -998,7 +998,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			if( $type == 'text' )
 				if( isset( $field['value'] ) )
-					$tagValues .= '"' . strval( $field['value'] ) . '" ';
+					$tagValues .= '"' . esc_attr( strval( $field['value'] ) ) . '" ';
 			
 			if( $type == 'radio' || $type == 'select' || $type == 'checkbox' )
 			{
@@ -1008,18 +1008,18 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					
 					if( ( $off_key = array_search( 'Off', $options, $strict=true ) ) !== FALSE )
 						unset( $options[ $off_key ] );
-				
+					
 					if( $type == 'radio' && count( $options ) == 1 )
 						$tagType = 'checkbox';
 					
 					if( count( $options ) == 1 )
 						// add pipe to prevent user confusion with singular options
-						$tagValues .= '"' . strval( $field['name'] ) . '|' . strval( reset( $options ) ) . '" ';
+						$tagValues .= '"' . esc_attr( strval( $field['name'] ) ) . '|' . esc_attr( strval( reset( $options ) ) ) . '" ';
 					else
 						foreach( $options as &$option )
-							$tagValues .= '"' . $option . '" ';
+							$tagValues .= '"' . esc_attr( strval( $option ) ) . '" ';
 					
-					if( $type == 'checkbox' && count($options) > 1 )
+					if( $type == 'checkbox' && count( $options ) > 1 )
 						$tagOptions .= 'exclusive ';
 				}
 				else
