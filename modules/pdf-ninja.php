@@ -37,7 +37,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function get_title()
 	{
-		return __( 'Pdf.Ninja API', 'wpcf7-pdf-forms' );
+		return __( 'Pdf.Ninja API', 'pdf-forms-for-contact-form-7' );
 	}
 	
 	/*
@@ -91,7 +91,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			// don't try to get the key from the API on every page load!
 			$fail = get_transient( 'wpcf7_pdf_forms_pdfninja_key_failure' );
 			if( $fail )
-				throw new Exception( __( "Failed to get the Pdf.Ninja API key on last attempt.  Please retry manually.", 'wpcf7-pdf-forms' ) );
+				throw new Exception( __( "Failed to get the Pdf.Ninja API key on last attempt.  Please retry manually.", 'pdf-forms-for-contact-form-7' ) );
 			
 			$this->set_key( $this->generate_key() );
 		}
@@ -119,11 +119,11 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		{
 			$current_user = wp_get_current_user();
 			if( ! $current_user )
-				throw new Exception( __( "Failed to determine the current user.", 'wpcf7-pdf-forms' ) );
+				throw new Exception( __( "Failed to determine the current user.", 'pdf-forms-for-contact-form-7' ) );
 			
 			$email = sanitize_email( $current_user->user_email );
 			if( ! $email )
-				throw new Exception( __( "Failed to determine the current user's email address.", 'wpcf7-pdf-forms' ) );
+				throw new Exception( __( "Failed to determine the current user's email address.", 'pdf-forms-for-contact-form-7' ) );
 			
 			$key = null;
 			
@@ -246,19 +246,19 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		
 		if( version_compare( PHP_VERSION, '5.3.0' ) < 0 )
 		{
-			$this->enterprise_extension_support_error = __( 'PHP version 5.3 or higher is required.', 'wpcf7-pdf-forms' );
+			$this->enterprise_extension_support_error = __( 'PHP version 5.3 or higher is required.', 'pdf-forms-for-contact-form-7' );
 			return false;
 		}
 		
 		if( strncasecmp(PHP_OS, 'WIN', 3) == 0)
 		{
-			$this->enterprise_extension_support_error = __( 'Windows platform is not supported.', 'wpcf7-pdf-forms' );
+			$this->enterprise_extension_support_error = __( 'Windows platform is not supported.', 'pdf-forms-for-contact-form-7' );
 			return false;
 		}
 		
 		if( ini_get( 'safe_mode' ) )
 		{
-			$this->enterprise_extension_support_error = __( 'PHP safe mode is not supported.', 'wpcf7-pdf-forms' );
+			$this->enterprise_extension_support_error = __( 'PHP safe mode is not supported.', 'pdf-forms-for-contact-form-7' );
 			return false;
 		}
 		
@@ -266,21 +266,21 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		|| $this->is_function_disabled( 'proc_open' )
 		|| $this->is_function_disabled( 'proc_close' ) )
 		{
-			$this->enterprise_extension_support_error = __( 'PHP execute functions (exec, proc_open, proc_close) are disabled.', 'wpcf7-pdf-forms' );
+			$this->enterprise_extension_support_error = __( 'PHP execute functions (exec, proc_open, proc_close) are disabled.', 'pdf-forms-for-contact-form-7' );
 			return false;
 		}
 		
 		exec( 'which which', $output, $retval );
 		if( $retval !== 0 )
 		{
-			$this->enterprise_extension_support_error = __( 'PHP execute functions (exec, proc_open, proc_close) are disabled.', 'wpcf7-pdf-forms' );
+			$this->enterprise_extension_support_error = __( 'PHP execute functions (exec, proc_open, proc_close) are disabled.', 'pdf-forms-for-contact-form-7' );
 			return false;
 		}
 		
 		// check /proc/self/stat (required for pdftk)
 		if( !file_exists( '/proc/self/stat' ) )
 		{
-			$this->enterprise_extension_support_error = __( 'Chroot environments are not supported', 'wpcf7-pdf-forms' );
+			$this->enterprise_extension_support_error = __( 'Chroot environments are not supported', 'pdf-forms-for-contact-form-7' );
 			return false;
 		}
 		
@@ -288,7 +288,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( $arch == 'x86_64' )
 			return true;
 		
-		$this->enterprise_extension_support_error = __( 'Required binaries are not available on this platform.', 'wpcf7-pdf-forms' );
+		$this->enterprise_extension_support_error = __( 'Required binaries are not available on this platform.', 'pdf-forms-for-contact-form-7' );
 		return false;
 	}
 	
@@ -306,7 +306,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		$body = wp_remote_retrieve_body( $response );
 		
 		if( ! $body )
-			throw new Exception( __( "Failed to get API server response", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Failed to get API server response", 'pdf-forms-for-contact-form-7' ) );
 		
 		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
 		
@@ -315,7 +315,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$response = json_decode( $body , true );
 			
 			if( ! $response )
-				throw new Exception( __( "Failed to decode API server response", 'wpcf7-pdf-forms' ) );
+				throw new Exception( __( "Failed to decode API server response", 'pdf-forms-for-contact-form-7' ) );
 			
 			if( $response['success'] == true && isset( $response['fileUrl'] ) )
 			{
@@ -323,7 +323,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 				$args2['timeout'] = 100;
 				$response2 = wp_remote_get( $response['fileUrl'], $args2 );
 				if( is_wp_error( $response2 ) )
-					throw new Exception( __( "Failed to download a file from the API server", 'wpcf7-pdf-forms' ) );
+					throw new Exception( __( "Failed to download a file from the API server", 'pdf-forms-for-contact-form-7' ) );
 				
 				$response['content_type'] = wp_remote_retrieve_header( $response2, 'content-type' );
 				$response['content'] = wp_remote_retrieve_body( $response2 );
@@ -364,7 +364,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		$body = wp_remote_retrieve_body( $response );
 		
 		if( ! $body )
-			throw new Exception( __( "Failed to get API server response", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Failed to get API server response", 'pdf-forms-for-contact-form-7' ) );
 		
 		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
 		
@@ -373,7 +373,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$response = json_decode( $body , true );
 			
 			if( ! $response )
-				throw new Exception( __( "Failed to decode API server response", 'wpcf7-pdf-forms' ) );
+				throw new Exception( __( "Failed to decode API server response", 'pdf-forms-for-contact-form-7' ) );
 			
 			if( $response['success'] == true && isset( $response['fileUrl'] ) )
 			{
@@ -381,7 +381,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 				$args2['timeout'] = 100;
 				$response2 = wp_remote_get( $response['fileUrl'], $args2 );
 				if( is_wp_error( $response2 ) )
-					throw new Exception( __( "Failed to download a file from the API server", 'wpcf7-pdf-forms' ) );
+					throw new Exception( __( "Failed to download a file from the API server", 'pdf-forms-for-contact-form-7' ) );
 				
 				$response['content_type'] = wp_remote_retrieve_header( $response2, 'content-type' );
 				$response['content'] = wp_remote_retrieve_body( $response2 );
@@ -408,7 +408,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			throw new Exception( $result['error'] );
 		
 		if( ! $result['key'])
-			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
 		return $result['key'];
 	}
@@ -462,7 +462,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		$filepath = get_attached_file( $attachment_id );
 		
 		if( ! file_exists( $filepath ) )
-			throw new Exception( __( "File not found", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "File not found", 'pdf-forms-for-contact-form-7' ) );
 		
 		$filename = basename( $filepath );
 		$filecontents = file_get_contents( $filepath );
@@ -536,7 +536,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			throw new Exception( $result['error'] );
 		
 		if( ! is_array( $result['fields'] ) )
-			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
 		return $result['fields'];
 	}
@@ -555,7 +555,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			throw new Exception( $result['error'] );
 		
 		if( ! is_array( $result['fields'] ) ||  ! is_array( $result['pages'] ) )
-			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
 		unset( $result['success'] );
 		
@@ -597,18 +597,18 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			throw new Exception( $result['error'] );
 		
 		if( !isset( $result['content'] ) || $result['content_type'] != 'image/jpeg' )
-			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
 		$handle = @fopen( $destfile, 'w' );
 		
 		if( ! $handle )
-			throw new Exception( __( "Failed to open file for writing", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Failed to open file for writing", 'pdf-forms-for-contact-form-7' ) );
 		
 		fwrite( $handle, $result['content'] );
 		fclose( $handle );
 		
 		if( ! file_exists( $destfile ) )
-			throw new Exception( __( "Failed to create file", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Failed to create file", 'pdf-forms-for-contact-form-7' ) );
 		
 		return true;
 	}
@@ -646,11 +646,11 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		
 		$encoded_data = WPCF7_Pdf_Forms::json_encode( $data );
 		if( $encoded_data === FALSE || $encoded_data === null )
-			throw new Exception( __( "Failed to encode JSON data", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Failed to encode JSON data", 'pdf-forms-for-contact-form-7' ) );
 		
 		$encoded_embeds = WPCF7_Pdf_Forms::json_encode( $embeds );
 		if( $encoded_embeds === FALSE || $encoded_embeds === null )
-			throw new Exception( __( "Failed to encode JSON data", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Failed to encode JSON data", 'pdf-forms-for-contact-form-7' ) );
 		
 		$params = array(
 			'fileId'   => $this->get_file_id( $attachment_id ),
@@ -711,18 +711,18 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			throw new Exception( $result['error'] );
 		
 		if( !isset( $result['content'] ) || $result['content_type'] != 'application/pdf' )
-			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
 		$handle = @fopen( $destfile, 'w' );
 		
 		if( ! $handle )
-			throw new Exception( __( "Failed to open file for writing", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Failed to open file for writing", 'pdf-forms-for-contact-form-7' ) );
 		
 		fwrite( $handle, $result['content'] );
 		fclose( $handle );
 		
 		if( ! file_exists( $destfile ) )
-			throw new Exception( __( "Failed to create file", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Failed to create file", 'pdf-forms-for-contact-form-7' ) );
 		
 		return true;
 	}
@@ -741,18 +741,18 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			throw new Exception( $result['error'] );
 		
 		if( !isset( $result['content'] ) || $result['content_type'] != 'application/pdf' )
-			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
 		$handle = @fopen( $destfile, 'w' );
 		
 		if( ! $handle )
-			throw new Exception( __( "Failed to open file for writing", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Failed to open file for writing", 'pdf-forms-for-contact-form-7' ) );
 		
 		fwrite( $handle, $result['content'] );
 		fclose( $handle );
 		
 		if( ! file_exists( $destfile ) )
-			throw new Exception( __( "Failed to create file", 'wpcf7-pdf-forms' ) );
+			throw new Exception( __( "Failed to create file", 'pdf-forms-for-contact-form-7' ) );
 		
 		return true;
 	}
@@ -787,7 +787,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 					check_admin_referer( 'wpcf7-pdfninja-edit' );
 					
 					if ( ! current_user_can( 'wpcf7_manage_integration' ) )
-						throw new Exception( __( "Permission denied", 'wpcf7-pdf-forms' ) );
+						throw new Exception( __( "Permission denied", 'pdf-forms-for-contact-form-7' ) );
 					
 					$success = true;
 					
@@ -844,20 +844,20 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		try { $key = $this->get_key(); } catch(Exception $e) { }
 		
 		echo WPCF7_Pdf_Forms::render( 'pdfninja_integration_info', array(
-			'top-message' => esc_html__( "This service provides functionality for working with PDF files via a web API.", 'wpcf7-pdf-forms' ),
-			'key-label' => esc_html__( 'API Key', 'wpcf7-pdf-forms' ),
+			'top-message' => esc_html__( "This service provides functionality for working with PDF files via a web API.", 'pdf-forms-for-contact-form-7' ),
+			'key-label' => esc_html__( 'API Key', 'pdf-forms-for-contact-form-7' ),
 			'key' => esc_html( $key ),
-			'key-copy-btn-label' => esc_html__( 'copy key', 'wpcf7-pdf-forms' ),
-			'key-copied-btn-label' => esc_html__( 'copied!', 'wpcf7-pdf-forms' ),
-			'api-url-label' => esc_html__( 'API URL', 'wpcf7-pdf-forms' ),
+			'key-copy-btn-label' => esc_html__( 'copy key', 'pdf-forms-for-contact-form-7' ),
+			'key-copied-btn-label' => esc_html__( 'copied!', 'pdf-forms-for-contact-form-7' ),
+			'api-url-label' => esc_html__( 'API URL', 'pdf-forms-for-contact-form-7' ),
 			'api-url' => esc_html( $this->get_api_url() ),
-			'security-label' => esc_html__( 'Data Security', 'wpcf7-pdf-forms' ),
-			'no-ssl-verify-label' => esc_html__( 'Ignore certificate verification errors', 'wpcf7-pdf-forms' ),
+			'security-label' => esc_html__( 'Data Security', 'pdf-forms-for-contact-form-7' ),
+			'no-ssl-verify-label' => esc_html__( 'Ignore certificate verification errors', 'pdf-forms-for-contact-form-7' ),
 			'no-ssl-verify-value' => !$this->get_verify_ssl() ? 'checked' : '',
-			'security-warning' => esc_html__( 'Warning: Using plain HTTP or disabling certificate verification can lead to data leaks.', 'wpcf7-pdf-forms' ),
-			'enterprise-extension-support-label' => esc_html__( 'Enterprise Extension', 'wpcf7-pdf-forms' ),
-			'enterprise-extension-support-value' => $this->get_enterprise_extension_support() ? esc_html__( 'Extension is supported.', 'wpcf7-pdf-forms' ) : esc_html__( 'Extension is not supported.', 'wpcf7-pdf-forms' ).' '.$this->enterprise_extension_support_error,
-			'edit-label' => esc_html__( "Edit", 'wpcf7-pdf-forms' ),
+			'security-warning' => esc_html__( 'Warning: Using plain HTTP or disabling certificate verification can lead to data leaks.', 'pdf-forms-for-contact-form-7' ),
+			'enterprise-extension-support-label' => esc_html__( 'Enterprise Extension', 'pdf-forms-for-contact-form-7' ),
+			'enterprise-extension-support-value' => $this->get_enterprise_extension_support() ? esc_html__( 'Extension is supported.', 'pdf-forms-for-contact-form-7' ) : esc_html__( 'Extension is not supported.', 'pdf-forms-for-contact-form-7' ).' '.$this->enterprise_extension_support_error,
+			'edit-label' => esc_html__( "Edit", 'pdf-forms-for-contact-form-7' ),
 			'edit-link' => esc_url( $this->menu_page_url( 'action=edit' ) ),
 		) );
 	}
@@ -868,9 +868,9 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	public function display_error()
 	{
 		echo WPCF7_Pdf_Forms::render( 'pdfninja_integration_error', array(
-			'top-message' => esc_html__( "Error!", 'wpcf7-pdf-forms' ),
+			'top-message' => esc_html__( "Error!", 'pdf-forms-for-contact-form-7' ),
 			'error-message' => esc_html( $this->error ),
-			'edit-label' => esc_html__( "Edit", 'wpcf7-pdf-forms' ),
+			'edit-label' => esc_html__( "Edit", 'pdf-forms-for-contact-form-7' ),
 			'edit-link' => esc_url( $this->menu_page_url( 'action=edit' ) ),
 		) );
 	}
@@ -883,19 +883,19 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		try { $key = $this->get_key(); } catch(Exception $e) { }
 		
 		echo WPCF7_Pdf_Forms::render( 'pdfninja_integration_edit', array(
-			'top-message' => esc_html__( "The following form allows you to edit your API key.", 'wpcf7-pdf-forms' ),
-			'key-label' => esc_html__( 'API Key', 'wpcf7-pdf-forms' ),
+			'top-message' => esc_html__( "The following form allows you to edit your API key.", 'pdf-forms-for-contact-form-7' ),
+			'key-label' => esc_html__( 'API Key', 'pdf-forms-for-contact-form-7' ),
 			'key' => esc_html( $key ),
-			'api-url-label' => esc_html__( 'API URL', 'wpcf7-pdf-forms' ),
+			'api-url-label' => esc_html__( 'API URL', 'pdf-forms-for-contact-form-7' ),
 			'api-url' => esc_html( $this->get_api_url() ),
-			'security-label' => esc_html__( 'Data Security', 'wpcf7-pdf-forms' ),
-			'no-ssl-verify-label' => esc_html__( 'Ignore certificate verification errors', 'wpcf7-pdf-forms' ),
+			'security-label' => esc_html__( 'Data Security', 'pdf-forms-for-contact-form-7' ),
+			'no-ssl-verify-label' => esc_html__( 'Ignore certificate verification errors', 'pdf-forms-for-contact-form-7' ),
 			'no-ssl-verify-value' => !$this->get_verify_ssl() ? 'checked' : '',
-			'security-warning' => esc_html__( 'Warning: Using plain HTTP or disabling certificate verification can lead to data leaks.', 'wpcf7-pdf-forms' ),
+			'security-warning' => esc_html__( 'Warning: Using plain HTTP or disabling certificate verification can lead to data leaks.', 'pdf-forms-for-contact-form-7' ),
 			'edit-link' => esc_url( $this->menu_page_url( 'action=edit' ) ),
 			'nonce' => wp_nonce_field( 'wpcf7-pdfninja-edit' ),
-			'save-label' => esc_html__( "Save", 'wpcf7-pdf-forms' ),
-			'new-label' => esc_html__( "Get New Key", 'wpcf7-pdf-forms' ),
+			'save-label' => esc_html__( "Save", 'pdf-forms-for-contact-form-7' ),
+			'new-label' => esc_html__( "Get New Key", 'pdf-forms-for-contact-form-7' ),
 		) );
 	}
 	
@@ -906,19 +906,19 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	{
 		if( 'error' == $message )
 			echo WPCF7_Pdf_Forms::render( 'notice_error', array(
-				'label' => esc_html__( "PDF Forms for CF7 plugin error", 'wpcf7-pdf-forms' ),
-				'message' => esc_html__( "Can't save new key.", 'wpcf7-pdf-forms' ),
+				'label' => esc_html__( "PDF Forms for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
+				'message' => esc_html__( "Can't save new key.", 'pdf-forms-for-contact-form-7' ),
 			) );
 		
 		if( $this->error )
 			echo WPCF7_Pdf_Forms::render( 'notice_error', array(
-				'label' => esc_html__( "PDF Forms for CF7 plugin error", 'wpcf7-pdf-forms' ),
+				'label' => esc_html__( "PDF Forms for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
 				'message' => esc_html( $this->error ),
 			) );
 		
 		if( 'success' == $message )
 			echo WPCF7_Pdf_Forms::render( 'notice_success', array(
-				'message' => esc_html__( "Settings saved.", 'wpcf7-pdf-forms' ),
+				'message' => esc_html__( "Settings saved.", 'pdf-forms-for-contact-form-7' ),
 			) );
 	}
 	
@@ -931,8 +931,8 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		$fail = get_transient( 'wpcf7_pdf_forms_pdfninja_key_failure' );
 		if( isset( $fail ) && $fail )
 			echo WPCF7_Pdf_Forms::render( 'notice_error', array(
-				'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'wpcf7-pdf-forms' ),
-				'message' => esc_html__( "Failed to get the Pdf.Ninja API key on last attempt.  Please retry manually.", 'wpcf7-pdf-forms' ),
+				'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
+				'message' => esc_html__( "Failed to get the Pdf.Ninja API key on last attempt.  Please retry manually.", 'pdf-forms-for-contact-form-7' ),
 			) );
 	}
 	
@@ -947,7 +947,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$url = $this->get_api_url();
 			$verify_ssl = $this->get_verify_ssl();
 			if( substr($url,0,5) == 'http:' || !$verify_ssl)
-				$messages .= "<div class='notice notice-warning'><p>" . esc_html__( 'Warning: Your integration settings indicate you are using an insecure connection to the Pdf.Ninja API server.', 'wpcf7-pdf-forms' ) . "</p></div>";
+				$messages .= "<div class='notice notice-warning'><p>" . esc_html__( 'Warning: Your integration settings indicate you are using an insecure connection to the Pdf.Ninja API server.', 'pdf-forms-for-contact-form-7' ) . "</p></div>";
 		}
 		catch(Exception $e) { };
 		
