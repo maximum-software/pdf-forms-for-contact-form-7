@@ -32,7 +32,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Storage' ) )
 				$storage_path = WPCF7_PDF_FORMS_STORAGE_PATH;
 			else
 			{
-				$uploads = wp_get_upload_dir();
+				$uploads = wp_upload_dir( null, false );
 				$storage_path = $uploads['basedir'];
 			}
 			

@@ -13,7 +13,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 		
 		private function __construct()
 		{
-			$uploads = wp_get_upload_dir();
+			$uploads = wp_upload_dir( null, false );
 			$subdir = 'wpcf7_pdf_forms_downloads';
 			$this->downloads_path = path_join( $uploads['basedir'], $subdir );
 			$this->downloads_url = $uploads['baseurl'] . '/' . $subdir;
