@@ -627,14 +627,14 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		foreach( $embeds as $key => &$embed )
 		{
 			$filepath = $embed['image'];
-			if( !file_exists( $filepath ) )
+			if( !is_readable( $filepath ) )
 			{
 				unset( $embeds[$key] );
 				continue;
 			}
 			$files[$filepath] = $filepath;
 		}
-		$files = array_values($files);
+		$files = array_values( $files );
 		foreach( $embeds as &$embed )
 		{
 			$filepath = $embed['image'];
