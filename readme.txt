@@ -2,10 +2,10 @@
 Contributors: maximumsoftware
 Tags: pdf, form, filler, contact form, attachment, email
 Requires at least: 4.3
-Tested up to: 5.0.3
+Tested up to: 5.2.3
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.0.2
+Version: 1.2.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -48,6 +48,19 @@ Special thanks to the following sponsors of this plugin,
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.2.0 =
+
+* Release date: September 27, 2019
+
+* Added a number of optimizations, bug fixes and improvements
+* Updated the lists of conflicting plugins and sponsors
+* Added an option for saving the filled PDF on the server
+* Added an option for allowing users to download the filled PDFs
+* Added integration with WP media library
+* Added code to add pipe to CF7 tags to prevent user confusion with singular options
+* Fixed CF7 tag generation code's field value escape issue
+* Renamed text domain to plugin slug
 
 = 1.0.2 =
 
