@@ -258,7 +258,7 @@ msgstr "Seleccione un archivo PDF"
 
 #: pdf-forms-for-contact-form-7.php:296
 msgid "Select"
-msgstr ""
+msgstr "Seleccionar"
 
 #: pdf-forms-for-contact-form-7.php:326
 msgid "PDF Forms"
