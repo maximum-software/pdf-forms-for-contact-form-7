@@ -60,7 +60,7 @@ Special thanks to the following sponsors of this plugin,
 * Added integration with WP media library
 * Added code to add pipe to CF7 tags to prevent user confusion with singular options
 * Fixed CF7 tag generation code's field value escape issue
-* Renamed text domain to plugin slug
+* Renamed text domain and plugin filename/slug to the published plugin slug (plugin needs to be reactivated after update due to a change in plugin filename)
 
 = 1.0.2 =
 
