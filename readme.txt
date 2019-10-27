@@ -5,7 +5,7 @@ Requires at least: 4.3
 Tested up to: 5.2.3
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.2.0
+Version: 1.2.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -49,6 +49,13 @@ Special thanks to the following sponsors of this plugin,
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.2.1 =
+
+* Release date: October 27, 2019
+
+* Fixed an issue with ajax form submission not always receiving HTML download response message
+* Fixed an issue which caused the plugin to deactivate when updating from pre-1.2 versions to 1.2.0 and later versions due to main plugin php file rename
 
 = 1.2.0 =
 
