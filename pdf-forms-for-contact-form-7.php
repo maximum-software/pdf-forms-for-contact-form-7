@@ -712,8 +712,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$mail = $attachment['options']['attach_to_mail_1'];
 				$mail2 = $attachment['options']['attach_to_mail_2'];
+				$save_directory = $attachment['options']['save_directory'];
+				$create_download_link = $attachment['options']['download_link'];
 				
-				if( !$mail && !$mail2 )
+				if( !$mail && !$mail2 && empty( $save_directory ) && !$create_download_link )
 					continue;
 				
 				$options = array();
@@ -762,7 +764,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$files[] = array( 'file' => $destfile, 'mail' => $mail, 'mail2' => $mail2 );
 				}
 				
-				$save_directory = $attachment['options']['save_directory'];
 				if( !empty( $save_directory ) )
 				{
 					$storage = $this->get_storage();
@@ -800,7 +801,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$storage->save( $destfile, $destfilename.'.pdf' );
 				}
 				
-				if ( $attachment['options']['download_link'] )
+				if ( $create_download_link )
 					$this->get_downloads()->add_file( $destfile, $destfilename.'.pdf' );
 			}
 			
