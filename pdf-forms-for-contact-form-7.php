@@ -791,7 +791,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						$element = $new_element;
 					}
 					$save_directory = implode( "/", $path_elements );
-					$path = preg_replace( '|/+|', '/', $path ); // remove double slashes
+					$save_directory = preg_replace( '|/+|', '/', $save_directory ); // remove double slashes
 					
 					// remove preceeding slashes and dots and space characters
 					$save_directory = trim( $save_directory, $trim_characters );
