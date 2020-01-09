@@ -24,7 +24,7 @@ When your website visitor submits the CF7 form, the form in the PDF file is fill
 An external web API (https://pdf.ninja) is used for filling PDF forms (free usage has limitations).  An Enterprise Extension, which enables performing all PDF operations locally on your web server (no external web API), is available.
 
 Known problems,
- * Many UTF-8 (non-latin) characters don't render properly after being filled.  Almost always the problem lies with the PDF viewers not rendering the text correctly.  There is a workaround in the works, however, currently it remains unimplemented.
+ * Some UTF-8 (non-latin) characters, checkboxes and radio buttons don't render properly after being filled.  Almost always the problem lies with the PDF viewers not rendering them correctly.  There is a workaround in the works, however, currently it remains in development.
  * Some third party plugins break the functionality of this plugin (see a list below).  Try troubleshooting the problem by disabling likely plugins that may cause issues, such as plugins that modify WordPress or Contact Form 7 in radical ways.
  * Possible issues with checkbox multiselect
 
@@ -240,8 +240,16 @@ There are two ways to map fields with this plugin.  The field mapper tool allows
 = My fields are not getting filled, what is wrong? =
 
 If you reuploaded the PDF file and your mapping was using the old file ID then your mapping will no longer work and you will need to recreate it.
+
 If you are using the field mapper tool, make sure the mapping exists in the list of mappings and the field names match.  If you are using the tag generator tool, make sure the attachment ID matches (or is 'all') and the base64-encoded part of the tag name is unchanged.
+
 If you renamed the PDF field, you will need to remove the old mapping and recreate the mapping with the new name.
+
+= My checkboxes and/or radio buttons are not getting filled, what is wrong? =
+
+Make sure your PDF checkbox/radio field's exported value matches the value of the CF7 form's checkbox tag.  Usually, it is "On" or "Yes".  If you need to display a different value in the CF7 form, use [pipes](https://contactform7.com/selectable-recipient-with-pipes/).
+
+Some PDF viewers don't render checkboxes correctly in some PDF files due to incompatible PDF formatting.  You may be able to solve this issue by recreating the PDF in a different PDF editor.
 
 = How do I remove the watermark in the filled PDF files? =
 
