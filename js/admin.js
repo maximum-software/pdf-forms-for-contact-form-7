@@ -1223,11 +1223,64 @@ jQuery(document).ready(function($) {
 		});
 		// callback on the pdf frame
 		pdf_frame.on('select', function() {
+			
 			var attachment = pdf_frame.state().get('selection').first().toJSON();
-			if(!getAttachmentInfo(attachment.id))
-				attachPdf(attachment.id);
+			
+			if(attachment.uploadedTo != 0) {
+				
+				var data = new FormData();
+				data.append("post_id", post_id);
+				data.append("attachment_id", attachment.id);
+				data.append("action", 'wpcf7_pdf_forms_get_attachment_copy');
+				data.append("nonce", wpcf7_pdf_forms.ajax_nonce);
+				
+				jQuery.ajax({
+					
+					url: wpcf7_pdf_forms.ajax_url,
+					type: 'POST',
+					data: data,
+					cache: false,
+					dataType: 'json',
+					processData: false, // this is needed for file upload to work properly
+					contentType: false, // this is needed for file upload to work properly
+					
+					success: function(data, textStatus, jqXHR) {
+						
+						if(!data.success) {
+							return errorMessage(data.error_message);
+						}
+						
+						delete data.success;
+						
+						if(data.hasOwnProperty('attachment_id')) {
+							if(data.hasOwnProperty('info')) {
+								setAttachmentInfo(data.attachment_id, data.info);
+								delete data.info;
+							}
+							addAttachment(data);
+						}
+						
+					},
+					
+					error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
+					
+					beforeSend: function() { showSpinner(); },
+					complete: function() { hideSpinner(); }
+					
+				});
+				
+			} else {
+				
+				if(!getAttachmentInfo(attachment.id)) {
+					attachPdf(attachment.id);
+				}
+				
+			}
+			
 		});
+		
 		pdf_frame.open();
+		
 	});
 	
 	// set up 'Add Mapping' button handler
