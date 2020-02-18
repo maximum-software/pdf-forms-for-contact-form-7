@@ -61,7 +61,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 			
 			add_action( 'wp_ajax_wpcf7_pdf_forms_get_attachment_info', array( $this, 'wp_ajax_get_attachment_info' ) );
-			add_action( 'wp_ajax_wpcf7_pdf_forms_get_attachment_copy', array( $this, 'wp_ajax_get_attachment_copy' ) );
 			add_action( 'wp_ajax_wpcf7_pdf_forms_query_tags', array( $this, 'wp_ajax_query_tags' ) );
 			add_action( 'wp_ajax_wpcf7_pdf_forms_preload_data', array( $this, 'wp_ajax_preload_data' ) );
 			add_action( 'wp_ajax_wpcf7_pdf_forms_query_cf7_fields', array( $this, 'wp_ajax_query_cf7_fields' ) );
@@ -464,6 +463,23 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( $attachment_id > 0 )
 						if( current_user_can( 'edit_post', $attachment_id ) )
 						{
+							if(wp_get_post_parent_id($attachment_id) > 0
+							&& wp_get_post_parent_id($attachment_id) != $post_id)
+							{
+								$filepath = get_attached_file($attachment_id);
+								$base_filename = preg_replace('/\-Copy(\-[0-9]+)?$/i', '', pathinfo($filepath, PATHINFO_FILENAME));
+								$copy_attachment_filename = pathinfo($filepath, PATHINFO_DIRNAME) . '/' . $base_filename . '-Copy.' . pathinfo($filepath, PATHINFO_EXTENSION);
+								$file_array = array(
+									'name'			=> pathinfo($copy_attachment_filename, PATHINFO_BASENAME),
+									'tmp_name'		=> download_url(wp_get_attachment_url($attachment_id))
+								);
+								if ( is_wp_error( $file_array['tmp_name'] ) )
+									return $file_array['tmp_name'];
+								$copy_attachment_id = media_handle_sideload($file_array, $post_id);
+								if($copy_attachment_id > 0)
+									$attachment_id = $copy_attachment_id;
+							}
+							
 							$new_attachment_ids[$attachment_id] = $attachment_id;
 							
 							$options = array();
@@ -873,90 +889,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'error_message' => $e->getMessage(),
 					'error_location' => basename( $e->getFile() ) . ":". $e->getLine(),
 				) );
-			}
-		}
-		
-		public function wp_ajax_get_attachment_copy()
-		{
-			try
-			{
-				$wp_upload_dir = wp_upload_dir();
-				
-				if(!check_ajax_referer('wpcf7-pdf-forms-ajax-nonce', 'nonce', false)) {
-					throw new Exception(__("Nonce mismatch", 'pdf-forms-for-contact-form-7'));
-				}
-				
-				$filepath = get_attached_file($_POST['attachment_id']);
-				
-				if(!$filepath) {
-					throw new Exception(__("Invalid attachment", 'pdf-forms-for-contact-form-7'));
-				}
-				if(!file_exists($filepath)) {
-					throw new Exception(__( "File not found", 'pdf-forms-for-contact-form-7'));
-				}
-				
-				if(file_exists($filepath)) {
-					
-					$base_filename = preg_replace('/\.pdf$/i', '', basename($filepath));
-					$base_filename = preg_replace('/\-copy\-[0-9]+$/i', '', $base_filename);
-					$new_filename = $wp_upload_dir['path'] . '/' . $base_filename . '-copy-' . time() . '.pdf';
-					
-					if(!file_exists($new_filename)) {
-						copy($filepath, $new_filename);
-						$filetype = wp_check_filetype(basename($new_filename), null);
-						$attachment = array(
-							'guid'           => $wp_upload_dir['url'] . '/' . basename($new_filename), 
-							'post_mime_type' => $filetype['type'],
-							'post_title'     => preg_replace( '/\.[^.]+$/', '', basename($new_filename)),
-							'post_content'   => '',
-							'post_status'    => 'inherit'
-						);
-						$new_attachment_id = wp_insert_attachment($attachment, $new_filename, $POST['post_id']);
-						require_once(ABSPATH . 'wp-admin/includes/image.php');
-						$new_attachment_data = wp_generate_attachment_metadata($new_attachment_id, $new_filename);
-						wp_update_attachment_metadata($new_attachment_id, $new_attachment_data);
-					}
-				}
-				
-				$new_filepath = get_attached_file($new_attachment_id);
-				
-				if(!$new_filepath) {
-					throw new Exception(__("Invalid attachment", 'pdf-forms-for-contact-form-7'));
-				}
-				if(!file_exists($new_filepath)) {
-					throw new Exception(__( "File not found", 'pdf-forms-for-contact-form-7'));
-				}
-				
-				// TODO: check type of contents of the file instead of just extension
-				if(($type = wp_check_filetype($new_filepath)) && isset($type['type']) && $type['type'] !== 'application/pdf') {
-					throw new Exception(__("Invalid file type, must be a PDF file", 'pdf-forms-for-contact-form-7'));
-				}
-				
-				$options = array();
-				foreach(self::$pdf_options as $option => $default) {
-					$options[$option] = $default;
-				}
-				
-				$info = $this->get_info($new_attachment_id);
-				$info['fields'] = $this->query_pdf_fields($new_attachment_id);
-				
-				if(file_exists($new_filepath)) {
-					return wp_send_json(array(
-						'success' => true,
-						'attachment_id' => $new_attachment_id,
-						'filename' => basename($new_filepath),
-						'options' => $options,
-						'info' => $info,
-					));
-				}
-			}
-			catch( Exception $e )
-			{
-				return wp_send_json(array(
-					'success'  => false,
-					'error_message' => $e->getMessage(),
-					'error_location' => basename($e->getFile() ) . ":". $e->getLine(),
-				));
 			}
 		}
 		
@@ -1643,7 +1575,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				$submission = WPCF7_Submission::get_instance();
 				$response = $submission->get_response();
-				if( $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest' )
+				if( $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' )
 				{
 					// ajax request
 					$response .= "<br/>";
