@@ -377,6 +377,33 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function post_add_pdf( $post_id, $attachment_id, $options )
 		{
+			// if this attachment is already attached, create a copy
+			// TODO: change attachment id in mappings/etc
+			if( wp_get_post_parent_id( $attachment_id ) > 0 )
+			{
+				$filepath = get_attached_file( $attachment_id );
+				
+				$temp_filepath = wp_tempnam();
+				if( copy( $filepath, $temp_filepath ) === FALSE )
+					return;
+				
+				$copy_suffix = sanitize_file_name( __( "Copy", 'pdf-forms-for-contact-form-7' ) );
+				$base_filename = preg_replace( '/\-' . preg_quote( $copy_suffix , "/" ) . '(\-[0-9]+)?$/iu', '', pathinfo( $filepath, PATHINFO_FILENAME ) );
+				$copy_filename = $base_filename . '-' . $copy_suffix . '.' . pathinfo( $filepath, PATHINFO_EXTENSION );
+				
+				$copy_attachment_id = media_handle_sideload( array(
+					'tmp_name' => $temp_filepath,
+					'name'     => $copy_filename
+				) );
+				if( is_wp_error( $copy_attachment_id ) )
+				{
+					@unlink( $temp_filepath );
+					return;
+				}
+				
+				$attachment_id = $copy_attachment_id;
+			}
+			
 			wp_update_post( array( 'ID' => $attachment_id, 'post_parent' => $post_id ) );
 			$this->post_update_pdf( $post_id, $attachment_id, $options );
 		}
@@ -463,25 +490,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( $attachment_id > 0 )
 						if( current_user_can( 'edit_post', $attachment_id ) )
 						{
-							if(wp_get_post_parent_id($attachment_id) > 0
-							&& wp_get_post_parent_id($attachment_id) != $post_id)
-							{
-								$filepath = get_attached_file($attachment_id);
-								$copy_attachment_temp_filename = wp_tempnam();
-								copy($filepath, $copy_attachment_temp_filename);
-								$base_attachment_filename = preg_replace('/\-Copy(\-[0-9]+)?$/i', '', pathinfo($filepath, PATHINFO_FILENAME));
-								$copy_attachment_filename = $base_attachment_filename . '-Copy.' . pathinfo($filepath, PATHINFO_EXTENSION);
-								$file_array = array(
-									'tmp_name'		=> $copy_attachment_temp_filename,
-									'name'			=> $copy_attachment_filename
-								);
-								$copy_attachment_id = media_handle_sideload($file_array, $post_id);
-								if($copy_attachment_id > 0)
-									$attachment_id = $copy_attachment_id;
-								if(!$copy_attachment_id)
-									continue;
-							}
-							
 							$new_attachment_ids[$attachment_id] = $attachment_id;
 							
 							$options = array();
