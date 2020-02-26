@@ -463,6 +463,25 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( $attachment_id > 0 )
 						if( current_user_can( 'edit_post', $attachment_id ) )
 						{
+							if(wp_get_post_parent_id($attachment_id) > 0
+							&& wp_get_post_parent_id($attachment_id) != $post_id)
+							{
+								$filepath = get_attached_file($attachment_id);
+								$copy_attachment_temp_filename = wp_tempnam();
+								copy($filepath, $copy_attachment_temp_filename);
+								$base_attachment_filename = preg_replace('/\-Copy(\-[0-9]+)?$/i', '', pathinfo($filepath, PATHINFO_FILENAME));
+								$copy_attachment_filename = $base_attachment_filename . '-Copy.' . pathinfo($filepath, PATHINFO_EXTENSION);
+								$file_array = array(
+									'tmp_name'		=> $copy_attachment_temp_filename,
+									'name'			=> $copy_attachment_filename
+								);
+								$copy_attachment_id = media_handle_sideload($file_array, $post_id);
+								if($copy_attachment_id > 0)
+									$attachment_id = $copy_attachment_id;
+								if(!$copy_attachment_id)
+									continue;
+							}
+							
 							$new_attachment_ids[$attachment_id] = $attachment_id;
 							
 							$options = array();
