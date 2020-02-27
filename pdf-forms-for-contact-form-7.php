@@ -378,7 +378,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public function post_add_pdf( $post_id, $attachment_id, $options )
 		{
 			// if this attachment is already attached, create a copy
-			// TODO: change attachment id in mappings/etc
 			if( wp_get_post_parent_id( $attachment_id ) > 0 )
 			{
 				$filepath = get_attached_file( $attachment_id );
@@ -406,6 +405,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			wp_update_post( array( 'ID' => $attachment_id, 'post_parent' => $post_id ) );
 			$this->post_update_pdf( $post_id, $attachment_id, $options );
+			
+			return $attachment_id;
 		}
 		
 		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false );
@@ -490,16 +491,24 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( $attachment_id > 0 )
 						if( current_user_can( 'edit_post', $attachment_id ) )
 						{
-							$new_attachment_ids[$attachment_id] = $attachment_id;
-							
 							$options = array();
 							if( isset( $attachment['options'] ) )
 								$options = $attachment['options'];
 							
 							if( ! isset( $old_attachments[$attachment_id] ) )
-								$this->post_add_pdf( $post_id, $attachment_id, $options );
+							{
+								$new_attachment_id = $this->post_add_pdf( $post_id, $attachment_id, $options );
+								if( $attachment_id != $new_attachment_id )
+								{
+									// TODO: change attachment id in $data['mappings'] and $data['embeds']
+									
+									$attachment_id = $new_attachment_id;
+								}
+							}
 							else
 								$this->post_update_pdf( $post_id, $attachment_id, $options );
+							
+							$new_attachment_ids[$attachment_id] = $attachment_id;
 						}
 				}
 				
