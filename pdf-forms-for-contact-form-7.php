@@ -748,10 +748,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$mail = $attachment['options']['attach_to_mail_1'];
 				$mail2 = $attachment['options']['attach_to_mail_2'];
-				$save_directory = $attachment['options']['save_directory'];
+				$save_directory = strval($attachment['options']['save_directory']);
 				$create_download_link = $attachment['options']['download_link'];
 				
-				if( !$mail && !$mail2 && empty( $save_directory ) && !$create_download_link )
+				if( !$mail && !$mail2 && $save_directory === "" && !$create_download_link )
 					continue;
 				
 				$options = array();
@@ -763,8 +763,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$filepath = get_attached_file( $attachment_id );
 				
-				$filename = $attachment['options']['filename'];
-				if ( !empty( $filename ))
+				$filename = strval($attachment['options']['filename']);
+				if ( $filename !== "" )
 					$destfilename = wpcf7_mail_replace_tags( $filename );
 				else
 					$destfilename = basename( $filepath, '.pdf' );
@@ -781,13 +781,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							$filled = $service->api_fill_embed( $destfile, $attachment_id, $data, $embeds_data, $options );
 					if( ! $filled )
 						copy( $filepath, $destfile );
-					$files[] = array( 'file' => $destfile, 'mail' => $mail, 'mail2' => $mail2 );
+					$files[] = array( 'file' => $destfile, 'filename' => $destfilename.'.pdf', 'options' => $attachment['options'] );
 				}
 				catch(Exception $e)
 				{
 					if( ! file_exists( $destfile ) )
 						copy( $filepath, $destfile );
-					$files[] = array( 'file' => $destfile, 'mail' => $mail, 'mail2' => $mail2 );
+					$files[] = array( 'file' => $destfile, 'filename' => $destfilename.'.pdf', 'options' => $attachment['options'] );
 					$destfile = self::create_wpcf7_tmp_filepath( $destfilename . ".txt" );
 					$text = str_replace(
 						array( '{error-message}', '{error-file}', '{error-line}' ),
@@ -797,48 +797,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					foreach( $data as $field => $value )
 						$text .= "$field: $value\n";
 					file_put_contents( $destfile, $text );
-					$files[] = array( 'file' => $destfile, 'mail' => $mail, 'mail2' => $mail2 );
+					$files[] = array( 'file' => $destfile, 'filename' => $destfilename.'.txt', 'options' => $attachment['options'] );
 				}
-				
-				if( !empty( $save_directory ) )
-				{
-					$storage = $this->get_storage();
-					
-					// standardize directory separator
-					$save_directory = str_replace( '\\', '/', $save_directory );
-					
-					// remove preceeding slashes and dots and space characters
-					$trim_characters = "/\\. \t\n\r\0\x0B";
-					$save_directory = trim( $save_directory, $trim_characters );
-					
-					// replace WPCF7 tags in path elements
-					$path_elements = explode( "/", $save_directory );
-					foreach( $path_elements as &$element )
-					{
-						$text = new WPCF7_MailTaggedText( $element );
-						$new_element = $text->replace_tags();
-						
-						// sanitize
-						$new_element = trim( sanitize_file_name( wpcf7_canonicalize( $new_element ) ), $trim_characters );
-						
-						// if replaced and sanitized filename is blank then attempt to use the non-replaced version
-						if( $new_element === "" )
-							$new_element = trim( sanitize_file_name( wpcf7_canonicalize( $element ) ), $trim_characters );
-						
-						$element = $new_element;
-					}
-					$save_directory = implode( "/", $path_elements );
-					$save_directory = preg_replace( '|/+|', '/', $save_directory ); // remove double slashes
-					
-					// remove preceeding slashes and dots and space characters
-					$save_directory = trim( $save_directory, $trim_characters );
-					
-					$storage->set_subpath( $save_directory );
-					$storage->save( $destfile, $destfilename.'.pdf' );
-				}
-				
-				if ( $create_download_link )
-					$this->get_downloads()->add_file( $destfile, $destfilename.'.pdf' );
 			}
 			
 			if( count( $files ) > 0 )
@@ -853,14 +813,58 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					{
 						$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
 						
-						if( $filedata['mail'] )
+						if( $filedata['options']['mail'] )
 							$mail["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
 						
-						if( $filedata['mail2'] )
+						if( $filedata['options']['mail2'] )
 							$mail2["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
 					}
 				}
 				$contact_form->set_properties( array( 'mail' => $mail, 'mail_2' => $mail2 ) );
+				
+				$storage = $this->get_storage();
+				foreach( $files as $id => $filedata )
+				{
+					$save_directory = strval($filedata['options']['save_directory']);
+					if( $save_directory !== "" )
+					{
+						// standardize directory separator
+						$save_directory = str_replace( '\\', '/', $save_directory );
+						
+						// remove preceeding slashes and dots and space characters
+						$trim_characters = "/\\. \t\n\r\0\x0B";
+						$save_directory = trim( $save_directory, $trim_characters );
+						
+						// replace WPCF7 tags in path elements
+						$path_elements = explode( "/", $save_directory );
+						foreach( $path_elements as &$element )
+						{
+							$text = new WPCF7_MailTaggedText( $element );
+							$new_element = $text->replace_tags();
+							
+							// sanitize
+							$new_element = trim( sanitize_file_name( wpcf7_canonicalize( $new_element ) ), $trim_characters );
+							
+							// if replaced and sanitized filename is blank then attempt to use the non-replaced version
+							if( $new_element === "" )
+								$new_element = trim( sanitize_file_name( wpcf7_canonicalize( $element ) ), $trim_characters );
+							
+							$element = $new_element;
+						}
+						$save_directory = implode( "/", $path_elements );
+						$save_directory = preg_replace( '|/+|', '/', $save_directory ); // remove double slashes
+						
+						// remove preceeding slashes and dots and space characters
+						$save_directory = trim( $save_directory, $trim_characters );
+						
+						$storage->set_subpath( $save_directory );
+						$storage->save( $filedata['file'], $filedata['filename'] );
+					}
+					
+					$create_download_link = $filedata['options']['download_link'];
+					if ( $create_download_link )
+						$this->get_downloads()->add_file( $filedata['file'], $filedata['filename'] );
+				}
 			}
 		}
 		
