@@ -473,7 +473,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			if( !isset( $_POST['wpcf7-pdf-forms-data'] ) )
 				return;
-			error_log(print_r($post_var));
+			
 			$post_var = wp_unslash( $_POST['wpcf7-pdf-forms-data'] );
 			$data = json_decode( $post_var, true );
 			
