@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: PDF Forms Filler for Contact Form 7 1.0.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pdf-forms-for-"
 "contact-form-7/\n"
-"POT-Creation-Date: 2019-09-27 18:26:59+00:00\n"
+"POT-Creation-Date: 2020-03-04 11:05:18+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -13,7 +13,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.2.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: modules/pdf-ninja.php:40
@@ -75,18 +75,18 @@ msgstr "أخفق تنزيل ملف من خادم واجهة برمجة التط�
 msgid "Pdf.Ninja API server did not send an expected response"
 msgstr "لم الخادم API Pdf.Ninja لم ترسل ردا المتوقع"
 
-#: modules/pdf-ninja.php:465 pdf-forms-for-contact-form-7.php:846
-#: pdf-forms-for-contact-form-7.php:897 pdf-forms-for-contact-form-7.php:1327
+#: modules/pdf-ninja.php:465 pdf-forms-for-contact-form-7.php:899
+#: pdf-forms-for-contact-form-7.php:950 pdf-forms-for-contact-form-7.php:1380
 msgid "File not found"
 msgstr "لم يتم العثور على الملف"
 
 #: modules/pdf-ninja.php:605 modules/pdf-ninja.php:719 modules/pdf-ninja.php:749
-#: pdf-forms-for-contact-form-7.php:539
+#: pdf-forms-for-contact-form-7.php:587
 msgid "Failed to open file for writing"
 msgstr "فشل في فتح الملف للكتابة"
 
 #: modules/pdf-ninja.php:611 modules/pdf-ninja.php:725 modules/pdf-ninja.php:755
-#: pdf-forms-for-contact-form-7.php:545
+#: pdf-forms-for-contact-form-7.php:593
 msgid "Failed to create file"
 msgstr "فشل في إنشاء الملف"
 
@@ -94,8 +94,8 @@ msgstr "فشل في إنشاء الملف"
 msgid "Failed to encode JSON data"
 msgstr "أخفق ترميز بيانات جسون"
 
-#: modules/pdf-ninja.php:790 pdf-forms-for-contact-form-7.php:1183
-#: pdf-forms-for-contact-form-7.php:1369
+#: modules/pdf-ninja.php:790 pdf-forms-for-contact-form-7.php:1236
+#: pdf-forms-for-contact-form-7.php:1422
 msgid "Permission denied"
 msgstr "طلب مرفوض"
 
@@ -236,11 +236,11 @@ msgstr "هل تريد بالتأكيد حذف هذا التعيين؟"
 msgid "Are you sure you want to delete this embeded image?"
 msgstr "هل أنت متأكد من أنك تريد حذف هذه الصورة المتضمنة؟"
 
-#: pdf-forms-for-contact-form-7.php:293 pdf-forms-for-contact-form-7.php:1508
+#: pdf-forms-for-contact-form-7.php:293 pdf-forms-for-contact-form-7.php:1561
 msgid "Show Help"
 msgstr "عرض المساعدة"
 
-#: pdf-forms-for-contact-form-7.php:294 pdf-forms-for-contact-form-7.php:1509
+#: pdf-forms-for-contact-form-7.php:294 pdf-forms-for-contact-form-7.php:1562
 msgid "Hide Help"
 msgstr "إخفاء المساعدة"
 
@@ -256,11 +256,15 @@ msgstr "تحديد"
 msgid "PDF Forms"
 msgstr "نماذج PDF"
 
-#: pdf-forms-for-contact-form-7.php:532
+#: pdf-forms-for-contact-form-7.php:389
+msgid "Copy"
+msgstr "نسخة"
+
+#: pdf-forms-for-contact-form-7.php:580
 msgid "Failed to download file"
 msgstr "فشلت في تحميل الملف"
 
-#: pdf-forms-for-contact-form-7.php:757
+#: pdf-forms-for-contact-form-7.php:807
 msgid ""
 "Error generating PDF: {error-message} at {error-file}:{error-line}\n"
 "\n"
@@ -272,25 +276,25 @@ msgstr ""
 "بيانات النموذج:\n"
 "\n"
 
-#: pdf-forms-for-contact-form-7.php:838 pdf-forms-for-contact-form-7.php:1065
-#: pdf-forms-for-contact-form-7.php:1174 pdf-forms-for-contact-form-7.php:1279
-#: pdf-forms-for-contact-form-7.php:1360
+#: pdf-forms-for-contact-form-7.php:891 pdf-forms-for-contact-form-7.php:1118
+#: pdf-forms-for-contact-form-7.php:1227 pdf-forms-for-contact-form-7.php:1332
+#: pdf-forms-for-contact-form-7.php:1413
 msgid "Nonce mismatch"
 msgstr "عدم تطابق حالية"
 
-#: pdf-forms-for-contact-form-7.php:844
+#: pdf-forms-for-contact-form-7.php:897
 msgid "Invalid attachment"
 msgstr "مرفق غير صالح"
 
-#: pdf-forms-for-contact-form-7.php:850
+#: pdf-forms-for-contact-form-7.php:903
 msgid "Invalid file type, must be a PDF file"
 msgstr "نوع ملف غير صالح ، يجب أن يكون ملف PDF"
 
-#: pdf-forms-for-contact-form-7.php:935
+#: pdf-forms-for-contact-form-7.php:988
 msgid "No service"
 msgstr "لاتوجد خدمة"
 
-#: pdf-forms-for-contact-form-7.php:1083
+#: pdf-forms-for-contact-form-7.php:1136
 msgid ""
 "This PDF file does not appear to contain a PDF form.  See https://acrobat."
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for more "
@@ -299,27 +303,27 @@ msgstr ""
 "لا يبدو أن ملف بدف هذا يحتوي على نموذج بدف. راجع https://acrobat.adobe.com/us/"
 "en/acrobat/how-to/create-fillable-pdf-forms-creator.html لمزيد من المعلومات."
 
-#: pdf-forms-for-contact-form-7.php:1180
+#: pdf-forms-for-contact-form-7.php:1233
 msgid "Invalid post ID"
 msgstr "ID آخر غير صالح"
 
-#: pdf-forms-for-contact-form-7.php:1250
+#: pdf-forms-for-contact-form-7.php:1303
 msgid "Failed to get Contact Form fields"
 msgstr "أخفق الحصول على حقول نموذج الاتصال"
 
-#: pdf-forms-for-contact-form-7.php:1366
+#: pdf-forms-for-contact-form-7.php:1419
 msgid "Invalid page number"
 msgstr "رقم الصفحة غير صالح"
 
-#: pdf-forms-for-contact-form-7.php:1375
+#: pdf-forms-for-contact-form-7.php:1428
 msgid "Failed to retrieve page snapshot"
 msgstr "فشل في استرداد لقطة الصفحة"
 
-#: pdf-forms-for-contact-form-7.php:1402 pdf-forms-for-contact-form-7.php:1411
+#: pdf-forms-for-contact-form-7.php:1455 pdf-forms-for-contact-form-7.php:1464
 msgid "PDF Form"
 msgstr "نموذج PDF"
 
-#: pdf-forms-for-contact-form-7.php:1469
+#: pdf-forms-for-contact-form-7.php:1522
 msgid ""
 "You can use this tag generator to attach a PDF file to your form, insert tags "
 "into your form and link them to fields in the PDF file.  You can also embed "
@@ -331,19 +335,19 @@ msgstr ""
 "تضمين الصور (التي تم إنشاؤها بواسطة علامات أو نماذج جهات الاتصال 7 الأخرى) في "
 "ملف PDF. يتم تطبيق التغييرات هنا عند حفظ نموذج الاتصال."
 
-#: pdf-forms-for-contact-form-7.php:1470
+#: pdf-forms-for-contact-form-7.php:1523
 msgid "Attach a PDF File"
 msgstr "إرفاق ملف PDF"
 
-#: pdf-forms-for-contact-form-7.php:1471
+#: pdf-forms-for-contact-form-7.php:1524
 msgid "Insert Tags"
 msgstr "إدراج الكلمات"
 
-#: pdf-forms-for-contact-form-7.php:1472
+#: pdf-forms-for-contact-form-7.php:1525
 msgid "Insert and Link"
 msgstr "إدراج والاتصال"
 
-#: pdf-forms-for-contact-form-7.php:1473
+#: pdf-forms-for-contact-form-7.php:1526
 msgid ""
 "This button allows you to generate tags for all remaining unlinked PDF fields, "
 "insert them into the form and link them to their corresponding fields."
@@ -351,39 +355,39 @@ msgstr ""
 "يتيح لك هذا الزر إنشاء علامات لكافة حقول PDF غير المرتبطة المتبقية ، وإدراجها "
 "في النموذج وربطها بالحقول المقابلة لها."
 
-#: pdf-forms-for-contact-form-7.php:1474
+#: pdf-forms-for-contact-form-7.php:1527
 msgid "Insert & Link All"
 msgstr "إدراج وربط كل شيء"
 
-#: pdf-forms-for-contact-form-7.php:1475 pdf-forms-for-contact-form-7.php:1496
+#: pdf-forms-for-contact-form-7.php:1528 pdf-forms-for-contact-form-7.php:1549
 msgid "Delete"
 msgstr "حذف"
 
-#: pdf-forms-for-contact-form-7.php:1476
+#: pdf-forms-for-contact-form-7.php:1529
 msgid "Options"
 msgstr "خيارات"
 
-#: pdf-forms-for-contact-form-7.php:1477
+#: pdf-forms-for-contact-form-7.php:1530
 msgid "Skip when empty"
 msgstr "تخطي عندما تكون فارغة"
 
-#: pdf-forms-for-contact-form-7.php:1478
+#: pdf-forms-for-contact-form-7.php:1531
 msgid "Attach to primary email message"
 msgstr "إرفاق رسالة البريد الإلكتروني الأساسية"
 
-#: pdf-forms-for-contact-form-7.php:1479
+#: pdf-forms-for-contact-form-7.php:1532
 msgid "Attach to secondary email message"
 msgstr "إرفاق رسالة بريد إلكتروني ثانوية"
 
-#: pdf-forms-for-contact-form-7.php:1480
+#: pdf-forms-for-contact-form-7.php:1533
 msgid "Flatten"
 msgstr "تسطح"
 
-#: pdf-forms-for-contact-form-7.php:1481
+#: pdf-forms-for-contact-form-7.php:1534
 msgid "Filename (mail-tags can be used)"
 msgstr "اسم الملف (يمكن استخدام علامات البريد)"
 
-#: pdf-forms-for-contact-form-7.php:1482
+#: pdf-forms-for-contact-form-7.php:1535
 msgid ""
 "Save PDF file on the server at the given path relative to wp-content/uploads "
 "(mail-tags can be used; if empty, PDF file is not saved on disk)"
@@ -391,15 +395,15 @@ msgstr ""
 "حفظ ملف PDF على الخادم في المسار المحدد نسبة إلى wp-content/uploads (يمكن "
 "استخدام علامات البريد ؛ إذا كان ملف PDF فارغًا فلا يتم حفظه على القرص)"
 
-#: pdf-forms-for-contact-form-7.php:1483
+#: pdf-forms-for-contact-form-7.php:1536
 msgid "Add filled PDF download link to form submission response"
 msgstr "أضف رابط تنزيل PDF المملوء إلى نموذج إرسال الرد"
 
-#: pdf-forms-for-contact-form-7.php:1484
+#: pdf-forms-for-contact-form-7.php:1537
 msgid "Field Mapper Tool"
 msgstr "مجال ربط أداة"
 
-#: pdf-forms-for-contact-form-7.php:1485
+#: pdf-forms-for-contact-form-7.php:1538
 msgid ""
 "This tool can be used to link Contact Form 7 fields with fields within the PDF "
 "files.  Contact Form 7 fields can also be generated.  When the user submits "
@@ -410,31 +414,31 @@ msgstr ""
 "نموذج الاتصال 7 حقول ويمكن أيضا أن تتولد. عندما يكون المستخدم على شكل بيانات "
 "من نموذج الاتصال 7 الحقول سيتم إدراجها في الحقول المقابلة في ملف PDF."
 
-#: pdf-forms-for-contact-form-7.php:1486
+#: pdf-forms-for-contact-form-7.php:1539
 msgid "PDF field"
 msgstr "بدف"
 
-#: pdf-forms-for-contact-form-7.php:1487
+#: pdf-forms-for-contact-form-7.php:1540
 msgid "CF7 field"
 msgstr "CF7 حقل الإدخال"
 
-#: pdf-forms-for-contact-form-7.php:1488
+#: pdf-forms-for-contact-form-7.php:1541
 msgid "Add Mapping"
 msgstr "إضافة تعيين"
 
-#: pdf-forms-for-contact-form-7.php:1489
+#: pdf-forms-for-contact-form-7.php:1542
 msgid "Delete All"
 msgstr "حذف الكل"
 
-#: pdf-forms-for-contact-form-7.php:1490
+#: pdf-forms-for-contact-form-7.php:1543
 msgid "New Tag:"
 msgstr "احصل على الكلماتعلامة جديدة:"
 
-#: pdf-forms-for-contact-form-7.php:1491
+#: pdf-forms-for-contact-form-7.php:1544
 msgid "Tag Generator Tool (deprecated)"
 msgstr "الوسم أداة مولد (إهمال)"
 
-#: pdf-forms-for-contact-form-7.php:1492
+#: pdf-forms-for-contact-form-7.php:1545
 msgid ""
 "This tool allows one to create CF7 fields that are linked to PDF fields by "
 "name.  This feature is deprecated in favor of the field mapper tool."
@@ -442,11 +446,11 @@ msgstr ""
 "تسمح هذه الأداة بإنشاء حقول CF7 المرتبطة بحقول PDF بالاسم. تم إيقاف هذه الميزة "
 "لصالح أداة معين الموقع."
 
-#: pdf-forms-for-contact-form-7.php:1493
+#: pdf-forms-for-contact-form-7.php:1546
 msgid "Image Embedding Tool"
 msgstr "صورة تضمين أداة"
 
-#: pdf-forms-for-contact-form-7.php:1494
+#: pdf-forms-for-contact-form-7.php:1547
 msgid ""
 "This tool allows embedding images into PDF files.  Images are taken from field "
 "attachments or field values that are URLs.  You must select a PDF file, its "
@@ -456,23 +460,23 @@ msgstr ""
 "الميدانية أو قيم الحقول التي هي عناوين URL. يجب تحديد ملف PDF وصفحته ورسم "
 "مربعًا محيطًا لإدراج الصورة."
 
-#: pdf-forms-for-contact-form-7.php:1495
+#: pdf-forms-for-contact-form-7.php:1548
 msgid "Embed Image"
 msgstr "تضمين صورة"
 
-#: pdf-forms-for-contact-form-7.php:1497
+#: pdf-forms-for-contact-form-7.php:1550
 msgid "PDF file"
 msgstr "ملف PDF"
 
-#: pdf-forms-for-contact-form-7.php:1498
+#: pdf-forms-for-contact-form-7.php:1551
 msgid "Page"
 msgstr "صفحة"
 
-#: pdf-forms-for-contact-form-7.php:1499
+#: pdf-forms-for-contact-form-7.php:1552
 msgid "Select a region where the image needs to be embeded."
 msgstr "حدد منطقة تحتاج إلى تضمين الصورة فيها."
 
-#: pdf-forms-for-contact-form-7.php:1501
+#: pdf-forms-for-contact-form-7.php:1554
 msgid ""
 "Have a question/comment/problem?  Feel free to use {a-href-forum}the support "
 "forum{/a} and view {a-href-tutorial}the tutorial video{/a}."
@@ -480,27 +484,27 @@ msgstr ""
 "لديك سؤال / تعليق / مشكلة؟ لا تتردد في استخدام {a-href-forum} منتدى الدعم {/a} "
 "واعرض {a-href-tutorial} الفيديو التعليمي {/a}."
 
-#: pdf-forms-for-contact-form-7.php:1510
+#: pdf-forms-for-contact-form-7.php:1563
 msgid "Get Tags"
 msgstr "احصل على الكلمات"
 
-#: pdf-forms-for-contact-form-7.php:1511
+#: pdf-forms-for-contact-form-7.php:1564
 msgid "All PDFs"
 msgstr "جميع ملفات PDF"
 
-#: pdf-forms-for-contact-form-7.php:1512
+#: pdf-forms-for-contact-form-7.php:1565
 msgid "Return to Form"
 msgstr "العودة إلى النموذج"
 
-#: pdf-forms-for-contact-form-7.php:1517
+#: pdf-forms-for-contact-form-7.php:1570
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr "بك CF7 البرنامج المساعد هو أيضا خارج التاريخ، الرجاء الترقية."
 
-#: pdf-forms-for-contact-form-7.php:1567
+#: pdf-forms-for-contact-form-7.php:1620
 msgid "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}"
 msgstr "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}"
 
-#: pdf-forms-for-contact-form-7.php:1585
+#: pdf-forms-for-contact-form-7.php:1638
 msgid "Download {filename} at {url}"
 msgstr "تنزيل {filename} على {url}"
 
@@ -515,14 +519,14 @@ msgstr "https://github.com/maximum-software/wpcf7-pdf-forms"
 #. Description of the plugin/theme
 msgid ""
 "Create Contact Form 7 forms from PDF forms.  Get PDF forms filled "
-"automatically and attached to email messages upon form submission on your "
-"website.  Embed images in PDF files.  Uses Pdf.Ninja API for working with PDF "
-"files.  See tutorial video for a demo."
+"automatically and attached to email messages and submission responses upon "
+"form submission on your website.  Embed images into PDF files.  Uses Pdf.Ninja "
+"API for working with PDF files.  See tutorial video for a demo."
 msgstr ""
-"إنشاء نموذج الاتصال 7 أشكال من أشكال PDF. احصل على نماذج PDF تملأ تلقائيا "
-"وتعلق على رسائل البريد الإلكتروني عند تقديم النموذج على موقع الويب الخاص بك. "
-"تضمين الصور في ملفات PDF. يستخدم Pdf.Ninja API للعمل مع ملفات PDF. انظر "
-"الفيديو التعليمي للحصول على عرض توضيحي."
+"إنشاء نموذج الاتصال 7 أشكال من أشكال PDF. احصل على نماذج PDF تملأ تلقائيًا "
+"ومرفقة برسائل البريد الإلكتروني وردود الاستلام عند تقديم النموذج على موقع "
+"الويب الخاص بك. تضمين الصور في ملفات PDF. يستخدم Pdf.Ninja API للعمل مع ملفات "
+"PDF. انظر الفيديو التعليمي للحصول على عرض توضيحي."
 
 #. Author of the plugin/theme
 msgid "Maximum.Software"
