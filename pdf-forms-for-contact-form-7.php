@@ -500,15 +500,19 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 								$new_attachment_id = $this->post_add_pdf( $post_id, $attachment_id, $options );
 								if( $attachment_id != $new_attachment_id )
 								{
-									foreach( $data['mappings'] as &$mapping ) {
-										if( isset( $mapping['pdf_field'] ) )
-											$mapping['pdf_field'] = preg_replace( '/^' . preg_quote( $attachment_id . '-' ) . '/i', preg_quote( $new_attachment_id . '-' ), $mapping['pdf_field'] );
-									}
+									// replace old attachment id in mappings
+									if( is_array( $data['mappings'] ) )
+										foreach( $data['mappings'] as &$mapping )
+											if( isset( $mapping['pdf_field'] ) )
+												$mapping['pdf_field'] = preg_replace( '/^' . preg_quote( $attachment_id . '-' ) . '/i', intval( $new_attachment_id ) . '-', $mapping['pdf_field'] );
 									
-									foreach( $data['embeds'] as &$embed ) {
-										if( isset( $embed['attachment_id'] ) )
-											$embed['attachment_id'] = $new_attachment_id;
-									}
+									// replace old attachment id in embeds
+									if( is_array( $data['embeds'] ) )
+										foreach( $data['embeds'] as &$embed )
+											if( isset( $embed['attachment_id'] ) )
+												$embed['attachment_id'] = $new_attachment_id;
+									
+									// TODO: replace old attachment id in tag generator tool tags in the form body and settings
 									
 									$attachment_id = $new_attachment_id;
 								}
