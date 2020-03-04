@@ -500,7 +500,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 								$new_attachment_id = $this->post_add_pdf( $post_id, $attachment_id, $options );
 								if( $attachment_id != $new_attachment_id )
 								{
-									// TODO: change attachment id in $data['mappings'] and $data['embeds']
+									foreach( $data['mappings'] as &$mapping ) {
+										if( isset( $mapping['pdf_field'] ) )
+											$mapping['pdf_field'] = preg_replace( '/^' . preg_quote( $attachment_id . '-' ) . '/i', preg_quote( $new_attachment_id . '-' ), $mapping['pdf_field'] );
+									}
+									
+									foreach( $data['embeds'] as &$embed ) {
+										if( isset( $embed['attachment_id'] ) )
+											$embed['attachment_id'] = $new_attachment_id;
+									}
 									
 									$attachment_id = $new_attachment_id;
 								}
