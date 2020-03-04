@@ -500,29 +500,17 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 								$new_attachment_id = $this->post_add_pdf( $post_id, $attachment_id, $options );
 								if( $attachment_id != $new_attachment_id )
 								{
+									foreach( $data['mappings'] as &$mapping ) {
+										if( isset( $mapping['pdf_field'] ) )
+											$mapping['pdf_field'] = preg_replace( '/^' . preg_quote( $attachment_id . '-' ) . '/i', preg_quote( $new_attachment_id . '-' ), $mapping['pdf_field'] );
+									}
+									
+									foreach( $data['embeds'] as &$embed ) {
+										if( isset( $embed['attachment_id'] ) )
+											$embed['attachment_id'] = $new_attachment_id;
+									}
+									
 									$attachment_id = $new_attachment_id;
-									
-									$mappings = array();
-									foreach( $data['mappings'] as $mapping ) {
-										if( isset( $mapping['cf7_field'] ) && isset( $mapping['pdf_field'] ) )
-											$mappings[] = array(
-												'cf7_field' => preg_replace( '/^pdf\-field\-' . $attachment_id . '\-/i', 'pdf-field-' . $new_attachment_id . '-', $mapping['cf7_field'] ),
-												'pdf_field' => preg_replace( '/^' . $attachment_id . '\-/i', $new_attachment_id . '-', $mapping['pdf_field'] )
-											);
-									}
-									if( !empty( $mappings ) )
-										$data['mappings'] = $mappings;
-									
-									$embeds = array();
-									foreach( $data['embeds'] as $embeds ) {
-										if( isset( $embeds['cf7_field'] ) && isset( $embeds['attachment_id'] ) )
-											$embeds[] = array(
-												'cf7_field' => preg_replace( '/^pdf\-field\-' . $attachment_id . '\-/i', 'pdf-field-' . $new_attachment_id . '-', $embeds['cf7_field'] ),
-												'attachment_id' => $new_attachment_id
-											);
-									}
-									if( !empty( $embeds ) )
-										$data['embeds'] = $embeds;
 								}
 							}
 							else
