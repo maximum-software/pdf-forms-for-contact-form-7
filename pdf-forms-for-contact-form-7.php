@@ -825,10 +825,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					{
 						$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
 						
-						if( $filedata['options']['mail'] )
+						if( $filedata['options']['attach_to_mail_1'] )
 							$mail["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
 						
-						if( $filedata['options']['mail2'] )
+						if( $filedata['options']['attach_to_mail_2'] )
 							$mail2["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
 					}
 				}
