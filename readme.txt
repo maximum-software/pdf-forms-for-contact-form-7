@@ -5,7 +5,7 @@ Requires at least: 4.3
 Tested up to: 5.3.2
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.2.2
+Version: 1.2.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -49,6 +49,15 @@ Special thanks to the following sponsors of this plugin,
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.2.3 =
+
+* Release date: March 4, 2020
+
+* Fixed an issue that causes the removal of attachments from other posts when attaching them to CF7 forms
+* Fixed a bug that caused HTML code to show up in response messages for filled PDF download links in some cases
+* Fixed a bug with filled PDF saving/downloading when handling errors
+* Refactored file save/download handling code
 
 = 1.2.2 =
 
