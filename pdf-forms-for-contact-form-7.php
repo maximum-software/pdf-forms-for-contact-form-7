@@ -760,7 +760,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$mail = $attachment['options']['attach_to_mail_1'];
 				$mail2 = $attachment['options']['attach_to_mail_2'];
-				$save_directory = strval($attachment['options']['save_directory']);
+				$save_directory = strval( $attachment['options']['save_directory'] );
 				$create_download_link = $attachment['options']['download_link'];
 				
 				if( !$mail && !$mail2 && $save_directory === "" && !$create_download_link )
@@ -775,7 +775,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$filepath = get_attached_file( $attachment_id );
 				
-				$filename = strval($attachment['options']['filename']);
+				$filename = strval( $attachment['options']['filename'] );
 				if ( $filename !== "" )
 					$destfilename = wpcf7_mail_replace_tags( $filename );
 				else
@@ -837,7 +837,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$storage = $this->get_storage();
 				foreach( $files as $id => $filedata )
 				{
-					$save_directory = strval($filedata['options']['save_directory']);
+					$save_directory = strval( $filedata['options']['save_directory'] );
 					if( $save_directory !== "" )
 					{
 						// standardize directory separator
