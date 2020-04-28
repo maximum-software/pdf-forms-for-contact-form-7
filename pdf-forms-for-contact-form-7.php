@@ -73,7 +73,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_after_create', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_after_update', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_mail_sent', array( $this, 'change_response_message' ) );
-			
+
+			//Hook that allow to copy form
+			add_filter( 'wpcf7_copy', array( $this,'duplicate_form_hook' ),10,2 );
+
 			// TODO: allow users to run this manually
 			//$this->upgrade_data();
 		}
@@ -463,7 +466,41 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			wp_update_post( array( 'ID' => $attachment_id, 'post_parent' => 0 ) );
 			self::unset_meta( $attachment_id, 'options-'.$post_id );
 		}
-		
+
+		/**
+		 * Hook that runs on form copy/duplicate forms with the editor
+		 */
+		function duplicate_form_hook( $new, $instance )
+		{
+			$prev_post_id = $instance->id;
+			$attachment = $this->post_get_all_pdfs( $prev_post_id );
+			$mappings = self::get_meta( $prev_post_id, 'mappings' );
+
+			if( $mappings )
+				$mappings = json_decode( $mappings, true );
+			if( !is_array( $mappings ) )
+				$mappings = array();
+
+			$embeds = self::get_meta( $prev_post_id, 'embeds' );
+			if( $embeds )
+				$embeds = json_decode( $embeds, true );
+			if( !is_array( $embeds ) )
+				$embeds = array();
+
+			foreach( $attachment as $att )
+			{
+				$attachment_id = intval( $att['attachment_id'] );
+				$new->copy_attch_id=$att['attachment_id'];
+			}
+
+			$new->attachment=$attachment;
+			$new->mappings=$mappings;
+			$new->embeds=$embeds;
+			$new->copy_id=$prev_post_id;
+
+			return $new;
+		}
+
 		/**
 		 * Hook that runs on form save and attaches all PDFs that were attached to forms with the editor
 		 */
