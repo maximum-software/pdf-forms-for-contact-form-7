@@ -77,6 +77,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			//Hook that allow to copy form
 			add_filter( 'wpcf7_copy', array( $this,'duplicate_form_hook' ),10,2 );
 
+			//Hook To copy PDF, Mappings, and Embed assets on duplicating a form.
+			add_action( 'wpcf7_after_save', array( $this, 'after_save_wpcf7_copy' ) );
+
 			// TODO: allow users to run this manually
 			//$this->upgrade_data();
 		}
@@ -499,6 +502,84 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$new->copy_id=$prev_post_id;
 
 			return $new;
+		}
+
+		/**
+		 * Hook that runs on form copy to mapping and attaches all PDFs that were attached to forms with the editor
+		 */
+		function after_save_wpcf7_copy( $instance )
+		{
+			$post_id = $instance->id;
+			$attachment = $instance->attachment;
+			$mappings = $instance->mappings;
+			$embeds = $instance->embeds;
+
+			if( isset( $attachment)  && is_array( $new_attachments = $attachment ))
+			{
+				$old_attachments = $this->post_get_all_pdfs( $post_id );
+				$new_attachment_ids = array();
+				
+				foreach( $new_attachments as $attachment )
+				{
+					$attachment_id = intval( $attachment['attachment_id'] );
+					if( $attachment_id > 0 )
+						if( current_user_can( 'edit_post', $attachment_id ) )
+						{
+							$options = array();
+							if( isset( $attachment['options'] ) )
+								$options = $attachment['options'];
+							
+							if( ! isset( $old_attachments[$attachment_id] ) )
+							{
+								$new_attachment_id = $this->post_add_pdf( $post_id, $attachment_id, $options );
+
+								if( $attachment_id != $new_attachment_id )
+								{
+									// add new attachment id in mappings
+									if( isset( $mappings ) && is_array( $new_mappings = $mappings ) )
+										{
+											$mappings = array();
+											foreach( $new_mappings as $mapping )
+												if( isset( $mapping['cf7_field'] ) && isset( $mapping['pdf_field'] ) )
+													if( self::wpcf7_field_name_decode( $mapping['cf7_field'] ) === FALSE )
+														$mappings[] = array( 'cf7_field' => $mapping['cf7_field'], 'pdf_field' => $mapping['pdf_field'] );
+											self::set_meta( $post_id, 'mappings', self::json_encode( $mappings ) );
+										}
+										
+										if( isset( $embeds ) && is_array( $new_embeds = $embeds ) )
+										{
+											$embeds = array();
+											foreach( $new_embeds as $embed )
+											{
+												if( isset( $embed['cf7_field'] ) && isset( $embed['attachment_id'] ) )
+												{
+													//Check for multiple image embedded in multiple attachment..
+													if( $embed['attachment_id'] == $attachment['attachment_id'] )
+													{
+														$embed['attachment_id'] = $new_attachment_id;
+													}
+													$embeds[] = $embed;
+												}
+											}
+											self::set_meta( $post_id, 'embeds', self::json_encode( $embeds ) );
+										}
+									
+									$attachment_id = $new_attachment_id;
+								}
+							}
+							
+							$new_attachment_ids[$attachment_id] = $attachment_id;
+						}
+				}
+
+				// embed images copy and uploads
+				foreach( $embeds as $embed )
+				{
+					$att_id = $embed['attachment_id'];
+					$page = $embed['page'];
+					$nattachment_id = $this->get_pdf_snapshot( $att_id, $page );
+				}
+			}
 		}
 
 		/**
