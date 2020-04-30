@@ -70,8 +70,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'admin_menu', array( $this, 'register_services') );
 			
 			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_and_attach_pdfs' ) );
-			add_action( 'wpcf7_after_create', array( $this, 'update_post_attachments' ) );
-			add_action( 'wpcf7_after_update', array( $this, 'update_post_attachments' ) );
+			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_mail_sent', array( $this, 'change_response_message' ) );
 			
 			// TODO: allow users to run this manually
@@ -501,13 +500,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 								if( $attachment_id != $new_attachment_id )
 								{
 									// replace old attachment id in mappings
-									if( is_array( $data['mappings'] ) )
+									if( isset( $data['embeds'] ) && is_array( $data['mappings'] ) )
 										foreach( $data['mappings'] as &$mapping )
 											if( isset( $mapping['pdf_field'] ) )
 												$mapping['pdf_field'] = preg_replace( '/^' . preg_quote( $attachment_id . '-' ) . '/i', intval( $new_attachment_id ) . '-', $mapping['pdf_field'] );
 									
 									// replace old attachment id in embeds
-									if( is_array( $data['embeds'] ) )
+									if( isset( $data['embeds'] ) && is_array( $data['embeds'] ) )
 										foreach( $data['embeds'] as &$embed )
 											if( isset( $embed['attachment_id'] ) )
 												$embed['attachment_id'] = $new_attachment_id;
