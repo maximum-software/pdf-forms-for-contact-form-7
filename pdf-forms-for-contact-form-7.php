@@ -500,7 +500,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 								if( $attachment_id != $new_attachment_id )
 								{
 									// replace old attachment id in mappings
-									if( isset( $data['embeds'] ) && is_array( $data['mappings'] ) )
+									if( isset( $data['mappings'] ) && is_array( $data['mappings'] ) )
 										foreach( $data['mappings'] as &$mapping )
 											if( isset( $mapping['pdf_field'] ) )
 												$mapping['pdf_field'] = preg_replace( '/^' . preg_quote( $attachment_id . '-' ) . '/i', intval( $new_attachment_id ) . '-', $mapping['pdf_field'] );
