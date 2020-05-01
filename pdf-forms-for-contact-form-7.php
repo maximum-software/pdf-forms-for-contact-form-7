@@ -392,7 +392,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$copy_attachment_id = media_handle_sideload( array(
 					'tmp_name' => $temp_filepath,
 					'name'     => $copy_filename
-				) );
+				), $post_id);
 				if( is_wp_error( $copy_attachment_id ) )
 				{
 					@unlink( $temp_filepath );
