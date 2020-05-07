@@ -547,7 +547,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 											if( isset( $embed['attachment_id'] ) )
 											{
 												// [update] Check for multiple image embedded in multiple attachment..
-												if( $embed['attachment_id'] == $attachment['attachment_id'] )
+												if( $embed['attachment_id'] == $attachment_id )
 												{
 													$embed['attachment_id'] = $new_attachment_id;
 												}
