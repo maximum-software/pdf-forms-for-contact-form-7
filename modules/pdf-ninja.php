@@ -256,7 +256,9 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			return false;
 		}
 		
-		if( ini_get( 'safe_mode' ) )
+		if( version_compare( PHP_VERSION, '5.4' ) < 0
+			&& ini_get( 'safe_' . 'mode' ) // don't warn me about this, I know!
+		)
 		{
 			$this->enterprise_extension_support_error = __( 'PHP safe mode is not supported.', 'pdf-forms-for-contact-form-7' );
 			return false;

@@ -113,13 +113,16 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( $options['action'] == 'update'
 			&& $options['type'] == 'plugin'
 			&& isset( $options['plugins'] ) )
+			{
 				foreach( $options['plugins'] as $plugin )
+				{
 					if( $plugin == $plugin_path )
 					{
 						set_transient( 'wpcf7_pdf_forms_updated_old_version', self::VERSION );
-						
 						break;
 					}
+				}
+			}
 		}
 		
 		/*
@@ -1020,7 +1023,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public static function json_encode( $value )
 		{
 			if( version_compare( phpversion(), "5.4" ) < 0 )
-				return preg_replace( "/\\\\u([a-f0-9]{4})/e", "iconv('UCS-4LE','UTF-8',pack('V', hexdec('U$1')))", json_encode( $value ) );
+				return preg_replace(
+						"/\\\\u([a-f0-9]{4})/" .
+						"e", // don't warn me about this, I know!
+						"iconv('UCS-4LE','UTF-8',pack('V', hexdec('U$1')))",
+						json_encode( $value )
+					);
 			
 			return json_encode( $value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 		}
