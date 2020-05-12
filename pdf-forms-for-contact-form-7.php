@@ -540,6 +540,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 										foreach( $data['mappings'] as &$mapping )
 											if( isset( $mapping['pdf_field'] ) )
 												$mapping['pdf_field'] = preg_replace( '/^' . preg_quote( $attachment_id . '-' ) . '/i', intval( $new_attachment_id ) . '-', $mapping['pdf_field'] );
+											
+											unset($mapping);
 									
 									// replace old attachment id in embeds
 									if( isset( $data['embeds'] ) && is_array( $data['embeds'] ) )
@@ -552,6 +554,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 													$embed['attachment_id'] = $new_attachment_id;
 												}
 											}
+											
+											unset($embed);
 									
 									// TODO: replace old attachment id in tag generator tool tags in the form body and settings
 									
@@ -572,15 +576,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				}
 			}
 			
-			// [Add] set mapping & embeds while cf7_forms_save_overrides array has value
-			if(is_array($this->cf7_forms_save_overrides) && isset($data))
-			{
-				self::set_meta( $post_id, 'mappings', self::json_encode( $data['mappings'] ) );
-				self::set_meta( $post_id, 'embeds', self::json_encode( $data['embeds'] ) );
-				
-				return;
-			}
-
 			if( isset( $data['mappings'] ) && is_array( $new_mappings = $data['mappings'] ) )
 			{
 				$mappings = array();
