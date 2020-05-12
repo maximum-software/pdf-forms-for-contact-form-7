@@ -472,7 +472,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		function duplicate_form_hook( $new, $instance )
 		{
-			$prev_post_id = $instance->id;
+			$prev_post_id = $instance->id();
 			$attachments = $this->post_get_all_pdfs( $prev_post_id );
 
 			$mappings = self::get_meta( $prev_post_id, 'mappings' );
