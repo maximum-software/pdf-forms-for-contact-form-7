@@ -2,7 +2,7 @@
 Contributors: maximumsoftware
 Tags: pdf, form, filler, contact form, attachment, email
 Requires at least: 4.3
-Tested up to: 5.3.2
+Tested up to: 5.4.1
 Requires PHP: 5.2
 Stable tag: trunk
 Version: 1.2.3
@@ -30,7 +30,6 @@ Known problems,
 
 Known incompatible plugins,
  * [Contact Form 7 Live Preview](https://wordpress.org/plugins/cf7-live-preview/)
- * [Smart Grid-Layout Design for Contact Form 7](https://wordpress.org/plugins/cf7-grid-layout/)
  * [Open external links in a new window](https://wordpress.org/plugins/open-external-links-in-a-new-window/)
  * [Contact Form 7 Multi-step Pro](https://codecanyon.net/item/contact-form-7-multistep-pro/19635969) (partial compatibility)
  * [WordPress Multilingual Plugin](https://wpml.org/)
