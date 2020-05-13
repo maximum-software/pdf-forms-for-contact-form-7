@@ -25,7 +25,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		private $registered_services = false;
 		private $downloads = null;
 		private $storage = null;
-		
+		private $cf7_forms_save_overrides = null;
+
 		private function __construct()
 		{
 			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
@@ -73,6 +74,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_mail_sent', array( $this, 'change_response_message' ) );
 			
+			//Hook that allow to copy media and mapping
+			add_filter( 'wpcf7_copy', array( $this,'duplicate_form_hook' ),10,2 );
+
 			// TODO: allow users to run this manually
 			//$this->upgrade_data();
 		}
@@ -467,17 +471,49 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/**
+		 * Hook that runs on form copy/duplicate forms with the editor
+		 */
+		function duplicate_form_hook( $new, $instance )
+		{
+			$prev_post_id = $instance->id();
+			$attachments = $this->post_get_all_pdfs( $prev_post_id );
+
+			$mappings = self::get_meta( $prev_post_id, 'mappings' );
+			if( $mappings )
+				$mappings = json_decode( $mappings, true );
+			if( !is_array( $mappings ) )
+				$mappings = array();
+			
+			$embeds = self::get_meta( $prev_post_id, 'embeds' );
+			if( $embeds )
+				$embeds = json_decode( $embeds, true );
+			if( !is_array( $embeds ) )
+				$embeds = array();
+
+			$this->cf7_forms_save_overrides = array( 'attachments' => $attachments , 'mappings' => $mappings , 'embeds' => $embeds );
+
+			return $new;
+		}
+
+		/**
 		 * Hook that runs on form save and attaches all PDFs that were attached to forms with the editor
 		 */
 		public function update_post_attachments( $contact_form )
 		{
 			$post_id = $contact_form->id();
 			
-			if( !isset( $_POST['wpcf7-pdf-forms-data'] ) )
-				return;
-			
-			$post_var = wp_unslash( $_POST['wpcf7-pdf-forms-data'] );
-			$data = json_decode( $post_var, true );
+			if( is_array($this->cf7_forms_save_overrides) )
+			{
+				$data = $this->cf7_forms_save_overrides;
+			}
+			else
+		 	{
+				if( !isset( $_POST['wpcf7-pdf-forms-data'] ) )
+					return;
+				
+				$post_var = wp_unslash( $_POST['wpcf7-pdf-forms-data'] );
+				$data = json_decode( $post_var, true );
+			}
 			
 			if( !is_array( $data ) )
 				return;
@@ -507,12 +543,22 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 										foreach( $data['mappings'] as &$mapping )
 											if( isset( $mapping['pdf_field'] ) )
 												$mapping['pdf_field'] = preg_replace( '/^' . preg_quote( $attachment_id . '-' ) . '/i', intval( $new_attachment_id ) . '-', $mapping['pdf_field'] );
+											
+											unset($mapping);
 									
 									// replace old attachment id in embeds
 									if( isset( $data['embeds'] ) && is_array( $data['embeds'] ) )
 										foreach( $data['embeds'] as &$embed )
 											if( isset( $embed['attachment_id'] ) )
-												$embed['attachment_id'] = $new_attachment_id;
+											{
+												// [update] Check for multiple image embedded in multiple attachment..
+												if( $embed['attachment_id'] == $attachment_id )
+												{
+													$embed['attachment_id'] = $new_attachment_id;
+												}
+											}
+											
+											unset($embed);
 									
 									// TODO: replace old attachment id in tag generator tool tags in the form body and settings
 									
