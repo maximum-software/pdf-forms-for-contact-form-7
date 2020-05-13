@@ -477,7 +477,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			$prev_post_id = $instance->id();
 			$attachments = $this->post_get_all_pdfs( $prev_post_id );
-
+			
 			$mappings = self::get_meta( $prev_post_id, 'mappings' );
 			if( $mappings )
 				$mappings = json_decode( $mappings, true );
@@ -489,9 +489,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$embeds = json_decode( $embeds, true );
 			if( !is_array( $embeds ) )
 				$embeds = array();
-
+			
 			$this->cf7_forms_save_overrides = array( 'attachments' => $attachments , 'mappings' => $mappings , 'embeds' => $embeds );
-
+			
 			return $new;
 		}
 
@@ -502,18 +502,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			$post_id = $contact_form->id();
 			
-			if( is_array($this->cf7_forms_save_overrides) )
-			{
+			$data = null;
+			if( is_array( $this->cf7_forms_save_overrides ) )
 				$data = $this->cf7_forms_save_overrides;
-			}
-			else
-		 	{
-				if( !isset( $_POST['wpcf7-pdf-forms-data'] ) )
-					return;
-				
-				$post_var = wp_unslash( $_POST['wpcf7-pdf-forms-data'] );
-				$data = json_decode( $post_var, true );
-			}
+			else if( isset( $_POST['wpcf7-pdf-forms-data'] ) )
+				$data = json_decode( wp_unslash( $_POST['wpcf7-pdf-forms-data'] ), true );
 			
 			if( !is_array( $data ) )
 				return;
@@ -540,25 +533,21 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 								{
 									// replace old attachment id in mappings
 									if( isset( $data['mappings'] ) && is_array( $data['mappings'] ) )
+									{
 										foreach( $data['mappings'] as &$mapping )
 											if( isset( $mapping['pdf_field'] ) )
 												$mapping['pdf_field'] = preg_replace( '/^' . preg_quote( $attachment_id . '-' ) . '/i', intval( $new_attachment_id ) . '-', $mapping['pdf_field'] );
-											
-											unset($mapping);
+										unset($mapping);
+									}
 									
 									// replace old attachment id in embeds
 									if( isset( $data['embeds'] ) && is_array( $data['embeds'] ) )
+									{
 										foreach( $data['embeds'] as &$embed )
-											if( isset( $embed['attachment_id'] ) )
-											{
-												// [update] Check for multiple image embedded in multiple attachment..
-												if( $embed['attachment_id'] == $attachment_id )
-												{
-													$embed['attachment_id'] = $new_attachment_id;
-												}
-											}
-											
-											unset($embed);
+											if( isset( $embed['attachment_id'] ) && $embed['attachment_id'] == $attachment_id )
+												$embed['attachment_id'] = $new_attachment_id;
+										unset($embed);
+									}
 									
 									// TODO: replace old attachment id in tag generator tool tags in the form body and settings
 									
