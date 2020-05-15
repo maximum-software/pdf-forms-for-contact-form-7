@@ -626,7 +626,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		
 		// prepare files and embed params
 		$files = array();
-		foreach( $embeds as $key => &$embed )
+		foreach( $embeds as $key => $embed )
 		{
 			$filepath = $embed['image'];
 			if( !is_readable( $filepath ) )
@@ -645,6 +645,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 				continue;
 			$embed['image'] = $id;
 		}
+		unset($embed);
 		
 		$encoded_data = WPCF7_Pdf_Forms::json_encode( $data );
 		if( $encoded_data === FALSE || $encoded_data === null )

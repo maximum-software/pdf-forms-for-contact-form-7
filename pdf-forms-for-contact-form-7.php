@@ -900,6 +900,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							
 							$element = $new_element;
 						}
+						unset($element);
+						
 						$save_directory = implode( "/", $path_elements );
 						$save_directory = preg_replace( '|/+|', '/', $save_directory ); // remove double slashes
 						
@@ -1111,7 +1113,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						// add pipe to prevent user confusion with singular options
 						$tagValues .= '"' . esc_attr( strval( $field['name'] ) ) . '|' . esc_attr( strval( reset( $options ) ) ) . '" ';
 					else
-						foreach( $options as &$option )
+						foreach( $options as $option )
 							$tagValues .= '"' . esc_attr( strval( $option ) ) . '" ';
 					
 					if( $type == 'checkbox' && count( $options ) > 1 )
@@ -1181,7 +1183,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$tags = "";
 					
 					foreach ( $fields as $attachment_id => $fs )
-						foreach ( $fs as &$field )
+						foreach ( $fs as $field )
 						{
 							if( isset( $field['type'] ) )
 							{
