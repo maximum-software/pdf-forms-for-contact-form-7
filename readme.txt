@@ -5,7 +5,7 @@ Requires at least: 4.3
 Tested up to: 5.4.1
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.2.3
+Version: 1.2.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -48,6 +48,14 @@ Special thanks to the following sponsors of this plugin,
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.2.4 =
+
+* Release date: May 15, 2020
+
+* Bug fixes
+* Code optimizations and improvements
+* Added CF7 form duplication support
 
 = 1.2.3 =
 
