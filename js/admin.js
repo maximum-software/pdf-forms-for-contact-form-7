@@ -1,4 +1,38 @@
 jQuery(document).ready(function($) {
+	$( "body" ).delegate( ".text-to-text", "click", function() {
+		var text = $(this).prev().text();
+		var html = '<textarea name="text" spellcheck="false">'+text+'</textarea>';
+		$(this).prev().replaceWith(html);
+		$(this).replaceWith('<span class="dashicons dashicons-admin-page text-to-label"></span>');
+		localStorage.setItem("old_name", text);
+		$('span.text-to-text').hide();
+	});
+	$( "body" ).delegate( ".text-to-label", "click", function() {
+		var new_field = $(this).prev().val();
+
+		var new_field_name = new_field.split(" ");
+		new_field_name = new_field_name[new_field_name.length - 1];
+		new_field_name = new_field_name.replace("]", "");
+
+		var field_list = $('textarea#wpcf7-form').val();
+		var is_field_exist = field_list.includes(new_field);
+		if(!is_field_exist){
+			$('textarea#wpcf7-form').val(field_list+new_field);
+		}
+		var hidden_data = $('input[name="wpcf7-pdf-forms-data"]').val();
+		hidden_data = JSON.parse(hidden_data);
+		hidden_data.mappings.forEach(function(value,index){
+			if(value.cf7_field == localStorage.getItem("old_name")){
+				value.cf7_field = new_field_name;
+			}
+		});
+		hidden_data = JSON.stringify(hidden_data);
+		$('input[name="wpcf7-pdf-forms-data"]').val(hidden_data);
+		var html = '<span class="cf7-field-name">'+new_field_name+'</span>';
+		$(this).prev().replaceWith(html);
+		$(this).replaceWith('<span class="dashicons dashicons-edit text-to-text"></span>');
+		$('span.text-to-text').show();
+	});
 	
 	var wpcf7_form = jQuery('textarea#wpcf7-form');
 	if(!wpcf7_form)
