@@ -1654,7 +1654,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				$submission = WPCF7_Submission::get_instance();
 				$response = $submission->get_response();
-				if( $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' )
+				if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' )
 				{
 					// ajax request
 					$response .= "<br/>";
