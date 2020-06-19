@@ -67,6 +67,7 @@
 .wpcf7-pdf-forms-admin .pdf-options-hidden,
 .wpcf7-pdf-forms-admin .pdf-attachment-row-template,
 .wpcf7-pdf-forms-admin .pdf-mapping-row-template,
+.wpcf7-pdf-forms-admin .pdf-mapping-row-new-template,
 .wpcf7-pdf-forms-admin .image-embeds-row-template
 {
 	display: none;
