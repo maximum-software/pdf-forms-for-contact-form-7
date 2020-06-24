@@ -1,39 +1,31 @@
 jQuery(document).ready(function($) {
 	$("body").on("click", ".text-to-text", function() {
 		var text = $(this).prev().text();
-
-		var hidden_data = $('input[name="wpcf7-pdf-forms-data"]').val();
-		hidden_data = JSON.parse(hidden_data);
+		var mappings = getMappings();
 		var pdf_field = '';
-		hidden_data.mappings.forEach(function(value,index){
-			if(value.cf7_field == text){
-				pdf_field = value.pdf_field;
-				hidden_data.mappings.splice(index, 1);
+		jQuery.each(mappings,function(index,mapping){
+			if(mapping.cf7_field == text){
+				pdf_field = mapping.pdf_field;
+				deleteMapping(mapping.cf7_field,mapping.pdf_field);
 			}
-		});	
-		
-		if(hidden_data.mappings === undefined){
-			hidden_data.mappings = [{"mail_tags":'['+text+']','pdf_field':pdf_field}];
-		}else{
-			hidden_data.mappings.push({"mail_tags":'['+text+']','pdf_field':pdf_field});
-		}
-		
+		});
+		mappings.push({"mail_tags":'['+text+']','pdf_field':pdf_field});
 		var html = '<textarea name="text" spellcheck="false" class="mail-tags" data-pdf-field="'+pdf_field+'">['+text+']</textarea>';
-		$('input[name="wpcf7-pdf-forms-data"]').val(JSON.stringify(hidden_data));
+		setMappings(mappings);
 		$(this).prev().replaceWith(html);
 		$(this).hide();
 	});
 	$("body").on("keyup", "textarea.mail-tags", function() {
 		var mail_tags = $(this).val();
-		var hidden_data = $('input[name="wpcf7-pdf-forms-data"]').val();
 		var pdf_field = $(this).attr('data-pdf-field');
-		hidden_data = JSON.parse(hidden_data);
-		hidden_data.mappings.forEach(function(value,index){
-			if(value.pdf_field == pdf_field){
-				hidden_data.mappings[index].mail_tags = mail_tags;
+		
+		var mappings = getMappings();
+		jQuery.each(mappings,function(index,mapping){
+			if(mapping.pdf_field == pdf_field){
+				mappings[index].mail_tags = mail_tags;
 			}
 		});
-		$('input[name="wpcf7-pdf-forms-data"]').val(JSON.stringify(hidden_data));
+		setMappings(mappings);
 	});
 	
 	var wpcf7_form = jQuery('textarea#wpcf7-form');
@@ -556,8 +548,8 @@ jQuery(document).ready(function($) {
 				if(data.hasOwnProperty('mappings'))
 				{
 					jQuery.each(data.mappings, function(index, mapping) {
-						if(mapping.cf7_field === undefined) {
-							addNewMapping(mapping.mail_tags, mapping.pdf_field); 
+						if(mapping.hasOwnProperty('mail_tags')) {
+							addMailtagMapping(mapping.mail_tags, mapping.pdf_field); 
 						}else{
 							addMapping(mapping.cf7_field, mapping.pdf_field); 	
 						}
@@ -608,6 +600,19 @@ jQuery(document).ready(function($) {
 		
 		setMappings(mappings);
 	};
+
+	var deleteMailtagsMapping = function(mail_tags, pdf_field){
+		var mappings = getMappings();
+		
+		for(var i=0, l=mappings.length; i<l; i++)
+			if(mappings[i].mail_tags == mail_tags && mappings[i].pdf_field == pdf_field)
+			{
+				mappings.splice(i, 1);
+				break;
+			}
+		
+		setMappings(mappings);
+	}
 	
 	var deleteAllMappings = function() {
 		setMappings([]);
@@ -678,15 +683,15 @@ jQuery(document).ready(function($) {
 	};
 	
 
-	var addNewMapping = function(mail_tags, pdf_field) {
+	var addMailtagMapping = function(mail_tags, pdf_field) {
 		var mappings = getMappings();
 		mappings.push( { 'mail_tags': mail_tags, 'pdf_field': pdf_field } );
 		setMappings(mappings);
 		
-		addNewMappingEntry(mail_tags, pdf_field);
+		addMailtagMappingEntry(mail_tags, pdf_field);
 	};
 
-	var addNewMappingEntry = function(mail_tags, pdf_field) {
+	var addMailtagMappingEntry = function(mail_tags, pdf_field) {
 		
 		var pdf_field_data = getPdfFieldData(pdf_field);
 		var pdf_field_caption;
@@ -698,16 +703,16 @@ jQuery(document).ready(function($) {
 			pdf_field_caption = base64urldecode(field_id);
 		}
 		
-		var template = jQuery('.wpcf7-pdf-forms-admin .pdf-mapping-row-new-template');
-		var tag = template.clone().removeClass('pdf-mapping-row-new-template').addClass('pdf-mapping-row');
+		var template = jQuery('.wpcf7-pdf-forms-admin .pdf-mapping-row-mailtag-template');
+		var tag = template.clone().removeClass('pdf-mapping-row-mailtag-template').addClass('pdf-mapping-row');
 		
-		tag.find('.cf7-field textarea').val(mail_tags);
-		tag.find('.cf7-field textarea').attr('data-pdf-field',pdf_field);
+		tag.find('.mail-tag textarea').val(mail_tags).attr('data-pdf-field',pdf_field);
 		tag.find('.pdf-field-name').text(pdf_field_caption);
 		
 		var delete_button = tag.find('.delete-mapping-button');
-		delete_button.data('cf7_field', mail_tags);
+		delete_button.data('mail_tags', mail_tags);
 		delete_button.data('pdf_field', pdf_field);
+		delete_button.addClass('addclass');
 		delete_button.click(function(event) {
 			
 			// prevent running default button click handlers
@@ -717,7 +722,7 @@ jQuery(document).ready(function($) {
 			if(!confirm(wpcf7_pdf_forms.__Confirm_Delete_Mapping))
 				return;
 			
-			deleteMapping(jQuery(this).data('cf7_field'), jQuery(this).data('pdf_field'));
+			deleteMailtagsMapping(jQuery(this).parent().parent().find("textarea").val(), jQuery(this).data('pdf_field'));
 			
 			tag.remove();
 			
@@ -739,8 +744,8 @@ jQuery(document).ready(function($) {
 		
 		var mappings = getMappings();
 		for(var i=0, l=mappings.length; i<l; i++){
-			if(mappings[i].cf7_field === undefined){
-				addNewMappingEntry(mappings[i].mail_tags, mappings[i].pdf_field);
+			if(mappings[i].hasOwnProperty('mail_tags')){
+				addMailtagMappingEntry(mappings[i].mail_tags, mappings[i].pdf_field);
 			}else{
 				addMappingEntry(mappings[i].cf7_field, mappings[i].pdf_field);
 			}		
