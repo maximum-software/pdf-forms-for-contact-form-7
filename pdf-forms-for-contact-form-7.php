@@ -758,10 +758,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							if( $i === FALSE ){
 								continue;	
 							}
+							$field = substr( $mapping["pdf_field"], $i+1 );
 							if( !isset( $fields[$field] ) ){
 								continue;
 							}							
-							$field = substr( $mapping["pdf_field"], $i+1 );
 							$field = self::base64url_decode( $field );
 							$data[$field] = wpcf7_mail_replace_tags( $mapping["mail_tags"] );
 						}
