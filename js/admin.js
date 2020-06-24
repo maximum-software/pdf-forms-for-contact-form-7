@@ -261,7 +261,7 @@ jQuery(document).ready(function($) {
 		
 		for(var i=0, l=cf7FieldsCache.length; i<l; i++)
 			if(cf7FieldsCache[i].id == id)
-				return cf7FieldsCache[i]
+				return cf7FieldsCache[i];
 		
 		return null;
 	};
@@ -1299,7 +1299,7 @@ jQuery(document).ready(function($) {
 	}
 	
 	// set up help buttons
-	jQuery('.help-button').click(function(event) {
+	jQuery('.wpcf7-pdf-forms-admin .help-button').click(function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
