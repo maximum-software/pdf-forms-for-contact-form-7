@@ -338,7 +338,7 @@ jQuery(document).ready(function($) {
 		jQuery.each(mappings, function(index, mapping) {
 			var pdf_field_data = getPdfFieldData(mapping.pdf_field);
 			if(!pdf_field_data || pdf_field_data.attachment_id == attachment_id)
-				deleteMapping(mapping.cf7_field, mapping.pdf_field);
+				deleteMapping(mapping.mapping_id);
 		});
 		
 		var embeds = getEmbeds();
@@ -579,19 +579,6 @@ jQuery(document).ready(function($) {
 		setMappings(mappings);
 	};
 
-	var deleteMailtagsMapping = function(mail_tags, pdf_field){
-		var mappings = getMappings();
-		
-		for(var i=0, l=mappings.length; i<l; i++)
-			if(mappings[i].mail_tags == mail_tags && mappings[i].pdf_field == pdf_field)
-			{
-				mappings.splice(i, 1);
-				break;
-			}
-		
-		setMappings(mappings);
-	}
-	
 	var deleteAllMappings = function() {
 		setMappings([]);
 		refreshMappings();
