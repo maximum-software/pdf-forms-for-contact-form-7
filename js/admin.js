@@ -518,20 +518,8 @@ jQuery(document).ready(function($) {
 				
 				if(data.hasOwnProperty('mappings'))
 				{
-					jQuery.each(data.mappings, function(index, mapping) {
-						if(mapping.hasOwnProperty('mail_tags')) {
-							addMapping({
-								mail_tags: mapping.mail_tags,
-								pdf_field: mapping.pdf_field,
-								mapping_id: index,
-							}); 
-						}else{
-							addMapping({
-								cf7_field: mapping.cf7_field,
-								pdf_field: mapping.pdf_field,
-								mapping_id: index,
-							}); 	
-						}
+					jQuery.each(data.mappings, function(index, mapping) {	
+							addMapping(mapping); 	
 					});
 					refreshMappings();
 				}
@@ -586,17 +574,26 @@ jQuery(document).ready(function($) {
 	
 	var addMapping = function(data) {
 		var mappings = getMappings();
-		if(!data.hasOwnProperty('mapping_id')){
-			data.mapping_id = (mappings.length + 1);
-		}
-		if(data.hasOwnProperty('mail_tags')){
-			mappings.push( { 'mail_tags' : data.mail_tags , 'pdf_field': data.pdf_field, 'mapping_id' : data.mapping_id } );
-		}else{
-			mappings.push( { 'cf7_field' : data.cf7_field , 'pdf_field': data.pdf_field, 'mapping_id' : data.mapping_id } );
-		}
+		data.mapping_id = generateMappingId(mappings);
+		mappings.push(data);
 		setMappings(mappings);
 		addMappingEntry(data);
 	};
+
+	var generateMappingId = function(mappings){
+		var mapping_id = "";
+		var mapping_ids = mappings.map(function(row) {
+			return row['mapping_id'];
+		});
+		do {
+			var alpha_numeric_string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+			for (var i = 0; i < 6; i++){
+				mapping_id += alpha_numeric_string.charAt(Math.floor(Math.random() * alpha_numeric_string.length));
+			}
+		}
+		while ($.inArray(mapping_id, mapping_ids) != -1);
+		return mapping_id;
+	}
 
 	var addMappingEntry = function(data) {
 		var pdf_field_data = getPdfFieldData(data.pdf_field);
@@ -669,19 +666,7 @@ jQuery(document).ready(function($) {
 		
 		var mappings = getMappings();
 		for(var i=0, l=mappings.length; i<l; i++){
-			if(mappings[i].hasOwnProperty('mail_tags')){
-				addMappingEntry({
-					mail_tags: mappings[i].mail_tags,
-					pdf_field: mappings[i].pdf_field,
-					mapping_id: mappings[i].mapping_id,
-				});
-			}else{
-				addMappingEntry({
-					cf7_field: mappings[i].cf7_field,
-					pdf_field: mappings[i].pdf_field,
-					mapping_id: mappings[i].mapping_id,
-				});
-			}		
+			addMappingEntry(mappings[i]);
 		}
 		
 		if(mappings.length==0)
