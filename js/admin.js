@@ -276,8 +276,46 @@ jQuery(document).ready(function($) {
 			
 			cf7_fields.append(jQuery('<option>', {
 				value: field.id,
-				text : field.caption 
+				text : '['+field.caption+']'
 			}));
+			
+		});
+		
+		var mailtags = [
+			 '[_date]'
+			,'[_time]'
+			,'[_serial_number]'
+			,'[_format_your-date "D, d M y"]'
+			,'[_remote_ip]'
+			,'[_url]'
+			,'[_user_agent]'
+			,'[_post_id]'
+			,'[_post_name]'
+			,'[_post_title]'
+			,'[_post_url]'
+			,'[_post_author]'
+			,'[_post_author_email]'
+			,'[_site_title]'
+			,'[_site_description]'
+			,'[_site_url]'
+			,'[_site_admin_email]'
+			,'[_user_login]'
+			,'[_user_email]'
+			,'[_user_url]'
+			,'[_user_first_name]'
+			,'[_user_last_name]'
+			,'[_user_nickname]'
+			,'[_user_display_name]'
+			,'[_invalid_fields]'
+		];
+		
+		jQuery.each(mailtags, function(i, mailtag) {
+			
+			cf7_fields.append(jQuery('<option>', {
+				value: mailtag,
+				text : mailtag
+			}));
+			
 		});
 	};
 	
@@ -1264,14 +1302,22 @@ jQuery(document).ready(function($) {
 		
 		clearMessages();
 		
-		var cf7_field = jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper .cf7-field-list').val();
 		var pdf_field = jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper .pdf-field-list').val();
+		var subject = jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper .cf7-field-list').val();
 		
-		if(cf7_field && pdf_field)
-			addMapping({
-				cf7_field: cf7_field,
-				pdf_field: pdf_field,
-			});
+		if(pdf_field && subject)
+		{
+			if(subject.charAt(0) == '[')
+				addMapping({
+					mail_tags: subject,
+					pdf_field: pdf_field,
+				});
+			else
+				addMapping({
+					cf7_field: subject,
+					pdf_field: pdf_field,
+				});
+		}
 		
 		return false;
 	});
