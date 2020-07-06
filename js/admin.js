@@ -233,7 +233,7 @@ jQuery(document).ready(function($) {
 			dataType: 'json',
 			
 			success: function(data, textStatus, jqXHR) {
-				
+
 				if(!data.success)
 					return errorMessage(data.error_message);
 				
@@ -257,10 +257,11 @@ jQuery(document).ready(function($) {
 		});
 	};
 	var getCf7FieldData = function(id) {
-		
-		for(var i=0, l=cf7FieldsCache.length; i<l; i++)
-			if(cf7FieldsCache[i].id == id)
-				return cf7FieldsCache[i]
+		for(var i=0, l=cf7FieldsCache.length; i<l; i++){
+			if(cf7FieldsCache[i].id == id){
+				return cf7FieldsCache[i];
+			}
+		}
 		
 		return null;
 	};
@@ -702,11 +703,13 @@ jQuery(document).ready(function($) {
 		
 		for(var i=0; i<mappings.length; i++)
 		{
-			var cf7_field_data = getCf7FieldData(mappings[i].cf7_field);
-			if(!cf7_field_data)
-			{
-				mappings.splice(i, 1);
-				i--;
+			if(mappings[i].hasOwnProperty('cf7_field')){
+				var cf7_field_data = getCf7FieldData(mappings[i].cf7_field);
+				if(!cf7_field_data)
+				{
+					mappings.splice(i, 1);
+					i--;
+				}
 			}
 		}
 		
