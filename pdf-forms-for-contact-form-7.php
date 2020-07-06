@@ -501,7 +501,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public function update_post_attachments( $contact_form )
 		{
 			$post_id = $contact_form->id();
-
+			
 			$data = null;
 			if( is_array( $this->cf7_forms_save_overrides ) )
 				$data = $this->cf7_forms_save_overrides;
@@ -571,15 +571,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( isset( $data['mappings'] ) && is_array( $new_mappings = $data['mappings'] ) )
 			{
 				$mappings = array();
-				foreach( $new_mappings as $mapping ){
-					if( isset( $mapping['cf7_field'] ) && isset( $mapping['pdf_field'] ) ){
-						if( self::wpcf7_field_name_decode( $mapping['cf7_field'] ) === FALSE ){
+				foreach( $new_mappings as $mapping )
+				{
+					if( isset( $mapping['cf7_field'] ) && isset( $mapping['pdf_field'] ) )
+						if( self::wpcf7_field_name_decode( $mapping['cf7_field'] ) === FALSE )
 							$mappings[] = array( 'cf7_field' => $mapping['cf7_field'], 'pdf_field' => $mapping['pdf_field'] );
-						}
-					}		
-					if( isset( $mapping['mail_tags'] ) && isset( $mapping['pdf_field'] ) ){
+					if( isset( $mapping['mail_tags'] ) && isset( $mapping['pdf_field'] ) )
 						$mappings[] = array( 'mail_tags' => $mapping['mail_tags'], 'pdf_field' => $mapping['pdf_field'] );
-					}
 				}
 				self::set_meta( $post_id, 'mappings', self::json_encode( $mappings ) );
 			}
@@ -731,7 +729,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				foreach( $processed_data as $key => $value )
 				{
 					// processs mappings
-					foreach( $mappings as $mapping ){
+					foreach( $mappings as $mapping )
 						if( $mapping["cf7_field"] == $key )
 						{
 							$i = strpos( $mapping["pdf_field"], '-' );
@@ -750,22 +748,23 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							
 							$data[$field] = $value;
 						}
-					}
 					
-					foreach( $mappings as $mapping ){
-						if( isset( $mapping["mail_tags"] ) ){
+					foreach( $mappings as $mapping )
+						if( isset( $mapping["mail_tags"] ) )
+						{
 							$i = strpos( $mapping["pdf_field"], '-' );
-							if( $i === FALSE ){
-								continue;	
-							}
+							if( $i === FALSE )
+								continue;
+							
 							$field = substr( $mapping["pdf_field"], $i+1 );
 							$field = self::base64url_decode( $field );
-							if( !isset( $fields[$field] ) ){
+							
+							if( !isset( $fields[$field] ) )
 								continue;
-							}							
+							
 							$data[$field] = wpcf7_mail_replace_tags( $mapping["mail_tags"] );
 						}
-					}
+					
 					// processs old style tag generator fields
 					try
 					{

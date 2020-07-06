@@ -1,4 +1,5 @@
 jQuery(document).ready(function($) {
+	
 	var wpcf7_form = jQuery('textarea#wpcf7-form');
 	if(!wpcf7_form)
 		return;
@@ -233,7 +234,7 @@ jQuery(document).ready(function($) {
 			dataType: 'json',
 			
 			success: function(data, textStatus, jqXHR) {
-
+				
 				if(!data.success)
 					return errorMessage(data.error_message);
 				
@@ -497,6 +498,7 @@ jQuery(document).ready(function($) {
 			dataType: 'json',
 			
 			success: function(data, textStatus, jqXHR) {
+				
 				if(!data.success)
 					return errorMessage(data.error_message);
 				
@@ -518,8 +520,8 @@ jQuery(document).ready(function($) {
 				
 				if(data.hasOwnProperty('mappings'))
 				{
-					jQuery.each(data.mappings, function(index, mapping) {	
-							addMapping(mapping); 	
+					jQuery.each(data.mappings, function(index, mapping) {
+						addMapping(mapping);
 					});
 					refreshMappings();
 				}
@@ -566,35 +568,25 @@ jQuery(document).ready(function($) {
 		
 		setMappings(mappings);
 	};
-
+	
 	var deleteAllMappings = function() {
 		setMappings([]);
 		refreshMappings();
 	};
+	
+	var generateMappingId = function() {
+		return Math.random().toString(36).substring(2) + Date.now().toString();
+	}
 	
 	var addMapping = function(data) {
 		var mappings = getMappings();
 		data.mapping_id = generateMappingId(mappings);
 		mappings.push(data);
 		setMappings(mappings);
+		
 		addMappingEntry(data);
 	};
-
-	var generateMappingId = function(mappings){
-		var mapping_id = "";
-		var mapping_ids = mappings.map(function(row) {
-			return row['mapping_id'];
-		});
-		do {
-			var alpha_numeric_string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-			for (var i = 0; i < 6; i++){
-				mapping_id += alpha_numeric_string.charAt(Math.floor(Math.random() * alpha_numeric_string.length));
-			}
-		}
-		while ($.inArray(mapping_id, mapping_ids) != -1);
-		return mapping_id;
-	}
-
+	
 	var addMappingEntry = function(data) {
 		var pdf_field_data = getPdfFieldData(data.pdf_field);
 		var pdf_field_caption;
@@ -605,7 +597,9 @@ jQuery(document).ready(function($) {
 			var field_id = data.pdf_field.substr(data.pdf_field.indexOf('-')+1);
 			pdf_field_caption = base64urldecode(field_id);
 		}
-		if(data.hasOwnProperty('cf7_field')){
+		
+		if(data.hasOwnProperty('cf7_field'))
+		{
 			var cf7_field_data = getCf7FieldData(data.cf7_field);
 			var cf7_field_caption = data.cf7_field;
 			if(cf7_field_data)
@@ -617,20 +611,21 @@ jQuery(document).ready(function($) {
 			tag.find('.cf7-field-name').text(cf7_field_caption);
 			tag.find('.pdf-field-name').text(pdf_field_caption);
 			
-			tag.find('.convert-to-mailtags').data('cf7_field', data.cf7_field);
-			tag.find('.convert-to-mailtags').data('pdf_field', data.pdf_field);
+			tag.find('.convert-to-mailtags-button').data('mapping_id', data.mapping_id);
 			
 			var virtual = cf7_field_data && cf7_field_data.pdf_field == data.pdf_field;
-		}else if(data.hasOwnProperty('mail_tags')){
+		}
+		else if(data.hasOwnProperty('mail_tags'))
+		{
 			var template = jQuery('.wpcf7-pdf-forms-admin .pdf-mapping-row-mailtag-template');
 			var tag = template.clone().removeClass('pdf-mapping-row-mailtag-template').addClass('pdf-mapping-row');
 			
-			tag.find('.mail-tag textarea').val(data.mail_tags).attr('data-pdf-field',data.pdf_field);
+			tag.find('textarea.mail-tags').val(data.mail_tags).data('mapping_id', data.mapping_id);
 			tag.find('.pdf-field-name').text(pdf_field_caption);
 			
 			var virtual = false;
 		}
-
+		
 		var delete_button = tag.find('.delete-mapping-button');
 		if(virtual)
 			delete_button.remove();
@@ -645,6 +640,7 @@ jQuery(document).ready(function($) {
 				
 				if(!confirm(wpcf7_pdf_forms.__Confirm_Delete_Mapping))
 					return;
+				
 				deleteMapping(jQuery(this).data('mapping_id'));
 				
 				tag.remove();
@@ -665,9 +661,8 @@ jQuery(document).ready(function($) {
 		reloadDefaultMappings();
 		
 		var mappings = getMappings();
-		for(var i=0, l=mappings.length; i<l; i++){
+		for(var i=0, l=mappings.length; i<l; i++)
 			addMappingEntry(mappings[i]);
-		}
 		
 		if(mappings.length==0)
 			jQuery('.wpcf7-pdf-forms-admin .delete-all-row').hide();
@@ -702,7 +697,8 @@ jQuery(document).ready(function($) {
 		
 		for(var i=0; i<mappings.length; i++)
 		{
-			if(mappings[i].hasOwnProperty('cf7_field')){
+			if(mappings[i].hasOwnProperty('cf7_field'))
+			{
 				var cf7_field_data = getCf7FieldData(mappings[i].cf7_field);
 				if(!cf7_field_data)
 				{
@@ -1360,13 +1356,18 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
-	$("body").on("click", ".wpcf7-pdf-forms-admin .convert-to-mailtags", function() {
-		var cf7_field = $(this).data('cf7_field');
-		var pdf_field = $(this).data('pdf_field');
-
+	jQuery('.wpcf7-pdf-forms-admin').on("click", '.convert-to-mailtags-button', function() {
+		
+		// prevent running default button click handlers
+		event.stopPropagation();
+		event.preventDefault();
+		
+		var mapping_id = jQuery(this).data('mapping_id');
+		
 		var mappings = getMappings();
-		for(var i=0, l=mappings.length; i<l; i++){
-			if((mappings[i].cf7_field == cf7_field) && mappings[i].pdf_field == pdf_field)
+		for(var i=0, l=mappings.length; i<l; i++)
+		{
+			if(mappings[i].mapping_id == mapping_id)
 			{
 				mappings[i].mail_tags = '['+mappings[i].cf7_field+']';
 				delete mappings[i].cf7_field;
@@ -1377,19 +1378,20 @@ jQuery(document).ready(function($) {
 		refreshMappings();
 	});
 	
-	$("body").on("keyup change", ".wpcf7-pdf-forms-admin textarea.mail-tags", function() {
-		var mail_tags = $(this).val();
-		var pdf_field = $(this).attr('data-pdf-field');
+	jQuery('.wpcf7-pdf-forms-admin').on("keyup change", 'textarea.mail-tags', function() {
+		
+		var mail_tags = jQuery(this).val();
+		var mapping_id = jQuery(this).data('mapping_id');
 		
 		var mappings = getMappings();
-		jQuery.each(mappings,function(index,mapping){
-			if(mapping.pdf_field == pdf_field){
+		jQuery.each(mappings, function(index, mapping) {
+			if(mapping.mapping_id == mapping_id)
 				mappings[index].mail_tags = mail_tags;
-			}
 		});
+		
 		setMappings(mappings);
 	});
-
+	
 	wpcf7_form.change(function() {
 		loadCf7Fields(removeOldMappings);
 	});
