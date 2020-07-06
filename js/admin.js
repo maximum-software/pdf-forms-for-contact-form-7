@@ -116,7 +116,7 @@ jQuery(document).ready(function($) {
 			
 			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
 			
-			beforeSend: function() { showSpinner() },
+			beforeSend: function() { showSpinner(); },
 			complete: function() { hideSpinner(); }
 			
 		});
@@ -252,7 +252,7 @@ jQuery(document).ready(function($) {
 			
 			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
 			
-			beforeSend: function() { showSpinner() },
+			beforeSend: function() { showSpinner(); },
 			complete: function() { hideSpinner(); }
 			
 		});
@@ -536,7 +536,7 @@ jQuery(document).ready(function($) {
 			
 			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
 			
-			beforeSend: function() { showSpinner() },
+			beforeSend: function() { showSpinner(); },
 			complete: function() { hideSpinner(); }
 			
 		});
@@ -1012,7 +1012,7 @@ jQuery(document).ready(function($) {
 			
 			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
 			
-			beforeSend: function() { showSpinner() },
+			beforeSend: function() { showSpinner(); },
 			complete: function() { hideSpinner(); }
 			
 		});
