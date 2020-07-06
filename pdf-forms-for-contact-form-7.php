@@ -1675,7 +1675,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				$submission = WPCF7_Submission::get_instance();
 				$response = $submission->get_response();
-				if( $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' )
+				if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' )
 				{
 					// ajax request
 					$response .= "<br/>";
@@ -1700,7 +1700,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$response .= "\n";
 					foreach( $this->downloads->get_files() as $file )
 						// no need to escape html because output gets escaped by WPCF7 code in this case, $response is plain text
-						$response .= "\n" . self::replace_tags( __( "Download {filename} at {url}", 'pdf-forms-for-contact-form-7' ), array( 'filename' => $file['filename'], 'url' => $file['url'] ) );
+						$response .= "\n" . self::replace_tags( __( "Download {filename} at {url}. ", 'pdf-forms-for-contact-form-7' ), array( 'filename' => $file['filename'], 'url' => $file['url'] ) );
 				}
 				$submission->set_response( $response );
 				
