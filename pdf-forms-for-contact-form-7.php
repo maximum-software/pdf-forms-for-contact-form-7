@@ -1601,7 +1601,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'field-mapping' => esc_html__( 'Field Mapper Tool', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping-help' => esc_html__( 'This tool can be used to link Contact Form 7 fields with fields within the PDF files.  Contact Form 7 fields can also be generated.  When the user submits the form, data from Contact Form 7 fields will be inserted into correspoinding fields in the PDF file.', 'pdf-forms-for-contact-form-7' ),
 					'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
-					'cf7-field' => esc_html__( 'CF7 field', 'pdf-forms-for-contact-form-7' ),
+					'cf7-field-or-mail-tags' => esc_html__( 'CF7 field/mail-tags', 'pdf-forms-for-contact-form-7' ),
 					'add-mapping' => esc_html__( 'Add Mapping', 'pdf-forms-for-contact-form-7' ),
 					'delete-all-mappings' => esc_html__( 'Delete All', 'pdf-forms-for-contact-form-7' ),
 					'new-tag' => esc_html__( 'New Tag:', 'pdf-forms-for-contact-form-7' ),
