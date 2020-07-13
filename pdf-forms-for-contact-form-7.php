@@ -588,7 +588,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				$embeds = array();
 				foreach( $new_embeds as $embed )
-					if( isset( $embed['cf7_field'] ) && isset( $embed['attachment_id'] ) )
+					if( (isset( $embed['cf7_field'] ) || isset( $embed['image_url'] )) && isset( $embed['attachment_id'] ) )
 						$embeds[] = $embed;
 				self::set_meta( $post_id, 'embeds', self::json_encode( $embeds ) );
 			}
@@ -698,7 +698,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			// preprocess embedded images
 			$embed_fields = array();
 			foreach( $embeds as $embed )
-				$embed_fields[] = $embed["cf7_field"];
+				$embed_fields[] = isset($embed["cf7_field"]) ? $embed["cf7_field"] : $embed["image_url"];
+			
 			$embed_files = array();
 			foreach( $embed_fields as $cf7_field )
 			{
@@ -808,6 +809,26 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							};
 							
 							$embeds_data[] = $embed_data;
+						}elseif(isset($embed['image_url'])){
+							$image_data = @file_get_contents($embed['image_url']);
+							if($image_data){
+								$uploaddir = wp_upload_dir();
+								$uploadfile = $uploaddir['basedir'] . '/wpcf7_uploads/'.rand(1000000000,9999999999).'.png';
+								file_put_contents($uploadfile, $image_data);
+								$embed_data = array(
+									'image' => $uploadfile,
+									'page' => $embed['page'],
+								);
+								
+								if($embed['page'] > 0)
+								{
+									$embed_data['left'] = $embed['left'];
+									$embed_data['top'] = $embed['top'];
+									$embed_data['width'] = $embed['width'];
+									$embed_data['height'] = $embed['height'];
+								};
+								$embeds_data[] = $embed_data;
+							}
 						}
 					}
 				
