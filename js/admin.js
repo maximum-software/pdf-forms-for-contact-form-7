@@ -278,7 +278,7 @@ jQuery(document).ready(function($) {
 				value: field.id,
 				text : '['+field.caption+']'
 			}));
-			
+   
 		});
 		
 		var mailtags = [
@@ -315,7 +315,7 @@ jQuery(document).ready(function($) {
 				value: mailtag,
 				text : mailtag
 			}));
-			
+   
 		});
 	};
 	
@@ -536,7 +536,7 @@ jQuery(document).ready(function($) {
 			dataType: 'json',
 			
 			success: function(data, textStatus, jqXHR) {
-				
+    
 				if(!data.success)
 					return errorMessage(data.error_message);
 				
@@ -606,25 +606,25 @@ jQuery(document).ready(function($) {
 		
 		setMappings(mappings);
 	};
-	
+ 
 	var deleteAllMappings = function() {
 		setMappings([]);
 		refreshMappings();
 	};
-	
+ 
 	var generateMappingId = function() {
 		return Math.random().toString(36).substring(2) + Date.now().toString();
 	}
-	
+ 
 	var addMapping = function(data) {
 		var mappings = getMappings();
 		data.mapping_id = generateMappingId(mappings);
 		mappings.push(data);
 		setMappings(mappings);
-		
+  
 		addMappingEntry(data);
 	};
-	
+ 
 	var addMappingEntry = function(data) {
 		var pdf_field_data = getPdfFieldData(data.pdf_field);
 		var pdf_field_caption;
@@ -635,7 +635,7 @@ jQuery(document).ready(function($) {
 			var field_id = data.pdf_field.substr(data.pdf_field.indexOf('-')+1);
 			pdf_field_caption = base64urldecode(field_id);
 		}
-		
+  
 		if(data.hasOwnProperty('cf7_field'))
 		{
 			var cf7_field_data = getCf7FieldData(data.cf7_field);
@@ -788,17 +788,26 @@ jQuery(document).ready(function($) {
 	var embed_id_autoinc = 0;
 	var addEmbed = function(embed) {
 		
-		var cf7_field = embed.cf7_field;
+
 		var attachment_id = embed.attachment_id;
 		var page = embed.page;
-		
-		if(!cf7_field || !attachment_id || !page || page < 0)
+
+		if(embed.hasOwnProperty('image_url')){
+			var image_url = embed.image_url;	
+		}else{
+			var cf7_field = embed.cf7_field;			
+			if(!cf7_field)
+				return;
+			
+			var cf7_field_data = getCf7FieldData(cf7_field);
+			if(!cf7_field_data)
+				return;
+		}
+		if(!attachment_id || !page || page < 0)
 			return;
 		
 		var attachment = getAttachment(attachment_id);
-		var cf7_field_data = getCf7FieldData(cf7_field);
-		
-		if(!attachment || !cf7_field_data)
+		if(!attachment)
 			return;
 		
 		if(!embed.id)
@@ -807,8 +816,12 @@ jQuery(document).ready(function($) {
 		var embeds = getEmbeds();
 		embeds.push(embed);
 		setEmbeds(embeds);
-		
-		addEmbedEntry(cf7_field_data, attachment, embed);
+				
+		if(embed.hasOwnProperty('image_url')){
+			addEmbedEntry({image_url, attachment, embed});
+		}else{
+			addEmbedEntry({cf7_field_data, attachment, embed});	
+		}
 	};
 	
 	var refreshEmbeds = function() {
@@ -821,23 +834,35 @@ jQuery(document).ready(function($) {
 			var embed = embeds[i];
 			var attachment = getAttachment(embed.attachment_id);
 			var cf7_field_data = getCf7FieldData(embed.cf7_field);
-			
+			if(attachment && embed.hasOwnProperty('image_url')){
+				var image_url = embed.image_url;
+				addEmbedEntry({image_url, attachment, embed});	
+			}
 			if(!attachment || !cf7_field_data)
 				continue;
 			
-			addEmbedEntry(cf7_field_data, attachment, embed);
+			addEmbedEntry({cf7_field_data, attachment, embed});
 		}
 	};
 	
-	var addEmbedEntry = function(cf7_field_data, attachment, embed) {
+	var addEmbedEntry = function(data) {
 		
-		var page = embed.page;
-		
+		var page = data.embed.page;
+
 		var template = jQuery('.wpcf7-pdf-forms-admin .image-embeds-row-template');
 		var tag = template.clone().removeClass('image-embeds-row-template').addClass('image-embeds-row');
+		if(data.hasOwnProperty('image_url')){
+			tag.find('td.cf7-field-caption').remove();
+			tag.find('textarea.image-url').text(data.image_url);
+			tag.find('textarea.image-url').data('id',data.embed.id);
+		}else{			
+			tag.find('td.image-url').remove();
+			tag.find('span.convert-to-urlbox').data('id',data.embed.id);
+			tag.find('span.cf7-field-name').text(data.cf7_field_data.caption);
+		}
 		
 		var delete_button = tag.find('.delete-cf7-field-embed-button');
-		delete_button.data('embed_id', embed.id);
+		delete_button.data('embed_id', data.embed.id);
 		delete_button.click(function(event) {
 			
 			// prevent running default button click handlers
@@ -854,12 +879,12 @@ jQuery(document).ready(function($) {
 			return false;
 		});
 		
-		tag.find('.cf7-field-caption').text(cf7_field_data.caption);
-		tag.find('.pdf-file-caption').text('[' + attachment.attachment_id + '] ' + attachment.filename);
+		
+		tag.find('.pdf-file-caption').text('[' + data.attachment.attachment_id + '] ' + data.attachment.filename);
 		tag.find('.page-caption').text(page > 0 ? page : 'all');
 		
 		if(page > 0)
-			loadPageSnapshot(attachment, embed, tag);
+			loadPageSnapshot(data.attachment, data.embed, tag);
 		else
 			tag.find('.page-selector-row').addBack('.page-selector-row').hide();
 		
@@ -1318,7 +1343,7 @@ jQuery(document).ready(function($) {
 					pdf_field: pdf_field,
 				});
 		}
-		
+  
 		return false;
 	});
 	
@@ -1423,7 +1448,7 @@ jQuery(document).ready(function($) {
 		setMappings(mappings);
 		refreshMappings();
 	});
-	
+ 
 	jQuery('.wpcf7-pdf-forms-admin').on("keyup change", 'textarea.mail-tags', function() {
 		
 		var mail_tags = jQuery(this).val();
@@ -1436,6 +1461,35 @@ jQuery(document).ready(function($) {
 		});
 		
 		setMappings(mappings);
+	});
+	
+	$("body").on("click", ".wpcf7-pdf-forms-admin .convert-to-urlbox", function() {
+		var id = $(this).data('id');
+
+		var embeds = getEmbeds();
+		for(var i=0, l=embeds.length; i<l; i++){
+			if(embeds[i].id == id)
+			{
+				embeds[i].image_url = '';
+				delete embeds[i].cf7_field;
+				break;
+			}
+		}
+		setEmbeds(embeds);
+		refreshEmbeds();
+	});
+	
+	$("body").on("keyup change", ".wpcf7-pdf-forms-admin textarea.image-url", function() {
+		var image_url = $(this).val();
+		var id = $(this).data('id');
+		
+		var embeds = getEmbeds();
+		jQuery.each(embeds,function(index,embed){
+			if(embed.id == id){
+				embeds[index].image_url = image_url;
+			}
+		});
+		setEmbeds(embeds);
 	});
 	
 	wpcf7_form.change(function() {
