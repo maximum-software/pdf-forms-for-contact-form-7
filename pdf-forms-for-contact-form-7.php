@@ -586,7 +586,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				$embeds = array();
 				foreach( $new_embeds as $embed )
-					if( (isset( $embed['cf7_field'] ) || isset( $embed['image_url'] )) && isset( $embed['attachment_id'] ) )
+					if( (isset( $embed['cf7_field'] ) || isset( $embed['mail_tags'] )) && isset( $embed['attachment_id'] ) )
 						$embeds[] = $embed;
 				self::set_meta( $post_id, 'embeds', self::json_encode( $embeds ) );
 			}
@@ -696,28 +696,37 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			// preprocess embedded images
 			$embed_fields = array();
 			foreach( $embeds as $embed )
-				$embed_fields[] = isset($embed["cf7_field"]) ? $embed["cf7_field"] : $embed["image_url"];
+				if(isset($embed["cf7_field"])){
+					$embed_fields[]['cf7_field'] =  $embed["cf7_field"];
+				}elseif(isset($embed["mail_tags"])){
+					$embed_fields[]['mail_tags'] =  $embed["mail_tags"];
+				}
+
 			$embed_files = array();
-			foreach( $embed_fields as $cf7_field )
+			foreach( $embed_fields as $id => $embed )
 			{
-				if( isset( $processed_data[$cf7_field] ) )
+				$url = NULL;
+				if(isset($embed['cf7_field']) && isset($processed_data[$embed['cf7_field']]))
+					$url = $processed_data[$embed['cf7_field']];
+				if(isset($embed['mail_tags']) && isset($processed_data[str_replace(array('[',']'),'',$embed['mail_tags'])]))
+					$url = wpcf7_mail_replace_tags($embed['mail_tags']);
+
+				if( $url!=null )
 				{
-					$value = $processed_data[$cf7_field];
-					if( filter_var( $value, FILTER_VALIDATE_URL ) !== FALSE )
-					if( substr( $value, 0, 5 ) === 'http:' || substr( $value, 0, 6 ) === 'https:' )
+					if( filter_var( $url, FILTER_VALIDATE_URL ) !== FALSE )
+					if( substr( $url, 0, 5 ) === 'http:' || substr( $url, 0, 6 ) === 'https:' )
 					{
 						try
 						{
-							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.tmp' );
-							self::download_file( $value, $filepath );
-							
-							$embed_files[$cf7_field] = $filepath;
+							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.png' );
+							self::download_file( $url, $filepath );
+							$embed_files[str_replace(array('[',']'),'',$embed['mail_tags'])] = $filepath;
 						}
 						catch(Exception $e) { }
 					}
 				}
-				if( isset( $uploaded_files[$cf7_field] ) )
-					$embed_files[$cf7_field] = $uploaded_files[$cf7_field];
+				if( isset($embed['cf7_field']) && isset( $uploaded_files[$embed['cf7_field']] ) )
+					$embed_files[$embed['cf7_field']] = $uploaded_files[$embed['cf7_field']];
 			}
 			
 			$files = array();
@@ -790,11 +799,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				foreach($embeds as $embed)
 					if( $embed['attachment_id'] == $attachment_id )
 					{
-						$cf7_field = $embed['cf7_field'];
-						if( isset( $embed_files[$cf7_field] ) )
+						$field = isset($embed['cf7_field']) ? $embed['cf7_field'] : str_replace(array('[',']'),'',$embed['mail_tags']);
+						if( isset( $embed_files[$field] ) )
 						{
 							$embed_data = array(
-								'image' => $embed_files[$cf7_field],
+								'image' => $embed_files[$field],
 								'page' => $embed['page'],
 							);
 							
@@ -807,26 +816,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							};
 							
 							$embeds_data[] = $embed_data;
-						}elseif(isset($embed['image_url'])){
-							$image_data = @file_get_contents($embed['image_url']);
-							if($image_data){
-								$uploaddir = wp_upload_dir();
-								$uploadfile = $uploaddir['basedir'] . '/wpcf7_uploads/'.rand(1000000000,9999999999).'.png';
-								file_put_contents($uploadfile, $image_data);
-								$embed_data = array(
-									'image' => $uploadfile,
-									'page' => $embed['page'],
-								);
-								
-								if($embed['page'] > 0)
-								{
-									$embed_data['left'] = $embed['left'];
-									$embed_data['top'] = $embed['top'];
-									$embed_data['width'] = $embed['width'];
-									$embed_data['height'] = $embed['height'];
-								};
-								$embeds_data[] = $embed_data;
-							}
 						}
 					}
 				
