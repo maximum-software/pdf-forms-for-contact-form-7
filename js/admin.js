@@ -278,9 +278,9 @@ jQuery(document).ready(function($) {
 				value: field.id,
 				text : '['+field.caption+']'
 			}));
-   
+			
 		});
-		
+			
 		var mailtags = [
 			 '[_date]'
 			,'[_time]'
@@ -315,7 +315,7 @@ jQuery(document).ready(function($) {
 				value: mailtag,
 				text : mailtag
 			}));
-   
+			
 		});
 	};
 	
@@ -536,7 +536,7 @@ jQuery(document).ready(function($) {
 			dataType: 'json',
 			
 			success: function(data, textStatus, jqXHR) {
-    
+				
 				if(!data.success)
 					return errorMessage(data.error_message);
 				
@@ -606,25 +606,25 @@ jQuery(document).ready(function($) {
 		
 		setMappings(mappings);
 	};
- 
+	
 	var deleteAllMappings = function() {
 		setMappings([]);
 		refreshMappings();
 	};
- 
+	
 	var generateMappingId = function() {
 		return Math.random().toString(36).substring(2) + Date.now().toString();
 	}
- 
+	
 	var addMapping = function(data) {
 		var mappings = getMappings();
 		data.mapping_id = generateMappingId(mappings);
 		mappings.push(data);
 		setMappings(mappings);
-  
+		
 		addMappingEntry(data);
 	};
- 
+	
 	var addMappingEntry = function(data) {
 		var pdf_field_data = getPdfFieldData(data.pdf_field);
 		var pdf_field_caption;
@@ -635,7 +635,7 @@ jQuery(document).ready(function($) {
 			var field_id = data.pdf_field.substr(data.pdf_field.indexOf('-')+1);
 			pdf_field_caption = base64urldecode(field_id);
 		}
-  
+		
 		if(data.hasOwnProperty('cf7_field'))
 		{
 			var cf7_field_data = getCf7FieldData(data.cf7_field);
@@ -1343,7 +1343,7 @@ jQuery(document).ready(function($) {
 					pdf_field: pdf_field,
 				});
 		}
-  
+		
 		return false;
 	});
 	
@@ -1448,7 +1448,7 @@ jQuery(document).ready(function($) {
 		setMappings(mappings);
 		refreshMappings();
 	});
- 
+	
 	jQuery('.wpcf7-pdf-forms-admin').on("keyup change", 'textarea.mail-tags', function() {
 		
 		var mail_tags = jQuery(this).val();

@@ -694,22 +694,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 			
 			// preprocess embedded images
-			$embed_fields = array();
-			foreach( $embeds as $embed )
-				if(isset($embed["cf7_field"])){
-					$embed_fields[]['cf7_field'] =  $embed["cf7_field"];
-				}elseif(isset($embed["mail_tags"])){
-					$embed_fields[]['mail_tags'] =  $embed["mail_tags"];
-				}
-
-			$embed_files = array();
-			foreach( $embed_fields as $id => $embed )
+			foreach( $embeds as $id => $embed )
 			{
 				$url = NULL;
-				if(isset($embed['cf7_field']) && isset($processed_data[$embed['cf7_field']]))
+				if( isset( $embed['cf7_field'] ) && isset( $processed_data[$embed['cf7_field']] ) )
 					$url = $processed_data[$embed['cf7_field']];
-				if(isset($embed['mail_tags']) && isset($processed_data[str_replace(array('[',']'),'',$embed['mail_tags'])]))
-					$url = wpcf7_mail_replace_tags($embed['mail_tags']);
+				if( isset( $embed['mail_tags'] ) )
+					$url = wpcf7_mail_replace_tags( $embed['mail_tags'] );
 
 				if( $url!=null )
 				{
@@ -720,13 +711,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						{
 							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.png' );
 							self::download_file( $url, $filepath );
-							$embed_files[str_replace(array('[',']'),'',$embed['mail_tags'])] = $filepath;
+							$embed_files[$id] = $filepath;
 						}
 						catch(Exception $e) { }
 					}
 				}
 				if( isset($embed['cf7_field']) && isset( $uploaded_files[$embed['cf7_field']] ) )
-					$embed_files[$embed['cf7_field']] = $uploaded_files[$embed['cf7_field']];
+					$embed_files[$id] = $uploaded_files[$embed['cf7_field']];
 			}
 			
 			$files = array();
@@ -796,14 +787,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				// process image embeds
 				$embeds_data = array();
-				foreach($embeds as $embed)
+				foreach( $embeds as $id => $embed )
 					if( $embed['attachment_id'] == $attachment_id )
 					{
-						$field = isset($embed['cf7_field']) ? $embed['cf7_field'] : str_replace(array('[',']'),'',$embed['mail_tags']);
-						if( isset( $embed_files[$field] ) )
+						if( isset( $embed_files[$id] ) )
 						{
 							$embed_data = array(
-								'image' => $embed_files[$field],
+								'image' => $embed_files[$id],
 								'page' => $embed['page'],
 							);
 							
