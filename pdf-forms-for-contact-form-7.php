@@ -709,7 +709,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					{
 						try
 						{
-							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.png' );
+							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.tmp' );
 							self::download_file( $url, $filepath );
 							$embed_files[$id] = $filepath;
 						}
@@ -755,10 +755,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							$i = strpos( $mapping["pdf_field"], '-' );
 							if( $i === FALSE )
 								continue;
-       
+
 							$field = substr( $mapping["pdf_field"], $i+1 );
 							$field = self::base64url_decode( $field );
-       
+							
 							if( !isset( $fields[$field] ) )
 								continue;
 							

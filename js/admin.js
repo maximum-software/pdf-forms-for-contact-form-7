@@ -280,7 +280,7 @@ jQuery(document).ready(function($) {
 			}));
 			
 		});
-			
+		
 		var mailtags = [
 			 '[_date]'
 			,'[_time]'
@@ -793,9 +793,9 @@ jQuery(document).ready(function($) {
 		var page = embed.page;
 
 		if(embed.hasOwnProperty('mail_tags')){
-			var mail_tags = embed.mail_tags;	
+			var mail_tags = embed.mail_tags;
 		}else{
-			var cf7_field = embed.cf7_field;			
+			var cf7_field = embed.cf7_field;
 			if(!cf7_field)
 				return;
 			
@@ -816,11 +816,11 @@ jQuery(document).ready(function($) {
 		var embeds = getEmbeds();
 		embeds.push(embed);
 		setEmbeds(embeds);
-				
+
 		if(embed.hasOwnProperty('mail_tags')){
 			addEmbedEntry({mail_tags, attachment, embed});
 		}else{
-			addEmbedEntry({cf7_field_data, attachment, embed});	
+			addEmbedEntry({cf7_field_data, attachment, embed});
 		}
 	};
 	
@@ -832,16 +832,22 @@ jQuery(document).ready(function($) {
 		for(var i=0, l=embeds.length; i<l; i++)
 		{
 			var embed = embeds[i];
+
 			var attachment = getAttachment(embed.attachment_id);
-			var cf7_field_data = getCf7FieldData(embed.cf7_field);
-			if(attachment && embed.hasOwnProperty('mail_tags')){
-				var mail_tags = embed.mail_tags;
-				addEmbedEntry({mail_tags, attachment, embed});	
-			}
-			if(!attachment || !cf7_field_data)
+			if(!attachment)
 				continue;
 			
-			addEmbedEntry({cf7_field_data, attachment, embed});
+			if(embed.hasOwnProperty('mail_tags'))
+				addEmbedEntry({mail_tags: embed.mail_tags, attachment, embed});
+			
+			if(embed.hasOwnProperty('cf7_field'))
+			{
+				var cf7_field_data = getCf7FieldData(embed.cf7_field);
+				if(!attachment || !cf7_field_data)
+					continue;
+				
+				addEmbedEntry({cf7_field_data, attachment, embed});
+			}
 		}
 	};
 	
@@ -854,7 +860,7 @@ jQuery(document).ready(function($) {
 			var tag = template.clone().removeClass('image-embeds-mail-tag-row-template').addClass('image-embeds-row');
 			tag.find('textarea.mail-tags').text(data.mail_tags);
 			tag.find('textarea.mail-tags').data('id',data.embed.id);
-		}else{			
+		}else{
 			var template = jQuery('.wpcf7-pdf-forms-admin .image-embeds-row-template');
 			var tag = template.clone().removeClass('image-embeds-row-template').addClass('image-embeds-row');
 			tag.find('span.convert-to-urlbox').data('id',data.embed.id);
@@ -1368,15 +1374,24 @@ jQuery(document).ready(function($) {
 		event.stopPropagation();
 		event.preventDefault();
 		
-		var cf7_field = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .cf7-field-list').val();
+		var subject = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .cf7-field-list').val();
 		var attachment_id = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .pdf-files-list').val();
 		var page = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .page-list').val();
 		
-		addEmbed({
-			'cf7_field': cf7_field,
-			'attachment_id': attachment_id,
-			'page': page
-		});
+		if(subject && attachment_id && page){
+			if(subject.charAt(0) == '[')
+				addEmbed({
+					'mail_tags': subject,
+					'attachment_id': attachment_id,
+					'page': page
+				});
+			else
+				addEmbed({
+					'cf7_field': subject,
+					'attachment_id': attachment_id,
+					'page': page
+				});
+		}
 		
 		var embedRowPosition = jQuery(".wpcf7-pdf-forms-admin .image-embeds-row").last().position();
 		if(embedRowPosition)
@@ -1470,7 +1485,7 @@ jQuery(document).ready(function($) {
 		for(var i=0, l=embeds.length; i<l; i++){
 			if(embeds[i].id == id)
 			{
-				embeds[i].mail_tags = '';
+				embeds[i].mail_tags = '['+embeds[i].cf7_field+']';
 				delete embeds[i].cf7_field;
 				break;
 			}
