@@ -586,7 +586,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				$embeds = array();
 				foreach( $new_embeds as $embed )
-					if( isset( $embed['cf7_field'] ) && isset( $embed['attachment_id'] ) )
+					if( (isset( $embed['cf7_field'] ) || isset( $embed['mail_tags'] )) && isset( $embed['attachment_id'] ) )
 						$embeds[] = $embed;
 				self::set_meta( $post_id, 'embeds', self::json_encode( $embeds ) );
 			}
@@ -694,30 +694,30 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 			
 			// preprocess embedded images
-			$embed_fields = array();
-			foreach( $embeds as $embed )
-				$embed_fields[] = $embed["cf7_field"];
-			$embed_files = array();
-			foreach( $embed_fields as $cf7_field )
+			foreach( $embeds as $id => $embed )
 			{
-				if( isset( $processed_data[$cf7_field] ) )
+				$url = NULL;
+				if( isset( $embed['cf7_field'] ) && isset( $processed_data[$embed['cf7_field']] ) )
+					$url = $processed_data[$embed['cf7_field']];
+				if( isset( $embed['mail_tags'] ) )
+					$url = wpcf7_mail_replace_tags( $embed['mail_tags'] );
+
+				if( $url!=null )
 				{
-					$value = $processed_data[$cf7_field];
-					if( filter_var( $value, FILTER_VALIDATE_URL ) !== FALSE )
-					if( substr( $value, 0, 5 ) === 'http:' || substr( $value, 0, 6 ) === 'https:' )
+					if( filter_var( $url, FILTER_VALIDATE_URL ) !== FALSE )
+					if( substr( $url, 0, 5 ) === 'http:' || substr( $url, 0, 6 ) === 'https:' )
 					{
 						try
 						{
 							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.tmp' );
-							self::download_file( $value, $filepath );
-							
-							$embed_files[$cf7_field] = $filepath;
+							self::download_file( $url, $filepath );
+							$embed_files[$id] = $filepath;
 						}
 						catch(Exception $e) { }
 					}
 				}
-				if( isset( $uploaded_files[$cf7_field] ) )
-					$embed_files[$cf7_field] = $uploaded_files[$cf7_field];
+				if( isset($embed['cf7_field']) && isset( $uploaded_files[$embed['cf7_field']] ) )
+					$embed_files[$id] = $uploaded_files[$embed['cf7_field']];
 			}
 			
 			$files = array();
@@ -787,14 +787,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				// process image embeds
 				$embeds_data = array();
-				foreach($embeds as $embed)
+				foreach( $embeds as $id => $embed )
 					if( $embed['attachment_id'] == $attachment_id )
 					{
-						$cf7_field = $embed['cf7_field'];
-						if( isset( $embed_files[$cf7_field] ) )
+						if( isset( $embed_files[$id] ) )
 						{
 							$embed_data = array(
-								'image' => $embed_files[$cf7_field],
+								'image' => $embed_files[$id],
 								'page' => $embed['page'],
 							);
 							
