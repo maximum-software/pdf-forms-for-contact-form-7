@@ -276,16 +276,19 @@ jQuery(document).ready(function($) {
 			
 			cf7_fields.append(jQuery('<option>', {
 				value: field.id,
-				text : '['+field.caption+']'
+				text : '['+field.caption+']',
+				'data-mailtags': false
 			}));
 			
 		});
 		
 		var mailtags = [
 			 '[_date]'
-			,'[_time]'
+			,'[_date] [_time]'
 			,'[_serial_number]'
 			,'[_format_your-date "D, d M y"]'
+			,'Custom string...'
+			,'[_raw_your-field]'
 			,'[_remote_ip]'
 			,'[_url]'
 			,'[_user_agent]'
@@ -302,8 +305,7 @@ jQuery(document).ready(function($) {
 			,'[_user_login]'
 			,'[_user_email]'
 			,'[_user_url]'
-			,'[_user_first_name]'
-			,'[_user_last_name]'
+			,'[_user_first_name] [_user_last_name]'
 			,'[_user_nickname]'
 			,'[_user_display_name]'
 			,'[_invalid_fields]'
@@ -313,7 +315,8 @@ jQuery(document).ready(function($) {
 			
 			cf7_fields.append(jQuery('<option>', {
 				value: mailtag,
-				text : mailtag
+				text : mailtag,
+				'data-mailtags': true
 			}));
 			
 		});
@@ -1335,12 +1338,15 @@ jQuery(document).ready(function($) {
 		
 		clearMessages();
 		
-		var pdf_field = jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper .pdf-field-list').val();
-		var subject = jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper .cf7-field-list').val();
+		var tag = jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper');
+		
+		var subject = tag.find('.cf7-field-list').val();
+		var mailtags = tag.find('.cf7-field-list').find('option:selected').data('mailtags');
+		var pdf_field =  tag.find('.pdf-field-list').val();
 		
 		if(pdf_field && subject)
 		{
-			if(subject.charAt(0) == '[')
+			if(mailtags)
 				addMapping({
 					mail_tags: subject,
 					pdf_field: pdf_field,
@@ -1376,12 +1382,16 @@ jQuery(document).ready(function($) {
 		event.stopPropagation();
 		event.preventDefault();
 		
-		var subject = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .cf7-field-list').val();
-		var attachment_id = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .pdf-files-list').val();
-		var page = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .page-list').val();
+		var tag = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool');
 		
-		if(subject && attachment_id && page){
-			if(subject.charAt(0) == '[')
+		var subject = tag.find('.cf7-field-list').val();
+		var mailtags = tag.find('.cf7-field-list').find('option:selected').data('mailtags');
+		var attachment_id = tag.find('.pdf-files-list').val();
+		var page = tag.find('.page-list').val();
+		
+		if(subject && attachment_id && page)
+		{
+			if(mailtags)
 				addEmbed({
 					'mail_tags': subject,
 					'attachment_id': attachment_id,
