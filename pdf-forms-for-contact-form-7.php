@@ -694,6 +694,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 			
 			// preprocess embedded images
+			$embed_files = array();
 			foreach( $embeds as $id => $embed )
 			{
 				$url = NULL;
@@ -701,7 +702,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$url = $processed_data[$embed['cf7_field']];
 				if( isset( $embed['mail_tags'] ) )
 					$url = wpcf7_mail_replace_tags( $embed['mail_tags'] );
-
+				
 				if( $url!=null )
 				{
 					if( filter_var( $url, FILTER_VALIDATE_URL ) !== FALSE )
@@ -726,46 +727,34 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$fields = $this->get_fields( $attachment_id );
 				
 				$data = array();
+				
+				// processs mappings
+				foreach( $mappings as $mapping )
+				{
+					$i = strpos( $mapping["pdf_field"], '-' );
+					if( $i === FALSE )
+						continue;
+					
+					$aid = substr( $mapping["pdf_field"], 0, $i );
+					if( $aid != $attachment_id && $aid != 'all' )
+						continue;
+					
+					$field = substr( $mapping["pdf_field"], $i+1 );
+					$field = self::base64url_decode( $field );
+					
+					if( !isset( $fields[$field] ) )
+						continue;
+					
+					if( isset( $mapping["cf7_field"] ) && isset( $processed_data[$mapping["cf7_field"]] ) )
+						$data[$field] = $processed_data[$mapping["cf7_field"]];
+					
+					if( isset( $mapping["mail_tags"] ) )
+						$data[$field] = wpcf7_mail_replace_tags( $mapping["mail_tags"] );
+				}
+				
+				// processs old style tag generator fields
 				foreach( $processed_data as $key => $value )
 				{
-					// processs mappings
-					foreach( $mappings as $mapping )
-						if( $mapping["cf7_field"] == $key )
-						{
-							$i = strpos( $mapping["pdf_field"], '-' );
-							if( $i === FALSE )
-								continue;
-							
-							$aid = substr( $mapping["pdf_field"], 0, $i );
-							if( $aid != $attachment_id && $aid != 'all' )
-								continue;
-							
-							$field = substr( $mapping["pdf_field"], $i+1 );
-							$field = self::base64url_decode( $field );
-							
-							if( !isset( $fields[$field] ) )
-								continue;
-							
-							$data[$field] = $value;
-						}
-					
-					foreach( $mappings as $mapping )
-						if( isset( $mapping["mail_tags"] ) )
-						{
-							$i = strpos( $mapping["pdf_field"], '-' );
-							if( $i === FALSE )
-								continue;
-							
-							$field = substr( $mapping["pdf_field"], $i+1 );
-							$field = self::base64url_decode( $field );
-							
-							if( !isset( $fields[$field] ) )
-								continue;
-							
-							$data[$field] = wpcf7_mail_replace_tags( $mapping["mail_tags"] );
-						}
-					
-					// processs old style tag generator fields
 					try
 					{
 						$field_data = self::wpcf7_field_name_decode( $key );
