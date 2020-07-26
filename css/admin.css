@@ -125,7 +125,8 @@
 	white-space: nowrap;
 }
 
-.wpcf7-pdf-forms-admin .mapping-table td.mapping-arrow
+.wpcf7-pdf-forms-admin .mapping-table td,
+.wpcf7-pdf-forms-admin .mapping-table th
 {
 	vertical-align: middle;
 }
@@ -190,6 +191,11 @@
 .wpcf7-pdf-forms-admin .image-embeds th.pdf-file
 {
 	width: 30%;
+}
+
+.wpcf7-pdf-forms-admin .image-embeds td,
+.wpcf7-pdf-forms-admin .image-embeds th
+{
 	vertical-align: middle;
 }
 
