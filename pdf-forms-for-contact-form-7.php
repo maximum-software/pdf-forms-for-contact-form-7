@@ -74,9 +74,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_mail_sent', array( $this, 'change_response_message' ) );
 			
-			//Hook that allow to copy media and mapping
+			// hook that allows to copy media and mapping
 			add_filter( 'wpcf7_copy', array( $this,'duplicate_form_hook' ),10,2 );
-
+			
 			// TODO: allow users to run this manually
 			//$this->upgrade_data();
 		}
@@ -612,7 +612,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				'decompress'  => true,
 				'timeout'     => 100,
 				'redirection' => 5,
-				'user-agent'  => 'wpcf7-pdf-forms/' . WPCF7_Pdf_Forms::VERSION,
+				'user-agent'  => 'wpcf7-pdf-forms/' . self::VERSION,
 			);
 			
 			$response = wp_remote_get( $url, $args );
