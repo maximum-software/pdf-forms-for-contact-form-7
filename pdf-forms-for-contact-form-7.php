@@ -964,23 +964,20 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							
 							// replace WPCF7 tags in path elements
 							$path_elements = explode( "/", $save_directory );
-							foreach( $path_elements as &$element )
+							$tag_replaced_path_elements = wpcf7_mail_replace_tags( $path_elements );
+							
+							foreach( $tag_replaced_path_elements as $elmid => &$new_element )
 							{
-								$text = new WPCF7_MailTaggedText( $element );
-								$new_element = $text->replace_tags();
-								
 								// sanitize
 								$new_element = trim( sanitize_file_name( wpcf7_canonicalize( $new_element ) ), $trim_characters );
 								
-								// if replaced and sanitized filename is blank then attempt to use the non-replaced version
+								// if replaced and sanitized filename is blank then attempt to use the non-tag-replaced version
 								if( $new_element === "" )
-									$new_element = trim( sanitize_file_name( wpcf7_canonicalize( $element ) ), $trim_characters );
-								
-								$element = $new_element;
+									$new_element = trim( sanitize_file_name( wpcf7_canonicalize( $path_elements[$elmid] ) ), $trim_characters );
 							}
-							unset($element);
+							unset($new_element);
 							
-							$save_directory = implode( "/", $path_elements );
+							$save_directory = implode( "/", $tag_replaced_path_elements );
 							$save_directory = preg_replace( '|/+|', '/', $save_directory ); // remove double slashes
 							
 							// remove preceeding slashes and dots and space characters
