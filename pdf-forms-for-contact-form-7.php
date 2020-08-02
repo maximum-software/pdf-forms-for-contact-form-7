@@ -70,7 +70,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'admin_init', array( $this, 'extend_tag_generator' ), 80 );
 			add_action( 'admin_menu', array( $this, 'register_services') );
 			
-			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_and_attach_pdfs' ) );
+			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_and_attach_pdfs' ), 10, 3 );
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_mail_sent', array( $this, 'change_response_message' ) );
 			
@@ -652,278 +652,359 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/**
+		 * Returns MIME type of the file
+		 */
+		public static function get_mime_type( $filepath )
+		{
+			$mimetype = null;
+			
+			if( file_exists( $filepath ) )
+			{
+				if( function_exists( 'finfo_open' ) )
+				{
+					$finfo = finfo_open( FILEINFO_MIME_TYPE );
+					if($finfo)
+					{
+						$mimetype = finfo_file( $finfo, $filepath );
+						finfo_close( $finfo );
+					}
+				}
+				
+				if( !$mimetype && function_exists( 'mime_content_type' ) )
+					$mimetype = mime_content_type( $filepath );
+			}
+			
+			// fallback
+			if( !$mimetype )
+			{
+				$type = wp_check_filetype( $filepath );
+				if( isset( $type['type'] ) )
+					$mimetype = $type['type'];
+			}
+			
+			return $mimetype;
+		}
+		
+		/**
+		 * Checks if the image format is supported for embedding
+		 */
+		private function is_embed_image_format_supported( $filepath, &$mimetype = null )
+		{
+			$supported_mime_types = array(
+					"image/jpeg",
+					"image/png",
+					"image/gif",
+					"image/tiff",
+					"image/bmp",
+					"image/x-ms-bmp",
+					"image/svg+xml",
+				);
+			
+			$mimetype = self::get_mime_type( $filepath );
+			if( $mimetype )
+				foreach( $supported_mime_types as $smt )
+					if( $mimetype === $smt )
+						return true;
+			
+			return false;
+		}
+		
+		/**
 		 * When form data is posted, this function communicates with the API
 		 * to fill the form data and get the PDF file with filled form fields
 		 * 
 		 * Files created and attached in this function will be deleted
 		 * automatically by CF7 after it sends the email message
 		 */
-		public function fill_and_attach_pdfs( $contact_form )
+		public function fill_and_attach_pdfs( $contact_form, &$abort, $object )
 		{
-			$post_id = $contact_form->id();
-			
-			$mappings = self::get_meta( $post_id, 'mappings' );
-			if( $mappings )
-				$mappings = json_decode( $mappings, true );
-			if( !is_array( $mappings ) )
-				$mappings = array();
-			
-			$embeds = self::get_meta( $post_id, 'embeds' );
-			if( $embeds )
-				$embeds = json_decode( $embeds, true );
-			if( !is_array( $embeds ) )
-				$embeds = array();
-			
-			$submission = WPCF7_Submission::get_instance();
-			$posted_data = $submission->get_posted_data();
-			$uploaded_files = $submission->uploaded_files();
-			
-			// preprocess posted data
-			$processed_data = array();
-			foreach( $posted_data as $key => $value )
+			try
 			{
-				if( is_array( $value ) )
-					$value = array_shift( $value );
-				$value = strval( $value );
-				if( $value === '' )
-					continue;
+				$post_id = $contact_form->id();
 				
-				$value = wp_unslash( $value );
+				$mappings = self::get_meta( $post_id, 'mappings' );
+				if( $mappings )
+					$mappings = json_decode( $mappings, true );
+				if( !is_array( $mappings ) )
+					$mappings = array();
 				
-				$processed_data[$key] = $value;
-			}
-			
-			// preprocess embedded images
-			$embed_files = array();
-			foreach( $embeds as $id => $embed )
-			{
-				$url = NULL;
-				if( isset( $embed['cf7_field'] ) && isset( $processed_data[$embed['cf7_field']] ) )
-					$url = $processed_data[$embed['cf7_field']];
-				if( isset( $embed['mail_tags'] ) )
-					$url = wpcf7_mail_replace_tags( $embed['mail_tags'] );
+				$embeds = self::get_meta( $post_id, 'embeds' );
+				if( $embeds )
+					$embeds = json_decode( $embeds, true );
+				if( !is_array( $embeds ) )
+					$embeds = array();
 				
-				if( $url!=null )
+				$submission = WPCF7_Submission::get_instance();
+				$posted_data = $submission->get_posted_data();
+				$uploaded_files = $submission->uploaded_files();
+				
+				// preprocess posted data
+				$processed_data = array();
+				foreach( $posted_data as $key => $value )
 				{
-					if( filter_var( $url, FILTER_VALIDATE_URL ) !== FALSE )
-					if( substr( $url, 0, 5 ) === 'http:' || substr( $url, 0, 6 ) === 'https:' )
+					if( is_array( $value ) )
+						$value = array_shift( $value );
+					$value = strval( $value );
+					if( $value === '' )
+						continue;
+					
+					$value = wp_unslash( $value );
+					
+					$processed_data[$key] = $value;
+				}
+				
+				// preprocess embedded images
+				$embed_files = array();
+				foreach( $embeds as $id => $embed )
+				{
+					$filepath = null;
+					$filename = null;
+					
+					$url = null;
+					if( isset( $embed['cf7_field'] ) && isset( $processed_data[$embed['cf7_field']] ) )
+						$url = $processed_data[$embed['cf7_field']];
+					if( isset( $embed['mail_tags'] ) )
+						$url = wpcf7_mail_replace_tags( $embed['mail_tags'] );
+					if( $url!=null )
+					{
+						if( filter_var( $url, FILTER_VALIDATE_URL ) !== FALSE )
+						if( substr( $url, 0, 5 ) === 'http:' || substr( $url, 0, 6 ) === 'https:' )
+						{
+							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.tmp' );
+							self::download_file( $url, $filepath ); // can throw an exception
+							$filename = $url;
+						}
+					}
+					
+					if( isset($embed['cf7_field']) && isset( $uploaded_files[$embed['cf7_field']] ) )
+					{
+						$filepath = $uploaded_files[$embed['cf7_field']];
+						$filename = basename( $filepath );
+					}
+					
+					if( ! $filepath )
+						continue;
+					
+					if( ! $this->is_embed_image_format_supported( $filepath, $mimetype ) )
+						throw new Exception(
+							self::replace_tags(
+								__( "File type {mime-type} of {file} is unsupported for {purpose}", 'pdf-forms-for-contact-form-7' ),
+								array( 'mime-type' => $mimetype, 'file' => $filename, 'purpose' => __("image embedding", 'pdf-forms-for-contact-form-7') )
+							)
+						);
+					
+					$embed_files[$id] = $filepath;
+				}
+				
+				$files = array();
+				foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
+				{
+					$fields = $this->get_fields( $attachment_id );
+					
+					$data = array();
+					
+					// processs mappings
+					foreach( $mappings as $mapping )
+					{
+						$i = strpos( $mapping["pdf_field"], '-' );
+						if( $i === FALSE )
+							continue;
+						
+						$aid = substr( $mapping["pdf_field"], 0, $i );
+						if( $aid != $attachment_id && $aid != 'all' )
+							continue;
+						
+						$field = substr( $mapping["pdf_field"], $i+1 );
+						$field = self::base64url_decode( $field );
+						
+						if( !isset( $fields[$field] ) )
+							continue;
+						
+						if( isset( $mapping["cf7_field"] ) && isset( $processed_data[$mapping["cf7_field"]] ) )
+							$data[$field] = $processed_data[$mapping["cf7_field"]];
+						
+						if( isset( $mapping["mail_tags"] ) )
+							$data[$field] = wpcf7_mail_replace_tags( $mapping["mail_tags"] );
+					}
+					
+					// processs old style tag generator fields
+					foreach( $processed_data as $key => $value )
 					{
 						try
 						{
-							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.tmp' );
-							self::download_file( $url, $filepath );
-							$embed_files[$id] = $filepath;
+							$field_data = self::wpcf7_field_name_decode( $key );
+							if( $field_data === FALSE )
+								throw new Exception();
+							if( $field_data['attachment_id'] != $attachment_id && $field_data['attachment_id'] != 'all' )
+								throw new Exception();
+							$field = $field_data['field'];
+							if( $field === '' )
+								throw new Exception();
+							
+							if( !isset( $fields[$field] ) )
+								throw new Exception();
+							
+							$data[$field] = $value;
 						}
 						catch(Exception $e) { }
 					}
-				}
-				if( isset($embed['cf7_field']) && isset( $uploaded_files[$embed['cf7_field']] ) )
-					$embed_files[$id] = $uploaded_files[$embed['cf7_field']];
-			}
-			
-			$files = array();
-			foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
-			{
-				$fields = $this->get_fields( $attachment_id );
-				
-				$data = array();
-				
-				// processs mappings
-				foreach( $mappings as $mapping )
-				{
-					$i = strpos( $mapping["pdf_field"], '-' );
-					if( $i === FALSE )
+					
+					// process image embeds
+					$embeds_data = array();
+					foreach( $embeds as $id => $embed )
+						if( $embed['attachment_id'] == $attachment_id )
+						{
+							if( isset( $embed_files[$id] ) )
+							{
+								$embed_data = array(
+									'image' => $embed_files[$id],
+									'page' => $embed['page'],
+								);
+								
+								if($embed['page'] > 0)
+								{
+									$embed_data['left'] = $embed['left'];
+									$embed_data['top'] = $embed['top'];
+									$embed_data['width'] = $embed['width'];
+									$embed_data['height'] = $embed['height'];
+								};
+								
+								$embeds_data[] = $embed_data;
+							}
+						}
+					
+					if( count( $data ) == 0
+					&& count( $embeds_data ) == 0
+					&& $attachment['options']['skip_empty'] )
 						continue;
 					
-					$aid = substr( $mapping["pdf_field"], 0, $i );
-					if( $aid != $attachment_id && $aid != 'all' )
+					$mail = $attachment['options']['attach_to_mail_1'];
+					$mail2 = $attachment['options']['attach_to_mail_2'];
+					$save_directory = strval( $attachment['options']['save_directory'] );
+					$create_download_link = $attachment['options']['download_link'];
+					
+					if( !$mail && !$mail2 && $save_directory === "" && !$create_download_link )
 						continue;
 					
-					$field = substr( $mapping["pdf_field"], $i+1 );
-					$field = self::base64url_decode( $field );
+					$options = array();
 					
-					if( !isset( $fields[$field] ) )
-						continue;
+					$options['flatten'] =
+						isset($attachment['options']) &&
+						isset($attachment['options']['flatten']) &&
+						$attachment['options']['flatten'] == true;
 					
-					if( isset( $mapping["cf7_field"] ) && isset( $processed_data[$mapping["cf7_field"]] ) )
-						$data[$field] = $processed_data[$mapping["cf7_field"]];
+					$filepath = get_attached_file( $attachment_id );
 					
-					if( isset( $mapping["mail_tags"] ) )
-						$data[$field] = wpcf7_mail_replace_tags( $mapping["mail_tags"] );
-				}
-				
-				// processs old style tag generator fields
-				foreach( $processed_data as $key => $value )
-				{
+					$filename = strval( $attachment['options']['filename'] );
+					if ( $filename !== "" )
+						$destfilename = wpcf7_mail_replace_tags( $filename );
+					else
+						$destfilename = basename( $filepath, '.pdf' );
+					
+					$destfile = self::create_wpcf7_tmp_filepath( $destfilename.'.pdf' ); // if $destfilename is empty create_wpcf7_tmp_filepath generates unnamed-file.pdf
+					
 					try
 					{
-						$field_data = self::wpcf7_field_name_decode( $key );
-						if( $field_data === FALSE )
-							throw new Exception();
-						if( $field_data['attachment_id'] != $attachment_id && $field_data['attachment_id'] != 'all' )
-							throw new Exception();
-						$field = $field_data['field'];
-						if( $field === '' )
-							throw new Exception();
-						
-						if( !isset( $fields[$field] ) )
-							throw new Exception();
-						
-						$data[$field] = $value;
+						$service = $this->get_service();
+						$filled = false;
+						if( $service )
+							// we only want to use the API when there is actual data to be embedded into the PDF file
+							if( count( $data ) > 0 || $options['flatten'] || count( $embeds_data ) > 0 )
+								$filled = $service->api_fill_embed( $destfile, $attachment_id, $data, $embeds_data, $options );
+						if( ! $filled )
+							copy( $filepath, $destfile );
+						$files[] = array( 'file' => $destfile, 'filename' => $destfilename.'.pdf', 'options' => $attachment['options'] );
 					}
-					catch(Exception $e) { }
+					catch(Exception $e)
+					{
+						// TODO: check to see if we need to clean up temporary files
+						
+						throw new Exception(
+							self::replace_tags(
+								__( "Error generating PDF: {error-message} at {error-file}:{error-line}", 'pdf-forms-for-contact-form-7' ),
+								array( 'error-message' => $e->getMessage(), 'error-file' => basename( $e->getFile() ), 'error-line' => $e->getLine() )
+							)
+						);
+					}
 				}
 				
-				// process image embeds
-				$embeds_data = array();
-				foreach( $embeds as $id => $embed )
-					if( $embed['attachment_id'] == $attachment_id )
+				if( count( $files ) > 0 )
+				{
+					$mail = $contact_form->prop( "mail" );
+					$mail2 = $contact_form->prop( "mail_2" );
+					
+					foreach( $files as $id => $filedata )
 					{
-						if( isset( $embed_files[$id] ) )
+						$file = $filedata['file'];
+						if( file_exists( $file ) )
 						{
-							$embed_data = array(
-								'image' => $embed_files[$id],
-								'page' => $embed['page'],
-							);
+							$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
 							
-							if($embed['page'] > 0)
-							{
-								$embed_data['left'] = $embed['left'];
-								$embed_data['top'] = $embed['top'];
-								$embed_data['width'] = $embed['width'];
-								$embed_data['height'] = $embed['height'];
-							};
+							if( $filedata['options']['attach_to_mail_1'] )
+								$mail["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
 							
-							$embeds_data[] = $embed_data;
+							if( $filedata['options']['attach_to_mail_2'] )
+								$mail2["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
 						}
 					}
-				
-				if( count( $data ) == 0
-				&& count( $embeds_data ) == 0
-				&& $attachment['options']['skip_empty'] )
-					continue;
-				
-				$mail = $attachment['options']['attach_to_mail_1'];
-				$mail2 = $attachment['options']['attach_to_mail_2'];
-				$save_directory = strval( $attachment['options']['save_directory'] );
-				$create_download_link = $attachment['options']['download_link'];
-				
-				if( !$mail && !$mail2 && $save_directory === "" && !$create_download_link )
-					continue;
-				
-				$options = array();
-				
-				$options['flatten'] =
-					isset($attachment['options']) &&
-					isset($attachment['options']['flatten']) &&
-					$attachment['options']['flatten'] == true;
-				
-				$filepath = get_attached_file( $attachment_id );
-				
-				$filename = strval( $attachment['options']['filename'] );
-				if ( $filename !== "" )
-					$destfilename = wpcf7_mail_replace_tags( $filename );
-				else
-					$destfilename = basename( $filepath, '.pdf' );
-				
-				$destfile = self::create_wpcf7_tmp_filepath( $destfilename.'.pdf' ); // if $destfilename is empty create_wpcf7_tmp_filepath generates unnamed-file.pdf
-				
-				try
-				{
-					$service = $this->get_service();
-					$filled = false;
-					if( $service )
-						// we only want to use the API when there is actual data to be embedded into the PDF file
-						if( count( $data ) > 0 || $options['flatten'] || count( $embeds_data ) > 0 )
-							$filled = $service->api_fill_embed( $destfile, $attachment_id, $data, $embeds_data, $options );
-					if( ! $filled )
-						copy( $filepath, $destfile );
-					$files[] = array( 'file' => $destfile, 'filename' => $destfilename.'.pdf', 'options' => $attachment['options'] );
-				}
-				catch(Exception $e)
-				{
-					if( ! file_exists( $destfile ) )
-						copy( $filepath, $destfile );
-					$files[] = array( 'file' => $destfile, 'filename' => $destfilename.'.pdf', 'options' => $attachment['options'] );
-					$destfile = self::create_wpcf7_tmp_filepath( $destfilename . ".txt" );
-					$text = str_replace(
-						array( '{error-message}', '{error-file}', '{error-line}' ),
-						array( $e->getMessage(), basename( $e->getFile() ), $e->getLine() ),
-						__( "Error generating PDF: {error-message} at {error-file}:{error-line}\n\nForm data:\n\n", 'pdf-forms-for-contact-form-7' )
-					);
-					foreach( $data as $field => $value )
-						$text .= "$field: $value\n";
-					file_put_contents( $destfile, $text );
-					$files[] = array( 'file' => $destfile, 'filename' => $destfilename.'.txt', 'options' => $attachment['options'] );
+					$contact_form->set_properties( array( 'mail' => $mail, 'mail_2' => $mail2 ) );
+					
+					$storage = $this->get_storage();
+					foreach( $files as $id => $filedata )
+					{
+						$save_directory = strval( $filedata['options']['save_directory'] );
+						if( $save_directory !== "" )
+						{
+							// standardize directory separator
+							$save_directory = str_replace( '\\', '/', $save_directory );
+							
+							// remove preceeding slashes and dots and space characters
+							$trim_characters = "/\\. \t\n\r\0\x0B";
+							$save_directory = trim( $save_directory, $trim_characters );
+							
+							// replace WPCF7 tags in path elements
+							$path_elements = explode( "/", $save_directory );
+							foreach( $path_elements as &$element )
+							{
+								$text = new WPCF7_MailTaggedText( $element );
+								$new_element = $text->replace_tags();
+								
+								// sanitize
+								$new_element = trim( sanitize_file_name( wpcf7_canonicalize( $new_element ) ), $trim_characters );
+								
+								// if replaced and sanitized filename is blank then attempt to use the non-replaced version
+								if( $new_element === "" )
+									$new_element = trim( sanitize_file_name( wpcf7_canonicalize( $element ) ), $trim_characters );
+								
+								$element = $new_element;
+							}
+							unset($element);
+							
+							$save_directory = implode( "/", $path_elements );
+							$save_directory = preg_replace( '|/+|', '/', $save_directory ); // remove double slashes
+							
+							// remove preceeding slashes and dots and space characters
+							$save_directory = trim( $save_directory, $trim_characters );
+							
+							$storage->set_subpath( $save_directory );
+							$storage->save( $filedata['file'], $filedata['filename'] );
+						}
+						
+						$create_download_link = $filedata['options']['download_link'];
+						if ( $create_download_link )
+							$this->get_downloads()->add_file( $filedata['file'], $filedata['filename'] );
+					}
 				}
 			}
-			
-			if( count( $files ) > 0 )
+			catch( Exception $e )
 			{
-				$mail = $contact_form->prop( "mail" );
-				$mail2 = $contact_form->prop( "mail_2" );
-				
-				foreach( $files as $id => $filedata )
-				{
-					$file = $filedata['file'];
-					if( file_exists( $file ) )
-					{
-						$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
-						
-						if( $filedata['options']['attach_to_mail_1'] )
-							$mail["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
-						
-						if( $filedata['options']['attach_to_mail_2'] )
-							$mail2["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
-					}
-				}
-				$contact_form->set_properties( array( 'mail' => $mail, 'mail_2' => $mail2 ) );
-				
-				$storage = $this->get_storage();
-				foreach( $files as $id => $filedata )
-				{
-					$save_directory = strval( $filedata['options']['save_directory'] );
-					if( $save_directory !== "" )
-					{
-						// standardize directory separator
-						$save_directory = str_replace( '\\', '/', $save_directory );
-						
-						// remove preceeding slashes and dots and space characters
-						$trim_characters = "/\\. \t\n\r\0\x0B";
-						$save_directory = trim( $save_directory, $trim_characters );
-						
-						// replace WPCF7 tags in path elements
-						$path_elements = explode( "/", $save_directory );
-						foreach( $path_elements as &$element )
-						{
-							$text = new WPCF7_MailTaggedText( $element );
-							$new_element = $text->replace_tags();
-							
-							// sanitize
-							$new_element = trim( sanitize_file_name( wpcf7_canonicalize( $new_element ) ), $trim_characters );
-							
-							// if replaced and sanitized filename is blank then attempt to use the non-replaced version
-							if( $new_element === "" )
-								$new_element = trim( sanitize_file_name( wpcf7_canonicalize( $element ) ), $trim_characters );
-							
-							$element = $new_element;
-						}
-						unset($element);
-						
-						$save_directory = implode( "/", $path_elements );
-						$save_directory = preg_replace( '|/+|', '/', $save_directory ); // remove double slashes
-						
-						// remove preceeding slashes and dots and space characters
-						$save_directory = trim( $save_directory, $trim_characters );
-						
-						$storage->set_subpath( $save_directory );
-						$storage->save( $filedata['file'], $filedata['filename'] );
-					}
-					
-					$create_download_link = $filedata['options']['download_link'];
-					if ( $create_download_link )
-						$this->get_downloads()->add_file( $filedata['file'], $filedata['filename'] );
-				}
+				$abort = true;
+				$object->set_response(
+						self::replace_tags(
+							__( "An error occured while attaching a PDF: {error-message}", 'pdf-forms-for-contact-form-7' ),
+							array( 'error-message' => $e->getMessage() )
+						)
+					);
 			}
 		}
 		
@@ -945,9 +1026,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( ! file_exists( $filepath ) )
 					throw new Exception( __( "File not found", 'pdf-forms-for-contact-form-7' ) );
 				
-				// TODO: check type of contents of the file instead of just extension
-				if( ( $type = wp_check_filetype( $filepath ) ) && isset( $type['type'] ) && $type['type'] !== 'application/pdf' )
-					throw new Exception( __( "Invalid file type, must be a PDF file", 'pdf-forms-for-contact-form-7' ) );
+				if( ( $mimetype = self::get_mime_type( $filepath ) ) && $mimetype !== 'application/pdf' )
+					throw new Exception(
+						self::replace_tags(
+							__( "File type {mime-type} of {file} is unsupported for {purpose}", 'pdf-forms-for-contact-form-7' ),
+							array( 'mime-type' => $mimetype, 'file' => basename( $filepath ), 'purpose' => __("PDF form filling", 'pdf-forms-for-contact-form-7') )
+						)
+					);
 				
 				$options = array( );
 				foreach( self::$pdf_options as $option => $default )
@@ -1433,15 +1518,16 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			$filename = wp_unique_filename( $wp_upload_dir['path'], basename( $attachment_path ).'.page'.intval($page).'.jpg' );
 			$filepath = $wp_upload_dir['path'] . "/$filename";
-			$filetype = wp_check_filetype( $filename, null );
 			
 			$service = $this->get_service();
 			if( $service )
 				$service->api_image( $filepath, $attachment_id, $page );
 			
+			$mimetype = self::get_mime_type( $filename );
+			
 			$attachment = array(
 				'guid'           => $wp_upload_dir['url'] . '/' . $filename,
-				'post_mime_type' => $filetype['type'],
+				'post_mime_type' => $mimetype,
 				'post_title'     => preg_replace( '/\.[^.]+$/', '', $filename ),
 				'post_content'   => '',
 				'post_status'    => 'inherit'
