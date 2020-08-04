@@ -761,8 +761,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$filename = null;
 					
 					$url = null;
-					if( isset( $embed['cf7_field'] ) && isset( $processed_data[$embed['cf7_field']] ) )
-						$url = $processed_data[$embed['cf7_field']];
+					if( isset( $embed['cf7_field'] ) )
+						$url = wpcf7_mail_replace_tags( "[".$embed['cf7_field']."]" );
 					if( isset( $embed['mail_tags'] ) )
 						$url = wpcf7_mail_replace_tags( $embed['mail_tags'] );
 					if( $url!=null )
@@ -820,8 +820,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						if( !isset( $fields[$field] ) )
 							continue;
 						
-						if( isset( $mapping["cf7_field"] ) && isset( $processed_data[$mapping["cf7_field"]] ) )
-							$data[$field] = $processed_data[$mapping["cf7_field"]];
+						if( isset( $mapping["cf7_field"] ) )
+							$data[$field] = wpcf7_mail_replace_tags( "[".$mapping["cf7_field"]."]" );
 						
 						if( isset( $mapping["mail_tags"] ) )
 							$data[$field] = wpcf7_mail_replace_tags( $mapping["mail_tags"] );
