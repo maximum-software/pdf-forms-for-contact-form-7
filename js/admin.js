@@ -820,10 +820,10 @@ jQuery(document).ready(function($) {
 		setEmbeds(embeds);
 		
 		if(embed.hasOwnProperty('mail_tags'))
-			addEmbedEntry({mail_tags: embed.mail_tags, attachment, embed});
+			addEmbedEntry({mail_tags: embed.mail_tags, attachment: attachment, embed: embed});
 		
 		if(embed.hasOwnProperty('cf7_field'))
-			addEmbedEntry({cf7_field_data, attachment, embed});
+			addEmbedEntry({cf7_field_data: cf7_field_data, attachment: attachment, embed: embed});
 	};
 	
 	var refreshEmbeds = function() {
@@ -840,7 +840,7 @@ jQuery(document).ready(function($) {
 				continue;
 			
 			if(embed.hasOwnProperty('mail_tags'))
-				addEmbedEntry({mail_tags: embed.mail_tags, attachment, embed});
+				addEmbedEntry({mail_tags: embed.mail_tags, attachment: attachment, embed: embed});
 			
 			if(embed.hasOwnProperty('cf7_field'))
 			{
@@ -848,7 +848,7 @@ jQuery(document).ready(function($) {
 				if(!cf7_field_data)
 					continue;
 				
-				addEmbedEntry({cf7_field_data, attachment, embed});
+				addEmbedEntry({cf7_field_data: cf7_field_data, attachment: attachment, embed: embed});
 			}
 		}
 	};
