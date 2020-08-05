@@ -1407,7 +1407,7 @@ jQuery(document).ready(function($) {
 				});
 		}
 		
-		var embedRowPosition = jQuery(".wpcf7-pdf-forms-admin .image-embeds-row").last().position();
+		var embedRowPosition = jQuery(".wpcf7-pdf-forms-admin .image-embeds-row:visible").last().position();
 		if(embedRowPosition)
 			jQuery(this).closest('#TB_ajaxContent').animate({scrollTop: embedRowPosition.top}, 1000);
 		
