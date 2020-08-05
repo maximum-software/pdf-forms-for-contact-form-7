@@ -1119,11 +1119,10 @@ jQuery(document).ready(function($) {
 		}
 	};
 	
-	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .pdf-files-list').change(refreshPageList);
-	
+	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("change", '.pdf-files-list', refreshPageList);
 	
 	// set up global 'Get Tags' button handler
-	jQuery('.wpcf7-pdf-forms-admin .get-tags-all-button').click(function(event) {
+	jQuery('.wpcf7-pdf-forms-admin').on("click", '.get-tags-all-button', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1164,7 +1163,7 @@ jQuery(document).ready(function($) {
 	};
 	
 	// set up 'Insert Tags' button handler
-	jQuery('.wpcf7-pdf-forms-admin .insert-tags-button').click(function(event) {
+	jQuery('.wpcf7-pdf-forms-admin').on("click", '.insert-tags-button', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1182,7 +1181,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Insert And Link' button handler
-	jQuery('.wpcf7-pdf-forms-admin .insert-tag-hint-btn').click(function(event) {
+	jQuery('.wpcf7-pdf-forms-admin').on("click", '.insert-tag-hint-btn', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1206,7 +1205,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Insert & Link All' button handler
-	jQuery('.wpcf7-pdf-forms-admin .insert-and-map-all-tags-btn').click(function(event) {
+	jQuery('.wpcf7-pdf-forms-admin').on("click", '.insert-and-map-all-tags-btn', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1300,8 +1299,11 @@ jQuery(document).ready(function($) {
 		
 		return false;
 	};
-	jQuery('.wpcf7-pdf-forms-admin .attach-btn').click(function(event) {
+	
+	jQuery('.wpcf7-pdf-forms-admin').on("click", '.attach-btn', function(event) {
 		
+		// prevent running default button click handlers
+		event.stopPropagation();
 		event.preventDefault();
 		
 		// create the pdf frame
@@ -1330,7 +1332,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Add Mapping' button handler
-	jQuery('.wpcf7-pdf-forms-admin .add-mapping-button').click(function(event) {
+	jQuery('.wpcf7-pdf-forms-admin').on("click", '.add-mapping-button', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1362,7 +1364,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Delete All Mappings' button handler
-	jQuery('.wpcf7-pdf-forms-admin .delete-all-mappings-button').click(function(event) {
+	jQuery('.wpcf7-pdf-forms-admin').on("click", '.delete-all-mappings-button', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1376,7 +1378,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Embed Image' button handler
-	jQuery('.wpcf7-pdf-forms-admin .add-cf7-field-embed-button').click(function(event) {
+	jQuery('.wpcf7-pdf-forms-admin').on("click", '.add-cf7-field-embed-button', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1425,7 +1427,7 @@ jQuery(document).ready(function($) {
 	}
 	
 	// set up help buttons
-	jQuery('.wpcf7-pdf-forms-admin .help-button').click(function(event) {
+	jQuery('.wpcf7-pdf-forms-admin').on("click", '.help-button', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1443,7 +1445,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Return to Form' button handler
-	jQuery('.wpcf7-pdf-forms-admin .return-to-form-button').click(function(event) {
+	jQuery('.wpcf7-pdf-forms-admin').on("click", '.return-to-form-button', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1454,7 +1456,7 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
-	jQuery('.wpcf7-pdf-forms-admin .field-mapping-tool').on("click", '.convert-to-mailtags-button', function() {
+	jQuery('.wpcf7-pdf-forms-admin .field-mapping-tool').on("click", '.convert-to-mailtags-button', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1476,11 +1478,7 @@ jQuery(document).ready(function($) {
 		refreshMappings();
 	});
 	
-	jQuery('.wpcf7-pdf-forms-admin .field-mapping-tool').on("keyup change", 'textarea.mail-tags', function() {
-		
-		// prevent running default button click handlers
-		event.stopPropagation();
-		event.preventDefault();
+	jQuery('.wpcf7-pdf-forms-admin .field-mapping-tool').on("keyup change", 'textarea.mail-tags', function(event) {
 		
 		var mail_tags = jQuery(this).val();
 		var mapping_id = jQuery(this).data('mapping_id');
@@ -1494,7 +1492,7 @@ jQuery(document).ready(function($) {
 		setMappings(mappings);
 	});
 	
-	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("click", ".convert-to-mailtags-button", function() {
+	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("click", ".convert-to-mailtags-button", function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1515,11 +1513,7 @@ jQuery(document).ready(function($) {
 		refreshEmbeds();
 	});
 	
-	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("keyup change", "textarea.mail-tags", function() {
-		
-		// prevent running default button click handlers
-		event.stopPropagation();
-		event.preventDefault();
+	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("keyup change", "textarea.mail-tags", function(event) {
 		
 		var mail_tags = $(this).val();
 		var embed_id = $(this).data('embed_id');
