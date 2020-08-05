@@ -287,7 +287,7 @@ jQuery(document).ready(function($) {
 			,'[_date] [_time]'
 			,'[_serial_number]'
 			,'[_format_your-date "D, d M y"]'
-			,'Custom string...'
+			,wpcf7_pdf_forms.__Custom_String
 			,'[_raw_your-field]'
 			,'[_remote_ip]'
 			,'[_url]'
