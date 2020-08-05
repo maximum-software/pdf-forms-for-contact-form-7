@@ -272,15 +272,16 @@ jQuery(document).ready(function($) {
 		
 		cf7_fields.empty();
 		
-		jQuery.each(cf7FieldsCache, function(i, field) {
-			
-			cf7_fields.append(jQuery('<option>', {
-				value: field.id,
-				text : '['+field.caption+']',
-				'data-mailtags': false
-			}));
-			
-		});
+		if(typeof cf7FieldsCache != 'undefined' && cf7FieldsCache !== null)
+			jQuery.each(cf7FieldsCache, function(i, field) {
+				
+				cf7_fields.append(jQuery('<option>', {
+					value: field.id,
+					text : '['+field.caption+']',
+					'data-mailtags': false
+				}));
+				
+			});
 		
 		var mailtags = [
 			 '[_date]'
@@ -524,7 +525,10 @@ jQuery(document).ready(function($) {
 	var preloadData = function() {
 		
 		if(!post_id)
+		{
+			loadCf7Fields(); // even with no post id we can still populate CF7 field dropdowns
 			return;
+		}
 		
 		jQuery.ajax({
 			url: wpcf7_pdf_forms.ajax_url,
