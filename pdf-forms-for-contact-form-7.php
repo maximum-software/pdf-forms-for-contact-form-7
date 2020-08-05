@@ -75,7 +75,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_mail_sent', array( $this, 'change_response_message' ) );
 			
 			// hook that allows to copy media and mapping
-			add_filter( 'wpcf7_copy', array( $this,'duplicate_form_hook' ),10,2 );
+			add_filter( 'wpcf7_copy', array( $this,'duplicate_form_hook' ), 10, 2 );
 			
 			// TODO: allow users to run this manually
 			//$this->upgrade_data();
