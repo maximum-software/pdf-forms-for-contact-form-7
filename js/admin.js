@@ -289,6 +289,7 @@ jQuery(document).ready(function($) {
 			,'[_serial_number]'
 			,'[_format_your-date "D, d M y"]'
 			,wpcf7_pdf_forms.__Custom_String
+			,'https://embed.image.url/[_url]'
 			,'[_raw_your-field]'
 			,'[_remote_ip]'
 			,'[_url]'
