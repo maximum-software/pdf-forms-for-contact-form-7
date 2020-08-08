@@ -1449,6 +1449,30 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
+	// set up "Show/Hide Tag Generator" button
+	jQuery('.wpcf7-pdf-forms-admin').on("click", '.tag-generator-toggle-button', function(event) {
+		
+		// prevent running default button click handlers
+		event.stopPropagation();
+		event.preventDefault();
+		
+		var button = jQuery(this);
+		var elements = button.closest(".tag-generator-tool").find('.tag-generator-body-element');
+		
+		if(elements.is(":visible"))
+		{
+			elements.hide();
+			button.text(wpcf7_pdf_forms.__Show_Tag_Generator_Tool);
+		}
+		else
+		{
+			elements.show();
+			button.text(wpcf7_pdf_forms.__Hide_Tag_Generator_Tool);
+		}
+		
+		return false;
+	});
+	
 	// set up 'Return to Form' button handler
 	jQuery('.wpcf7-pdf-forms-admin').on("click", '.return-to-form-button', function(event) {
 		

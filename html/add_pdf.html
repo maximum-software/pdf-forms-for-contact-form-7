@@ -221,21 +221,23 @@
 		<div>
 			<span class="dashicons dashicons-welcome-write-blog"></span>
 			<strong>{tag-generator}</strong>
-			<a class="help-button" href="#">{hide-help}</a>
+			<a class="tag-generator-toggle-button" href="#">{show-tag-generator}</a>
+			<a class="help-button tag-generator-body-element" href="#">{hide-help}</a>
 			
-			<div class="helpbox">
-				<span class="dashicons dashicons-editor-help"></span>
-				{tag-generator-help}
+			<div class="tag-generator-body-element">
+				<div class="helpbox">
+					<span class="dashicons dashicons-editor-help"></span>
+					{tag-generator-help}
+				</div>
 			</div>
 		</div>
 		
-		<textarea wrap="hard" name="text" class="tag code tags-textarea"></textarea>
+		<textarea wrap="hard" name="text" class="tag code tags-textarea tag-generator-body-element"></textarea>
 		
-		<div class="submitbox">
+		<div class="submitbox tag-generator-body-element">
 			<select class="pdf-files-list" name="tag-generator-pdf-list"><option value="all">{all-pdfs}</option></select>
 			<a class="button button-primary get-tags-all-button" href="#">{get-tags}</a>
 			<input type="button" class="button button-primary insert-tags-button" value="{insert-tags}" />
-			<a class="button button-primary return-to-form-button" href="#">{return-to-form}</a>
 		</div>
 		
 	</div>
@@ -243,6 +245,7 @@
 	<hr/>
 	
 	<div class="footer">
+		<a class="button button-primary return-to-form-button" href="#">{return-to-form}</a>
 		<span class="dashicons dashicons-editor-help"></span>
 		{help-message}
 	</div>

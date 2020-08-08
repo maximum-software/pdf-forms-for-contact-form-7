@@ -298,6 +298,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__Confirm_Delete_Embed' => __( 'Are you sure you want to delete this embeded image?', 'pdf-forms-for-contact-form-7' ),
 					'__Show_Help' => __( 'Show Help', 'pdf-forms-for-contact-form-7' ),
 					'__Hide_Help' => __( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
+					'__Show_Tag_Generator_Tool' => __( 'Show Tag Generator', 'pdf-forms-for-contact-form-7' ),
+					'__Hide_Tag_Generator_Tool' => __( 'Hide Tag Generator', 'pdf-forms-for-contact-form-7' ),
 					'__PDF_Frame_Title' => __( 'Select a PDF file', 'pdf-forms-for-contact-form-7'),
 					'__PDF_Frame_Button' => __( 'Select', 'pdf-forms-for-contact-form-7'),
 					'__Custom_String' => __( "Custom text string...", 'pdf-forms-for-contact-form-7' )
@@ -1696,6 +1698,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					),
 					'show-help' => esc_html__( 'Show Help', 'pdf-forms-for-contact-form-7' ),
 					'hide-help' => esc_html__( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
+					'show-tag-generator' => __( 'Show Tag Generator', 'pdf-forms-for-contact-form-7' ),
+					'hide-tag-generator' => __( 'Hide Tag Generator', 'pdf-forms-for-contact-form-7' ),
 					'get-tags' => esc_html__( 'Get Tags', 'pdf-forms-for-contact-form-7' ),
 					'all-pdfs' => esc_html__( 'All PDFs', 'pdf-forms-for-contact-form-7' ),
 					'return-to-form' => esc_html__( "Return to Form", 'pdf-forms-for-contact-form-7' ),

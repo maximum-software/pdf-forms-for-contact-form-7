@@ -168,6 +168,11 @@
 	float: right;
 }
 
+.wpcf7-pdf-forms-admin .tag-generator-body-element
+{
+	display: none;
+}
+
 .wpcf7-pdf-forms-admin .tag-hint-row
 {
 	vertical-align: middle !important;
