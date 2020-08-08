@@ -847,7 +847,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							if( !isset( $fields[$field] ) )
 								throw new Exception();
 							
-							$data[$field] = $value;
+							$data[$field] = wpcf7_mail_replace_tags( "[".$key."]" );
 						}
 						catch(Exception $e) { }
 					}
