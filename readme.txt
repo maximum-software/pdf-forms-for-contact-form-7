@@ -2,10 +2,10 @@
 Contributors: maximumsoftware
 Tags: pdf, form, filler, contact form, attachment, email
 Requires at least: 4.3
-Tested up to: 5.4.1
+Tested up to: 5.5
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.2.4
+Version: 1.3.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -48,6 +48,20 @@ Special thanks to the following sponsors of this plugin,
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.3.0 =
+
+* Release date: August 8, 2020
+
+* WARNING: this update introduces some changes in plugin operation, these changes should not break anything for existing users, however, testing after an update is encouraged
+* Added mail-tags feature
+* Improved general error handling during PDF filling
+* WARNING: should any errors occur with the PDF filling process, they will now be displayed to users when they submit forms on the front-end (instead of being attached along with user input in a .txt file)
+* Added file MIME type validation for image embeds
+* WARNING: image embedding is now limited to the following MIME types: image/jpeg, image/png, image/gif, image/tiff, image/bmp, image/x-ms-bmp, image/svg+xml
+* Switched to using mail-tags replacement function `wpcf7_mail_replace_tags()` for filling CF7 fields input (to improve third party plugin support)
+* Hidden tag generator tool by default
+* Other minor bug fixes and improvements
 
 = 1.2.4 =
 
