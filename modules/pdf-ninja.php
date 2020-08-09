@@ -950,7 +950,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$url = $this->get_api_url();
 			$verify_ssl = $this->get_verify_ssl();
 			if( substr($url,0,5) == 'http:' || !$verify_ssl)
-				$messages .= "<div class='notice notice-warning'><p>" . esc_html__( 'Warning: Your Contact Form 7 integration settings indicate you are using an insecure connection to the Pdf.Ninja API server.', 'pdf-forms-for-contact-form-7' ) . "</p></div>";
+				$messages .= "<div class='notice notice-warning'><p>" . esc_html__( 'Warning: Your Contact Form 7 integration settings indicate that you are using an insecure connection to the Pdf.Ninja API server.', 'pdf-forms-for-contact-form-7' ) . "</p></div>";
 		}
 		catch(Exception $e) { };
 		

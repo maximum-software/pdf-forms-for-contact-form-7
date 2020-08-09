@@ -1001,7 +1001,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$abort = true;
 				$object->set_response(
 						self::replace_tags(
-							__( "An error occured while processing a PDF: {error-message}", 'pdf-forms-for-contact-form-7' ),
+							__( "An error occurred while processing a PDF: {error-message}", 'pdf-forms-for-contact-form-7' ),
 							array( 'error-message' => $e->getMessage() )
 						)
 					);
@@ -1657,7 +1657,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				echo self::render( 'add_pdf', array(
 					'post-id' => esc_html( $contact_form->id() ),
 					'messages' => $messages,
-					'instructions' => esc_html__( "You can use this tag generator to attach a PDF file to your form, insert generated form tags into your form and link them to fields in the PDF file. Linking a combination of mail-tags is possible. You can also embed images (from URLs or attached files) into the PDF file. Changes here are applied when the contact form is saved.", 'pdf-forms-for-contact-form-7' ),
+					'instructions' => esc_html__( "You can use this tag generator to attach a PDF file to your form, insert generated form tags into your form, and link them to fields in the PDF file. It is possible to link a combination of mail-tags to PDF fields. You can also embed images (from URLs or attached files) into the PDF file. Changes here are applied when the contact form is saved.", 'pdf-forms-for-contact-form-7' ),
 					'attach-pdf' => esc_html__( "Attach a PDF File", 'pdf-forms-for-contact-form-7' ),
 					'insert-tags' => esc_html__( "Insert Tags", 'pdf-forms-for-contact-form-7' ),
 					'insert-tag' => esc_html__( "Insert and Link", 'pdf-forms-for-contact-form-7' ),
