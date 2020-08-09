@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: PDF Forms Filler for Contact Form 7 1.0.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pdf-forms-for-"
 "contact-form-7/\n"
-"POT-Creation-Date: 2020-03-04 11:05:18+00:00\n"
+"POT-Creation-Date: 2020-08-09 05:43:12+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid "Pdf.Ninja API"
 msgstr "Pdf.Ninja API"
 
-#: modules/pdf-ninja.php:94 modules/pdf-ninja.php:935
+#: modules/pdf-ninja.php:94 modules/pdf-ninja.php:938
 msgid ""
 "Failed to get the Pdf.Ninja API key on last attempt.  Please retry manually."
 msgstr ""
@@ -44,98 +44,98 @@ msgstr "Se requiere PHP versión 5.3 o superior."
 msgid "Windows platform is not supported."
 msgstr "Plataforma de Windows no es compatible."
 
-#: modules/pdf-ninja.php:261
+#: modules/pdf-ninja.php:263
 msgid "PHP safe mode is not supported."
 msgstr "El modo seguro de PHP no es compatible."
 
-#: modules/pdf-ninja.php:269 modules/pdf-ninja.php:276
+#: modules/pdf-ninja.php:271 modules/pdf-ninja.php:278
 msgid "PHP execute functions (exec, proc_open, proc_close) are disabled."
 msgstr ""
 "Las funciones de ejecución PHP (exec, proc_open, proc_close) están "
 "deshabilitadas."
 
-#: modules/pdf-ninja.php:283
+#: modules/pdf-ninja.php:285
 msgid "Chroot environments are not supported"
 msgstr "Los entornos Chroot no son compatibles"
 
-#: modules/pdf-ninja.php:291
+#: modules/pdf-ninja.php:293
 msgid "Required binaries are not available on this platform."
 msgstr "Los binarios requeridos no están disponibles en esta plataforma."
 
-#: modules/pdf-ninja.php:309 modules/pdf-ninja.php:367
+#: modules/pdf-ninja.php:311 modules/pdf-ninja.php:369
 msgid "Failed to get API server response"
 msgstr "No se pudo obtener el servidor de API"
 
-#: modules/pdf-ninja.php:318 modules/pdf-ninja.php:376
+#: modules/pdf-ninja.php:320 modules/pdf-ninja.php:378
 msgid "Failed to decode API server response"
 msgstr "No se pudo descifrar la respuesta del servidor API"
 
-#: modules/pdf-ninja.php:326 modules/pdf-ninja.php:384
+#: modules/pdf-ninja.php:328 modules/pdf-ninja.php:386
 msgid "Failed to download a file from the API server"
 msgstr "Error al descargar un archivo del servidor API"
 
-#: modules/pdf-ninja.php:411 modules/pdf-ninja.php:539
-#: modules/pdf-ninja.php:558 modules/pdf-ninja.php:600
-#: modules/pdf-ninja.php:714 modules/pdf-ninja.php:744
+#: modules/pdf-ninja.php:413 modules/pdf-ninja.php:541
+#: modules/pdf-ninja.php:560 modules/pdf-ninja.php:602
+#: modules/pdf-ninja.php:717 modules/pdf-ninja.php:747
 msgid "Pdf.Ninja API server did not send an expected response"
 msgstr "El servidor de la API Pdf.Ninja no envió una respuesta esperada"
 
-#: modules/pdf-ninja.php:465 pdf-forms-for-contact-form-7.php:899
-#: pdf-forms-for-contact-form-7.php:950 pdf-forms-for-contact-form-7.php:1380
+#: modules/pdf-ninja.php:467 pdf-forms-for-contact-form-7.php:1027
+#: pdf-forms-for-contact-form-7.php:1082 pdf-forms-for-contact-form-7.php:1517
 msgid "File not found"
 msgstr "Archivo no encontrado"
 
-#: modules/pdf-ninja.php:605 modules/pdf-ninja.php:719
-#: modules/pdf-ninja.php:749 pdf-forms-for-contact-form-7.php:587
+#: modules/pdf-ninja.php:607 modules/pdf-ninja.php:722
+#: modules/pdf-ninja.php:752 pdf-forms-for-contact-form-7.php:631
 msgid "Failed to open file for writing"
 msgstr "Error al abrir el archivo para escribir"
 
-#: modules/pdf-ninja.php:611 modules/pdf-ninja.php:725
-#: modules/pdf-ninja.php:755 pdf-forms-for-contact-form-7.php:593
+#: modules/pdf-ninja.php:613 modules/pdf-ninja.php:728
+#: modules/pdf-ninja.php:758 pdf-forms-for-contact-form-7.php:637
 msgid "Failed to create file"
 msgstr "Fracasado en la creación de archivos"
 
-#: modules/pdf-ninja.php:649 modules/pdf-ninja.php:653
+#: modules/pdf-ninja.php:652 modules/pdf-ninja.php:656
 msgid "Failed to encode JSON data"
 msgstr "Error al codificar datos JSON"
 
-#: modules/pdf-ninja.php:790 pdf-forms-for-contact-form-7.php:1236
-#: pdf-forms-for-contact-form-7.php:1422
+#: modules/pdf-ninja.php:793 pdf-forms-for-contact-form-7.php:1373
+#: pdf-forms-for-contact-form-7.php:1560
 msgid "Permission denied"
 msgstr "Permiso denegado"
 
-#: modules/pdf-ninja.php:847
+#: modules/pdf-ninja.php:850
 msgid ""
 "This service provides functionality for working with PDF files via a web API."
 msgstr ""
 "Este servicio proporciona funcionalidad para trabajar con archivos PDF a "
 "través de una API web."
 
-#: modules/pdf-ninja.php:848 modules/pdf-ninja.php:887
+#: modules/pdf-ninja.php:851 modules/pdf-ninja.php:890
 msgid "API Key"
 msgstr "Clave API"
 
-#: modules/pdf-ninja.php:850
+#: modules/pdf-ninja.php:853
 msgid "copy key"
 msgstr "clave de copia"
 
-#: modules/pdf-ninja.php:851
+#: modules/pdf-ninja.php:854
 msgid "copied!"
 msgstr "¡copiado!"
 
-#: modules/pdf-ninja.php:852 modules/pdf-ninja.php:889
+#: modules/pdf-ninja.php:855 modules/pdf-ninja.php:892
 msgid "API URL"
 msgstr "API URL"
 
-#: modules/pdf-ninja.php:854 modules/pdf-ninja.php:891
+#: modules/pdf-ninja.php:857 modules/pdf-ninja.php:894
 msgid "Data Security"
 msgstr "Seguridad de datos"
 
-#: modules/pdf-ninja.php:855 modules/pdf-ninja.php:892
+#: modules/pdf-ninja.php:858 modules/pdf-ninja.php:895
 msgid "Ignore certificate verification errors"
 msgstr "Ignorar los errores de verificación del certificado"
 
-#: modules/pdf-ninja.php:857 modules/pdf-ninja.php:894
+#: modules/pdf-ninja.php:860 modules/pdf-ninja.php:897
 msgid ""
 "Warning: Using plain HTTP or disabling certificate verification can lead to "
 "data leaks."
@@ -143,92 +143,92 @@ msgstr ""
 "Advertencia: Usar HTTP simple o deshabilitar la verificación del certificado "
 "puede provocar filtraciones de datos."
 
-#: modules/pdf-ninja.php:858
+#: modules/pdf-ninja.php:861
 msgid "Enterprise Extension"
 msgstr "Extensión empresarial"
 
-#: modules/pdf-ninja.php:859
+#: modules/pdf-ninja.php:862
 msgid "Extension is supported."
 msgstr "La extensión es compatible."
 
-#: modules/pdf-ninja.php:859
+#: modules/pdf-ninja.php:862
 msgid "Extension is not supported."
 msgstr "La extensión no es compatible."
 
-#: modules/pdf-ninja.php:860 modules/pdf-ninja.php:873
+#: modules/pdf-ninja.php:863 modules/pdf-ninja.php:876
 msgid "Edit"
 msgstr "Editar"
 
-#: modules/pdf-ninja.php:871
+#: modules/pdf-ninja.php:874
 msgid "Error!"
 msgstr "¡Error!"
 
-#: modules/pdf-ninja.php:886
+#: modules/pdf-ninja.php:889
 msgid "The following form allows you to edit your API key."
 msgstr "El siguiente formulario le permite editar la clave de API."
 
-#: modules/pdf-ninja.php:897
+#: modules/pdf-ninja.php:900
 msgid "Save"
 msgstr "Guardad"
 
-#: modules/pdf-ninja.php:898
+#: modules/pdf-ninja.php:901
 msgid "Get New Key"
 msgstr "Obtener clave nueva"
 
-#: modules/pdf-ninja.php:909 modules/pdf-ninja.php:915
+#: modules/pdf-ninja.php:912 modules/pdf-ninja.php:918
 msgid "PDF Forms for CF7 plugin error"
 msgstr "Formularios PDF para el error CF7 plug-in"
 
-#: modules/pdf-ninja.php:910
+#: modules/pdf-ninja.php:913
 msgid "Can't save new key."
 msgstr "No se puede guardar la llave."
 
-#: modules/pdf-ninja.php:921
+#: modules/pdf-ninja.php:924
 msgid "Settings saved."
 msgstr "Ajustes guardados."
 
-#: modules/pdf-ninja.php:934 pdf-forms-for-contact-form-7.php:201
+#: modules/pdf-ninja.php:937 pdf-forms-for-contact-form-7.php:207
 msgid "PDF Forms Filler for CF7 plugin error"
 msgstr "Formularios PDF de relleno para el error CF7 plug-in"
 
-#: modules/pdf-ninja.php:950
+#: modules/pdf-ninja.php:953
 msgid ""
-"Warning: Your integration settings indicate you are using an insecure "
-"connection to the Pdf.Ninja API server."
+"Warning: Your Contact Form 7 integration settings indicate that you are "
+"using an insecure connection to the Pdf.Ninja API server."
 msgstr ""
-"Advertencia: su configuración de integración indica que está utilizando una "
-"conexión insegura al servidor API Pdf.Ninja."
+"Advertencia: la configuración de integración de Contact Form 7 indica que "
+"está utilizando una conexión insegura al servidor de la API de Pdf.Ninja."
 
 #: modules/service.php:7 modules/service.php:12 modules/service.php:17
 #: modules/service.php:22 modules/service.php:27
 msgid "Missing feature"
 msgstr "Característica faltante"
 
-#: pdf-forms-for-contact-form-7.php:188
+#: pdf-forms-for-contact-form-7.php:194
 msgid "Tutorial Video"
 msgstr "Video tutorial"
 
-#: pdf-forms-for-contact-form-7.php:189
+#: pdf-forms-for-contact-form-7.php:195
 msgid "Support"
 msgstr "Apoyo"
 
-#: pdf-forms-for-contact-form-7.php:202
+#: pdf-forms-for-contact-form-7.php:208
 msgid "The required plugin 'Contact Form 7' is not installed!"
 msgstr "El plug-in requerido 'Formulario de contacto 7' no está instalado!"
 
-#: pdf-forms-for-contact-form-7.php:287
+#: pdf-forms-for-contact-form-7.php:293
 msgid "File not specified"
 msgstr "Archivo no especificado"
 
-#: pdf-forms-for-contact-form-7.php:288
+#: pdf-forms-for-contact-form-7.php:294
 msgid "Unknown error"
 msgstr "Error desconocido"
 
-#: pdf-forms-for-contact-form-7.php:289
+#: pdf-forms-for-contact-form-7.php:295
 msgid "Please copy/paste tags manually"
 msgstr "Por favor, copie / pegue las etiquetas manualmente"
 
-#: pdf-forms-for-contact-form-7.php:290
+#: pdf-forms-for-contact-form-7.php:296
 msgid ""
 "Are you sure you want to delete this file?  This will delete field mappings "
 "and image embeds associated with this file."
@@ -236,73 +236,92 @@ msgstr ""
 "¿Seguro que quieres eliminar este archivo? Esto eliminará las asignaciones "
 "de campo e imágenes asociadas con este archivo."
 
-#: pdf-forms-for-contact-form-7.php:291
+#: pdf-forms-for-contact-form-7.php:297
 msgid "Are you sure you want to delete this mapping?"
 msgstr "¿Estás seguro de que deseas eliminar esta asignación?"
 
-#: pdf-forms-for-contact-form-7.php:292
+#: pdf-forms-for-contact-form-7.php:298
 msgid "Are you sure you want to delete this embeded image?"
 msgstr "¿Seguro que quieres eliminar esta imagen embebida?"
 
-#: pdf-forms-for-contact-form-7.php:293 pdf-forms-for-contact-form-7.php:1561
+#: pdf-forms-for-contact-form-7.php:299 pdf-forms-for-contact-form-7.php:1699
 msgid "Show Help"
 msgstr "Mostrar ayuda"
 
-#: pdf-forms-for-contact-form-7.php:294 pdf-forms-for-contact-form-7.php:1562
+#: pdf-forms-for-contact-form-7.php:300 pdf-forms-for-contact-form-7.php:1700
 msgid "Hide Help"
 msgstr "Ocultar Ayuda"
 
-#: pdf-forms-for-contact-form-7.php:295
+#: pdf-forms-for-contact-form-7.php:301 pdf-forms-for-contact-form-7.php:1701
+msgid "Show Tag Generator"
+msgstr "Mostrar generador de etiquetas"
+
+#: pdf-forms-for-contact-form-7.php:302 pdf-forms-for-contact-form-7.php:1702
+msgid "Hide Tag Generator"
+msgstr "Ocultar generador de etiquetas"
+
+#: pdf-forms-for-contact-form-7.php:303
 msgid "Select a PDF file"
 msgstr "Seleccione un archivo PDF"
 
-#: pdf-forms-for-contact-form-7.php:296
+#: pdf-forms-for-contact-form-7.php:304
 msgid "Select"
 msgstr "Seleccionar"
 
-#: pdf-forms-for-contact-form-7.php:326
+#: pdf-forms-for-contact-form-7.php:305
+msgid "Custom text string..."
+msgstr "Cadena de texto personalizada..."
+
+#: pdf-forms-for-contact-form-7.php:335
 msgid "PDF Forms"
 msgstr "Formularios PDF"
 
-#: pdf-forms-for-contact-form-7.php:389
+#: pdf-forms-for-contact-form-7.php:398
 msgid "Copy"
 msgstr "Copiar"
 
-#: pdf-forms-for-contact-form-7.php:580
+#: pdf-forms-for-contact-form-7.php:624
 msgid "Failed to download file"
 msgstr "Error al descargar el archivo"
 
-#: pdf-forms-for-contact-form-7.php:807
-msgid ""
-"Error generating PDF: {error-message} at {error-file}:{error-line}\n"
-"\n"
-"Form data:\n"
-"\n"
+#: pdf-forms-for-contact-form-7.php:794 pdf-forms-for-contact-form-7.php:1032
+msgid "File type {mime-type} of {file} is unsupported for {purpose}"
 msgstr ""
-"Error al generar PDF: {error-message} en {error-file}:{error-line}\n"
-"\n"
-"Datos del formulario:\n"
-"\n"
+"El tipo de archivo {mime-type} de {file} no es compatible con {purpose}"
 
-#: pdf-forms-for-contact-form-7.php:891 pdf-forms-for-contact-form-7.php:1118
-#: pdf-forms-for-contact-form-7.php:1227 pdf-forms-for-contact-form-7.php:1332
-#: pdf-forms-for-contact-form-7.php:1413
+#: pdf-forms-for-contact-form-7.php:795
+msgid "image embedding"
+msgstr "incrustación de imágenes"
+
+#: pdf-forms-for-contact-form-7.php:927
+msgid "Error generating PDF: {error-message} at {error-file}:{error-line}"
+msgstr "Error al generar PDF: {error-message} en {error-file}:{error-line}"
+
+#: pdf-forms-for-contact-form-7.php:1004
+#, fuzzy
+#| msgid "An error occured while processing a PDF: {error-message}"
+msgid "An error occurred while processing a PDF: {error-message}"
+msgstr "Se produjo un error al procesar un PDF: {error-message}"
+
+#: pdf-forms-for-contact-form-7.php:1019 pdf-forms-for-contact-form-7.php:1255
+#: pdf-forms-for-contact-form-7.php:1364 pdf-forms-for-contact-form-7.php:1469
+#: pdf-forms-for-contact-form-7.php:1551
 msgid "Nonce mismatch"
 msgstr "Falta de coincidencia de nonce"
 
-#: pdf-forms-for-contact-form-7.php:897
+#: pdf-forms-for-contact-form-7.php:1025
 msgid "Invalid attachment"
 msgstr "Adjunto inválido"
 
-#: pdf-forms-for-contact-form-7.php:903
-msgid "Invalid file type, must be a PDF file"
-msgstr "Tipo de archivo inválido, debe ser un archivo PDF"
+#: pdf-forms-for-contact-form-7.php:1033
+msgid "PDF form filling"
+msgstr "llenado de formularios PDF"
 
-#: pdf-forms-for-contact-form-7.php:988
+#: pdf-forms-for-contact-form-7.php:1120
 msgid "No service"
 msgstr "Sin servicio"
 
-#: pdf-forms-for-contact-form-7.php:1136
+#: pdf-forms-for-contact-form-7.php:1273
 msgid ""
 "This PDF file does not appear to contain a PDF form.  See https://acrobat."
 "adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for "
@@ -312,52 +331,54 @@ msgstr ""
 "acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator."
 "html para obtener más información."
 
-#: pdf-forms-for-contact-form-7.php:1233
+#: pdf-forms-for-contact-form-7.php:1370
 msgid "Invalid post ID"
 msgstr "Invalid ID mensaje"
 
-#: pdf-forms-for-contact-form-7.php:1303
+#: pdf-forms-for-contact-form-7.php:1440
 msgid "Failed to get Contact Form fields"
 msgstr "Error al obtener campos de Formulario de contacto"
 
-#: pdf-forms-for-contact-form-7.php:1419
+#: pdf-forms-for-contact-form-7.php:1557
 msgid "Invalid page number"
 msgstr "Número de página inválido"
 
-#: pdf-forms-for-contact-form-7.php:1428
+#: pdf-forms-for-contact-form-7.php:1566
 msgid "Failed to retrieve page snapshot"
 msgstr "Error al recuperar la instantánea de la página"
 
-#: pdf-forms-for-contact-form-7.php:1455 pdf-forms-for-contact-form-7.php:1464
+#: pdf-forms-for-contact-form-7.php:1593 pdf-forms-for-contact-form-7.php:1602
 msgid "PDF Form"
 msgstr "Formulario PDF"
 
-#: pdf-forms-for-contact-form-7.php:1522
+#: pdf-forms-for-contact-form-7.php:1660
 msgid ""
 "You can use this tag generator to attach a PDF file to your form, insert "
-"tags into your form and link them to fields in the PDF file.  You can also "
-"embed images (generated by other Contact Form 7 tags or fields) into the PDF "
-"file.  Changes here are applied when the contact form is saved."
+"generated form tags into your form, and link them to fields in the PDF file. "
+"It is possible to link a combination of mail-tags to PDF fields. You can "
+"also embed images (from URLs or attached files) into the PDF file. Changes "
+"here are applied when the contact form is saved."
 msgstr ""
 "Puede usar este generador de etiquetas para adjuntar un archivo PDF a su "
-"formulario, insertar etiquetas en su formulario y vincularlas a campos en el "
-"archivo PDF. También puede incrustar imágenes (generadas por otras etiquetas "
-"o campos del Formulario de contacto 7) en el archivo PDF. Los cambios aquí "
-"se aplican cuando se guarda el formulario de contacto."
+"formulario, insertar etiquetas de formulario generadas en su formulario y "
+"vincularlas a campos en el archivo PDF. Es posible vincular una combinación "
+"de etiquetas de correo a campos PDF. También puede incrustar imágenes (de "
+"URL o archivos adjuntos) en el archivo PDF. Los cambios aquí se aplican "
+"cuando se guarda el formulario de contacto."
 
-#: pdf-forms-for-contact-form-7.php:1523
+#: pdf-forms-for-contact-form-7.php:1661
 msgid "Attach a PDF File"
 msgstr "Adjuntar un archivo PDF"
 
-#: pdf-forms-for-contact-form-7.php:1524
+#: pdf-forms-for-contact-form-7.php:1662
 msgid "Insert Tags"
 msgstr "Insertar etiquetas"
 
-#: pdf-forms-for-contact-form-7.php:1525
+#: pdf-forms-for-contact-form-7.php:1663
 msgid "Insert and Link"
 msgstr "Insertar y vincular"
 
-#: pdf-forms-for-contact-form-7.php:1526
+#: pdf-forms-for-contact-form-7.php:1664
 msgid ""
 "This button allows you to generate tags for all remaining unlinked PDF "
 "fields, insert them into the form and link them to their corresponding "
@@ -367,39 +388,39 @@ msgstr ""
 "vinculados restantes, insertarlos en el formulario y vincularlos a sus "
 "campos correspondientes."
 
-#: pdf-forms-for-contact-form-7.php:1527
+#: pdf-forms-for-contact-form-7.php:1665
 msgid "Insert & Link All"
 msgstr "Insertar y vincular todo"
 
-#: pdf-forms-for-contact-form-7.php:1528 pdf-forms-for-contact-form-7.php:1549
+#: pdf-forms-for-contact-form-7.php:1666 pdf-forms-for-contact-form-7.php:1687
 msgid "Delete"
 msgstr "Borrar"
 
-#: pdf-forms-for-contact-form-7.php:1529
+#: pdf-forms-for-contact-form-7.php:1667
 msgid "Options"
 msgstr "Opciones"
 
-#: pdf-forms-for-contact-form-7.php:1530
+#: pdf-forms-for-contact-form-7.php:1668
 msgid "Skip when empty"
 msgstr "Omitir cuando está vacío"
 
-#: pdf-forms-for-contact-form-7.php:1531
+#: pdf-forms-for-contact-form-7.php:1669
 msgid "Attach to primary email message"
 msgstr "Adjuntar al correo electrónico principal"
 
-#: pdf-forms-for-contact-form-7.php:1532
+#: pdf-forms-for-contact-form-7.php:1670
 msgid "Attach to secondary email message"
 msgstr "Adjuntar a un correo electrónico secundario"
 
-#: pdf-forms-for-contact-form-7.php:1533
+#: pdf-forms-for-contact-form-7.php:1671
 msgid "Flatten"
 msgstr "Aplanar"
 
-#: pdf-forms-for-contact-form-7.php:1534
+#: pdf-forms-for-contact-form-7.php:1672
 msgid "Filename (mail-tags can be used)"
 msgstr "Nombre de archivo (se pueden usar etiquetas de correo)"
 
-#: pdf-forms-for-contact-form-7.php:1535
+#: pdf-forms-for-contact-form-7.php:1673
 msgid ""
 "Save PDF file on the server at the given path relative to wp-content/uploads "
 "(mail-tags can be used; if empty, PDF file is not saved on disk)"
@@ -408,54 +429,54 @@ msgstr ""
 "content / uploads (se pueden usar etiquetas de correo; si está vacío, el "
 "archivo PDF no se guarda en el disco)"
 
-#: pdf-forms-for-contact-form-7.php:1536
+#: pdf-forms-for-contact-form-7.php:1674
 msgid "Add filled PDF download link to form submission response"
 msgstr ""
 "Agregue el enlace de descarga del PDF lleno para responder al envío del "
 "formulario"
 
-#: pdf-forms-for-contact-form-7.php:1537
+#: pdf-forms-for-contact-form-7.php:1675
 msgid "Field Mapper Tool"
 msgstr "Herramienta Field Mapper"
 
-#: pdf-forms-for-contact-form-7.php:1538
+#: pdf-forms-for-contact-form-7.php:1676
 msgid ""
-"This tool can be used to link Contact Form 7 fields with fields within the "
-"PDF files.  Contact Form 7 fields can also be generated.  When the user "
-"submits the form, data from Contact Form 7 fields will be inserted into "
-"correspoinding fields in the PDF file."
+"This tool can be used to link form fields and mail-tags with fields in the "
+"attached PDF files. Form tags can also be generated. When your users submit "
+"the form, input from form fields and other mail-tags will be inserted into "
+"the correspoinding fields in the PDF file."
 msgstr ""
-"Esta herramienta se puede utilizar para vincular los campos de Formulario de "
-"contacto 7 con campos dentro de los archivos PDF. Los campos de Formulario "
-"de contacto 7 también se pueden generar. Cuando el usuario envía el "
-"formulario, los datos de los campos de Formulario de contacto 7 se "
-"insertarán en los campos de creación de concordancia en el archivo PDF."
+"Esta herramienta se puede utilizar para vincular campos de formulario y "
+"etiquetas de correo con campos en los archivos PDF adjuntos. También se "
+"pueden generar etiquetas de formulario. Cuando sus usuarios envíen el "
+"formulario, la entrada de los campos del formulario y otras etiquetas de "
+"correo se insertarán en los campos correspondientes del archivo PDF."
 
-#: pdf-forms-for-contact-form-7.php:1539
+#: pdf-forms-for-contact-form-7.php:1677
 msgid "PDF field"
 msgstr "Campo PDF"
 
-#: pdf-forms-for-contact-form-7.php:1540
-msgid "CF7 field"
-msgstr "Campo CF7"
+#: pdf-forms-for-contact-form-7.php:1678
+msgid "CF7 field/mail-tags"
+msgstr "Campo/etiquetas CF7"
 
-#: pdf-forms-for-contact-form-7.php:1541
+#: pdf-forms-for-contact-form-7.php:1679
 msgid "Add Mapping"
 msgstr "Agregar asignación"
 
-#: pdf-forms-for-contact-form-7.php:1542
+#: pdf-forms-for-contact-form-7.php:1680
 msgid "Delete All"
 msgstr "Eliminar todos"
 
-#: pdf-forms-for-contact-form-7.php:1543
+#: pdf-forms-for-contact-form-7.php:1681
 msgid "New Tag:"
 msgstr "Nueva etiqueta:"
 
-#: pdf-forms-for-contact-form-7.php:1544
+#: pdf-forms-for-contact-form-7.php:1682
 msgid "Tag Generator Tool (deprecated)"
 msgstr "Tag Generator Tool (obsoleto)"
 
-#: pdf-forms-for-contact-form-7.php:1545
+#: pdf-forms-for-contact-form-7.php:1683
 msgid ""
 "This tool allows one to create CF7 fields that are linked to PDF fields by "
 "name.  This feature is deprecated in favor of the field mapper tool."
@@ -464,11 +485,11 @@ msgstr ""
 "por nombre. Esta característica está en desuso en favor de la herramienta "
 "mapeador de campo."
 
-#: pdf-forms-for-contact-form-7.php:1546
+#: pdf-forms-for-contact-form-7.php:1684
 msgid "Image Embedding Tool"
 msgstr "Herramienta de incrustación de imágenes"
 
-#: pdf-forms-for-contact-form-7.php:1547
+#: pdf-forms-for-contact-form-7.php:1685
 msgid ""
 "This tool allows embedding images into PDF files.  Images are taken from "
 "field attachments or field values that are URLs.  You must select a PDF "
@@ -479,23 +500,23 @@ msgstr ""
 "seleccionar un archivo PDF, su página y dibujar un cuadro delimitador para "
 "la inserción de imágenes."
 
-#: pdf-forms-for-contact-form-7.php:1548
+#: pdf-forms-for-contact-form-7.php:1686
 msgid "Embed Image"
 msgstr "Insertar imagen"
 
-#: pdf-forms-for-contact-form-7.php:1550
+#: pdf-forms-for-contact-form-7.php:1688
 msgid "PDF file"
 msgstr "Archivo PDF"
 
-#: pdf-forms-for-contact-form-7.php:1551
+#: pdf-forms-for-contact-form-7.php:1689
 msgid "Page"
 msgstr "Página"
 
-#: pdf-forms-for-contact-form-7.php:1552
+#: pdf-forms-for-contact-form-7.php:1690
 msgid "Select a region where the image needs to be embeded."
 msgstr "Seleccione una región donde la imagen debe ser embebida."
 
-#: pdf-forms-for-contact-form-7.php:1554
+#: pdf-forms-for-contact-form-7.php:1692
 msgid ""
 "Have a question/comment/problem?  Feel free to use {a-href-forum}the support "
 "forum{/a} and view {a-href-tutorial}the tutorial video{/a}."
@@ -503,29 +524,29 @@ msgstr ""
 "¿Tiene una pregunta/comentario/problema? Siéntase libre de usar {a-href-"
 "forum}el foro de soporte{/a} y ver {a-href-tutorial}el video tutorial{/a}."
 
-#: pdf-forms-for-contact-form-7.php:1563
+#: pdf-forms-for-contact-form-7.php:1703
 msgid "Get Tags"
 msgstr "Obtener Etiquetas"
 
-#: pdf-forms-for-contact-form-7.php:1564
+#: pdf-forms-for-contact-form-7.php:1704
 msgid "All PDFs"
 msgstr "Todos los archivos PDF"
 
-#: pdf-forms-for-contact-form-7.php:1565
+#: pdf-forms-for-contact-form-7.php:1705
 msgid "Return to Form"
 msgstr "Regresar a la forma"
 
-#: pdf-forms-for-contact-form-7.php:1570
+#: pdf-forms-for-contact-form-7.php:1710
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr "Tu lector CF7 es demasiado fuera de fecha, por favor, actualice."
 
-#: pdf-forms-for-contact-form-7.php:1620
+#: pdf-forms-for-contact-form-7.php:1760
 msgid "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}"
 msgstr "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}"
 
-#: pdf-forms-for-contact-form-7.php:1638
-msgid "Download {filename} at {url}"
-msgstr "Descargar {filename} de {url}"
+#: pdf-forms-for-contact-form-7.php:1778
+msgid "Download {filename} at {url}. "
+msgstr "Descargar {filename} de {url}. "
 
 #. Plugin Name of the plugin/theme
 msgid "PDF Forms Filler for Contact Form 7"
@@ -556,6 +577,9 @@ msgstr "Maximum.Software"
 #. Author URI of the plugin/theme
 msgid "https://maximum.software/"
 msgstr "https://maximum.software/"
+
+#~ msgid "Invalid file type, must be a PDF file"
+#~ msgstr "Tipo de archivo inválido, debe ser un archivo PDF"
 
 #~ msgid "Cannot create temporary PDF file"
 #~ msgstr "No se puede crear el archivo PDF temporal"
