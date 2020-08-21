@@ -595,7 +595,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 		}
 		
-		private static function download_file( $url, $filepath )
+		private static function download_file( $url, $filepath, &$mimetype = null )
 		{
 			// if this url points to the site, copy the file directly
 			$site_url = trailingslashit( get_site_url() );
@@ -607,7 +607,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( $home_path && $sourcepath && substr( $sourcepath, 0, strlen( $home_path ) ) == $home_path )
 					if( file_exists( $sourcepath ) )
 						if( copy($sourcepath, $filepath) )
+						{
+							$mimetype = self::get_mime_type( $sourcepath );
 							return;
+						}
 			}
 			
 			$args = array(
@@ -622,6 +625,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			if( is_wp_error( $response ) )
 				throw new Exception( __( "Failed to download file", 'pdf-forms-for-contact-form-7' ) );
+			
+			$mimetype = wp_remote_retrieve_header( $response, 'content-type' );
 			
 			$body = wp_remote_retrieve_body( $response );
 			
@@ -689,9 +694,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/**
-		 * Checks if the image format is supported for embedding
+		 * Checks if the image MIME type is supported for embedding
 		 */
-		private function is_embed_image_format_supported( $filepath, &$mimetype = null )
+		private function is_embed_image_format_supported( $mimetype )
 		{
 			$supported_mime_types = array(
 					"image/jpeg",
@@ -703,7 +708,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					"image/svg+xml",
 				);
 			
-			$mimetype = self::get_mime_type( $filepath );
 			if( $mimetype )
 				foreach( $supported_mime_types as $smt )
 					if( $mimetype === $smt )
@@ -762,19 +766,20 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				{
 					$filepath = null;
 					$filename = null;
+					$url_mimetype = null;
 					
 					$url = null;
 					if( isset( $embed['cf7_field'] ) )
 						$url = wpcf7_mail_replace_tags( "[".$embed['cf7_field']."]" );
 					if( isset( $embed['mail_tags'] ) )
 						$url = wpcf7_mail_replace_tags( $embed['mail_tags'] );
-					if( $url!=null )
+					if( $url != null )
 					{
 						if( filter_var( $url, FILTER_VALIDATE_URL ) !== FALSE )
 						if( substr( $url, 0, 5 ) === 'http:' || substr( $url, 0, 6 ) === 'https:' )
 						{
 							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.tmp' );
-							self::download_file( $url, $filepath ); // can throw an exception
+							self::download_file( $url, $filepath, $url_mimetype ); // can throw an exception
 							$filename = $url;
 						}
 					}
@@ -788,7 +793,29 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( ! $filepath )
 						continue;
 					
-					if( ! $this->is_embed_image_format_supported( $filepath, $mimetype ) )
+					$file_mimetype = self::get_mime_type( $filepath );
+					
+					$mimetype_supported = false;
+					$mimetype = 'unknown';
+					
+					if( $file_mimetype )
+					{
+						$mimetype = $file_mimetype;
+						
+						// check if MIME type is supported based on file contents
+						$mimetype_supported = $this->is_embed_image_format_supported( $file_mimetype );
+					}
+					
+					// if we were not able to determine MIME type based on file contents
+					// then fall back to URL MIME type (if we are dealing with a URL)
+					// (maybe fileinfo functions are not functional and WP fallback failed due to the ".tmp" extension)
+					if( !$mimetype_supported && $url_mimetype )
+					{
+						$mimetype = $url_mimetype;
+						$mimetype_supported = $this->is_embed_image_format_supported( $url_mimetype );
+					}
+					
+					if( !$mimetype_supported )
 						throw new Exception(
 							self::replace_tags(
 								__( "File type {mime-type} of {file} is unsupported for {purpose}", 'pdf-forms-for-contact-form-7' ),
