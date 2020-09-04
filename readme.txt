@@ -51,7 +51,7 @@ Special thanks to the following sponsors of this plugin,
 
 == Changelog ==
 
-= 1.3.1 =
+= 1.3.2 =
 
 * Release date: September 4, 2020
 
