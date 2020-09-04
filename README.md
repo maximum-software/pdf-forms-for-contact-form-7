@@ -18,7 +18,7 @@ Known problems,
 * Some UTF-8 (non-latin) characters, checkboxes and radio buttons don't render properly after being filled. Almost always the problem lies with the PDF viewers not rendering them correctly. There is a workaround in the works, however, currently it remains in development.
 * Some third party plugins break the functionality of this plugin (see a list below). Try troubleshooting the problem by disabling likely plugins that may cause issues, such as plugins that modify WordPress or Contact Form 7 in radical ways.
 * Some image optimization plugins optimize PDFs and strip PDF forms from PDF files. This may cause your existing forms to break at a random point in the future (when PDF file cache times out at the API).
-* Multi-select checkbox are not currently supported. Support is planned in the future.
+* Multi-select checkbox fields are not currently supported. Support is planned in the future.
 
 Known incompatible plugins,
 * [ShortPixel Image Optimizer](https://wordpress.org/plugins/shortpixel-image-optimiser/) (strips forms from PDF files)
