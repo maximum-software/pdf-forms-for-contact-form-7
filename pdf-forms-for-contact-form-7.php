@@ -879,6 +879,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						catch(Exception $e) { }
 					}
 					
+					// remove fields with empty values form data
+					foreach( $data as $field => $value )
+						if( $value === "" || is_null( $value ) || $value === array() )
+							unset( $data[$field] );
+					
 					// process image embeds
 					$embeds_data = array();
 					foreach( $embeds as $id => $embed )
