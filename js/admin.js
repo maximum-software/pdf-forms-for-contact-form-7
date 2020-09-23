@@ -166,7 +166,7 @@ jQuery(document).ready(function($) {
 			}
 		});
 		
-		refreshPdfFields();
+		runAfterDone(refreshPdfFields);
 	};
 	var getPdfFieldData = function(id) {
 		
@@ -596,9 +596,16 @@ jQuery(document).ready(function($) {
 			return [];
 	};
 	
+	var runAfterDoneTimers = {};
+	var runAfterDone = function(func) {
+		if(runAfterDoneTimers[func])
+			return;
+		runAfterDoneTimers[func] = setTimeout(function(){ delete runAfterDoneTimers[func]; func(); }, 0);
+	}
+	
 	var setMappings = function(mappings) {
 		setData('mappings', mappings);
-		refreshPdfFields();
+		runAfterDone(refreshPdfFields);
 	};
 	
 	var deleteMapping = function(mapping_id) {
