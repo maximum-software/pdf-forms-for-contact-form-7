@@ -4,6 +4,12 @@ jQuery(document).ready(function($) {
 	if(!wpcf7_form)
 		return;
 	
+	var pluginData = {
+		attachments: [],
+		mappings: [],
+		embeds: []
+	};
+	
 	var post_id = jQuery('.wpcf7-pdf-forms-admin input[name=post_id]').val();
 	
 	var clearMessages = function() {
@@ -325,15 +331,15 @@ jQuery(document).ready(function($) {
 	};
 	
 	var getData = function(field) {
-		var data = wpcf7_form.closest('form').find('input[name=wpcf7-pdf-forms-data]').val();
-		if(data)
-			data = JSON.parse(data);
-		else
-			data = {};
-		return data[field];
+		return pluginData[field];
 	};
 	
 	var setData = function(field, value) {
+		pluginData[field] = value;
+		runAfterDone(updatePluginDataField);
+	};
+	
+	var updatePluginDataField = function() {
 		var form = wpcf7_form.closest('form');
 		if(form)
 		{
@@ -343,13 +349,7 @@ jQuery(document).ready(function($) {
 				input = jQuery("<input type='hidden' name='wpcf7-pdf-forms-data'/>");
 				jQuery(form).append(input);
 			}
-			var data = input.val();
-			if(data)
-				data = JSON.parse(data);
-			else
-				data = {};
-			data[field] = value;
-			input.val(JSON.stringify(data));
+			input.val(JSON.stringify(pluginData));
 		}
 	};
 	
@@ -632,10 +632,11 @@ jQuery(document).ready(function($) {
 	}
 	
 	var addMapping = function(data) {
-		var mappings = getMappings();
-		data.mapping_id = generateMappingId(mappings);
-		mappings.push(data);
-		setMappings(mappings);
+		data.mapping_id = generateMappingId();
+		pluginData["mappings"].push(data);
+		
+		runAfterDone(updatePluginDataField);
+		runAfterDone(refreshPdfFields);
 		
 		addMappingEntry(data);
 	};
