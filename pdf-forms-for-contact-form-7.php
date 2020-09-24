@@ -228,7 +228,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $this->pdf_ninja_service;
 		}
 		
-		
 		/**
 		 * Returns the service module instance
 		 */
