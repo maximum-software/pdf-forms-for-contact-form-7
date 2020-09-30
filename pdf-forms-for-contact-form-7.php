@@ -727,6 +727,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			try
 			{
 				$post_id = $contact_form->id();
+				$mail = $contact_form->prop( "mail" );
+				$mail2 = $contact_form->prop( "mail_2" );
 				
 				$mappings = self::get_meta( $post_id, 'mappings' );
 				if( $mappings )
@@ -907,17 +909,22 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							}
 						}
 					
+					// skip file if 'skip when empty' option is enabled and nothing is being done to the file
 					if( count( $data ) == 0
 					&& count( $embeds_data ) == 0
 					&& $attachment['options']['skip_empty'] )
 						continue;
 					
-					$mail = $attachment['options']['attach_to_mail_1'];
-					$mail2 = $attachment['options']['attach_to_mail_2'];
+					$attach_to_mail_1 = $attachment['options']['attach_to_mail_1'] || strpos( $mail["attachments"], "[pdf-form-".$attachment_id."]" ) !== FALSE;
+					$attach_to_mail_2 = $attachment['options']['attach_to_mail_2'] || strpos( $mail2["attachments"], "[pdf-form-".$attachment_id."]" ) !== FALSE;
 					$save_directory = strval( $attachment['options']['save_directory'] );
 					$create_download_link = $attachment['options']['download_link'];
 					
-					if( !$mail && !$mail2 && $save_directory === "" && !$create_download_link )
+					// skip file if it is not used anywhere
+					if( !$attach_to_mail_1
+					&& !$attach_to_mail_2
+					&& $save_directory === ""
+					&& !$create_download_link )
 						continue;
 					
 					$options = array();
@@ -947,7 +954,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 								$filled = $service->api_fill_embed( $destfile, $attachment_id, $data, $embeds_data, $options );
 						if( ! $filled )
 							copy( $filepath, $destfile );
-						$files[] = array( 'file' => $destfile, 'filename' => $destfilename.'.pdf', 'options' => $attachment['options'] );
+						$files[] = array( 'attachment_id' => $attachment_id, 'file' => $destfile, 'filename' => $destfilename.'.pdf', 'options' => $attachment['options'] );
 					}
 					catch(Exception $e)
 					{
@@ -964,14 +971,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				if( count( $files ) > 0 )
 				{
-					$mail = $contact_form->prop( "mail" );
-					$mail2 = $contact_form->prop( "mail_2" );
-					
 					foreach( $files as $id => $filedata )
 					{
 						$file = $filedata['file'];
 						if( file_exists( $file ) )
 						{
+							$attachment_id = $filedata['attachment_id'];
+							$submission->add_uploaded_file( "pdf-form-".$attachment_id, $file );
+							
 							$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
 							
 							if( $filedata['options']['attach_to_mail_1'] )
