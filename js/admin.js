@@ -210,20 +210,55 @@ jQuery(document).ready(function($) {
 		
 		return pdf_fields;
 	};
+
+	var pdf_fields_dropdown = jQuery('.wpcf7-pdf-forms-admin .pdf-field-list');
+	jQuery.fn.select2.amd.define("unmappedPdfFieldsAdapter", 
+	['select2/data/array','select2/utils'],
+		function (ArrayData, Utils) {
+			function CustomData($element, options) {
+				CustomData.__super__.constructor.call(this, $element, options);
+			}
+			Utils.Extend(CustomData, ArrayData);
+
+			CustomData.prototype.query = function (params, callback) {
+				var items = [];
+				jQuery.each(getUnmappedPdfFields(), function(f, field) {
+					items.push({ id: field.id, text: field.caption });
+				});
+				results = [];
+				if (params.term && params.term !== '') {
+					results = _.filter(items, function(e) {
+						return e.text.toUpperCase().indexOf(params.term.toUpperCase()) >= 0;
+					});
+				} else {
+					results = items;
+				}
+
+				if (!("page" in params)) {
+					params.page = 1;
+				}
+				var data = {};
+				var pageSize = 50;
+				data.results = results.slice((params.page - 1) * pageSize, params.page * pageSize);
+				data.pagination = {};
+				data.pagination.more = params.page * pageSize < results.length;
+				callback(data);
+			};
+			return CustomData;
+		}
+	);
+
+	pdf_fields_dropdown.select2({
+		ajax: {},
+		width: '100%',
+		placeholder: "Select Item",
+		allowClear: true,
+		dropdownParent: jQuery(pdf_fields_dropdown).parent(),
+		dataAdapter: jQuery.fn.select2.amd.require("unmappedPdfFieldsAdapter")
+	});
 	
 	var refreshPdfFields = function() {
-		
-		var pdf_fields = jQuery('.wpcf7-pdf-forms-admin .pdf-field-list');
-		pdf_fields.empty();
-		
-		jQuery.each(getUnmappedPdfFields(), function(f, field) {
-			
-			pdf_fields.append(jQuery('<option>', {
-				value: field.id,
-				text : field.caption
-			}));
-		});
-		
+		pdf_fields_dropdown.val('').trigger('change');
 		updateTagHint();
 	};
 	
