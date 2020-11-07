@@ -194,10 +194,10 @@ jQuery(document).ready(function($) {
 			var field_pdf_field = String(field.id);
 			var field_attachment_id = field_pdf_field.substr(0, field_pdf_field.indexOf('-'));
 			var field_pdf_field_name = field_pdf_field.substr(field_pdf_field.indexOf('-')+1);
-			
-			for(var i=0, l=mappings.length; i<l; i++)
+
+			if(mappings.indexOf(mappings[f]) != -1)
 			{
-				var mapping_pdf_field = String(mappings[i].pdf_field);
+				var mapping_pdf_field = String(mappings[f].pdf_field);
 				var mapping_attachment_id = mapping_pdf_field.substr(0, mapping_pdf_field.indexOf('-'));
 				var mapping_pdf_field_name = mapping_pdf_field.substr(mapping_pdf_field.indexOf('-')+1);
 				
@@ -213,47 +213,6 @@ jQuery(document).ready(function($) {
 	};
 
 	var pdf_fields_dropdown = jQuery('.wpcf7-pdf-forms-admin .pdf-field-list');
-	jQuery.fn.select2.amd.define("unmappedPdfFieldsAdapter", 
-	['select2/data/array','select2/utils'],
-		function (ArrayData, Utils) {
-			function CustomData($element, options) {
-				CustomData.__super__.constructor.call(this, $element, options);
-			}
-			Utils.Extend(CustomData, ArrayData);
-
-			CustomData.prototype.query = function (params, callback) {
-				var items = getUnmappedPdfFields();
-				results = [];
-				if (params.term && params.term !== '') {
-					var upperTerm = params.term.toUpperCase();
-					results = _.filter(items, function(e) {
-						return e.upperText.indexOf(upperTerm) >= 0;
-					});
-				} else {
-					results = items;
-				}
-
-				if (!("page" in params)) {
-					params.page = 1;
-				}
-				var data = {};
-				var pageSize = 50;
-				data.results = results.slice((params.page - 1) * pageSize, params.page * pageSize);
-				data.pagination = {};
-				data.pagination.more = params.page * pageSize < results.length;
-				callback(data);
-			};
-			return CustomData;
-		}
-	);
-	pdf_fields_dropdown.select2({
-		ajax: {},
-		width: '100%',
-		placeholder: "Select Item",
-		allowClear: true,
-		dropdownParent: jQuery(pdf_fields_dropdown).parent(),
-		dataAdapter: jQuery.fn.select2.amd.require("unmappedPdfFieldsAdapter")
-	});
 	
 	var refreshPdfFields = function() {
 		pdf_fields_dropdown.val('').trigger('change');
@@ -350,44 +309,6 @@ jQuery(document).ready(function($) {
 		
 		return null;
 	};
-	
-	var createSelect = function(adapter, itemsArr){
-		
-		jQuery.fn.select2.amd.define(adapter, 
-		['select2/data/array','select2/utils'],
-			function (ArrayData, Utils) {
-				function CustomData($element, options) {
-					CustomData.__super__.constructor.call(this, $element, options);
-				}
-
-				Utils.Extend(CustomData, ArrayData);
-				
-				CustomData.prototype.query = function (params, callback) {
-					var items = itemsArr;
-					results = [];
-					if (params.term && params.term !== '') {
-						var upperTerm = params.term.toUpperCase();
-						results = _.filter(items, function(e) {
-							return e.upperText.indexOf(upperTerm) >= 0;
-						});
-					} else {
-						results = items;
-					}
-
-					if (!("page" in params)) {
-						params.page = 1;
-					}
-					var data = {};
-					var pageSize = 50;
-					data.results = results.slice((params.page - 1) * pageSize, params.page * pageSize);
-					data.pagination = {};
-					data.pagination.more = params.page * pageSize < results.length;
-					callback(data);
-				};
-				return CustomData;
-			}
-		);
-	}
 	
 	var cf7_fields = jQuery('.wpcf7-pdf-forms-admin .marked-row-background .cf7-field-list');
 	var cf7_fields_embed = jQuery('.wpcf7-pdf-forms-admin .image-embeds .cf7-field-list');
@@ -589,6 +510,44 @@ jQuery(document).ready(function($) {
 		});
 	};
 	
+	var createSelect = function(adapter, itemsArr){
+		
+		jQuery.fn.select2.amd.define(adapter, 
+		['select2/data/array','select2/utils'],
+			function (ArrayData, Utils) {
+				function CustomData($element, options) {
+					CustomData.__super__.constructor.call(this, $element, options);
+				}
+
+				Utils.Extend(CustomData, ArrayData);
+				
+				CustomData.prototype.query = function (params, callback) {
+					var items = itemsArr;
+					results = [];
+					if (params.term && params.term !== '') {
+						var upperTerm = params.term.toUpperCase();
+						results = _.filter(items, function(e) {
+							return e.upperText.indexOf(upperTerm) >= 0;
+						});
+					} else {
+						results = items;
+					}
+
+					if (!("page" in params)) {
+						params.page = 1;
+					}
+					var data = {};
+					var pageSize = 50;
+					data.results = results.slice((params.page - 1) * pageSize, params.page * pageSize);
+					data.pagination = {};
+					data.pagination.more = params.page * pageSize < results.length;
+					callback(data);
+				};
+				return CustomData;
+			}
+		);
+	}
+	
 	createSelect('pdf_files_adapter', pdf_select2Files);
 	pdf_files.select2({
 		ajax: {},
@@ -661,6 +620,15 @@ jQuery(document).ready(function($) {
 			complete: function() { 
 				hideSpinner(); 
 				// To prevent cf7FieldsCache from being empty, you need to connect select2 here
+				createSelect('unmappedPdfFieldsAdapter', getUnmappedPdfFields());
+				pdf_fields_dropdown.select2({
+					ajax: {},
+					width: '100%',
+					placeholder: "Select Item",
+					allowClear: true,
+					dropdownParent: jQuery(pdf_fields_dropdown).parent(),
+					dataAdapter: jQuery.fn.select2.amd.require("unmappedPdfFieldsAdapter")
+				});
 				jQuery('.wpcf7-pdf-forms-admin .marked-row-background .cf7-field-list, .wpcf7-pdf-forms-admin .image-embeds .cf7-field-list').select2({
 					data: cf7FieldsCache,
 					templateSelection: function (data, container) {
@@ -669,6 +637,14 @@ jQuery(document).ready(function($) {
 					},
 					minimumInputLength: 1,
 					dropdownParent: jQuery(cf7_fields).parent(),
+				});
+				createSelect('page_list_adapter', page_list);
+				pages.select2({
+					ajax: {},
+					placeholder: "Select Page",
+					allowClear: true,
+					dropdownParent: jQuery(cf7_fields).parent(),
+					dataAdapter: jQuery.fn.select2.amd.require("page_list_adapter")
 				});
 			}
 		});
@@ -1208,14 +1184,6 @@ jQuery(document).ready(function($) {
 				pages.find('option:eq(1)').prop('selected', true);
 		}
 	};
-	createSelect('page_list_adapter', page_list);
-	pages.select2({
-		ajax: {},
-		placeholder: "Select File",
-		allowClear: true,
-		dropdownParent: jQuery(cf7_fields).parent(),
-		dataAdapter: jQuery.fn.select2.amd.require("page_list_adapter")
-	});
 	
 	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("change", '.pdf-files-list', refreshPageList);
 	
