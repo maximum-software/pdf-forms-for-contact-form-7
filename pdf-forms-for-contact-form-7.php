@@ -1492,7 +1492,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$fields[] = array(
 					'id' => $tag,
 					'name' => $tag,
-//					'caption' => $tag,
 					'text' => $tag,
 					'pdf_field' => $pdf_field,
 				);
