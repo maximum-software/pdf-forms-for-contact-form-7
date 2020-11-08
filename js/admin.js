@@ -510,7 +510,7 @@ jQuery(document).ready(function($) {
 		});
 	};
 	
-	var createSelect = function(adapter, itemsArr){
+	var createSelect = function(selectElement, adapter, itemsArr, otherOptions){
 		
 		jQuery.fn.select2.amd.define(adapter, 
 		['select2/data/array','select2/utils'],
@@ -546,16 +546,23 @@ jQuery(document).ready(function($) {
 				return CustomData;
 			}
 		);
+		if(otherOptions != undefined){
+			var templateSelection = function (data, container) {
+				jQuery(data.element).attr('data-mailtags', data['data-mailtags']);
+				return data.text;
+			};
+		}
+		selectElement.select2({
+			ajax: {},
+			placeholder: "Select item",
+			allowClear: true,
+			templateSelection: templateSelection,
+			dropdownParent: jQuery(cf7_fields).parent(),
+			dataAdapter: jQuery.fn.select2.amd.require(adapter)
+		});
 	}
 	
-	createSelect('pdf_files_adapter', pdf_select2Files);
-	pdf_files.select2({
-		ajax: {},
-		placeholder: "Select File",
-		allowClear: true,
-		dropdownParent: jQuery(cf7_fields).parent(),
-		dataAdapter: jQuery.fn.select2.amd.require("pdf_files_adapter")
-	});
+	createSelect(pdf_files, 'pdf_files_adapter', pdf_select2Files);
 	
 	var preloadData = function() {
 		
@@ -620,32 +627,10 @@ jQuery(document).ready(function($) {
 			complete: function() { 
 				hideSpinner(); 
 				// To prevent cf7FieldsCache from being empty, you need to connect select2 here
-				createSelect('unmappedPdfFieldsAdapter', getUnmappedPdfFields());
-				pdf_fields_dropdown.select2({
-					ajax: {},
-					width: '100%',
-					placeholder: "Select Item",
-					allowClear: true,
-					dropdownParent: jQuery(pdf_fields_dropdown).parent(),
-					dataAdapter: jQuery.fn.select2.amd.require("unmappedPdfFieldsAdapter")
-				});
-				jQuery('.wpcf7-pdf-forms-admin .marked-row-background .cf7-field-list, .wpcf7-pdf-forms-admin .image-embeds .cf7-field-list').select2({
-					data: cf7FieldsCache,
-					templateSelection: function (data, container) {
-						jQuery(data.element).attr('data-mailtags', data['data-mailtags']);
-						return data.text;
-					},
-					minimumInputLength: 1,
-					dropdownParent: jQuery(cf7_fields).parent(),
-				});
-				createSelect('page_list_adapter', page_list);
-				pages.select2({
-					ajax: {},
-					placeholder: "Select Page",
-					allowClear: true,
-					dropdownParent: jQuery(cf7_fields).parent(),
-					dataAdapter: jQuery.fn.select2.amd.require("page_list_adapter")
-				});
+				createSelect(pdf_fields_dropdown, 'unmappedPdfFieldsAdapter', getUnmappedPdfFields());
+				createSelect(cf7_fields, 'cf7FieldsCacheAdapter', cf7FieldsCache, true);
+				createSelect(cf7_fields_embed, 'cf7FieldsCacheAdapter', cf7FieldsCache, true);
+				createSelect(pages, 'page_list_adapter', page_list);
 			}
 		});
 	};
