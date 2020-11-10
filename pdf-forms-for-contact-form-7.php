@@ -705,6 +705,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					"image/bmp",
 					"image/x-ms-bmp",
 					"image/svg+xml",
+					"image/webp",
 				);
 			
 			if( $mimetype )
