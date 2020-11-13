@@ -285,7 +285,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				wp_register_script( 'wpcf7_pdf_forms_admin_script', plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery', 'jcrop' ), self::VERSION );
 				wp_register_style( 'wpcf7_pdf_forms_admin_style', plugin_dir_url( __FILE__ ) . 'css/admin.css', array( 'jcrop' ), self::VERSION );
-				wp_register_script( 'wpcf7_pdf_forms_select2_script', plugin_dir_url( __FILE__ ) . 'js/select2.min.js', array( 'jquery' ), '4.0.13');
+				wp_register_script( 'wpcf7_pdf_forms_select2_script', plugin_dir_url( __FILE__ ) . 'js/select2/select2.min.js', array( 'jquery' ), '4.0.13');
 				wp_register_style( 'wpcf7_pdf_forms_select2_style', plugin_dir_url( __FILE__ ) . 'css/select2.min.css', array(), '4.0.13');
 				
 				wp_localize_script( 'wpcf7_pdf_forms_admin_script', 'wpcf7_pdf_forms', array(

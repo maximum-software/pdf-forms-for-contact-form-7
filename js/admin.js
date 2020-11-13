@@ -168,7 +168,7 @@ jQuery(document).ready(function($) {
 			if(ids.indexOf(field.id) == -1)
 			{
 				ids.push(field.id);
-				field.upperText = String(field.text).toUpperCase();
+				field.lowerText = String(field.text).toLowerCase();
 				pdfFields.push(field);
 			}
 		});
@@ -195,9 +195,9 @@ jQuery(document).ready(function($) {
 			var field_attachment_id = field_pdf_field.substr(0, field_pdf_field.indexOf('-'));
 			var field_pdf_field_name = field_pdf_field.substr(field_pdf_field.indexOf('-')+1);
 
-			if(mappings.indexOf(mappings[f]) != -1)
+			for(var i=0, l=mappings.length; i<l; i++)
 			{
-				var mapping_pdf_field = String(mappings[f].pdf_field);
+				var mapping_pdf_field = String(mappings[i].pdf_field);
 				var mapping_attachment_id = mapping_pdf_field.substr(0, mapping_pdf_field.indexOf('-'));
 				var mapping_pdf_field_name = mapping_pdf_field.substr(mapping_pdf_field.indexOf('-')+1);
 				
@@ -211,26 +211,24 @@ jQuery(document).ready(function($) {
 		
 		return pdf_fields;
 	};
-
-	var pdf_fields_dropdown = jQuery('.wpcf7-pdf-forms-admin .pdf-field-list');
 	
 	var refreshPdfFields = function() {
-		pdf_fields_dropdown.val('').trigger('change');
+		select_pdf_fields.val('').trigger('change');
 		updateTagHint();
 	};
 	
 	var cf7FieldsCache = [];
 	var cf7Select2Cache = [];
-
+	
 	var precomputeCf7Select2Cache = function() {
-
+		
 		cf7Select2Cache = cf7FieldsCache;
 		
 		jQuery.each(cf7Select2Cache, function(i, field) {
-			cf7Select2Cache[i].upperText = String(cf7Select2Cache[i].text).toUpperCase();
+			cf7Select2Cache[i].lowerText = String(cf7Select2Cache[i].text).toLowerCase();
 			cf7Select2Cache[i]['data-mailtags'] = false;
 		});
-			
+		
 		var mailtags = [
 			 '[_date]'
 			,'[_date] [_time]'
@@ -262,7 +260,7 @@ jQuery(document).ready(function($) {
 		];
 		
 		jQuery.each(mailtags, function(i, mailtag) {
-			cf7Select2Cache.push({id: mailtag, text: mailtag, upperText: String(mailtag).toUpperCase(), 'data-mailtags': true});
+			cf7Select2Cache.push({id: mailtag, text: mailtag, lowerText: String(mailtag).toLowerCase(), 'data-mailtags': true});
 		});
 	};
 	
@@ -310,13 +308,10 @@ jQuery(document).ready(function($) {
 		return null;
 	};
 	
-	var cf7_fields = jQuery('.wpcf7-pdf-forms-admin .marked-row-background .cf7-field-list');
-	var cf7_fields_embed = jQuery('.wpcf7-pdf-forms-admin .image-embeds .cf7-field-list');
-	
 	var refreshCf7Fields = function() {
 		precomputeCf7Select2Cache();
-		cf7_fields.val('').trigger('change');
-		cf7_fields_embed.val('').trigger('change');
+		select_cf7_fields.val('').trigger('change');
+		jQuery('.wpcf7-pdf-forms-admin .image-embeds .cf7-field-list').val('').trigger('change');
 	};
 	
 	var getData = function(field) {
@@ -428,8 +423,7 @@ jQuery(document).ready(function($) {
 		delete attachmentInfo[attachment_id];
 	}
 	
-	var pdf_select2Files = [];
-	var pdf_files = jQuery('.wpcf7-pdf-forms-admin .pdf-files-list');
+	var pdfSelect2Files = [];
 	var addAttachment = function(data) {
 		
 		var attachment_id = data.attachment_id;
@@ -498,7 +492,7 @@ jQuery(document).ready(function($) {
 		});
 		
 		jQuery('.wpcf7-pdf-forms-admin .pdf-attachments tr.pdf-buttons').before(tag);
-		pdf_select2Files.push({id: attachment_id, text: '[' + attachment_id + '] ' + filename, upperText: String('[' + attachment_id + '] ' + filename).toUpperCase() });
+		pdfSelect2Files.push({id: attachment_id, text: '[' + attachment_id + '] ' + filename, lowerText: String('[' + attachment_id + '] ' + filename).toLowerCase() });
 		
 		if(attachments.length==1)
 			refreshPageList();
@@ -510,59 +504,91 @@ jQuery(document).ready(function($) {
 		});
 	};
 	
-	var createSelect = function(selectElement, adapter, itemsArr, otherOptions){
-		
-		jQuery.fn.select2.amd.define(adapter, 
-		['select2/data/array','select2/utils'],
-			function (ArrayData, Utils) {
-				function CustomData($element, options) {
-					CustomData.__super__.constructor.call(this, $element, options);
-				}
-
-				Utils.Extend(CustomData, ArrayData);
-				
-				CustomData.prototype.query = function (params, callback) {
-					var items = itemsArr;
-					results = [];
-					if (params.term && params.term !== '') {
-						var upperTerm = params.term.toUpperCase();
-						results = _.filter(items, function(e) {
-							return e.upperText.indexOf(upperTerm) >= 0;
-						});
-					} else {
-						results = items;
-					}
-
-					if (!("page" in params)) {
-						params.page = 1;
-					}
-					var data = {};
-					var pageSize = 50;
-					data.results = results.slice((params.page - 1) * pageSize, params.page * pageSize);
-					data.pagination = {};
-					data.pagination.more = params.page * pageSize < results.length;
-					callback(data);
-				};
-				return CustomData;
+	jQuery.fn.select2.amd.define("myadapter", 
+	['select2/data/array','select2/utils'],
+		function (ArrayData, Utils) {
+			function CustomData($element, options) {
+				CustomData.__super__.constructor.call(this, $element, options);
 			}
-		);
-		if(otherOptions != undefined){
-			var templateSelection = function (data, container) {
-				jQuery(data.element).attr('data-mailtags', data['data-mailtags']);
-				return data.text;
+			
+			Utils.Extend(CustomData, ArrayData);
+			
+			CustomData.prototype.query = function (params, callback) {
+				var items = globalSelectObj[this.options.options.myListName][0];
+				
+				var results = [];
+				if (params.term && params.term !== '') {
+					var upperTerm = params.term.toLowerCase();
+					results = _.filter(items, function(e) {
+						return e.lowerText.indexOf(upperTerm) >= 0;
+					});
+				} else {
+					results = items;
+				}
+				
+				if (!("page" in params)) {
+					params.page = 1;
+				}
+				var data = {};
+				var pageSize = 50;
+				data.results = results.slice((params.page - 1) * pageSize, params.page * pageSize);
+				data.pagination = {};
+				data.pagination.more = params.page * pageSize < results.length;
+				callback(data);
 			};
+			return CustomData;
 		}
-		selectElement.select2({
-			ajax: {},
-			placeholder: "Select item",
-			allowClear: true,
-			templateSelection: templateSelection,
-			dropdownParent: jQuery(cf7_fields).parent(),
-			dataAdapter: jQuery.fn.select2.amd.require(adapter)
-		});
-	}
+	);
 	
-	createSelect(pdf_files, 'pdf_files_adapter', pdf_select2Files);
+	var globalSelectObj = {
+		'unmappedPdfFields':[], 
+		'cf7FieldsCache':[],
+		'pdfSelect2Files':[],
+		'pageList':[]
+	};
+	
+	var select_pdf_fields = jQuery('.wpcf7-pdf-forms-admin .pdf-field-list');
+	var select_cf7_fields = jQuery('.wpcf7-pdf-forms-admin .marked-row-background .cf7-field-list');
+	var select_pdf_files = jQuery('.wpcf7-pdf-forms-admin .pdf-files-list');
+	var select_pages = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .page-list');
+
+	select_pdf_fields.select2({
+		ajax: {},
+		myListName: "unmappedPdfFields",
+		placeholder: "Select item",
+		allowClear: false,
+		dropdownParent: jQuery(select_cf7_fields).parent(),
+		dataAdapter: jQuery.fn.select2.amd.require("myadapter")
+	});
+	jQuery('.wpcf7-pdf-forms-admin .marked-row-background .cf7-field-list, .wpcf7-pdf-forms-admin .image-embeds .cf7-field-list').select2({
+		ajax: {},
+		myListName: "cf7FieldsCache",
+		placeholder: "Select item",
+		allowClear: false,
+		templateSelection: function (data, container) {
+			jQuery(data.element).attr('data-mailtags', data['data-mailtags']);
+			return data.text;
+		},
+		dropdownParent: jQuery(select_cf7_fields).parent(),
+		dataAdapter: jQuery.fn.select2.amd.require("myadapter")
+	});
+	select_pdf_files.select2({
+		ajax: {},
+		myListName: "pdfSelect2Files",
+		placeholder: "Select item",
+		allowClear: false,
+		dropdownParent: jQuery(select_cf7_fields).parent(),
+		dataAdapter: jQuery.fn.select2.amd.require("myadapter")
+	});
+	select_pages.select2({
+		ajax: {},
+		myListName: "pageList",
+		width: '100%',
+		placeholder: "Select item",
+		allowClear: false,
+		dropdownParent: jQuery(select_cf7_fields).parent(),
+		dataAdapter: jQuery.fn.select2.amd.require("myadapter")
+	});
 	
 	var preloadData = function() {
 		
@@ -618,20 +644,16 @@ jQuery(document).ready(function($) {
 					jQuery.each(data.embeds, function(index, embed) { if(embed.id && embed_id_autoinc < embed.id) embed_id_autoinc = embed.id; });
 					jQuery.each(data.embeds, function(index, embed) { addEmbed(embed); });
 				}
-				
+				globalSelectObj.unmappedPdfFields.push(getUnmappedPdfFields());
+				globalSelectObj.cf7FieldsCache.push(cf7FieldsCache);
+				globalSelectObj.pdfSelect2Files.push(pdfSelect2Files);
+				globalSelectObj.pageList.push(pageList);
 			},
 			
 			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
 			
 			beforeSend: function() { showSpinner(); },
-			complete: function() { 
-				hideSpinner(); 
-				// To prevent cf7FieldsCache from being empty, you need to connect select2 here
-				createSelect(pdf_fields_dropdown, 'unmappedPdfFieldsAdapter', getUnmappedPdfFields());
-				createSelect(cf7_fields, 'cf7FieldsCacheAdapter', cf7FieldsCache, true);
-				createSelect(cf7_fields_embed, 'cf7FieldsCacheAdapter', cf7FieldsCache, true);
-				createSelect(pages, 'page_list_adapter', page_list);
-			}
+			complete: function() { hideSpinner(); }
 		});
 	};
 	
@@ -1151,22 +1173,22 @@ jQuery(document).ready(function($) {
 		});
 	};
 	
-	var pages = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .page-list');
-	var page_list = [];
-		page_list.push({id: 0, text: 'all', upperText: String('all').toUpperCase() });
+	var pageList = [];
+		pageList.push({id: 0, text: 'all', lowerText: String('all').toLowerCase() });
 	
 	var refreshPageList = function()
 	{
+		select_pages.val('').trigger('change');
 		var files = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .pdf-files-list');
 		var info = getAttachmentInfo(files.val());
 		if(info)
 		{
 			jQuery.each(info.pages, function(p, page){
-				page_list.push({id: page.number, text: page.number, upperText: String(page.number).toUpperCase() });
+				pageList.push({id: page.number, text: page.number, lowerText: String(page.number).toLowerCase() });
 			});
 			
 			if(info.pages.length > 0)
-				pages.find('option:eq(1)').prop('selected', true);
+				select_pages.find('option:eq(1)').prop('selected', true);
 		}
 	};
 	
