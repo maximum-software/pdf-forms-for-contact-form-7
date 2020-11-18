@@ -214,7 +214,10 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	private function wp_remote_args()
 	{
 		return array(
-			'headers'     => array( 'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8' ),
+			'headers'     => array(
+				'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8',
+				'Referer' => home_url(),
+			),
 			'compress'    => true,
 			'decompress'  => true,
 			'timeout'     => 300,
