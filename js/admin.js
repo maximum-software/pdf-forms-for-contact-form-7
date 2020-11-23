@@ -218,15 +218,16 @@ jQuery(document).ready(function($) {
 	};
 	
 	var cf7FieldsCache = [];
-	var cf7Select2Cache = [];
 	
 	var precomputeCf7Select2Cache = function() {
 		
-		cf7Select2Cache = cf7FieldsCache;
+		var cf7Select2Cache = [...cf7FieldsCache]; // shallow copy
 		
 		jQuery.each(cf7Select2Cache, function(i, field) {
-			cf7Select2Cache[i].lowerText = String(cf7Select2Cache[i].text).toLowerCase();
-			cf7Select2Cache[i]['data-mailtags'] = false;
+			field = {...field}; // shallow copy
+			field.lowerText = String(cf7Select2Cache[i].text).toLowerCase();
+			field['data-mailtags'] = false;
+			cf7Select2Cache[i] = field;
 		});
 		
 		var mailtags = [
@@ -260,8 +261,15 @@ jQuery(document).ready(function($) {
 		];
 		
 		jQuery.each(mailtags, function(i, mailtag) {
-			cf7Select2Cache.push({id: mailtag, text: mailtag, lowerText: String(mailtag).toLowerCase(), 'data-mailtags': true});
+			cf7Select2Cache.push({
+				id: mailtag,
+				text: mailtag,
+				lowerText: String(mailtag).toLowerCase(),
+				'data-mailtags': true
+			});
 		});
+		
+		globalSelectObj.cf7FieldsCache = [cf7Select2Cache];
 	};
 	
 	var loadCf7Fields = function(callback) {
@@ -645,7 +653,6 @@ jQuery(document).ready(function($) {
 					jQuery.each(data.embeds, function(index, embed) { addEmbed(embed); });
 				}
 				globalSelectObj.unmappedPdfFields.push(getUnmappedPdfFields());
-				globalSelectObj.cf7FieldsCache.push(cf7FieldsCache);
 				globalSelectObj.pdfSelect2Files.push(pdfSelect2Files);
 				globalSelectObj.pageList.push(pageList);
 			},
