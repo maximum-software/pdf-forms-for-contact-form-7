@@ -500,7 +500,11 @@ jQuery(document).ready(function($) {
 		});
 		
 		jQuery('.wpcf7-pdf-forms-admin .pdf-attachments tr.pdf-buttons').before(tag);
-		pdfSelect2Files.push({id: attachment_id, text: '[' + attachment_id + '] ' + filename, lowerText: String('[' + attachment_id + '] ' + filename).toLowerCase() });
+		pdfSelect2Files.push({
+			id: attachment_id,
+			text: '[' + attachment_id + '] ' + filename,
+			lowerText: String('[' + attachment_id + '] ' + filename).toLowerCase()
+		});
 		
 		if(attachments.length==1)
 			refreshPageList();
@@ -1183,7 +1187,11 @@ jQuery(document).ready(function($) {
 	};
 	
 	var pageList = [];
-		pageList.push({id: 0, text: 'all', lowerText: String('all').toLowerCase() });
+	pageList.push({
+		id: 0,
+		text: 'all',
+		lowerText: String('all').toLowerCase()
+	});
 	
 	var refreshPageList = function()
 	{
