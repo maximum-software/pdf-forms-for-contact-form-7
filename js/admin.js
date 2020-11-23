@@ -213,6 +213,7 @@ jQuery(document).ready(function($) {
 	};
 	
 	var refreshPdfFields = function() {
+		globalSelectObj.unmappedPdfFields = [getUnmappedPdfFields()];
 		select_pdf_fields.val('').trigger('change');
 		updateTagHint();
 	};
@@ -687,7 +688,7 @@ jQuery(document).ready(function($) {
 					jQuery.each(data.embeds, function(index, embed) { if(embed.id && embed_id_autoinc < embed.id) embed_id_autoinc = embed.id; });
 					jQuery.each(data.embeds, function(index, embed) { addEmbed(embed); });
 				}
-				globalSelectObj.unmappedPdfFields.push(getUnmappedPdfFields());
+				
 				globalSelectObj.pdfSelect2Files.push(pdfSelect2Files);
 				globalSelectObj.pageList.push(pageList);
 			},
