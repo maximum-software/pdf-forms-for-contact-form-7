@@ -194,7 +194,7 @@ jQuery(document).ready(function($) {
 			var field_pdf_field = String(field.id);
 			var field_attachment_id = field_pdf_field.substr(0, field_pdf_field.indexOf('-'));
 			var field_pdf_field_name = field_pdf_field.substr(field_pdf_field.indexOf('-')+1);
-
+			
 			for(var i=0, l=mappings.length; i<l; i++)
 			{
 				var mapping_pdf_field = String(mappings[i].pdf_field);
@@ -654,6 +654,7 @@ jQuery(document).ready(function($) {
 			
 			beforeSend: function() { showSpinner(); },
 			complete: function() { hideSpinner(); }
+			
 		});
 	};
 	
@@ -727,6 +728,7 @@ jQuery(document).ready(function($) {
 			var cf7_field_caption = data.cf7_field;
 			if(cf7_field_data)
 				cf7_field_caption = cf7_field_data.text;
+			
 			var template = jQuery('.wpcf7-pdf-forms-admin .pdf-mapping-row-template');
 			var tag = template.clone().removeClass('pdf-mapping-row-template').addClass('pdf-mapping-row');
 			
@@ -1179,12 +1181,17 @@ jQuery(document).ready(function($) {
 	var refreshPageList = function()
 	{
 		select_pages.val('').trigger('change');
+		
 		var files = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .pdf-files-list');
 		var info = getAttachmentInfo(files.val());
 		if(info)
 		{
 			jQuery.each(info.pages, function(p, page){
-				pageList.push({id: page.number, text: page.number, lowerText: String(page.number).toLowerCase() });
+				pageList.push({
+					id: page.number,
+					text: page.number,
+					lowerText: String(page.number).toLowerCase()
+				});
 			});
 			
 			if(info.pages.length > 0)
