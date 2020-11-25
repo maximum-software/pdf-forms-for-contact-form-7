@@ -690,7 +690,6 @@ jQuery(document).ready(function($) {
 				}
 				
 				globalSelectObj.pdfSelect2Files.push(pdfSelect2Files);
-				globalSelectObj.pageList.push(pageList);
 			},
 			
 			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
@@ -1218,20 +1217,19 @@ jQuery(document).ready(function($) {
 		});
 	};
 	
-	var pageList = [];
-	pageList.push({
-		id: 0,
-		text: 'all',
-		lowerText: String('all').toLowerCase()
-	});
-	
 	var refreshPageList = function()
 	{
-		select_pages.val('').trigger('change');
+		var pageList = [];
+		
+		pageList.push({
+			id: 0,
+			text: 'all',
+			lowerText: String('all').toLowerCase()
+		});
 		
 		var files = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .pdf-files-list');
 		var info = getAttachmentInfo(files.val());
-		if(info)
+		if(typeof info != 'undefined' && info !== null)
 		{
 			jQuery.each(info.pages, function(p, page){
 				pageList.push({
@@ -1240,10 +1238,13 @@ jQuery(document).ready(function($) {
 					lowerText: String(page.number).toLowerCase()
 				});
 			});
-			
-			if(info.pages.length > 0)
-				select_pages.find('option:eq(1)').prop('selected', true);
 		}
+		
+		globalSelectObj.pageList = [pageList];
+		
+		var id = typeof info != 'undefined' && info !== null && info.pages.length > 0 ? 1 : 0;
+		// TODO: figure out why this doesn't work
+		select_pages.val(id).trigger('change');
 	};
 	
 	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("change", '.pdf-files-list', refreshPageList);
