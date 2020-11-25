@@ -153,6 +153,23 @@
 	text-overflow: ellipsis;
 }
 
+.wpcf7-pdf-forms-admin td.select-dropdown
+{
+	position: relative;
+}
+
+.wpcf7-pdf-forms-admin .select2
+{
+	width: 100%;
+	max-width: 100%;
+	max-height: 100%;
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	bottom: 5px;
+	right: 5px;
+}
+
 .wpcf7-pdf-forms-admin .footer
 {
 	padding-bottom: 15px;

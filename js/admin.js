@@ -611,12 +611,15 @@ jQuery(document).ready(function($) {
 	
 	jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').select2({
 		ajax: {},
+		width: '100%',
 		sharedDataElement: "unmappedPdfFields",
 		dropdownParent: jQuery('.wpcf7-pdf-forms-admin'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	jQuery('.wpcf7-pdf-forms-admin .cf7-field-list').select2({
 		ajax: {},
+		width: '100%',
+		dropdownAutoWidth: true,
 		sharedDataElement: "cf7FieldsCache",
 		templateSelection: function (data, container) {
 			jQuery(data.element).attr('data-mailtags', data['data-mailtags']);
@@ -627,14 +630,17 @@ jQuery(document).ready(function($) {
 	});
 	jQuery('.wpcf7-pdf-forms-admin .pdf-files-list').select2({
 		ajax: {},
+		width: '100%',
+		dropdownAutoWidth: true,
 		sharedDataElement: "pdfSelect2Files",
 		dropdownParent: jQuery('.wpcf7-pdf-forms-admin'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	jQuery('.wpcf7-pdf-forms-admin .page-list').select2({
 		ajax: {},
-		sharedDataElement: "pageList",
 		width: '100%',
+		dropdownAutoWidth: true,
+		sharedDataElement: "pageList",
 		dropdownParent: jQuery('.wpcf7-pdf-forms-admin'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
