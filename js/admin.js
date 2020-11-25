@@ -213,7 +213,7 @@ jQuery(document).ready(function($) {
 	};
 	
 	var refreshPdfFields = function() {
-		globalSelectObj.unmappedPdfFields = getUnmappedPdfFields();
+		select2SharedData.unmappedPdfFields = getUnmappedPdfFields();
 		select_pdf_fields.val('').trigger('change');
 		updateTagHint();
 	};
@@ -301,7 +301,7 @@ jQuery(document).ready(function($) {
 			});
 		});
 		
-		globalSelectObj.cf7FieldsCache = cf7Select2Cache;
+		select2SharedData.cf7FieldsCache = cf7Select2Cache;
 	};
 	
 	var loadCf7Fields = function(callback) {
@@ -531,7 +531,7 @@ jQuery(document).ready(function($) {
 		});
 		
 		jQuery('.wpcf7-pdf-forms-admin .pdf-attachments tr.pdf-buttons').before(tag);
-		globalSelectObj.pdfSelect2Files.push({
+		select2SharedData.pdfSelect2Files.push({
 			id: attachment_id,
 			text: '[' + attachment_id + '] ' + filename,
 			lowerText: String('[' + attachment_id + '] ' + filename).toLowerCase()
@@ -547,7 +547,7 @@ jQuery(document).ready(function($) {
 		});
 	};
 	
-	jQuery.fn.select2.amd.define("myadapter", 
+	jQuery.fn.select2.amd.define("pdf-forms-for-cf7-shared-data-adapter", 
 	['select2/data/array','select2/utils'],
 		function (ArrayData, Utils) {
 			function CustomData($element, options) {
@@ -557,7 +557,7 @@ jQuery(document).ready(function($) {
 			Utils.Extend(CustomData, ArrayData);
 			
 			CustomData.prototype.query = function (params, callback) {
-				var items = globalSelectObj[this.options.options.myListName];
+				var items = select2SharedData[this.options.options.sharedDataElement];
 				
 				var results = [];
 				if (params.term && params.term !== '') {
@@ -583,7 +583,7 @@ jQuery(document).ready(function($) {
 		}
 	);
 	
-	var globalSelectObj = {
+	var select2SharedData = {
 		unmappedPdfFields: [], 
 		cf7FieldsCache: [],
 		pdfSelect2Files: [],
@@ -597,32 +597,32 @@ jQuery(document).ready(function($) {
 	
 	select_pdf_fields.select2({
 		ajax: {},
-		myListName: "unmappedPdfFields",
+		sharedDataElement: "unmappedPdfFields",
 		dropdownParent: jQuery(select_cf7_fields).parent(),
-		dataAdapter: jQuery.fn.select2.amd.require("myadapter")
+		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	jQuery('.wpcf7-pdf-forms-admin .marked-row-background .cf7-field-list, .wpcf7-pdf-forms-admin .image-embeds .cf7-field-list').select2({
 		ajax: {},
-		myListName: "cf7FieldsCache",
+		sharedDataElement: "cf7FieldsCache",
 		templateSelection: function (data, container) {
 			jQuery(data.element).attr('data-mailtags', data['data-mailtags']);
 			return data.text;
 		},
 		dropdownParent: jQuery(select_cf7_fields).parent(),
-		dataAdapter: jQuery.fn.select2.amd.require("myadapter")
+		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	select_pdf_files.select2({
 		ajax: {},
-		myListName: "pdfSelect2Files",
+		sharedDataElement: "pdfSelect2Files",
 		dropdownParent: jQuery(select_cf7_fields).parent(),
-		dataAdapter: jQuery.fn.select2.amd.require("myadapter")
+		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	select_pages.select2({
 		ajax: {},
-		myListName: "pageList",
+		sharedDataElement: "pageList",
 		width: '100%',
 		dropdownParent: jQuery(select_cf7_fields).parent(),
-		dataAdapter: jQuery.fn.select2.amd.require("myadapter")
+		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	
 	var preloadData = function() {
@@ -1229,7 +1229,7 @@ jQuery(document).ready(function($) {
 			});
 		}
 		
-		globalSelectObj.pageList = pageList;
+		select2SharedData.pageList = pageList;
 		
 		var id = typeof info != 'undefined' && info !== null && info.pages.length > 0 ? 1 : 0;
 		// TODO: figure out why this doesn't work
