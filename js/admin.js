@@ -1248,7 +1248,6 @@ jQuery(document).ready(function($) {
 		{
 			jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tags);
 			jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
-			tb_remove();
 		}
 		
 		return false;
@@ -1273,7 +1272,6 @@ jQuery(document).ready(function($) {
 				cf7_field: tag.data('cf7_field'),
 				pdf_field: tag.data('pdf_field'),
 			});
-			tb_remove();
 		}
 		
 		return false;
@@ -1314,7 +1312,6 @@ jQuery(document).ready(function($) {
 						});
 				});
 				
-				tb_remove();
 			}
 		}
 		
