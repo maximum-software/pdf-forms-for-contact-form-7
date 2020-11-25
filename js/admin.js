@@ -213,7 +213,7 @@ jQuery(document).ready(function($) {
 	};
 	
 	var refreshPdfFields = function() {
-		select2SharedData.unmappedPdfFields = getUnmappedPdfFields();
+		select2SharedData.unmappedPdfFields = getUnmappedPdfFields(); // TODO: optimize this
 		select_pdf_fields.val('').trigger('change');
 		updateTagHint();
 	};
@@ -301,6 +301,7 @@ jQuery(document).ready(function($) {
 			});
 		});
 		
+		// TODO: use the same list for both uses (cf7FieldsCache)
 		select2SharedData.cf7FieldsCache = cf7Select2Cache;
 	};
 	
@@ -531,6 +532,8 @@ jQuery(document).ready(function($) {
 		});
 		
 		jQuery('.wpcf7-pdf-forms-admin .pdf-attachments tr.pdf-buttons').before(tag);
+		// TODO: remove item when attachment is deleted
+		// better TODO: use shared list (attachmentInfo)
 		select2SharedData.pdfSelect2Files.push({
 			id: attachment_id,
 			text: '[' + attachment_id + '] ' + filename,
@@ -1229,6 +1232,7 @@ jQuery(document).ready(function($) {
 			});
 		}
 		
+		// TODO: use a new dynamically generated data adapter for better memory efficiency
 		select2SharedData.pageList = pageList;
 		
 		var id = typeof info != 'undefined' && info !== null && info.pages.length > 0 ? 1 : 0;
