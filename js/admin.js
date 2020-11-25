@@ -213,7 +213,7 @@ jQuery(document).ready(function($) {
 	};
 	
 	var refreshPdfFields = function() {
-		globalSelectObj.unmappedPdfFields = [getUnmappedPdfFields()];
+		globalSelectObj.unmappedPdfFields = getUnmappedPdfFields();
 		select_pdf_fields.val('').trigger('change');
 		updateTagHint();
 	};
@@ -301,7 +301,7 @@ jQuery(document).ready(function($) {
 			});
 		});
 		
-		globalSelectObj.cf7FieldsCache = [cf7Select2Cache];
+		globalSelectObj.cf7FieldsCache = cf7Select2Cache;
 	};
 	
 	var loadCf7Fields = function(callback) {
@@ -463,7 +463,6 @@ jQuery(document).ready(function($) {
 		delete attachmentInfo[attachment_id];
 	}
 	
-	var pdfSelect2Files = [];
 	var addAttachment = function(data) {
 		
 		var attachment_id = data.attachment_id;
@@ -532,7 +531,7 @@ jQuery(document).ready(function($) {
 		});
 		
 		jQuery('.wpcf7-pdf-forms-admin .pdf-attachments tr.pdf-buttons').before(tag);
-		pdfSelect2Files.push({
+		globalSelectObj.pdfSelect2Files.push({
 			id: attachment_id,
 			text: '[' + attachment_id + '] ' + filename,
 			lowerText: String('[' + attachment_id + '] ' + filename).toLowerCase()
@@ -558,7 +557,7 @@ jQuery(document).ready(function($) {
 			Utils.Extend(CustomData, ArrayData);
 			
 			CustomData.prototype.query = function (params, callback) {
-				var items = globalSelectObj[this.options.options.myListName][0];
+				var items = globalSelectObj[this.options.options.myListName];
 				
 				var results = [];
 				if (params.term && params.term !== '') {
@@ -585,10 +584,10 @@ jQuery(document).ready(function($) {
 	);
 	
 	var globalSelectObj = {
-		'unmappedPdfFields':[], 
-		'cf7FieldsCache':[],
-		'pdfSelect2Files':[],
-		'pageList':[]
+		unmappedPdfFields: [], 
+		cf7FieldsCache: [],
+		pdfSelect2Files: [],
+		pageList: []
 	};
 	
 	var select_pdf_fields = jQuery('.wpcf7-pdf-forms-admin .pdf-field-list');
@@ -680,8 +679,6 @@ jQuery(document).ready(function($) {
 					jQuery.each(data.embeds, function(index, embed) { if(embed.id && embed_id_autoinc < embed.id) embed_id_autoinc = embed.id; });
 					jQuery.each(data.embeds, function(index, embed) { addEmbed(embed); });
 				}
-				
-				globalSelectObj.pdfSelect2Files.push(pdfSelect2Files);
 			},
 			
 			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
@@ -1232,7 +1229,7 @@ jQuery(document).ready(function($) {
 			});
 		}
 		
-		globalSelectObj.pageList = [pageList];
+		globalSelectObj.pageList = pageList;
 		
 		var id = typeof info != 'undefined' && info !== null && info.pages.length > 0 ? 1 : 0;
 		// TODO: figure out why this doesn't work
