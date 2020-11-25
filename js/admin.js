@@ -1246,7 +1246,8 @@ jQuery(document).ready(function($) {
 		var wpcf7obj = getWpcf7obj();
 		if(wpcf7obj)
 		{
-			wpcf7obj.taggen.insert(tags);
+			jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tags);
+			jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
 			tb_remove();
 		}
 		
@@ -1265,7 +1266,8 @@ jQuery(document).ready(function($) {
 		var tagText = tag.text();
 		if(wpcf7obj && tagText)
 		{
-			wpcf7obj.taggen.insert(tagText);
+			jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tagText);
+			jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
 			loadCf7Fields();
 			addMapping({
 				cf7_field: tag.data('cf7_field'),
@@ -1300,7 +1302,8 @@ jQuery(document).ready(function($) {
 			
 			if(tagText)
 			{
-				wpcf7obj.taggen.insert(tagText);
+				jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tagText);
+				jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
 				loadCf7Fields();
 				
 				jQuery.each(pdf_fields, function(f, field) {
