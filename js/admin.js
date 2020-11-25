@@ -560,28 +560,45 @@ jQuery(document).ready(function($) {
 			Utils.Extend(CustomData, ArrayData);
 			
 			CustomData.prototype.query = function (params, callback) {
+				
 				var items = select2SharedData[this.options.options.sharedDataElement];
 				
-				var results = [];
-				if (params.term && params.term !== '') {
+				var pageSize = 20;
+				if(!("page" in params))
+					params.page = 1;
+				
+				var totalNeeded = params.page * pageSize;
+				
+				if(params.term && params.term !== '')
+				{
 					var upperTerm = params.term.toLowerCase();
-					results = _.filter(items, function(e) {
-						return e.lowerText.indexOf(upperTerm) >= 0;
+					var count = 0;
+					
+					items = items.filter(function(item) {
+						
+						// don't filter any more items if we have collected enough
+						if(count > totalNeeded)
+							return false;
+						
+						var counts = item.lowerText.indexOf(upperTerm) >= 0;
+						
+						if(counts)
+							count++;
+						
+						return counts;
 					});
-				} else {
-					results = items;
 				}
 				
-				if (!("page" in params)) {
-					params.page = 1;
-				}
-				var data = {};
-				var pageSize = 50;
-				data.results = results.slice((params.page - 1) * pageSize, params.page * pageSize);
-				data.pagination = {};
-				data.pagination.more = params.page * pageSize < results.length;
-				callback(data);
+				var more = items.length > totalNeeded;
+				
+				items = items.slice((params.page - 1) * pageSize, totalNeeded); // paginate
+				
+				callback({
+					results: items,
+					pagination: { more: more }
+				});
 			};
+			
 			return CustomData;
 		}
 	);
