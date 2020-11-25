@@ -595,20 +595,16 @@ jQuery(document).ready(function($) {
 	var select_cf7_fields = jQuery('.wpcf7-pdf-forms-admin .marked-row-background .cf7-field-list');
 	var select_pdf_files = jQuery('.wpcf7-pdf-forms-admin .pdf-files-list');
 	var select_pages = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .page-list');
-
+	
 	select_pdf_fields.select2({
 		ajax: {},
 		myListName: "unmappedPdfFields",
-		placeholder: "Select item",
-		allowClear: false,
 		dropdownParent: jQuery(select_cf7_fields).parent(),
 		dataAdapter: jQuery.fn.select2.amd.require("myadapter")
 	});
 	jQuery('.wpcf7-pdf-forms-admin .marked-row-background .cf7-field-list, .wpcf7-pdf-forms-admin .image-embeds .cf7-field-list').select2({
 		ajax: {},
 		myListName: "cf7FieldsCache",
-		placeholder: "Select item",
-		allowClear: false,
 		templateSelection: function (data, container) {
 			jQuery(data.element).attr('data-mailtags', data['data-mailtags']);
 			return data.text;
@@ -619,8 +615,6 @@ jQuery(document).ready(function($) {
 	select_pdf_files.select2({
 		ajax: {},
 		myListName: "pdfSelect2Files",
-		placeholder: "Select item",
-		allowClear: false,
 		dropdownParent: jQuery(select_cf7_fields).parent(),
 		dataAdapter: jQuery.fn.select2.amd.require("myadapter")
 	});
@@ -628,8 +622,6 @@ jQuery(document).ready(function($) {
 		ajax: {},
 		myListName: "pageList",
 		width: '100%',
-		placeholder: "Select item",
-		allowClear: false,
 		dropdownParent: jQuery(select_cf7_fields).parent(),
 		dataAdapter: jQuery.fn.select2.amd.require("myadapter")
 	});
