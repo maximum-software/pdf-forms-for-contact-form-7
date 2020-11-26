@@ -160,14 +160,18 @@
 
 .wpcf7-pdf-forms-admin .select2
 {
-	width: 100%;
-	max-width: 100%;
+	width: calc(100% - 10px);
+	max-width: calc(100% - 10px);
 	max-height: 100%;
 	position: absolute;
-	top: 5px;
-	left: 5px;
-	bottom: 5px;
-	right: 5px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.wpcf7-pdf-forms-admin .select2-results__option
+{
+	margin-bottom: 0;
 }
 
 .wpcf7-pdf-forms-admin .footer
