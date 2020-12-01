@@ -286,7 +286,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		// check /proc/self/stat (required for pdftk)
 		if( !@file_exists( '/proc/self/stat' ) )
 		{
-			$this->enterprise_extension_support_error = __( 'Chroot environments are not supported', 'pdf-forms-for-contact-form-7' );
+			$this->enterprise_extension_support_error = __( 'Environments with no access to /proc/self/stat are not supported.', 'pdf-forms-for-contact-form-7' );
 			return false;
 		}
 		
