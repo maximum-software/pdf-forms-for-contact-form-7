@@ -291,7 +291,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		}
 		
 		$arch = php_uname( "m" );
-		if( $arch != 'x86_64' )
+		if( $arch != 'x86_64' && $arch != 'amd64' )
 		{
 			$this->enterprise_extension_support_error = __( 'Required binaries are not available on this platform.', 'pdf-forms-for-contact-form-7' );
 			return false;
