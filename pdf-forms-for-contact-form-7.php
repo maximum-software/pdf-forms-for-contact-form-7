@@ -1475,7 +1475,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$fields = array();
 			foreach( $tags as $tag )
 			{
-				$name = $tag;
 				$pdf_field = self::wpcf7_field_name_decode( $tag );
 				if( $pdf_field !== FALSE )
 					$pdf_field = $pdf_field['attachment_id'].'-'.$pdf_field['encoded_field'];
