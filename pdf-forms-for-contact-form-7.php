@@ -1273,8 +1273,25 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( in_array( 'ReadOnly', $flags ) )
 					$tagOptions .= 'readonly ';
 			}
+			$unavailableNames = array(
+				'm','p','posts','w','cat','withcomments','withoutcomments'
+				,'s','search','exact','sentence','calendar','page','paged'
+				,'more','tb','pb','author','order','orderby','year','monthnum'
+				,'day','hour','minute','second','name','category_name','tag','feed'
+				,'author_name','static','pagename','page_id','error','attachment'
+				,'attachment_id','subpost','subpost_id','preview','robots','taxonomy'
+				,'term','cpage','post_type','embed'
+			);
+			foreach($unavailableNames as $item)
+			{
+				if ($item == $tagName) {
+					$i = rand(0, 999);
+					$tagName = $item.'-'.$i;
+				}
+			}
 			
-			return '[' . self::mb_trim( $tagType . ' ' . $tagName . ' ' . $tagOptions . $tagValues ) . ']';
+			$tagValues = str_replace( array('[',']'), array('&#91;','&#93;'), $tagValues);
+			return '[' . self::mb_trim( esc_html( $tagType . ' ' . $tagName . ' ' . $tagOptions . $tagValues ) ) . ']';
 		}
 		
 		/**
