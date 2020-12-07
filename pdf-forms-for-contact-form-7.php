@@ -1204,6 +1204,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return preg_replace( '/(^\s+)|(\s+$)/us', '', $str );
 		}
 		
+		private static function escape_tag_value($value)
+		{
+			$value = esc_attr($value);
+			$escape_characters = array("\\","]","|");
+			$escape_table = array('', '','');
+			$value = str_replace($escape_characters, $escape_table, $value);
+			return $value;
+		}
+		
 		/*
 		 * Generates CF7 field tag based on field data
 		 */
@@ -1221,7 +1230,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			if( $type == 'text' )
 				if( isset( $field['value'] ) )
-					$tagValues .= '"' . esc_attr( strval( $field['value'] ) ) . '" ';
+					$tagValues .= '"' . self::escape_tag_value( strval( $field['value'] ) ) . '" ';
 			
 			if( $type == 'radio' || $type == 'select' || $type == 'checkbox' )
 			{
@@ -1237,10 +1246,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					
 					if( count( $options ) == 1 )
 						// add pipe to prevent user confusion with singular options
-						$tagValues .= '"' . esc_attr( strval( $field['name'] ) ) . '|' . esc_attr( strval( reset( $options ) ) ) . '" ';
+						$tagValues .= '"' . self::escape_tag_value( strval( $field['name'] ) ) . '|' . self::escape_tag_value( strval( reset( $options ) ) ) . '" ';
 					else
 						foreach( $options as $option )
-							$tagValues .= '"' . esc_attr( strval( $option ) ) . '" ';
+							$tagValues .= '"' . self::escape_tag_value( strval( $option ) ) . '" ';
 					
 					if( $type == 'checkbox' && count( $options ) > 1 )
 						$tagOptions .= 'exclusive ';
@@ -1282,16 +1291,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				,'attachment_id','subpost','subpost_id','preview','robots','taxonomy'
 				,'term','cpage','post_type','embed'
 			);
-			foreach($unavailableNames as $item)
-			{
-				if ($item == $tagName) {
-					$i = rand(0, 999);
-					$tagName = $item.'-'.$i;
-				}
-			}
+			$tagName = self::wpcf7_field_name_encode( $tagName );
+			if( array_search( $tagName, $unavailableNames ) !== FALSE )
+				$tagName .= '-0000';
+			do { $tagName++; }
+			while( array_search( $tagName, $unavailableNames ) !== FALSE );
 			
-			$tagValues = str_replace( array('[',']'), array('&#91;','&#93;'), $tagValues);
-			return '[' . self::mb_trim( esc_html( $tagType . ' ' . $tagName . ' ' . $tagOptions . $tagValues ) ) . ']';
+			return '[' . self::mb_trim( $tagType . ' ' . $tagName . ' ' . $tagOptions . $tagValues ) . ']';
 		}
 		
 		/**
