@@ -1311,8 +1311,8 @@ jQuery(document).ready(function($) {
 		var wpcf7obj = getWpcf7obj();
 		if(wpcf7obj)
 		{
-			wpcf7obj.taggen.insert(tags);
-			tb_remove();
+			jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tags);
+			jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
 		}
 		
 		return false;
@@ -1330,13 +1330,13 @@ jQuery(document).ready(function($) {
 		var tagText = tag.text();
 		if(wpcf7obj && tagText)
 		{
-			wpcf7obj.taggen.insert(tagText);
+			jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tagText);
+			jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
 			loadCf7Fields();
 			addMapping({
 				cf7_field: tag.data('cf7_field'),
 				pdf_field: tag.data('pdf_field'),
 			});
-			tb_remove();
 		}
 		
 		return false;
@@ -1365,7 +1365,8 @@ jQuery(document).ready(function($) {
 			
 			if(tagText)
 			{
-				wpcf7obj.taggen.insert(tagText);
+				jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tagText);
+				jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
 				loadCf7Fields();
 				
 				jQuery.each(pdf_fields, function(f, field) {
@@ -1376,7 +1377,6 @@ jQuery(document).ready(function($) {
 						});
 				});
 				
-				tb_remove();
 			}
 		}
 		
