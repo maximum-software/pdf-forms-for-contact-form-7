@@ -229,6 +229,9 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	private function is_function_disabled( $function_name )
 	{
+		if( !function_exists( $function_name ) )
+			return true;
+		
 		$disabled_functions = ini_get('disable_functions');
 		if( $disabled_functions )
 			return in_array( $function_name, array_map( 'trim', explode( ',', $disabled_functions ) ) );
@@ -265,10 +268,13 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		}
 		
 		if( $this->is_function_disabled( 'exec' )
-		|| $this->is_function_disabled( 'proc_open' )
-		|| $this->is_function_disabled( 'proc_close' ) )
+		&& ( $this->is_function_disabled( 'proc_open' )
+			|| $this->is_function_disabled( 'proc_close' )
+			|| $this->is_function_disabled( 'proc_get_status' )
+			|| $this->is_function_disabled( 'proc_terminate' ) )
+		)
 		{
-			$this->enterprise_extension_support_error = __( 'PHP execute functions (exec, proc_open, proc_close) are disabled.', 'pdf-forms-for-contact-form-7' );
+			$this->enterprise_extension_support_error = __( 'All or some of PHP execute functions are disabled (exec, proc_open, proc_close, proc_get_status, proc_terminate).', 'pdf-forms-for-contact-form-7' );
 			return false;
 		}
 		
@@ -280,7 +286,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		}
 		
 		// check /proc/self/stat (required for pdftk)
-		if( !file_exists( '/proc/self/stat' ) )
+		if( !@file_exists( '/proc/self/stat' ) )
 		{
 			$this->enterprise_extension_support_error = __( 'Chroot environments are not supported', 'pdf-forms-for-contact-form-7' );
 			return false;
