@@ -267,21 +267,16 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			return false;
 		}
 		
-		if( $this->is_function_disabled( 'exec' )
-		&& ( $this->is_function_disabled( 'proc_open' )
-			|| $this->is_function_disabled( 'proc_close' )
-			|| $this->is_function_disabled( 'proc_get_status' )
-			|| $this->is_function_disabled( 'proc_terminate' ) )
-		)
+		if( $this->is_function_disabled( 'exec' ) )
 		{
-			$this->enterprise_extension_support_error = __( 'All or some of PHP execute functions are disabled (exec, proc_open, proc_close, proc_get_status, proc_terminate).', 'pdf-forms-for-contact-form-7' );
+			$this->enterprise_extension_support_error = __( 'PHP execute function (exec) is disabled.', 'pdf-forms-for-contact-form-7' );
 			return false;
 		}
 		
 		exec( 'which which', $output, $retval );
 		if( $retval !== 0 )
 		{
-			$this->enterprise_extension_support_error = __( 'PHP execute functions (exec, proc_open, proc_close) are disabled.', 'pdf-forms-for-contact-form-7' );
+			$this->enterprise_extension_support_error = __( 'PHP execute function (exec) is disabled.', 'pdf-forms-for-contact-form-7' );
 			return false;
 		}
 		
