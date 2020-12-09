@@ -247,10 +247,13 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	{
 		$this->enterprise_extension_support_error = '';
 		
-		if( version_compare( PHP_VERSION, '5.3.0' ) < 0 )
+		$required_php_version = '5.4.0';
+		if( version_compare( PHP_VERSION, $required_php_version ) < 0 )
 		{
-			$this->enterprise_extension_support_error = __( 'PHP version 5.3 or higher is required.', 'pdf-forms-for-contact-form-7' );
-			return false;
+			$this->enterprise_extension_support_error = WPCF7_Pdf_Forms::replace_tags(
+				__( 'PHP {version} or higher is required.', 'pdf-forms-for-contact-form-7' ),
+				array( 'version' => $required_php_version )
+			);
 		}
 		
 		if( strncasecmp(PHP_OS, 'WIN', 3) == 0)
