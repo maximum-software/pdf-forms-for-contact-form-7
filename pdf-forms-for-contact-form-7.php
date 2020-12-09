@@ -59,7 +59,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return;
 			
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 			
 			add_action( 'wp_ajax_wpcf7_pdf_forms_get_attachment_info', array( $this, 'wp_ajax_get_attachment_info' ) );
 			add_action( 'wp_ajax_wpcf7_pdf_forms_query_tags', array( $this, 'wp_ajax_query_tags' ) );
@@ -311,14 +310,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				wp_enqueue_script( 'wpcf7_pdf_forms_admin_script' );
 				wp_enqueue_style( 'wpcf7_pdf_forms_admin_style' );
 			}
-		}
-		
-		/**
-		 * Adds necessary scripts and styles
-		 */
-		public function enqueue_scripts( $hook )
-		{
-			wp_enqueue_style( 'font-awesome-free', '//use.fontawesome.com/releases/v5.2.0/css/all.css' );
 		}
 		
 		/**
