@@ -288,11 +288,20 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		}
 		
 		$arch = php_uname( "m" );
-		if( $arch == 'x86_64' )
-			return true;
+		if( $arch != 'x86_64' )
+		{
+			$this->enterprise_extension_support_error = __( 'Required binaries are not available on this platform.', 'pdf-forms-for-contact-form-7' );
+			return false;
+		}
 		
-		$this->enterprise_extension_support_error = __( 'Required binaries are not available on this platform.', 'pdf-forms-for-contact-form-7' );
-		return false;
+		exec( 'getenforce', $getenforce, $retval );
+		if( !$retval && trim( $getenforce[0] ) == "Enforced" )
+		{
+			$this->enterprise_extension_support_error = __( 'SELinux may cause problems with using required binaries. You may need to turn off SELinux or adjust its policies.', 'pdf-forms-for-contact-form-7' );
+			return false;
+		}
+		
+		return true;
 	}
 	
 	/*
