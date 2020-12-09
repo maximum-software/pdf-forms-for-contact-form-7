@@ -33,7 +33,6 @@ Known incompatible plugins,
  * [ShortPixel Image Optimizer](https://wordpress.org/plugins/shortpixel-image-optimiser/) (strips forms from PDF files)
  * [Contact Form 7 Live Preview](https://wordpress.org/plugins/cf7-live-preview/)
  * [Open external links in a new window](https://wordpress.org/plugins/open-external-links-in-a-new-window/)
- * [Contact Form 7 Multi-step Pro](https://codecanyon.net/item/contact-form-7-multistep-pro/19635969) (partial compatibility)
  * [WordPress Multilingual Plugin](https://wpml.org/)
  * [Contact Form 7 Skins](https://wordpress.org/plugins/contact-form-7-skins/)
 
