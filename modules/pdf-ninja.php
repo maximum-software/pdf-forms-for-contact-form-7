@@ -286,7 +286,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		// check /proc/self/stat (required for pdftk)
 		if( !@file_exists( '/proc/self/stat' ) )
 		{
-			$this->enterprise_extension_support_error = __( 'Environments with no access to /proc/self/stat are not supported.', 'pdf-forms-for-contact-form-7' );
+			$this->enterprise_extension_support_error = __( 'Hosting environments with no access to /proc/self/stat are not supported.', 'pdf-forms-for-contact-form-7' );
 			return false;
 		}
 		
@@ -294,17 +294,11 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		
 		$arch = php_uname( "m" );
 		if( $arch != 'x86_64' && $arch != 'amd64' )
-		{
 			$this->enterprise_extension_support_error .= __( 'Bundled binaries are not available for this platform, however, pdftk/qpdf/poppler/imagemagick package binaries might be usable if they are installed on the server.', 'pdf-forms-for-contact-form-7' ).' ';
-			return false;
-		}
 		
 		exec( 'getenforce', $getenforce, $retval );
 		if( !$retval && trim( $getenforce[0] ) == "Enforced" )
-		{
 			$this->enterprise_extension_support_error .= __( 'SELinux may cause problems with using required binaries. You may need to turn off SELinux or adjust its policies.', 'pdf-forms-for-contact-form-7' ).' ';
-			return false;
-		}
 		
 		if($this->enterprise_extension_support_error != '')
 		{
