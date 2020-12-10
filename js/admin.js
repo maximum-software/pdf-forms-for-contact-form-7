@@ -1510,6 +1510,9 @@ jQuery(document).ready(function($) {
 		
 		clearMessages();
 		
+		if(!confirm(wpcf7_pdf_forms.__Confirm_Delete_All_Mappings))
+			return;
+		
 		deleteAllMappings();
 		
 		return false;

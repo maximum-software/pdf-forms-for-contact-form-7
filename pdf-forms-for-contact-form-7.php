@@ -29,7 +29,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 
 		private function __construct()
 		{
-			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 			add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 			add_action( 'plugins_loaded', array( $this, 'plugin_init' ) );
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'action_links' ) );
@@ -58,6 +57,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( ! class_exists('WPCF7') )
 				return;
 			
+			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			
 			add_action( 'wp_ajax_wpcf7_pdf_forms_get_attachment_info', array( $this, 'wp_ajax_get_attachment_info' ) );
@@ -296,6 +296,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__No_WPCF7' => __( 'Please copy/paste tags manually', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Attachment' => __( 'Are you sure you want to delete this file?  This will delete field mappings and image embeds associated with this file.', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Mapping' => __( 'Are you sure you want to delete this mapping?', 'pdf-forms-for-contact-form-7' ),
+					'__Confirm_Delete_All_Mappings' => __( 'Are you sure you want to delete all mappings?', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Embed' => __( 'Are you sure you want to delete this embeded image?', 'pdf-forms-for-contact-form-7' ),
 					'__Show_Help' => __( 'Show Help', 'pdf-forms-for-contact-form-7' ),
 					'__Hide_Help' => __( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
@@ -1291,12 +1292,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				,'attachment_id','subpost','subpost_id','preview','robots','taxonomy'
 				,'term','cpage','post_type','embed'
 			);
-			$tagName = self::wpcf7_field_name_encode( $tagName );
-			if( array_search( $tagName, $unavailableNames ) !== FALSE )
+			$tagName = sanitize_title( $tagName );
+			if( array_search( $tagName, $unavailableNames ) !== FALSE ){
 				$tagName .= '-0000';
-			do { $tagName++; }
-			while( array_search( $tagName, $unavailableNames ) !== FALSE );
-			
+				do { $tagName++; }
+				while( array_search( $tagName, $unavailableNames ) !== FALSE );
+			}
 			return '[' . self::mb_trim( $tagType . ' ' . $tagName . ' ' . $tagOptions . $tagValues ) . ']';
 		}
 		
