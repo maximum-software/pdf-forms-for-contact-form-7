@@ -1209,7 +1209,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			$value = esc_attr($value);
 			$escape_characters = array("\\","]","|");
-			$escape_table = array('', '','');
+			$escape_table = array('&#92;', '&#93;','&#124;');
 			$value = str_replace($escape_characters, $escape_table, $value);
 			return $value;
 		}

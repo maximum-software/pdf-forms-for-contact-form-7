@@ -349,6 +349,10 @@ jQuery(document).ready(function($) {
 		return null;
 	};
 	
+	jQuery('.thickbox').click(function() {
+		loadCf7Fields();
+	});
+	
 	var refreshCf7Fields = function() {
 		precomputeCf7Select2Cache();
 		jQuery('.wpcf7-pdf-forms-admin .cf7-field-list').val('').trigger('change');
