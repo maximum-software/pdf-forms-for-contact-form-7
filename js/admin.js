@@ -349,10 +349,6 @@ jQuery(document).ready(function($) {
 		return null;
 	};
 	
-	jQuery('.thickbox').click(function() {
-		loadCf7Fields();
-	});
-	
 	var refreshCf7Fields = function() {
 		precomputeCf7Select2Cache();
 		jQuery('.wpcf7-pdf-forms-admin .cf7-field-list').val('').trigger('change');
@@ -1696,9 +1692,11 @@ jQuery(document).ready(function($) {
 		setEmbeds(embeds);
 	});
 	
-	wpcf7_form.change(function() {
+	var changeHandler = function() {
 		loadCf7Fields(removeOldMappings);
-	});
+	};
+	wpcf7_form.change(changeHandler);
+	jQuery('form.tag-generator-panel .insert-tag').click(changeHandler);
 	
 	preloadData();
 });
