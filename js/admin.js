@@ -1253,8 +1253,9 @@ jQuery(document).ready(function($) {
 		select2SharedData.pageList = pageList;
 		
 		var id = typeof info != 'undefined' && info !== null && info.pages.length > 0 ? 1 : 0;
-		// TODO: figure out why this doesn't work
-		jQuery('.wpcf7-pdf-forms-admin .page-list').val(id).trigger('change');
+		var option = new Option(id, pageList[id].text, true, true);
+		
+		jQuery('.wpcf7-pdf-forms-admin .page-list').append(option).val(id).trigger('change');
 	};
 	
 	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("change", '.pdf-files-list', refreshPageList);
