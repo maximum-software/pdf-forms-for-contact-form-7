@@ -1416,7 +1416,7 @@ jQuery(document).ready(function($) {
 				
 				delete data.success;
 				
-				if(data.hasOwnProperty('attachment_id'))
+				if(data.hasOwnProperty('attachment_id') && Object.keys(data.info.fields).length != 0)
 				{
 					if(data.hasOwnProperty('info'))
 					{
@@ -1424,6 +1424,8 @@ jQuery(document).ready(function($) {
 						delete data.info;
 					}
 					addAttachment(data);
+				}else{
+					confirm(wpcf7_pdf_forms.__Confirm_Download_Empty_Pdf);
 				}
 				
 			},

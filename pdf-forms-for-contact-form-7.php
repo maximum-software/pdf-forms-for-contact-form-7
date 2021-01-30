@@ -296,6 +296,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__No_WPCF7' => __( 'Please copy/paste tags manually', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Attachment' => __( 'Are you sure you want to delete this file?  This will delete field mappings and image embeds associated with this file.', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Mapping' => __( 'Are you sure you want to delete this mapping?', 'pdf-forms-for-contact-form-7' ),
+					'__Confirm_Download_Empty_Pdf' => __( 'You are trying to upload a blank document', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Embed' => __( 'Are you sure you want to delete this embeded image?', 'pdf-forms-for-contact-form-7' ),
 					'__Show_Help' => __( 'Show Help', 'pdf-forms-for-contact-form-7' ),
 					'__Hide_Help' => __( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
