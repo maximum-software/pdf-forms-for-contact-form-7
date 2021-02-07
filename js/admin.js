@@ -214,7 +214,8 @@ jQuery(document).ready(function($) {
 	
 	var refreshPdfFields = function() {
 		select2SharedData.unmappedPdfFields = getUnmappedPdfFields(); // TODO: optimize this
-		jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').val('').trigger('change');
+		option = new Option(select2SharedData.unmappedPdfFields[0].text, 0, true, true);
+		jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').append(option).val(0).trigger('change');
 		updateTagHint();
 	};
 	
@@ -351,7 +352,8 @@ jQuery(document).ready(function($) {
 	
 	var refreshCf7Fields = function() {
 		precomputeCf7Select2Cache();
-		jQuery('.wpcf7-pdf-forms-admin .cf7-field-list').val('').trigger('change');
+		option = new Option(select2SharedData.cf7FieldsCache[0].text, 0, true, true);
+		jQuery('.wpcf7-pdf-forms-admin .cf7-field-list').append(option).val(0).trigger('change');
 	};
 	
 	var getData = function(field) {
