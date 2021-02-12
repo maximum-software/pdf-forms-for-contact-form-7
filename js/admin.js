@@ -442,6 +442,9 @@ jQuery(document).ready(function($) {
 				break;
 			}
 		
+		// delete Attachment from select2SharedData
+		select2SharedData.pdfSelect2Files = select2SharedData.pdfSelect2Files.filter((elem) => elem.id !== attachment_id);
+		
 		setAttachments(attachments);
 		
 		deleteAttachmentInfo(attachment_id);
