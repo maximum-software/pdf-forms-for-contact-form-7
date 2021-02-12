@@ -448,6 +448,7 @@ jQuery(document).ready(function($) {
 		
 		refreshMappings();
 		refreshEmbeds();
+		refreshPageList();
 	};
 	
 	var setAttachmentOption = function(attachment_id, option, value) {
@@ -545,6 +546,9 @@ jQuery(document).ready(function($) {
 			
 			jQuery('.wpcf7-pdf-forms-admin .pdf-files-list option[value='+attachment_id+']').remove();
 			
+			refreshPdfFilesList();
+			refreshPageList();
+			
 			return false;
 		});
 		
@@ -557,12 +561,7 @@ jQuery(document).ready(function($) {
 			lowerText: String('[' + attachment_id + '] ' + filename).toLowerCase()
 		});
 		
-		var pdfFileDropDown = jQuery('.wpcf7-pdf-forms-admin .pdf-files-list');
-		if (pdfFileDropDown.val() === null){
-			var firstOption = select2SharedData.pdfSelect2Files[0];
-			var option = new Option(firstOption.text, firstOption.id, true, true);
-			pdfFileDropDown.append(option).val(firstOption.id).trigger('change');
-		}
+		refreshPdfFilesList();
 		
 		if(attachments.length==1)
 			refreshPageList();
@@ -1263,6 +1262,7 @@ jQuery(document).ready(function($) {
 		
 		var files = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .pdf-files-list');
 		var info = getAttachmentInfo(files.val());
+		
 		if(typeof info != 'undefined' && info !== null)
 		{
 			jQuery.each(info.pages, function(p, page){
@@ -1279,13 +1279,26 @@ jQuery(document).ready(function($) {
 		
 		var pageListDropDown = jQuery('.wpcf7-pdf-forms-admin .page-list');
 		var id = typeof info != 'undefined' && info !== null && info.pages.length > 0 ? 1 : 0;
-		if (pageListDropDown.val() === null)
+		
+		if (pageListDropDown.val() === null || pageList.length == 1 || (pageListDropDown.val() == 0 && pageList.length > 1) )
 		{
 			var firstOption = pageList[id];
 			var option = new Option(firstOption.text, firstOption.id, true, true);
 			pageListDropDown.append(option).val(firstOption.id).trigger('change');
 		}
 	};
+	
+	var refreshPdfFilesList = function()
+	{
+		var pdfFileDropDown = jQuery('.wpcf7-pdf-forms-admin .pdf-files-list');
+		
+		if (pdfFileDropDown.val() === null && select2SharedData.pdfSelect2Files.length > 0)
+		{
+			var firstOption = select2SharedData.pdfSelect2Files[0];
+			var option = new Option(firstOption.text, firstOption.id, true, true);
+			pdfFileDropDown.append(option).val(firstOption.id).trigger('change');
+		}
+	}
 	
 	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("change", '.pdf-files-list', refreshPageList);
 	
