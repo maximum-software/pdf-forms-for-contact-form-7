@@ -359,7 +359,7 @@ jQuery(document).ready(function($) {
 		precomputeCf7Select2Cache();
 		
 		var Cf7FieldDropDown = jQuery('.wpcf7-pdf-forms-admin .cf7-field-list');
-		if (!select2SharedData.cf7FieldsCache.includes(Cf7FieldDropDown.val()))
+		if (!select2SharedData.cf7FieldsCache.includes(Cf7FieldDropDown.val()) && select2SharedData.cf7FieldsCache.length > 0)
 			refreshSelect2Field(Cf7FieldDropDown, select2SharedData.cf7FieldsCache[0]);
 		else if (select2SharedData.cf7FieldsCache.length == 0)
 			Cf7FieldDropDown.empty();
