@@ -435,15 +435,20 @@ jQuery(document).ready(function($) {
 				break;
 			}
 		
-		// delete Attachment from select2SharedData
-		select2SharedData.pdfSelect2Files = select2SharedData.pdfSelect2Files.filter((elem) => elem.id !== attachment_id);
-		
 		setAttachments(attachments);
+		
+			for (var i=0, l=select2SharedData.pdfSelect2Files.length; i<l; i++)
+			if (select2SharedData.pdfSelect2Files[i].id == attachment_id)
+			{
+				select2SharedData.pdfSelect2Files.splice(i, 1);
+				break;
+			}
 		
 		deleteAttachmentInfo(attachment_id);
 		
 		refreshMappings();
 		refreshEmbeds();
+		refreshPdfFilesList();
 		refreshPageList();
 	};
 	
@@ -542,9 +547,6 @@ jQuery(document).ready(function($) {
 			
 			jQuery('.wpcf7-pdf-forms-admin .pdf-files-list option[value='+attachment_id+']').remove();
 			
-			refreshPdfFilesList();
-			refreshPageList();
-			
 			return false;
 		});
 		
@@ -557,10 +559,12 @@ jQuery(document).ready(function($) {
 			lowerText: String('[' + attachment_id + '] ' + filename).toLowerCase()
 		});
 		
-		refreshPdfFilesList();
 		
 		if(attachments.length==1)
+		{
 			refreshPageList();
+			refreshPdfFilesList();
+		}
 		
 		jQuery('.wpcf7-pdf-forms-admin .help-button').each(function(){
 			var button = jQuery(this);
