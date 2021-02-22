@@ -1552,6 +1552,9 @@ jQuery(document).ready(function($) {
 		
 		clearMessages();
 		
+		if(!confirm(wpcf7_pdf_forms.__Confirm_Delete_All_Mappings))
+			return;
+		
 		deleteAllMappings();
 		
 		return false;
@@ -1731,9 +1734,11 @@ jQuery(document).ready(function($) {
 		setEmbeds(embeds);
 	});
 	
-	wpcf7_form.change(function() {
+	var changeHandler = function() {
 		loadCf7Fields(removeOldMappings);
-	});
+	};
+	wpcf7_form.change(changeHandler);
+	jQuery('form.tag-generator-panel .insert-tag').click(changeHandler);
 	
 	preloadData();
 });

@@ -2,7 +2,7 @@
 Contributors: maximumsoftware
 Tags: pdf, form, filler, contact form, attachment, email
 Requires at least: 4.3
-Tested up to: 5.5
+Tested up to: 5.6
 Requires PHP: 5.2
 Stable tag: trunk
 Version: 1.3.3
@@ -30,6 +30,7 @@ Known problems,
  * Multi-select checkbox fields are not currently supported. Support is planned in the future.
 
 Known incompatible plugins,
+ * [Imagify](https://wordpress.org/plugins/imagify/) (strips forms from PDF files)
  * [ShortPixel Image Optimizer](https://wordpress.org/plugins/shortpixel-image-optimiser/) (strips forms from PDF files)
  * [Contact Form 7 Live Preview](https://wordpress.org/plugins/cf7-live-preview/)
  * [Open external links in a new window](https://wordpress.org/plugins/open-external-links-in-a-new-window/)
