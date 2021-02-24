@@ -490,6 +490,10 @@ jQuery(document).ready(function($) {
 				var option = jQuery(this).data('option');
 				jQuery(this).val(options[option]);
 			});
+			tag.find('.pdf-options input[type=password]').each(function() {
+				var option = jQuery(this).data('option');
+				jQuery(this).val(options[option]);
+			});
 		}
 		tag.find('.pdf-options input').data('attachment_id', attachment_id);
 		tag.find('.pdf-options input[type=checkbox]').change(function() {
@@ -502,6 +506,12 @@ jQuery(document).ready(function($) {
 			var option = jQuery(this).data('option');
 			setAttachmentOption(attachment_id, option, jQuery(this).val());
 		});
+		tag.find('.pdf-options input[type=password]').change(function() {
+			var attachment_id = jQuery(this).data('attachment_id');
+			var option = jQuery(this).data('option');
+			setAttachmentOption(attachment_id, option, jQuery(this).val());
+		});
+		
 		tag.find('.pdf-options-button').click(function() {
 			jQuery(this).closest('.pdf-attachment-row').find('.pdf-options').toggle('.pdf-options-hidden');
 		});
@@ -1076,6 +1086,7 @@ jQuery(document).ready(function($) {
 				'action': 'wpcf7_pdf_forms_query_page_image',
 				'attachment_id': attachment.attachment_id,
 				'page': embed.page,
+				'options': attachment.options,
 				'nonce': wpcf7_pdf_forms.ajax_nonce
 			},
 			cache: false,
@@ -1279,10 +1290,14 @@ jQuery(document).ready(function($) {
 		var attachmentList = [];
 		
 		if(all)
-			for(var i=0, l=attachments.length; i<l; i++)
-				attachmentList.push(attachments[i].attachment_id);
+			attachmentList = attachments;
 		else
-			attachmentList.push(attachment_id);
+			for(var i=0, l=attachments.length; i<l; i++)
+				if(attachments[i].attachment_id == attachment_id)
+				{
+					attachmentList.push(attachments[i]);
+					break;
+				}
 		
 		getTags(attachmentList, all);
 		
@@ -1384,17 +1399,22 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Attach a PDF file' button handler
-	var attachPdf = function(file_id) {
+	var attachPdf = function(file_id, owner_password = null) {
 		
 		// prevent running default button click handlers
-		event.stopPropagation();
-		event.preventDefault();
 		
+		if(event)
+		{
+			event.stopPropagation();
+			event.preventDefault();
+		}
 		clearMessages();
 		
 		var data = new FormData();
 		data.append("post_id", post_id);
 		data.append("file_id", file_id);
+		if(owner_password === null)
+			data.append("owner_password", owner_password);
 		data.append("action", 'wpcf7_pdf_forms_get_attachment_info');
 		data.append("nonce", wpcf7_pdf_forms.ajax_nonce);
 		
@@ -1412,20 +1432,38 @@ jQuery(document).ready(function($) {
 			success: function(data, textStatus, jqXHR) {
 				
 				if(!data.success)
+				{
+					if(data.reason == 'incorrectPassword')
+					{
+						// ask user for the password and retry request
+						var owner_password = prompt('Enter owner password', owner_password);
+						return attachPdf(file_id, owner_password);
+					}
 					return errorMessage(data.error_message);
+				}
 				
 				delete data.success;
 				
-				if(data.hasOwnProperty('attachment_id') && Object.keys(data.info.fields).length != 0)
+				if(Object.keys(data.info.fields).length == 0)
+					var pdf_not_empty = confirm(wpcf7_pdf_forms.__Confirm_Download_Empty_Pdf);
+				else
+					var pdf_not_empty = true;
+				
+				if(data.hasOwnProperty('attachment_id') && pdf_not_empty)
 				{
+					if(data.info.encrypted && owner_password === null)
+					{
+						// TODO: find a way to check password
+						var owner_password = prompt('Enter owner password', owner_password);
+						return attachPdf(file_id, owner_password);
+					}
+					
 					if(data.hasOwnProperty('info'))
 					{
 						setAttachmentInfo(data.attachment_id, data.info);
 						delete data.info;
 					}
 					addAttachment(data);
-				}else{
-					confirm(wpcf7_pdf_forms.__Confirm_Download_Empty_Pdf);
 				}
 				
 			},
