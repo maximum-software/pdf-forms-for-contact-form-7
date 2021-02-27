@@ -778,7 +778,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					
 					if( isset($embed['cf7_field']) && isset( $uploaded_files[$embed['cf7_field']] ) )
 					{
-						$filepath = $uploaded_files[$embed['cf7_field']];
+						$filepath = $uploaded_files[$embed['cf7_field']]; // array in CF7 v5.4, string in prior versions
+						if( is_array( $filepath ) )
+							$filepath = reset( $filepath ); // take only the first file
 						$filename = basename( $filepath );
 					}
 					
