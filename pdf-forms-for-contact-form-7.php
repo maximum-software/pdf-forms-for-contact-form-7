@@ -1000,7 +1000,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						$file = $filedata['file'];
 						if( file_exists( $file ) )
 						{
-							$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
+							if( is_callable($submission, 'add_uploaded_file') ) // available only prior to CF7 v5.4
+								$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
 							
 							if( $filedata['options']['attach_to_mail_1'] )
 								$mail["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
