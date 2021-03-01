@@ -5,7 +5,7 @@ Requires at least: 4.3
 Tested up to: 5.6.2
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.3.3
+Version: 1.3.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -51,6 +51,17 @@ Special thanks to the following sponsors of this plugin,
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.3.4 =
+
+* Release date: March 1, 2021
+
+* CF7 v5.4 is still unsupported, however, error mitigation measures were added
+* Added CF7 v5.4 compatibility: WPCF7_Submission::uploaded_files()
+* Added CF7 plugin version support checking feature
+* Added crash prevention check to CF7's add_uploaded_file call
+* Updated readme
+* Other minor fixes
 
 = 1.3.3 =
 
