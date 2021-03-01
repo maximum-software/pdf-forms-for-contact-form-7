@@ -18,6 +18,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 	class WPCF7_Pdf_Forms
 	{
 		const VERSION = '1.3.3';
+		const MIN_WPCF7_VERSION = '4.2';
+		const MAX_WPCF7_VERSION = '5.3.2';
+		const BLACKLISTED_WPCF7_VERSIONS = array( '5.4' );
 		
 		private static $instance = null;
 		private $pdf_ninja_service = null;
@@ -185,6 +188,22 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			include( $script );
 		}
 		
+		/*
+		 * Checks if CF7 version is supported
+		 */
+		public function is_wpcf7_version_supported( $version )
+		{
+			if( version_compare( $version, self::MIN_WPCF7_VERSION ) < 0
+			|| version_compare( $version, self::MAX_WPCF7_VERSION ) > 0 )
+				return false;
+			
+			foreach( self::BLACKLISTED_WPCF7_VERSIONS as $blacklisted_version )
+				if( version_compare( $version, $blacklisted_version ) == 0 )
+					return false;
+			
+			return true;
+		}
+		
 		/**
 		 * Adds plugin action links
 		 */
@@ -208,6 +227,20 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				) );
 				return;
 			}
+			
+			if( ! defined( 'WPCF7_VERSION' ) || ! $this->is_wpcf7_version_supported( WPCF7_VERSION ) )
+				echo WPCF7_Pdf_Forms::render( 'notice_error', array(
+							'label'   => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
+							'message' =>
+								self::replace_tags(
+									esc_html__( "The currently installed version of 'Contact Form 7' plugin ({current-wpcf7-version}) is not supported by the current version of 'PDF Forms Filler for Contact Form 7' plugin ({current-plugin-version}), please switch to 'Contact Form 7' plugin version {supported-wpcf7-version} to allow 'PDF Forms Filler for Contact Form 7' plugin to work.", 'pdf-forms-for-contact-form-7' ),
+									array(
+										'current-wpcf7-version' => esc_html( defined( 'WPCF7_VERSION' ) ? WPCF7_VERSION : __( "Unknown version", 'pdf-forms-for-contact-form-7' ) ),
+										'current-plugin-version' => esc_html( self::VERSION ),
+										'supported-wpcf7-version' => esc_html( self::MAX_WPCF7_VERSION ),
+									)
+								),
+						) );
 			
 			if( ( $service = $this->get_service() ) )
 				$service->admin_notices();
@@ -783,7 +816,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					
 					if( isset($embed['cf7_field']) && isset( $uploaded_files[$embed['cf7_field']] ) )
 					{
-						$filepath = $uploaded_files[$embed['cf7_field']];
+						$filepath = $uploaded_files[$embed['cf7_field']]; // array in CF7 v5.4, string in prior versions
+						if( is_array( $filepath ) )
+							$filepath = reset( $filepath ); // take only the first file
 						$filename = basename( $filepath );
 					}
 					
@@ -972,10 +1007,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						$file = $filedata['file'];
 						if( file_exists( $file ) )
 						{
-							$attachment_id = $filedata['attachment_id'];
-							$submission->add_uploaded_file( "pdf-form-".$attachment_id, $file );
-							
-							$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
+							if( is_callable($submission, 'add_uploaded_file') ) // available only prior to CF7 v5.4
+							{
+								$attachment_id = $filedata['attachment_id'];
+								$submission->add_uploaded_file( "pdf-form-".$attachment_id, $file );
+								$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
+							}
 							
 							if( $filedata['options']['attach_to_mail_1'] )
 								$mail["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
