@@ -235,9 +235,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 								self::replace_tags(
 									esc_html__( "The currently installed version of 'Contact Form 7' plugin ({current-wpcf7-version}) is not supported by the current version of 'PDF Forms Filler for Contact Form 7' plugin ({current-plugin-version}), please switch to 'Contact Form 7' plugin version {supported-wpcf7-version} to allow 'PDF Forms Filler for Contact Form 7' plugin to work.", 'pdf-forms-for-contact-form-7' ),
 									array(
-										'current-wpcf7-version' => esc_html__( defined( 'WPCF7_VERSION' ) ? WPCF7_VERSION : "Unknown version" ),
-										'current-plugin-version' => esc_html__( self::VERSION ),
-										'supported-wpcf7-version' => esc_html__( self::MAX_WPCF7_VERSION ),
+										'current-wpcf7-version' => esc_html( defined( 'WPCF7_VERSION' ) ? WPCF7_VERSION : __( "Unknown version", 'pdf-forms-for-contact-form-7' ) ),
+										'current-plugin-version' => esc_html( self::VERSION ),
+										'supported-wpcf7-version' => esc_html( self::MAX_WPCF7_VERSION ),
 									)
 								),
 						) );
