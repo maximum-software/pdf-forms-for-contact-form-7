@@ -1401,15 +1401,6 @@ jQuery(document).ready(function($) {
 	// set up 'Attach a PDF file' button handler
 	var attachPdf = function(file_id, owner_password = null) {
 		
-		// prevent running default button click handlers
-		
-		if(event)
-		{
-			event.stopPropagation();
-			event.preventDefault();
-		}
-		clearMessages();
-		
 		var data = new FormData();
 		data.append("post_id", post_id);
 		data.append("file_id", file_id);
@@ -1483,6 +1474,8 @@ jQuery(document).ready(function($) {
 		// prevent running default button click handlers
 		event.stopPropagation();
 		event.preventDefault();
+		
+		clearMessages();
 		
 		// create the pdf frame
 		var pdf_frame = wp.media({
