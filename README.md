@@ -24,7 +24,7 @@ Known problems,
 Known incompatible plugins,
 * [Imagify](https://wordpress.org/plugins/imagify/) (strips forms from PDF files)
 * [ShortPixel Image Optimizer](https://wordpress.org/plugins/shortpixel-image-optimiser/) (strips forms from PDF files)
-* [Contact Form 7 Live Preview](https://wordpress.org/plugins/cf7-live-preview/)
+* [Live Preview for Contact Form 7](https://wordpress.org/plugins/cf7-live-preview/)
 * [Open external links in a new window](https://wordpress.org/plugins/open-external-links-in-a-new-window/)
 * [WordPress Multilingual Plugin](https://wpml.org/)
 * [Contact Form 7 Skins](https://wordpress.org/plugins/contact-form-7-skins/)
