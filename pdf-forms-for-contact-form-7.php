@@ -20,7 +20,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		const VERSION = '1.3.6';
 		const MIN_WPCF7_VERSION = '4.2';
 		const MAX_WPCF7_VERSION = '5.4';
-		const BLACKLISTED_WPCF7_VERSIONS = array();
+		private static $BLACKLISTED_WPCF7_VERSIONS = array();
 		
 		private static $instance = null;
 		private $pdf_ninja_service = null;
@@ -199,7 +199,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			|| version_compare( $version, self::MAX_WPCF7_VERSION ) > 0 )
 				return false;
 			
-			foreach( self::BLACKLISTED_WPCF7_VERSIONS as $blacklisted_version )
+			foreach( self::$BLACKLISTED_WPCF7_VERSIONS as $blacklisted_version )
 				if( version_compare( $version, $blacklisted_version ) == 0 )
 					return false;
 			
@@ -696,11 +696,25 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				if( function_exists( 'finfo_open' ) )
 				{
-					$finfo = finfo_open( FILEINFO_MIME_TYPE );
-					if($finfo)
+					if( version_compare( phpversion(), "5.3" ) < 0 )
 					{
-						$mimetype = finfo_file( $finfo, $filepath );
-						finfo_close( $finfo );
+						$finfo = finfo_open( FILEINFO_MIME );
+						if($finfo)
+						{
+							$mimetype = finfo_file( $finfo, $filepath );
+							$mimetype = explode( ";", $mimetype );
+							$mimetype = reset( $mimetype );
+							finfo_close( $finfo );
+						}
+					}
+					else
+					{
+						$finfo = finfo_open( FILEINFO_MIME_TYPE );
+						if($finfo)
+						{
+							$mimetype = finfo_file( $finfo, $filepath );
+							finfo_close( $finfo );
+						}
 					}
 				}
 				
