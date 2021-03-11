@@ -73,7 +73,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'admin_init', array( $this, 'extend_tag_generator' ), 80 );
 			add_action( 'admin_menu', array( $this, 'register_services') );
 			
-			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_pdfs' ), 10, 3 );
+			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_pdfs' ), 1000, 3 );
 			add_filter( 'wpcf7_mail_components', array( $this, 'attach_files' ), 10, 3 );
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_mail_sent', array( $this, 'change_response_message' ) );
