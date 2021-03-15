@@ -3,7 +3,7 @@
 Plugin Name: PDF Forms Filler for Contact Form 7
 Plugin URI: https://github.com/maximum-software/wpcf7-pdf-forms
 Description: Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically and attached to email messages and submission responses upon form submission on your website.  Embed images into PDF files.  Uses Pdf.Ninja API for working with PDF files.  See tutorial video for a demo.
-Version: 1.3.5
+Version: 1.3.7
 Author: Maximum.Software
 Author URI: https://maximum.software/
 Text Domain: pdf-forms-for-contact-form-7
@@ -17,10 +17,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 {
 	class WPCF7_Pdf_Forms
 	{
-		const VERSION = '1.3.5';
+		const VERSION = '1.3.7';
 		const MIN_WPCF7_VERSION = '4.2';
-		const MAX_WPCF7_VERSION = '5.3.2';
-		const BLACKLISTED_WPCF7_VERSIONS = array( '5.4' );
+		const MAX_WPCF7_VERSION = '5.4';
+		private static $BLACKLISTED_WPCF7_VERSIONS = array();
 		
 		private static $instance = null;
 		private $pdf_ninja_service = null;
@@ -29,6 +29,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		private $downloads = null;
 		private $storage = null;
 		private $cf7_forms_save_overrides = null;
+		private $cf7_mail_attachments = array();
 
 		private function __construct()
 		{
@@ -72,7 +73,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'admin_init', array( $this, 'extend_tag_generator' ), 80 );
 			add_action( 'admin_menu', array( $this, 'register_services') );
 			
-			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_and_attach_pdfs' ), 10, 3 );
+			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_pdfs' ), 1000, 3 );
+			add_filter( 'wpcf7_mail_components', array( $this, 'attach_files' ), 10, 3 );
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_mail_sent', array( $this, 'change_response_message' ) );
 			
@@ -197,7 +199,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			|| version_compare( $version, self::MAX_WPCF7_VERSION ) > 0 )
 				return false;
 			
-			foreach( self::BLACKLISTED_WPCF7_VERSIONS as $blacklisted_version )
+			foreach( self::$BLACKLISTED_WPCF7_VERSIONS as $blacklisted_version )
 				if( version_compare( $version, $blacklisted_version ) == 0 )
 					return false;
 			
@@ -697,11 +699,25 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				if( function_exists( 'finfo_open' ) )
 				{
-					$finfo = finfo_open( FILEINFO_MIME_TYPE );
-					if($finfo)
+					if( version_compare( phpversion(), "5.3" ) < 0 )
 					{
-						$mimetype = finfo_file( $finfo, $filepath );
-						finfo_close( $finfo );
+						$finfo = finfo_open( FILEINFO_MIME );
+						if($finfo)
+						{
+							$mimetype = finfo_file( $finfo, $filepath );
+							$mimetype = explode( ";", $mimetype );
+							$mimetype = reset( $mimetype );
+							finfo_close( $finfo );
+						}
+					}
+					else
+					{
+						$finfo = finfo_open( FILEINFO_MIME_TYPE );
+						if($finfo)
+						{
+							$mimetype = finfo_file( $finfo, $filepath );
+							finfo_close( $finfo );
+						}
 					}
 				}
 				
@@ -748,10 +764,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 * When form data is posted, this function communicates with the API
 		 * to fill the form data and get the PDF file with filled form fields
 		 * 
-		 * Files created and attached in this function will be deleted
-		 * automatically by CF7 after it sends the email message
+		 * Files created in this function will be deleted automatically by
+		 * CF7 after it sends the email message
 		 */
-		public function fill_and_attach_pdfs( $contact_form, &$abort, $object )
+		public function fill_pdfs( $contact_form, &$abort, $object )
 		{
 			try
 			{
@@ -1000,29 +1016,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					}
 				}
 				
+				// files will be attached to email messages in attach_files()
+				$this->cf7_mail_attachments = $files;
+				
 				if( count( $files ) > 0 )
 				{
-					foreach( $files as $id => $filedata )
-					{
-						$file = $filedata['file'];
-						if( file_exists( $file ) )
-						{
-							if( is_callable( array( $submission, 'add_uploaded_file' ) ) ) // available only prior to CF7 v5.4
-							{
-								$attachment_id = $filedata['attachment_id'];
-								$submission->add_uploaded_file( "pdf-form-".$attachment_id, $file );
-								$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
-							}
-							
-							if( $filedata['options']['attach_to_mail_1'] )
-								$mail["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
-							
-							if( $filedata['options']['attach_to_mail_2'] )
-								$mail2["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
-						}
-					}
-					$contact_form->set_properties( array( 'mail' => $mail, 'mail_2' => $mail2 ) );
-					
 					$storage = $this->get_storage();
 					foreach( $files as $id => $filedata )
 					{
@@ -1077,6 +1075,26 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						)
 					);
 			}
+		}
+		
+		/*
+		 * Attaches files to CF7 email messages when needed
+		 */
+		public function attach_files( $components, $form = null, $mail = null )
+		{
+			if( $mail != null )
+				foreach( $this->cf7_mail_attachments as $filedata )
+				{
+					$file = $filedata['file'];
+					if( file_exists( $file ) )
+					{
+						if( ( $filedata['options']['attach_to_mail_1'] && $mail->name() == 'mail' )
+						|| ( $filedata['options']['attach_to_mail_2'] && $mail->name() == 'mail_2' ))
+							$components['attachments'][] = $file;
+					}
+				}
+			
+			return $components;
 		}
 		
 		/**
