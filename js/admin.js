@@ -1404,7 +1404,7 @@ jQuery(document).ready(function($) {
 		var data = new FormData();
 		data.append("post_id", post_id);
 		data.append("file_id", file_id);
-		if(owner_password === null)
+		if(owner_password !== null)
 			data.append("owner_password", owner_password);
 		data.append("action", 'wpcf7_pdf_forms_get_attachment_info');
 		data.append("nonce", wpcf7_pdf_forms.ajax_nonce);
@@ -1427,8 +1427,9 @@ jQuery(document).ready(function($) {
 					if(data.reason == 'incorrectPassword')
 					{
 						// ask user for the password and retry request
-						var owner_password = prompt('Enter owner password', owner_password);
-						return attachPdf(file_id, owner_password);
+						var password = prompt(wpcf7_pdf_forms.__Enter_Owner_Password, password);
+						if(password)
+							return attachPdf(file_id, password);
 					}
 					return errorMessage(data.error_message);
 				}
@@ -1445,8 +1446,9 @@ jQuery(document).ready(function($) {
 					if(data.info.encrypted && owner_password === null)
 					{
 						// TODO: find a way to check password
-						var owner_password = prompt('Enter owner password', owner_password);
-						return attachPdf(file_id, owner_password);
+						var password = prompt(wpcf7_pdf_forms.__Enter_Owner_Password, password);
+						if(password)
+							return attachPdf(file_id, password);
 					}
 					
 					if(data.hasOwnProperty('info'))

@@ -298,6 +298,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__Confirm_Delete_Mapping' => __( 'Are you sure you want to delete this mapping?', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Download_Empty_Pdf' => __( 'You want to upload a blank document', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Embed' => __( 'Are you sure you want to delete this embeded image?', 'pdf-forms-for-contact-form-7' ),
+					'__Enter_Owner_Password' => __( 'Enter owner password', 'pdf-forms-for-contact-form-7' ),
 					'__Show_Help' => __( 'Show Help', 'pdf-forms-for-contact-form-7' ),
 					'__Hide_Help' => __( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
 					'__Show_Tag_Generator_Tool' => __( 'Show Tag Generator', 'pdf-forms-for-contact-form-7' ),
@@ -465,6 +466,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			wp_update_post( array( 'ID' => $attachment_id, 'post_parent' => 0 ) );
 			self::unset_meta( $attachment_id, 'options-'.$post_id );
+			self::unset_meta( $attachment_id, 'info' );
 		}
 		
 		/**
