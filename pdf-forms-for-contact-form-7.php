@@ -29,6 +29,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		private $downloads = null;
 		private $storage = null;
 		private $cf7_forms_save_overrides = null;
+		private $cf7_mail_attachments = array();
 
 		private function __construct()
 		{
@@ -72,7 +73,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'admin_init', array( $this, 'extend_tag_generator' ), 80 );
 			add_action( 'admin_menu', array( $this, 'register_services') );
 			
-			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_and_attach_pdfs' ), 10, 3 );
+			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_pdfs' ), 1000, 3 );
+			add_filter( 'wpcf7_mail_components', array( $this, 'attach_files' ), 10, 3 );
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_mail_sent', array( $this, 'change_response_message' ) );
 			
@@ -188,6 +190,22 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			include( $script );
 		}
 		
+		/*
+		 * Checks if CF7 version is supported
+		 */
+		public function is_wpcf7_version_supported( $version )
+		{
+			if( version_compare( $version, self::MIN_WPCF7_VERSION ) < 0
+			|| version_compare( $version, self::MAX_WPCF7_VERSION ) > 0 )
+				return false;
+			
+			foreach( self::$BLACKLISTED_WPCF7_VERSIONS as $blacklisted_version )
+				if( version_compare( $version, $blacklisted_version ) == 0 )
+					return false;
+			
+			return true;
+		}
+		
 		/**
 		 * Adds plugin action links
 		 */
@@ -211,6 +229,20 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				) );
 				return;
 			}
+			
+			if( ! defined( 'WPCF7_VERSION' ) || ! $this->is_wpcf7_version_supported( WPCF7_VERSION ) )
+				echo WPCF7_Pdf_Forms::render( 'notice_error', array(
+							'label'   => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
+							'message' =>
+								self::replace_tags(
+									esc_html__( "The currently installed version of 'Contact Form 7' plugin ({current-wpcf7-version}) is not supported by the current version of 'PDF Forms Filler for Contact Form 7' plugin ({current-plugin-version}), please switch to 'Contact Form 7' plugin version {supported-wpcf7-version} to allow 'PDF Forms Filler for Contact Form 7' plugin to work.", 'pdf-forms-for-contact-form-7' ),
+									array(
+										'current-wpcf7-version' => esc_html( defined( 'WPCF7_VERSION' ) ? WPCF7_VERSION : __( "Unknown version", 'pdf-forms-for-contact-form-7' ) ),
+										'current-plugin-version' => esc_html( self::VERSION ),
+										'supported-wpcf7-version' => esc_html( self::MAX_WPCF7_VERSION ),
+									)
+								),
+						) );
 			
 			if( ( $service = $this->get_service() ) )
 				$service->admin_notices();
@@ -667,11 +699,25 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				if( function_exists( 'finfo_open' ) )
 				{
-					$finfo = finfo_open( FILEINFO_MIME_TYPE );
-					if($finfo)
+					if( version_compare( phpversion(), "5.3" ) < 0 )
 					{
-						$mimetype = finfo_file( $finfo, $filepath );
-						finfo_close( $finfo );
+						$finfo = finfo_open( FILEINFO_MIME );
+						if($finfo)
+						{
+							$mimetype = finfo_file( $finfo, $filepath );
+							$mimetype = explode( ";", $mimetype );
+							$mimetype = reset( $mimetype );
+							finfo_close( $finfo );
+						}
+					}
+					else
+					{
+						$finfo = finfo_open( FILEINFO_MIME_TYPE );
+						if($finfo)
+						{
+							$mimetype = finfo_file( $finfo, $filepath );
+							finfo_close( $finfo );
+						}
 					}
 				}
 				
@@ -718,10 +764,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 * When form data is posted, this function communicates with the API
 		 * to fill the form data and get the PDF file with filled form fields
 		 * 
-		 * Files created and attached in this function will be deleted
-		 * automatically by CF7 after it sends the email message
+		 * Files created in this function will be deleted automatically by
+		 * CF7 after it sends the email message
 		 */
-		public function fill_and_attach_pdfs( $contact_form, &$abort, $object )
+		public function fill_pdfs( $contact_form, &$abort, $object )
 		{
 			try
 			{
@@ -786,7 +832,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					
 					if( isset($embed['cf7_field']) && isset( $uploaded_files[$embed['cf7_field']] ) )
 					{
-						$filepath = $uploaded_files[$embed['cf7_field']];
+						$filepath = $uploaded_files[$embed['cf7_field']]; // array in CF7 v5.4, string in prior versions
+						if( is_array( $filepath ) )
+							$filepath = reset( $filepath ); // take only the first file
 						$filename = basename( $filepath );
 					}
 					
@@ -968,27 +1016,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					}
 				}
 				
+				// files will be attached to email messages in attach_files()
+				$this->cf7_mail_attachments = $files;
+				
 				if( count( $files ) > 0 )
 				{
-					foreach( $files as $id => $filedata )
-					{
-						$file = $filedata['file'];
-						if( file_exists( $file ) )
-						{
-							$attachment_id = $filedata['attachment_id'];
-							$submission->add_uploaded_file( "pdf-form-".$attachment_id, $file );
-							
-							$submission->add_uploaded_file( "wpcf7-pdf-forms-$id", $file );
-							
-							if( $filedata['options']['attach_to_mail_1'] )
-								$mail["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
-							
-							if( $filedata['options']['attach_to_mail_2'] )
-								$mail2["attachments"] .= "\n[wpcf7-pdf-forms-$id]\n";
-						}
-					}
-					$contact_form->set_properties( array( 'mail' => $mail, 'mail_2' => $mail2 ) );
-					
 					$storage = $this->get_storage();
 					foreach( $files as $id => $filedata )
 					{
@@ -1043,6 +1075,26 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						)
 					);
 			}
+		}
+		
+		/*
+		 * Attaches files to CF7 email messages when needed
+		 */
+		public function attach_files( $components, $form = null, $mail = null )
+		{
+			if( $mail != null )
+				foreach( $this->cf7_mail_attachments as $filedata )
+				{
+					$file = $filedata['file'];
+					if( file_exists( $file ) )
+					{
+						if( ( $filedata['options']['attach_to_mail_1'] && $mail->name() == 'mail' )
+						|| ( $filedata['options']['attach_to_mail_2'] && $mail->name() == 'mail_2' ))
+							$components['attachments'][] = $file;
+					}
+				}
+			
+			return $components;
 		}
 		
 		/**
