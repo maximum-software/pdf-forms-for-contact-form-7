@@ -2,10 +2,10 @@
 Contributors: maximumsoftware
 Tags: pdf, form, filler, contact form, attachment, email
 Requires at least: 4.3
-Tested up to: 5.6
+Tested up to: 5.7.1
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.3.3
+Version: 1.3.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -50,6 +50,38 @@ Special thanks to the following sponsors of this plugin,
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.3.7 =
+
+* Release date: March 10, 2021
+
+* Fixed old PHP version support
+* Decreased order of execution for wpcf7_before_send_mail action to allow other plugins to finish first
+
+= 1.3.6 =
+
+* Release date: March 7, 2021
+
+* Added CF7 v5.4 compatibility: WPCF7_Submission::add_uploaded_file()
+* Enabled CF7 v5.4 support
+* Readme update
+
+= 1.3.5 =
+
+* Release date: March 1, 2021
+
+* Fixed an accidental bug that was causing PDFs not to be attached to email messages
+
+= 1.3.4 =
+
+* Release date: March 1, 2021
+
+* CF7 v5.4 is still unsupported, however, error mitigation measures were added
+* Added CF7 v5.4 compatibility: WPCF7_Submission::uploaded_files()
+* Added CF7 plugin version support checking feature
+* Added crash prevention check to CF7's add_uploaded_file call
+* Updated readme
+* Other minor fixes
 
 = 1.3.3 =
 
