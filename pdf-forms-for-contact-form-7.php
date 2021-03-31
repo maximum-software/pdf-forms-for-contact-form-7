@@ -30,6 +30,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		private $storage = null;
 		private $cf7_forms_save_overrides = null;
 		private $cf7_mail_attachments = array();
+		private $js_enabled = true;
 
 		private function __construct()
 		{
@@ -62,6 +63,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return;
 			
 			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+			add_action( 'wp_enqueue_scripts', array( $this, 'front_end_enqueue_scripts' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			
 			add_action( 'wp_ajax_wpcf7_pdf_forms_get_attachment_info', array( $this, 'wp_ajax_get_attachment_info' ) );
@@ -78,11 +80,17 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
 			add_action( 'wpcf7_mail_sent', array( $this, 'change_response_message' ) );
 			
+			if( defined( 'WPCF7_VERSION' ) && version_compare( WPCF7_VERSION, '5.2' ) >= 0 )
+				// hook wpcf7_feedback_response ( works only with cf7 version 5.2+
+				add_filter( 'wpcf7_feedback_response', array( $this, 'change_response' ), 10, 2 );
+			
 			// hook that allows to copy media and mapping
 			add_filter( 'wpcf7_copy', array( $this,'duplicate_form_hook' ), 10, 2 );
 			
 			// TODO: allow users to run this manually
 			//$this->upgrade_data();
+			$this->js_enabled = $_COOKIE['wpcf7_pdf_forms_js'] == 'on';
+			setcookie( 'wpcf7_pdf_forms_js', '', 1 );
 		}
 		
 		/*
@@ -348,6 +356,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				wp_enqueue_script( 'wpcf7_pdf_forms_admin_script' );
 				wp_enqueue_style( 'wpcf7_pdf_forms_admin_style' );
 			}
+		}
+		
+		/**
+		 * Adds necessary front-end scripts and styles
+		*/
+		function front_end_enqueue_scripts( $hook )
+		{
+			wp_enqueue_script( 'wpcf7_pdf_forms_script', plugin_dir_url( __FILE__ ) . 'js/frontend.js', array(), self::VERSION );
+			wp_enqueue_style( 'wpcf7_pdf_forms_style', plugin_dir_url( __FILE__ ) . 'css/frontend.css', array(), self::VERSION );
 		}
 		
 		/**
@@ -1852,7 +1869,29 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/*
-		 * WPCF7 hook for adding some more information to response message
+		 * WPCF7 hook for adding some more information to response for CF7 version >= 5.2
+		 */
+		public function change_response( $response, $result  )
+		{
+			// if downloads variable is not initialized then we don't need to do anything
+			if( $this->downloads )
+			{
+				foreach( $this->downloads->get_files() as $file )
+					$response['wpcf7_pdf_forms_data'][] =
+						array(
+							'filename' => $file['filename'],
+							'url' => $file['url'],
+							'size' => size_format( filesize( $file['filepath'] ) )
+						);
+				
+				// make sure to enable cron if it is down so that old download files get cleaned up
+				$this->enable_cron();
+				
+				return $response;
+			}
+		}
+		/*
+		 * WPCF7 hook for adding some more information to response message (need it only with CF7 version < 5.2)
 		 */
 		public function change_response_message( $contact_form )
 		{
@@ -1863,30 +1902,36 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$response = $submission->get_response();
 				if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' )
 				{
-					// ajax request
-					$response .= "<br/>";
-					foreach( $this->downloads->get_files() as $file )
-						$response .= "<br/>" .
-							self::replace_tags(
-								esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
-								array(
-									'icon' => '<span class="dashicons dashicons-download"></span>',
-									'a-href-url' => '<a href="' . esc_html( $file['url'] ) . '" download>',
-									'filename' => esc_html( $file['filename'] ),
-									'/a' => '</a>',
-									'i' => '<i>',
-									'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
-									'/i' => '</i>',
-								)
-							);
+					if( ! defined( 'WPCF7_VERSION' ) || version_compare( WPCF7_VERSION, '5.2' ) < 0 )
+					{
+						// ajax request
+						$response .= "<br/>";
+						foreach( $this->downloads->get_files() as $file )
+							$response .= "<br/>" .
+								self::replace_tags(
+									esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
+									array(
+										'icon' => '<span class="dashicons dashicons-download"></span>',
+										'a-href-url' => '<a href="' . esc_html( $file['url'] ) . '" download>',
+										'filename' => esc_html( $file['filename'] ),
+										'/a' => '</a>',
+										'i' => '<i>',
+										'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
+										'/i' => '</i>',
+									)
+								);
+					}
 				}
 				else
 				{
 					// non-ajax request
-					$response .= "\n";
-					foreach( $this->downloads->get_files() as $file )
-						// no need to escape html because output gets escaped by WPCF7 code in this case, $response is plain text
-						$response .= "\n" . self::replace_tags( __( "Download {filename} at {url}. ", 'pdf-forms-for-contact-form-7' ), array( 'filename' => $file['filename'], 'url' => $file['url'] ) );
+					if( !$this->js_enabled )
+					{
+						$response .= "\n";
+						foreach( $this->downloads->get_files() as $file )
+							// no need to escape html because output gets escaped by WPCF7 code in this case, $response is plain text
+							$response .= "\n" . self::replace_tags( __( "Download {filename} at {url}. ", 'pdf-forms-for-contact-form-7' ), array( 'filename' => $file['filename'], 'url' => $file['url'] ) );
+					}
 				}
 				$submission->set_response( $response );
 				
