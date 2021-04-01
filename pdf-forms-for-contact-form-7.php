@@ -364,7 +364,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		function front_end_enqueue_scripts( $hook )
 		{
 			wp_enqueue_script( 'wpcf7_pdf_forms_script', plugin_dir_url( __FILE__ ) . 'js/frontend.js', array(), self::VERSION );
-			wp_enqueue_style( 'wpcf7_pdf_forms_style', plugin_dir_url( __FILE__ ) . 'css/frontend.css', array(), self::VERSION );
+			wp_enqueue_style( 'wpcf7_pdf_forms_style', plugin_dir_url( __FILE__ ) . 'css/frontend.css', array( 'dashicons' ), self::VERSION );
 		}
 		
 		/**
