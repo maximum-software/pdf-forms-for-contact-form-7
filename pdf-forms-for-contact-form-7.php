@@ -63,7 +63,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return;
 			
 			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+			
 			add_action( 'wp_enqueue_scripts', array( $this, 'front_end_enqueue_scripts' ) );
+			add_filter( 'wpcf7_form_elements', array( $this, 'front_end_form_scripts' ) );
+			
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			
 			add_action( 'wp_ajax_wpcf7_pdf_forms_get_attachment_info', array( $this, 'wp_ajax_get_attachment_info' ) );
@@ -363,12 +366,29 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/**
-		 * Adds necessary front-end scripts and styles
+		 * Adds necessary global front-end scripts and styles
 		*/
-		function front_end_enqueue_scripts( $hook )
+		function front_end_enqueue_scripts()
 		{
-			wp_enqueue_script( 'wpcf7_pdf_forms_script', plugin_dir_url( __FILE__ ) . 'js/frontend.js', array(), self::VERSION );
-			wp_enqueue_style( 'wpcf7_pdf_forms_style', plugin_dir_url( __FILE__ ) . 'css/frontend.css', array( 'dashicons' ), self::VERSION );
+			wp_enqueue_style( 'dashicons' ); // needed by the download link feature
+		}
+		
+		/**
+		 * Adds necessary front-end scripts and styles (needed needed)
+		*/
+		function front_end_form_scripts( $form )
+		{
+			// add scripts only when needed
+			static $form_count = 0;
+			$form_count++;
+			if( $form_count == 1 ) // add only once
+			{
+				$style = '<link rel="stylesheet" href="' . plugin_dir_url( __FILE__ ) . 'css/frontend.css' . '" />';
+				$script = '<script type="text/javascript" src="' . plugin_dir_url( __FILE__ ) . 'js/frontend.js' . '?ver=' . self::VERSION . '"></script>';
+				$form =  $style . $script . $form;
+			}
+			
+			return $form;
 		}
 		
 		/**
