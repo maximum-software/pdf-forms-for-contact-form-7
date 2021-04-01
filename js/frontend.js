@@ -23,16 +23,23 @@ document.addEventListener( 'wpcf7mailsent', function( event )
 		return;
 	
 	var data = event.detail.apiResponse.wpcf7_pdf_forms_data;
-	var download = '';
-	
+	var downloads = document.createElement('div');
 	for(var i=0; i<data.length; i++)
-		download += "<span class='dashicons dashicons-download'></span><a href='"+data[i]['url']+"' download>"+data[i]['filename']+"</a> ("+data[i]['size']+")<br>";
+	{
+		var download = document.createElement('div');
+		download.innerHTML = "<span class='dashicons dashicons-download'></span><a href='' download></a> (<span class='file-size'></span>)";
+		
+		var link = download.querySelector('a');
+		link.href = data[i]['url'];
+		link.innerText = data[i]['filename'];
+		download.querySelector('.file-size').innerText = data[i]['size'];
+		
+		downloads.appendChild(download);
+	}
 	
 	var cf7form = document.querySelector('.wpcf7-form');
-	var div = document.createElement('div');
-	div.innerHTML = download;
-	div.className = 'wpcf7-pdf-response-output';
-	cf7form.appendChild(div);
+	downloads.className = 'wpcf7-pdf-response-output';
+	cf7form.appendChild(downloads);
 	
 }, false );
 
