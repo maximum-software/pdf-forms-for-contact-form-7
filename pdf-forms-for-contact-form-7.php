@@ -89,8 +89,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			// TODO: allow users to run this manually
 			//$this->upgrade_data();
-			$this->js_enabled = $_COOKIE['wpcf7_pdf_forms_js'] == 'on';
-			setcookie( 'wpcf7_pdf_forms_js', '', 1 );
+			
+			if( isset( $_COOKIE['wpcf7_pdf_forms_js'] ) )
+			{
+				$this->js_enabled = $_COOKIE['wpcf7_pdf_forms_js'] == 'on';
+				setcookie( 'wpcf7_pdf_forms_js', '', 1 );
+			}
 		}
 		
 		/*
