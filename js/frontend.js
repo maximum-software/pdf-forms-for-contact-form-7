@@ -14,6 +14,22 @@ document.cookie = 'wpcf7_pdf_forms_js=on';
 
 document.addEventListener( 'wpcf7mailsent', function( event )
 {
+	// https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number
+	var compareVersions = function(min, current)
+	{
+		var reg = "/(\.0+)+$/";
+		var partMin = min.replace(reg, '').split('.');
+		var partCur = current.replace(reg, '').split('.');
+		
+		for(var i = 0; i < Math.min(partMin.length, partCur.length); i++) {
+			var diff = parseInt(partMin[i], 10) - parseInt(partCur[i], 10);
+			if(diff)
+				return diff;
+		}
+		
+		return partMin.length - partCur.length;
+	};
+	
 	if(typeof event.detail !== 'object'
 	|| typeof event.detail.apiResponse !== 'object'
 	|| typeof event.detail.apiResponse.wpcf7_pdf_forms_data !== 'object'
@@ -42,19 +58,3 @@ document.addEventListener( 'wpcf7mailsent', function( event )
 	cf7form.appendChild(downloads);
 	
 }, false );
-
-// https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number
-function compareVersions(min, current)
-{
-	var reg = "/(\.0+)+$/";
-	var partMin = min.replace(reg, '').split('.');
-	var partCur = current.replace(reg, '').split('.');
-	
-	for(var i = 0; i < Math.min(partMin.length, partCur.length); i++) {
-		var diff = parseInt(partMin[i], 10) - parseInt(partCur[i], 10);
-		if(diff)
-			return diff;
-	}
-	
-	return partMin.length - partCur.length;
-}
