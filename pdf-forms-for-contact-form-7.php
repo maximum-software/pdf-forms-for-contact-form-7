@@ -18,7 +18,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 	class WPCF7_Pdf_Forms
 	{
 		const VERSION = '1.3.7';
-		const MIN_WPCF7_VERSION = '4.2';
+		const MIN_WPCF7_VERSION = '5.0';
 		const MAX_WPCF7_VERSION = '5.4';
 		private static $BLACKLISTED_WPCF7_VERSIONS = array();
 		
@@ -58,7 +58,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function plugin_init()
 		{
-			if( ! class_exists('WPCF7') )
+			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
 				return;
 			
 			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
@@ -233,11 +233,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function admin_notices()
 		{
-			if( ! class_exists('WPCF7') )
+			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
 			{
 				echo WPCF7_Pdf_Forms::render( 'notice_error', array(
 					'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
-					'message' => esc_html__( "The required plugin 'Contact Form 7' is not installed!", 'pdf-forms-for-contact-form-7' ),
+					'message' => esc_html__( "The required plugin 'Contact Form 7' version is not supported!", 'pdf-forms-for-contact-form-7' ),
 				) );
 				return;
 			}
@@ -255,6 +255,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 									)
 								),
 						) );
+			
+			if( ! class_exists('WPCF7') )
+				return;
 			
 			if( ( $service = $this->get_service() ) )
 				$service->admin_notices();
