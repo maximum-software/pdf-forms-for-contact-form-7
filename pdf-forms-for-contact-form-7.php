@@ -30,8 +30,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		private $storage = null;
 		private $cf7_forms_save_overrides = null;
 		private $cf7_mail_attachments = array();
-		private $js_enabled = true;
-
+		
 		private function __construct()
 		{
 			add_action( 'admin_notices', array( $this, 'admin_notices' ) );
@@ -81,23 +80,21 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_pdfs' ), 1000, 3 );
 			add_filter( 'wpcf7_mail_components', array( $this, 'attach_files' ), 10, 3 );
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
-			add_action( 'wpcf7_mail_sent', array( $this, 'change_response_message' ) );
+			
+			add_filter( 'wpcf7_form_response_output', array( $this, 'change_response_nojs' ), 10, 4 );
 			
 			if( defined( 'WPCF7_VERSION' ) && version_compare( WPCF7_VERSION, '5.2' ) >= 0 )
-				// hook wpcf7_feedback_response ( works only with cf7 version 5.2+
-				add_filter( 'wpcf7_feedback_response', array( $this, 'change_response' ), 10, 2 );
+				// hook wpcf7_feedback_response (works only with CF7 version 5.2+)
+				add_filter( 'wpcf7_feedback_response', array( $this, 'change_response_js' ), 10, 2 );
+			else
+				// hook wpcf7_ajax_json_echo (needed only for CF7 versions < 5.2)
+				add_action( 'wpcf7_ajax_json_echo', array( $this, 'change_response_js' ), 10, 2 );
 			
 			// hook that allows to copy media and mapping
 			add_filter( 'wpcf7_copy', array( $this,'duplicate_form_hook' ), 10, 2 );
 			
 			// TODO: allow users to run this manually
 			//$this->upgrade_data();
-			
-			if( isset( $_COOKIE['wpcf7_pdf_forms_js'] ) )
-			{
-				$this->js_enabled = $_COOKIE['wpcf7_pdf_forms_js'] == 'on';
-				setcookie( 'wpcf7_pdf_forms_js', '', 1 );
-			}
 		}
 		
 		/*
@@ -808,7 +805,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 * Files created in this function will be deleted automatically by
 		 * CF7 after it sends the email message
 		 */
-		public function fill_pdfs( $contact_form, &$abort, $object )
+		public function fill_pdfs( $contact_form, &$abort, $submission )
 		{
 			try
 			{
@@ -828,7 +825,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( !is_array( $embeds ) )
 					$embeds = array();
 				
-				$submission = WPCF7_Submission::get_instance();
 				$posted_data = $submission->get_posted_data();
 				$uploaded_files = $submission->uploaded_files();
 				
@@ -1109,7 +1105,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			catch( Exception $e )
 			{
 				$abort = true;
-				$object->set_response(
+				$submission->set_response(
 						self::replace_tags(
 							__( "An error occurred while processing a PDF: {error-message}", 'pdf-forms-for-contact-form-7' ),
 							array( 'error-message' => $e->getMessage() )
@@ -1893,9 +1889,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/*
-		 * WPCF7 hook for adding some more information to response for CF7 version >= 5.2
+		 * WPCF7 hook for adding download links to JS response
 		 */
-		public function change_response( $response, $result  )
+		public function change_response_js( $response, $result )
 		{
 			// if downloads variable is not initialized then we don't need to do anything
 			if( $this->downloads )
@@ -1914,54 +1910,44 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return $response;
 			}
 		}
+		
 		/*
-		 * WPCF7 hook for adding some more information to response message (need it only with CF7 version < 5.2)
+		 * WPCF7 hook for adding download links to response message (only for when JS is disabled)
 		 */
-		public function change_response_message( $contact_form )
+		public function change_response_nojs( $output, $class, $content, $contact_form )
 		{
 			// if downloads variable is not initialized then we don't need to do anything
 			if( $this->downloads )
 			{
 				$submission = WPCF7_Submission::get_instance();
-				$response = $submission->get_response();
-				if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' )
-				{
-					if( ! defined( 'WPCF7_VERSION' ) || version_compare( WPCF7_VERSION, '5.2' ) < 0 )
-					{
-						// ajax request
-						$response .= "<br/>";
-						foreach( $this->downloads->get_files() as $file )
-							$response .= "<br/>" .
-								self::replace_tags(
-									esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
-									array(
-										'icon' => '<span class="dashicons dashicons-download"></span>',
-										'a-href-url' => '<a href="' . esc_html( $file['url'] ) . '" download>',
-										'filename' => esc_html( $file['filename'] ),
-										'/a' => '</a>',
-										'i' => '<i>',
-										'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
-										'/i' => '</i>',
-									)
-								);
-					}
-				}
-				else
-				{
-					// non-ajax request
-					if( !$this->js_enabled )
-					{
-						$response .= "\n";
-						foreach( $this->downloads->get_files() as $file )
-							// no need to escape html because output gets escaped by WPCF7 code in this case, $response is plain text
-							$response .= "\n" . self::replace_tags( __( "Download {filename} at {url}. ", 'pdf-forms-for-contact-form-7' ), array( 'filename' => $file['filename'], 'url' => $file['url'] ) );
-					}
-				}
-				$submission->set_response( $response );
+				$status = $submission->get_status();
 				
-				// make sure to enable cron if it is down so that old download files get cleaned up
-				$this->enable_cron();
+				if( $status == 'mail_sent' )
+				{
+					$downloads = '';
+					foreach( $this->downloads->get_files() as $file )
+						$downloads .= "<div>" .
+							self::replace_tags(
+								esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
+								array(
+									'icon' => '<span class="dashicons dashicons-download"></span>',
+									'a-href-url' => '<a href="' . esc_html( $file['url'] ) . '" download>',
+									'filename' => esc_html( $file['filename'] ),
+									'/a' => '</a>',
+									'i' => '<span class="file-size">',
+									'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
+									'/i' => '</span>',
+								)
+							)
+						. "</div>";
+					$output .= "<div class='wpcf7-pdf-response-output'>$downloads</div>";
+					
+					// make sure to enable cron if it is down so that old download files get cleaned up
+					$this->enable_cron();
+				}
 			}
+			
+			return $output;
 		}
 		
 		/**

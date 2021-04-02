@@ -6,3 +6,8 @@
 	padding: 1em 1em;
 	border: 2px solid #00a0d2;
 }
+
+.wpcf7-pdf-response-output .file-size
+{
+	font-style: italic;
+}
