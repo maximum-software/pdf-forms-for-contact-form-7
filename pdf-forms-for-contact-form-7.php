@@ -276,7 +276,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $this->pdf_ninja_service;
 		}
 		
-		
 		/**
 		 * Returns the service module instance
 		 */
@@ -370,18 +369,17 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/**
-		 * Adds necessary front-end scripts and styles (needed needed)
+		 * Adds necessary front-end scripts and styles (only when CF7 form is displayed)
 		*/
 		function front_end_form_scripts( $form )
 		{
-			// add scripts only when needed
 			static $form_count = 0;
 			$form_count++;
 			if( $form_count == 1 ) // add only once
 			{
 				$style = '<link rel="stylesheet" href="' . plugin_dir_url( __FILE__ ) . 'css/frontend.css' . '" />';
 				$script = '<script type="text/javascript" src="' . plugin_dir_url( __FILE__ ) . 'js/frontend.js' . '?ver=' . self::VERSION . '"></script>';
-				$form =  $style . $script . $form;
+				$form = $style . $script . $form;
 			}
 			
 			return $form;
@@ -1909,7 +1907,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 								)
 							)
 						. "</div>";
-					$output .= "<div class='wpcf7-pdf-response-output'>$downloads</div>";
+					$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
 					
 					// make sure to enable cron if it is down so that old download files get cleaned up
 					$this->enable_cron();
