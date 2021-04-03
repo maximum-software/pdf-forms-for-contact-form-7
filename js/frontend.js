@@ -1,28 +1,45 @@
-document.addEventListener( 'wpcf7mailsent', function( event )
+document.addEventListener( 'wpcf7submit', function( event )
 {
 	if(typeof event.detail !== 'object'
+	|| typeof event.detail.id === 'undefined'
 	|| typeof event.detail.apiResponse !== 'object'
 	|| typeof event.detail.apiResponse.wpcf7_pdf_forms_data !== 'object'
 	|| event.detail.apiResponse.wpcf7_pdf_forms_data === null)
 		return;
 	
-	var data = event.detail.apiResponse.wpcf7_pdf_forms_data;
-	var downloads = document.createElement('div');
-	for(var i=0; i<data.length; i++)
-	{
-		var download = document.createElement('div');
-		download.innerHTML = "<span class='dashicons dashicons-download'></span><a href='' download></a> <span class='file-size'></span>";
-		
-		var link = download.querySelector('a');
-		link.href = data[i]['url'];
-		link.innerText = data[i]['filename'];
-		download.querySelector('.file-size').innerText = "(" + data[i]['size'] + ")";
-		
-		downloads.appendChild(download);
-	}
+	var id = event.detail.id;
+	var formDiv = document.getElementById(id);
 	
-	var cf7form = document.querySelector('.wpcf7-form');
-	downloads.className = 'wpcf7-pdf-response-output';
-	cf7form.appendChild(downloads);
+	if(!formDiv)
+		return;
+	
+	// delete previous div
+	var prevDiv = formDiv.querySelector('.wpcf7-pdf-forms-response-output');
+	if(prevDiv)
+		prevDiv.parentNode.removeChild(prevDiv);
+	
+	var data = event.detail.apiResponse.wpcf7_pdf_forms_data;
+	if(data.length > 0)
+	{
+		var downloads = document.createElement('div');
+		downloads.className = 'wpcf7-pdf-forms-response-output';
+		
+		for(var i=0; i<data.length; i++)
+		{
+			var download = document.createElement('div');
+			download.innerHTML = "<span class='dashicons dashicons-download'></span><a href='' download></a> <span class='file-size'></span>";
+			
+			var link = download.querySelector('a');
+			link.href = data[i]['url'];
+			link.innerText = data[i]['filename'];
+			download.querySelector('.file-size').innerText = "(" + data[i]['size'] + ")";
+			
+			downloads.appendChild(download);
+		}
+		
+		var form = formDiv.querySelector('.wpcf7-form');
+		if(form)
+			form.appendChild(downloads);
+	}
 	
 }, false );
