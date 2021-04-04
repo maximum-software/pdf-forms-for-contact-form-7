@@ -5,7 +5,7 @@ Requires at least: 4.8
 Tested up to: 5.7.1
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.3.7
+Version: 1.3.9
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -24,11 +24,10 @@ When your website visitor submits the CF7 form, the form in the PDF file is fill
 An external web API (https://pdf.ninja) is used for filling PDF forms (free usage has limitations).  An Enterprise Extension, which enables performing all PDF operations locally on your web server (no external web API), is available.
 
 Requirements:
- * PHP 5.2
- * WordPress 4.8
- * Contact Form 7 5.0
- * Lowest supported browser versions:
-    * IE 11
+ * PHP 5.2 or newer
+ * WordPress 4.8 or newer
+ * Contact Form 7 5.0 or newer
+ * IE 11 (or equivalent) or newer
 
 Known problems:
  * Some UTF-8 (non-latin) characters, checkboxes and radio buttons don't render properly after being filled. Almost always the problem lies with the PDF viewers not rendering them correctly. There is a workaround in the works, however, currently it remains in development.
@@ -57,6 +56,21 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.3.9 =
+
+* Release date: April 2, 2021
+
+* Fixed an issue with the download link feature and the latest version of CF7
+
+= 1.3.8 =
+
+* Release date: April 2, 2021
+
+* Fixed and improved download link feature support in CF7 v5.4
+* Fixed old version support
+* Hid CF7 insert box to prevent it from getting in the way of the tag generator UI
+* Fixed other minor issues
 
 = 1.3.7 =
 

@@ -1,14 +1,14 @@
 document.addEventListener( 'wpcf7submit', function( event )
 {
 	if(typeof event.detail !== 'object'
-	|| typeof event.detail.id === 'undefined'
+	|| typeof event.detail.unitTag === 'undefined'
 	|| typeof event.detail.apiResponse !== 'object'
 	|| typeof event.detail.apiResponse.wpcf7_pdf_forms_data !== 'object'
 	|| event.detail.apiResponse.wpcf7_pdf_forms_data === null)
 		return;
 	
-	var id = event.detail.id;
-	var formDiv = document.getElementById(id);
+	var unitTag = event.detail.unitTag;
+	var formDiv = document.getElementById(unitTag);
 	
 	if(!formDiv)
 		return;
