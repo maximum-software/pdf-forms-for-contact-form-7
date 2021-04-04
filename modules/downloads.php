@@ -151,26 +151,29 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 					if( $temp_item != '.' && $temp_item != '..' )
 					{
 						$temp_item_path = trailingslashit( $path ) . $temp_item;
-						$mtime = filemtime( $temp_item_path );
-						
-						if( $mtime && time() < $mtime + $timeout )
-							continue;
-						
-						if( ( $temp_item_dir = opendir( $temp_item_path ) ) !== FALSE )
+						if( is_dir( $temp_item_path ) )
 						{
-							while( FALSE !== ( $file = readdir( $temp_item_dir ) ) )
+							$mtime = filemtime( $temp_item_path );
+							
+							if( $mtime && time() < $mtime + $timeout )
+								continue;
+							
+							if( ( $temp_item_dir = opendir( $temp_item_path ) ) !== FALSE )
 							{
-								if( $file != '.' && $file != '..' )
+								while( FALSE !== ( $file = readdir( $temp_item_dir ) ) )
 								{
-									$filepath = trailingslashit( $temp_item_path ) . $file;
-									@unlink( $filepath );
+									if( $file != '.' && $file != '..' )
+									{
+										$filepath = trailingslashit( $temp_item_path ) . $file;
+										@unlink( $filepath );
+									}
 								}
+								
+								closedir( $temp_item_dir );
 							}
 							
-							closedir( $temp_item_dir );
+							rmdir( $temp_item_path );
 						}
-						
-						rmdir( $temp_item_path );
 					}
 				}
 				
