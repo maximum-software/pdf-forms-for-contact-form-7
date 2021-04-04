@@ -87,7 +87,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				add_filter( 'wpcf7_feedback_response', array( $this, 'change_response_js' ), 10, 2 );
 			else
 				// hook wpcf7_ajax_json_echo (needed only for CF7 versions < 5.2)
-				add_action( 'wpcf7_ajax_json_echo', array( $this, 'change_response_js' ), 10, 2 );
+				add_filter( 'wpcf7_ajax_json_echo', array( $this, 'change_response_js' ), 10, 2 );
 			
 			// hook that allows to copy media and mapping
 			add_filter( 'wpcf7_copy', array( $this,'duplicate_form_hook' ), 10, 2 );
