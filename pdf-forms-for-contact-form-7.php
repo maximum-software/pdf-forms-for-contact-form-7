@@ -1873,9 +1873,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				// make sure to enable cron if it is down so that old download files get cleaned up
 				$this->enable_cron();
-				
-				return $response;
 			}
+			
+			return $response;
 		}
 		
 		/*
