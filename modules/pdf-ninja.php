@@ -287,6 +287,26 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			return false;
 		}
 		
+		$min_kernel_version = '2.6.32';
+		$matches = array();
+		if( preg_match('/(\d+)(?:\.\d+)+/', php_uname( 'r' ), $matches) != 1 )
+		{
+			$this->enterprise_extension_support_error = __( 'Failed to parse kernel version.', 'pdf-forms-for-contact-form-7' );
+			return false;
+		}
+		$cur_kernel_version = $matches[0];
+		if( !$cur_kernel_version || version_compare( $cur_kernel_version, $min_kernel_version ) < 0 )
+		{
+			$this->enterprise_extension_support_error = WPCF7_Pdf_Forms::replace_tags(
+				__( 'Minimum kernel version supported is {min-kernel-version}, current kernel version is {cur-kernel-version}.', 'pdf-forms-for-contact-form-7' ),
+				array(
+					'min-kernel-version' => $min_kernel_version,
+					'cur-kernel-version' => $cur_kernel_version,
+				)
+			);
+			return false;
+		}
+		
 		// check /proc/self/stat (required for pdftk)
 		if( !@file_exists( '/proc/self/stat' ) )
 		{
