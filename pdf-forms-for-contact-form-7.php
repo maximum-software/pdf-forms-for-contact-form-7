@@ -131,22 +131,31 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		private function enable_cron()
 		{
 			$due = wp_next_scheduled( 'wpcf7_pdf_forms_cron' );
+			$current_time = time();
 			
-			// check to make sure timeout didn't change
-			$interval = $this->get_downloads()->get_timeout();
-			if( $due > time() + $interval )
+			if( $due !== false )
 			{
-				wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
-				$due = false;
+				$interval = $this->get_downloads()->get_timeout();
+				
+				// check if cron is not functional, run manually
+				if( $due < $current_time - $interval )
+					$this->cron();
+				
+				// check if interval changed
+				if( $due > $current_time + $interval )
+				{
+					wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
+					$due = false;
+				}
+				
 			}
 			
 			if( $due === false )
-				wp_schedule_event( time(), 'wpcf7_pdf_forms_cron_frequency', 'wpcf7_pdf_forms_cron' );
+				wp_schedule_event( $current_time, 'wpcf7_pdf_forms_cron_frequency', 'wpcf7_pdf_forms_cron' );
 		}
 		private function disable_cron()
 		{
-			if( wp_next_scheduled( 'wpcf7_pdf_forms_cron' ) )
-				wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
+			wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
 		}
 		
 		/*

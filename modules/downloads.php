@@ -141,6 +141,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 				$timeout = WPCF7_PDF_FORMS_DOWNLOADS_TIMEOUT_SECONDS;
 			else
 				$timeout = 24*60*60;
+			return $timeout;
 		}
 		
 		/**
