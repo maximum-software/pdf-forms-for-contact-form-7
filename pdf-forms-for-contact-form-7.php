@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: PDF Forms Filler for Contact Form 7
+Plugin Name: PDF Forms Filler for CF7
 Plugin URI: https://github.com/maximum-software/wpcf7-pdf-forms
 Description: Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically and attached to email messages and submission responses upon form submission on your website.  Embed images into PDF files.  Uses Pdf.Ninja API for working with PDF files.  See tutorial video for a demo.
 Version: 1.3.10
@@ -290,7 +290,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							'label'   => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
 							'message' =>
 								self::replace_tags(
-									esc_html__( "The currently installed version of 'Contact Form 7' plugin ({current-wpcf7-version}) is not supported by the current version of 'PDF Forms Filler for Contact Form 7' plugin ({current-plugin-version}), please switch to 'Contact Form 7' plugin version {supported-wpcf7-version} to allow 'PDF Forms Filler for Contact Form 7' plugin to work.", 'pdf-forms-for-contact-form-7' ),
+									esc_html__( "The currently installed version of 'Contact Form 7' plugin ({current-wpcf7-version}) is not supported by the current version of 'PDF Forms Filler for CF7' plugin ({current-plugin-version}), please switch to 'Contact Form 7' plugin version {supported-wpcf7-version} to allow 'PDF Forms Filler for CF7' plugin to work.", 'pdf-forms-for-contact-form-7' ),
 									array(
 										'current-wpcf7-version' => esc_html( defined( 'WPCF7_VERSION' ) ? WPCF7_VERSION : __( "Unknown version", 'pdf-forms-for-contact-form-7' ) ),
 										'current-plugin-version' => esc_html( self::VERSION ),
