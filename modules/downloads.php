@@ -133,14 +133,22 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 		}
 		
 		/**
-		 * Removes old downloads
+		 * Returns download files timeout (in number of seconds)
 		 */
-		public function delete_old_downloads()
+		public function get_timeout()
 		{
 			if( defined( 'WPCF7_PDF_FORMS_DOWNLOADS_TIMEOUT_SECONDS' ) )
 				$timeout = WPCF7_PDF_FORMS_DOWNLOADS_TIMEOUT_SECONDS;
 			else
 				$timeout = 24*60*60;
+		}
+		
+		/**
+		 * Removes old downloads
+		 */
+		public function delete_old_downloads()
+		{
+			$timeout = $this->get_timeout();
 			
 			$path = $this->get_downloads_path();
 			

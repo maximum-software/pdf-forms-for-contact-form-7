@@ -90,7 +90,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				add_filter( 'wpcf7_ajax_json_echo', array( $this, 'change_response_js' ), 10, 2 );
 			
 			// hook that allows to copy media and mapping
-			add_filter( 'wpcf7_copy', array( $this,'duplicate_form_hook' ), 10, 2 );
+			add_filter( 'wpcf7_copy', array( $this, 'duplicate_form_hook' ), 10, 2 );
+			
+			add_filter( 'cron_schedules', array( $this, 'cron_schedules' ) );
 			
 			// TODO: allow users to run this manually
 			//$this->upgrade_data();
@@ -109,12 +111,36 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/*
+		 * Hook that adds a cron schedule
+		 */
+		public function cron_schedules()
+		{
+			$interval = $this->get_downloads()->get_timeout();
+			$display = self::replace_tags( __("Every {interval} seconds"), array( 'internval' => $interval ) );
+			$schedules['wpcf7_pdf_forms_cron_frequency'] = array(
+				'interval' => $interval,
+				'display' => $display
+			);
+			return $schedules;
+		}
+		
+		/*
 		 * Enables/disables cron
 		 */
 		private function enable_cron()
 		{
-			if( ! wp_next_scheduled( 'wpcf7_pdf_forms_cron' ) )
-				wp_schedule_event( time(), 'daily', 'wpcf7_pdf_forms_cron' );
+			$due = wp_next_scheduled( 'wpcf7_pdf_forms_cron' );
+			
+			// check to make sure timeout didn't change
+			$interval = $this->get_downloads()->get_timeout();
+			if( $due > time() + $interval )
+			{
+				wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
+				$due = false;
+			}
+			
+			if( $due === false )
+				wp_schedule_event( time(), 'wpcf7_pdf_forms_cron_frequency', 'wpcf7_pdf_forms_cron' );
 		}
 		private function disable_cron()
 		{
