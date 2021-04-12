@@ -109,6 +109,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public function plugin_deactivated()
 		{
 			$this->disable_cron();
+			$this->get_downloads()->set_timeout(0)->delete_old_downloads();
 		}
 		
 		/*
@@ -126,7 +127,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/*
-		 * Enables/disables cron
+		 * Enables cron
 		 */
 		private function enable_cron()
 		{
@@ -148,9 +149,21 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( $due === false )
 				wp_schedule_event( $current_time, 'wpcf7_pdf_forms_cron_frequency', 'wpcf7_pdf_forms_cron' );
 		}
+		
+		/*
+		 * Disables cron
+		 */
 		private function disable_cron()
 		{
 			wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
+		}
+		
+		/**
+		 * Executes scheduled tasks
+		 */
+		public function cron()
+		{
+			$this->get_downloads()->delete_old_downloads();
 		}
 		
 		/*
@@ -1979,14 +1992,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 			
 			return $output;
-		}
-		
-		/**
-		 * Executes scheduled tasks
-		 */
-		public function cron()
-		{
-			$this->get_downloads()->delete_old_downloads();
 		}
 	}
 	

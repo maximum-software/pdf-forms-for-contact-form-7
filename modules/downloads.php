@@ -8,6 +8,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 		
 		private $downloads_path = null;
 		private $downloads_url = null;
+		private $downloads_timeout = 3600;
 		private $subdir = null;
 		private $files = array();
 		
@@ -17,6 +18,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 			$subdir = 'wpcf7_pdf_forms_downloads';
 			$this->downloads_path = path_join( $uploads['basedir'], $subdir );
 			$this->downloads_url = $uploads['baseurl'] . '/' . $subdir;
+			if( defined( 'WPCF7_PDF_FORMS_DOWNLOADS_TIMEOUT_SECONDS' ) )
+				$this->downloads_timeout = WPCF7_PDF_FORMS_DOWNLOADS_TIMEOUT_SECONDS;
 		}
 		
 		/*
@@ -133,15 +136,20 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 		}
 		
 		/**
+		 * Sets download files timeout (in number of seconds)
+		 */
+		public function set_timeout( $timeout )
+		{
+			$this->downloads_timeout = $timeout;
+			return $this;
+		}
+		
+		/**
 		 * Returns download files timeout (in number of seconds)
 		 */
 		public function get_timeout()
 		{
-			if( defined( 'WPCF7_PDF_FORMS_DOWNLOADS_TIMEOUT_SECONDS' ) )
-				$timeout = WPCF7_PDF_FORMS_DOWNLOADS_TIMEOUT_SECONDS;
-			else
-				$timeout = 24*60*60;
-			return $timeout;
+			return $this->downloads_timeout;
 		}
 		
 		/**
