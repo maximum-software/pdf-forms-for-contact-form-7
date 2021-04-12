@@ -1909,12 +1909,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function change_response_nojs( $output, $class, $content, $contact_form )
 		{
+			$submission = WPCF7_Submission::get_instance();
 			// if downloads variable is not initialized then we don't need to do anything
-			if( $this->downloads )
+			if( $this->downloads && $submission !== null )
 			{
-				$submission = WPCF7_Submission::get_instance();
 				$status = $submission->get_status();
-				
 				if( $status == 'mail_sent' )
 				{
 					$downloads = '';
