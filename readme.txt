@@ -5,7 +5,7 @@ Requires at least: 4.8
 Tested up to: 5.7.1
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.3.10
+Version: 1.3.11
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -56,6 +56,16 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.3.11 =
+
+* Release date: April 12, 2021
+
+* Fixed and improved cron code
+* Changed the default download links timeout from 1 day to 1 hour
+* Fixed a crash
+* Improved frontend JS slightly
+* Added minimum kernel version check to enterprise extension support checking code
 
 = 1.3.10 =
 
