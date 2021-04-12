@@ -133,21 +133,16 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$due = wp_next_scheduled( 'wpcf7_pdf_forms_cron' );
 			$current_time = time();
 			
-			if( $due !== false )
+			$interval = $this->get_downloads()->get_timeout();
+			
+			if( $due !== false && (
+				   $due < $current_time - ( $interval + 60 ) // cron is not functional
+				|| $due > $current_time + $interval // interval changed to a smaller value
+			) )
 			{
-				$interval = $this->get_downloads()->get_timeout();
-				
-				// check if cron is not functional, run manually
-				if( $due < $current_time - $interval )
-					$this->cron();
-				
-				// check if interval changed
-				if( $due > $current_time + $interval )
-				{
-					wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
-					$due = false;
-				}
-				
+				$this->cron(); // run manually
+				wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
+				$due = false;
 			}
 			
 			if( $due === false )
