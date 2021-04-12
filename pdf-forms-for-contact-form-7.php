@@ -1864,7 +1864,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( $this->downloads )
 			{
 				foreach( $this->downloads->get_files() as $file )
-					$response['wpcf7_pdf_forms_data'][] =
+					$response['wpcf7_pdf_forms_data']['downloads'][] =
 						array(
 							'filename' => $file['filename'],
 							'url' => $file['url'],
