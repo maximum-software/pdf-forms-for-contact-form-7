@@ -305,28 +305,25 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			}
 		}
 		
-		// check /proc/self/stat (required for pdftk)
-		if( !@file_exists( '/proc/self/stat' ) )
+		$arch = php_uname( "m" );
+		if( $arch != 'x86_64' && $arch != 'amd64' )
 		{
-			$this->enterprise_extension_support_error = __( 'Hosting environments with no access to /proc/self/stat are not supported.', 'pdf-forms-for-contact-form-7' );
+			$this->enterprise_extension_support_error .= __( 'Bundled binaries are not available for this platform. Enterprise Extension 1 can use pdftk/qpdf/poppler/imagemagick package binaries ONLY if they are installed on the server. Enterprise Extension 2 is not supported.', 'pdf-forms-for-contact-form-7' ).' ';
 			return false;
 		}
 		
 		// warnings
 		
-		$arch = php_uname( "m" );
-		if( $arch != 'x86_64' && $arch != 'amd64' )
-			$this->enterprise_extension_support_error .= __( 'Bundled binaries are not available for this platform, however, pdftk/qpdf/poppler/imagemagick package binaries might be usable if they are installed on the server.', 'pdf-forms-for-contact-form-7' ).' ';
+		// check /proc/self/stat (required for pdftk)
+		if( !@file_exists( '/proc/self/stat' ) )
+			$this->enterprise_extension_support_error .= __( 'Enterprise Extension 1 requires access to /proc/self/stat and therefore is not supported. Enterprise Extension 2 is supported.', 'pdf-forms-for-contact-form-7' ).' ';
 		
 		exec( 'getenforce', $getenforce, $retval );
 		if( !$retval && trim( $getenforce[0] ) == "Enforced" ) // TODO: fix localization
 			$this->enterprise_extension_support_error .= __( 'SELinux may cause problems with using required binaries. You may need to turn off SELinux or adjust its policies.', 'pdf-forms-for-contact-form-7' ).' ';
 		
 		if($this->enterprise_extension_support_error != '')
-		{
 			$this->enterprise_extension_support_error = WPCF7_Pdf_Forms::mb_trim($this->enterprise_extension_support_error);
-			return false;
-		}
 		
 		return true;
 	}
@@ -896,7 +893,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'no-ssl-verify-value' => !$this->get_verify_ssl() ? 'checked' : '',
 			'security-warning' => esc_html__( 'Warning: Using plain HTTP or disabling certificate verification can lead to data leaks.', 'pdf-forms-for-contact-form-7' ),
 			'enterprise-extension-support-label' => esc_html__( 'Enterprise Extension', 'pdf-forms-for-contact-form-7' ),
-			'enterprise-extension-support-value' => $this->get_enterprise_extension_support() ? esc_html__( 'Extension is supported.', 'pdf-forms-for-contact-form-7' ) : esc_html__( 'Extension is not supported.', 'pdf-forms-for-contact-form-7' ).' '.$this->enterprise_extension_support_error,
+			'enterprise-extension-support-value' => ($this->get_enterprise_extension_support() ? esc_html__( 'Extension is supported.', 'pdf-forms-for-contact-form-7' ) : esc_html__( 'Extension is not supported.', 'pdf-forms-for-contact-form-7' )).' '.$this->enterprise_extension_support_error,
 			'edit-label' => esc_html__( "Edit", 'pdf-forms-for-contact-form-7' ),
 			'edit-link' => esc_url( $this->menu_page_url( 'action=edit' ) ),
 		) );
