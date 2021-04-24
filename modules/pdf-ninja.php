@@ -245,47 +245,38 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	/*
 	 * Returns true if the Enterprise Extension is supported on the system
 	 */
-	private $enterprise_extension_support_error = '';
+	private $enterprise_extension_support = null;
 	private function get_enterprise_extension_support()
 	{
-		$this->enterprise_extension_support_error = '';
+		if( $this->enterprise_extension_support !== null )
+			return $this->enterprise_extension_support;
+		
+		$this->enterprise_extension_support = '';
+		
+		$errors = array( 1 => array(), 2 => array() );
+		$warnings = array( 1 => array(), 2 => array() );
 		
 		$required_php_version = '5.4.0';
 		if( version_compare( PHP_VERSION, $required_php_version ) < 0 )
 		{
-			$this->enterprise_extension_support_error = WPCF7_Pdf_Forms::replace_tags(
+			$error = WPCF7_Pdf_Forms::replace_tags(
 				__( 'PHP {version} or higher is required.', 'pdf-forms-for-contact-form-7' ),
 				array( 'version' => $required_php_version )
 			);
-			return false;
+			$errors[1][] = $error;
+			$errors[2][] = $error;
 		}
 		
 		if( strncasecmp(PHP_OS, 'WIN', 3) == 0 )
 		{
-			$this->enterprise_extension_support_error = __( 'Windows platform is not supported.', 'pdf-forms-for-contact-form-7' );
-			return false;
+			$error = __( 'Windows platform is not supported.', 'pdf-forms-for-contact-form-7' );
+			$errors[1][] = $error;
+			$errors[2][] = $error;
 		}
 		
-		if( version_compare( PHP_VERSION, '5.4' ) < 0
-			&& ini_get( 'safe_' . 'mode' ) // don't warn me about this, I know!
-		)
-		{
-			$this->enterprise_extension_support_error = __( 'PHP safe mode is not supported.', 'pdf-forms-for-contact-form-7' );
-			return false;
-		}
-		
-		if( $this->is_function_disabled( 'exec' ) )
-		{
-			$this->enterprise_extension_support_error = __( 'PHP execute function (exec) is disabled.', 'pdf-forms-for-contact-form-7' );
-			return false;
-		}
-		
-		exec( 'which which', $output, $retval );
-		if( $retval !== 0 )
-		{
-			$this->enterprise_extension_support_error = __( 'PHP execute function (exec) is disabled.', 'pdf-forms-for-contact-form-7' );
-			return false;
-		}
+		// check /proc/self/stat (required for pdftk)
+		if( !@file_exists( '/proc/self/stat' ) )
+			$errors[1][] = __( 'Hosting environments with no access to /proc/self/stat are not supported.', 'pdf-forms-for-contact-form-7' );
 		
 		$min_kernel_version = array( 'Linux' => '2.6.32' );
 		$matches = array();
@@ -294,38 +285,91 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$cur_kernel_version = $matches[0];
 			if( !$cur_kernel_version || version_compare( $cur_kernel_version, $min_kernel_version[PHP_OS] ) < 0 )
 			{
-				$this->enterprise_extension_support_error = WPCF7_Pdf_Forms::replace_tags(
+				$error = WPCF7_Pdf_Forms::replace_tags(
 					__( 'Minimum kernel version supported is {min-kernel-version}, current kernel version is {cur-kernel-version}.', 'pdf-forms-for-contact-form-7' ),
 					array(
 						'min-kernel-version' => $min_kernel_version[PHP_OS],
 						'cur-kernel-version' => $cur_kernel_version,
 					)
 				);
-				return false;
+				$errors[1][] = $error;
+				$errors[2][] = $error;
+			}
+			
+		}
+		else
+		{
+			$warning = __( 'Warning: Failed to detect kernel version support.', 'pdf-forms-for-contact-form-7' );
+			$warnings[1][] = $warning;
+			$warnings[2][] = $warning;
+		}
+		
+		if( $this->is_function_disabled( 'exec' ) )
+		{
+			$error = __( 'PHP execute function (exec) is disabled.', 'pdf-forms-for-contact-form-7' );
+			$errors[1][] = $error;
+			$errors[2][] = $error;
+		}
+		else
+		{
+			exec( 'which which', $output, $retval );
+			if( $retval !== 0 )
+			{
+				$error = __( 'PHP execute function (exec) is disabled.', 'pdf-forms-for-contact-form-7' );
+				$errors[1][] = $error;
+				$errors[2][] = $error;
 			}
 		}
+		
 		
 		$arch = php_uname( "m" );
 		if( $arch != 'x86_64' && $arch != 'amd64' )
 		{
-			$this->enterprise_extension_support_error .= __( 'Bundled binaries are not available for this platform. Enterprise Extension 1 can use pdftk/qpdf/poppler/imagemagick package binaries ONLY if they are installed on the server. Enterprise Extension 2 is not supported.', 'pdf-forms-for-contact-form-7' ).' ';
-			return false;
+			$warnings[1][] = __( 'Warning: Bundled binaries are not available for this platform. Enterprise Extension 1 can use pdftk/qpdf/poppler/imagemagick package binaries ONLY if they are installed on the server system-wide.', 'pdf-forms-for-contact-form-7' );
+			$errors[2][] = __( 'Enterprise Extension 2 is not available for this platform.', 'pdf-forms-for-contact-form-7' );
 		}
-		
-		// warnings
-		
-		// check /proc/self/stat (required for pdftk)
-		if( !@file_exists( '/proc/self/stat' ) )
-			$this->enterprise_extension_support_error .= __( 'Enterprise Extension 1 requires access to /proc/self/stat and therefore is not supported. Enterprise Extension 2 is supported.', 'pdf-forms-for-contact-form-7' ).' ';
 		
 		exec( 'getenforce', $getenforce, $retval );
 		if( !$retval && trim( $getenforce[0] ) == "Enforced" ) // TODO: fix localization
-			$this->enterprise_extension_support_error .= __( 'SELinux may cause problems with using required binaries. You may need to turn off SELinux or adjust its policies.', 'pdf-forms-for-contact-form-7' ).' ';
+		{
+			$warning = __( 'Warning: SELinux may cause problems with using required binaries. You may need to turn off SELinux or adjust its policies.', 'pdf-forms-for-contact-form-7' );
+			$warnings[1][] = $warning;
+			$warnings[2][] = $warning;
+		}
 		
-		if($this->enterprise_extension_support_error != '')
-			$this->enterprise_extension_support_error = WPCF7_Pdf_Forms::mb_trim($this->enterprise_extension_support_error);
+		$common_errors = array_intersect( $errors[1], $errors[2] );
+		$filtered_errors = array();
+		foreach( $errors as $version => $version_errors )
+			$filtered_errors[$version] = array_diff( $version_errors, $common_errors );
+		$common_warnings = array_intersect( $warnings[1], $warnings[2] );
+		$filtered_warnings = array();
+		foreach( $warnings as $version => $version_warnings )
+			$filtered_warnings[$version] = array_diff( $version_warnings, $common_warnings );
 		
-		return true;
+		if(count($errors[1]) == 0)
+			$this->enterprise_extension_support .= __( 'Enterprise Extension 1 is supported.', 'pdf-forms-for-contact-form-7' ).' ';
+		else
+			$this->enterprise_extension_support .= __( 'Enterprise Extension 1 is not supported.', 'pdf-forms-for-contact-form-7' ).' ';
+		if(count($errors[2]) == 0)
+			$this->enterprise_extension_support .= __( 'Enterprise Extension 2 is supported.', 'pdf-forms-for-contact-form-7' ).' ';
+		else
+			$this->enterprise_extension_support .= __( 'Enterprise Extension 2 is not supported.', 'pdf-forms-for-contact-form-7' ).' ';
+		
+		foreach($common_errors as $error)
+			$this->enterprise_extension_support .= "$error ";
+		foreach($filtered_errors as $version => $version_errors)
+			foreach($version_errors as $error)
+				$this->enterprise_extension_support .= "$error ";
+		
+		foreach($common_warnings as $warning)
+			$this->enterprise_extension_support .= "$warning ";
+		foreach($filtered_warnings as $version => $version_warnings)
+			foreach($version_warnings as $warning)
+				$this->enterprise_extension_support .= "$warning ";
+		
+		$this->enterprise_extension_support = WPCF7_Pdf_Forms::mb_trim($this->enterprise_extension_support);
+		
+		return $this->enterprise_extension_support;
 	}
 	
 	/*
@@ -893,7 +937,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'no-ssl-verify-value' => !$this->get_verify_ssl() ? 'checked' : '',
 			'security-warning' => esc_html__( 'Warning: Using plain HTTP or disabling certificate verification can lead to data leaks.', 'pdf-forms-for-contact-form-7' ),
 			'enterprise-extension-support-label' => esc_html__( 'Enterprise Extension', 'pdf-forms-for-contact-form-7' ),
-			'enterprise-extension-support-value' => ($this->get_enterprise_extension_support() ? esc_html__( 'Extension is supported.', 'pdf-forms-for-contact-form-7' ) : esc_html__( 'Extension is not supported.', 'pdf-forms-for-contact-form-7' )).' '.$this->enterprise_extension_support_error,
+			'enterprise-extension-support-value' => esc_html( $this->get_enterprise_extension_support() ),
 			'edit-label' => esc_html__( "Edit", 'pdf-forms-for-contact-form-7' ),
 			'edit-link' => esc_url( $this->menu_page_url( 'action=edit' ) ),
 		) );
