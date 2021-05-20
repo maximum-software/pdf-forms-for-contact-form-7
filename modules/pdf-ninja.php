@@ -285,6 +285,8 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$cur_kernel_version = $matches[0];
 			if( !$cur_kernel_version || version_compare( $cur_kernel_version, $min_kernel_version[PHP_OS] ) < 0 )
 			{
+				if(!$cur_kernel_version)
+					$cur_kernel_version = __( 'unknown', 'pdf-forms-for-contact-form-7' );
 				$error = WPCF7_Pdf_Forms::replace_tags(
 					__( 'Minimum kernel version supported is {min-kernel-version}, current kernel version is {cur-kernel-version}.', 'pdf-forms-for-contact-form-7' ),
 					array(
@@ -295,7 +297,6 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 				$errors[1][] = $error;
 				$errors[2][] = $error;
 			}
-			
 		}
 		else
 		{
