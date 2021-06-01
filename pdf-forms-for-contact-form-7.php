@@ -37,8 +37,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'plugins_loaded', array( $this, 'plugin_init' ) );
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'action_links' ) );
 			add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 99, 2 );
-			add_action( 'activate_'.plugin_basename( __FILE__ ), array( $this, 'plugin_activated') );
-			add_action( 'deactivate_'.plugin_basename( __FILE__ ), array( $this, 'plugin_deactivated') );
+			register_activation_hook( __FILE__, array( $this, 'plugin_activated' ) );
+			register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivated' ) );
 			add_action( 'wpcf7_pdf_forms_cron', array( $this, 'cron') );
 		}
 		
@@ -102,12 +102,36 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		/*
 		 * Runs after the plugin have been activated/deactivated
 		 */
-		public function plugin_activated()
+		public function plugin_activated( $network_wide = false )
 		{
+			if( $network_wide )
+			{
+				$sites = get_sites( array( 'fields' => 'ids' ) );
+				foreach( $sites as $id )
+				{
+					switch_to_blog( $id );
+					$this->plugin_activated( false );
+					restore_current_blog();
+				}
+				return;
+			}
+			
 			$this->enable_cron();
 		}
-		public function plugin_deactivated()
+		public function plugin_deactivated( $network_deactivating = false )
 		{
+			if( $network_deactivating )
+			{
+				$sites = get_sites( array( 'fields' => 'ids' ) );
+				foreach( $sites as $id )
+				{
+					switch_to_blog( $id );
+					$this->plugin_deactivated( false );
+					restore_current_blog();
+				}
+				return;
+			}
+			
 			$this->disable_cron();
 			$this->get_downloads()->set_timeout(0)->delete_old_downloads();
 		}
