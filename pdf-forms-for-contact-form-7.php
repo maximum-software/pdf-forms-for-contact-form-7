@@ -96,7 +96,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_filter( 'cron_schedules', array( $this, 'cron_schedules' ) );
 			
 			// TODO: allow users to run this manually
-			//$this->upgrade_data();
+			add_action( 'admin_init', array( $this, 'upgrade_data' ) );
 		}
 		
 		/*
@@ -193,15 +193,16 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		/*
 		 * Runs after plugin updates and triggers data migration
 		 */
-		public function upgrader_process_complete( $upgrader_object, $options )
+		public function upgrader_process_complete( $upgrader, $hook_extra )
 		{
 			$plugin_path = plugin_basename( __FILE__ );
 			
-			if( $options['action'] == 'update'
-			&& $options['type'] == 'plugin'
-			&& isset( $options['plugins'] ) )
+			if( $hook_extra['action'] == 'update'
+			&& $hook_extra['type'] == 'plugin'
+			&& isset( $hook_extra['plugins'] )
+			&& is_array( $hook_extra['plugins'] ) )
 			{
-				foreach( $options['plugins'] as $plugin )
+				foreach( $hook_extra['plugins'] as $plugin )
 				{
 					if( $plugin == $plugin_path )
 					{
@@ -244,6 +245,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		private function upgrade_data()
 		{
+			if( wp_doing_ajax() )
+				return;
+			
 			$old_version = get_transient( 'wpcf7_pdf_forms_updated_old_version' );
 			if( !$old_version )
 				return;
@@ -266,7 +270,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		private function run_data_migration( $script )
 		{
-			include( $script );
+			try { include( $script ); }
+			catch( Exception $e ) { }
 		}
 		
 		/*
