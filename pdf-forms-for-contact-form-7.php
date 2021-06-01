@@ -243,7 +243,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		/*
 		 * Runs data migration when triggered
 		 */
-		private function upgrade_data()
+		public function upgrade_data()
 		{
 			if( wp_doing_ajax() )
 				return;
