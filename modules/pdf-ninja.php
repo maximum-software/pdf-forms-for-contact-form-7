@@ -188,7 +188,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	{
 		if( $this->api_version === null )
 		{
-			$value = WPCF7::get_option( 'wpcf7_pdf_forms_api_version' );
+			$value = WPCF7::get_option( 'wpcf7_pdf_forms_pdfninja_api_version' );
 			if( $value == '1' ) $this->api_version = 1;
 			if( $value == '2' ) $this->api_version = 2;
 		}
@@ -207,7 +207,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( $value == 1 || $value == 2 )
 		{
 			$this->api_version = $value;
-			WPCF7::update_option( 'wpcf7_pdf_forms_api_version', intval( $value ) );
+			WPCF7::update_option( 'wpcf7_pdf_forms_pdfninja_api_version', intval( $value ) );
 		}
 		return true;
 	}
