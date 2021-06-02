@@ -309,7 +309,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				echo WPCF7_Pdf_Forms::render( 'notice_error', array(
 					'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
-					'message' => esc_html__( "The required plugin 'Contact Form 7' version is not supported!", 'pdf-forms-for-contact-form-7' ),
+					'message' => esc_html__( "The required plugin 'Contact Form 7' version is not installed!", 'pdf-forms-for-contact-form-7' ),
 				) );
 				return;
 			}
