@@ -5,7 +5,7 @@ Requires at least: 4.8
 Tested up to: 5.7.1
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.3.12
+Version: 1.3.13
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -56,6 +56,16 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.3.13 =
+
+* Release date: June 1, 2021
+
+* Added API version configuration option
+* Improved plugin activation and deactivation hooks
+* Improved and enabled the database migration scripts
+* Added 1.3.13 database migration script
+* Other bug fixes and improvements
 
 = 1.3.12 =
 
