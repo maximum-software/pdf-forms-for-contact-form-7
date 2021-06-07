@@ -383,22 +383,23 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$this->enterprise_extension_support .= __( 'Enterprise Extension 1 is supported.', 'pdf-forms-for-contact-form-7' ).' ';
 		else
 			$this->enterprise_extension_support .= __( 'Enterprise Extension 1 is not supported.', 'pdf-forms-for-contact-form-7' ).' ';
+		foreach($filtered_errors[1] as $error)
+			$this->enterprise_extension_support .= "$error ";
+		foreach($filtered_warnings[1] as $warning)
+			$this->enterprise_extension_support .= "$warning ";
 		if(count($errors[2]) == 0)
 			$this->enterprise_extension_support .= __( 'Enterprise Extension 2 is supported.', 'pdf-forms-for-contact-form-7' ).' ';
 		else
 			$this->enterprise_extension_support .= __( 'Enterprise Extension 2 is not supported.', 'pdf-forms-for-contact-form-7' ).' ';
+		foreach($filtered_errors[2] as $error)
+			$this->enterprise_extension_support .= "$error ";
+		foreach($filtered_warnings[2] as $warning)
+			$this->enterprise_extension_support .= "$warning ";
 		
 		foreach($common_errors as $error)
 			$this->enterprise_extension_support .= "$error ";
-		foreach($filtered_errors as $version => $version_errors)
-			foreach($version_errors as $error)
-				$this->enterprise_extension_support .= "$error ";
-		
 		foreach($common_warnings as $warning)
 			$this->enterprise_extension_support .= "$warning ";
-		foreach($filtered_warnings as $version => $version_warnings)
-			foreach($version_warnings as $warning)
-				$this->enterprise_extension_support .= "$warning ";
 		
 		$this->enterprise_extension_support = WPCF7_Pdf_Forms::mb_trim($this->enterprise_extension_support);
 		
