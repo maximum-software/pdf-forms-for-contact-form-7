@@ -559,7 +559,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $attachment_id;
 		}
 		
-		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false );
+		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false,'download_link_auto' => false );
 		
 		/**
 		 * Updates post attachment options
@@ -1077,12 +1077,16 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$attach_to_mail_2 = $attachment['options']['attach_to_mail_2'] || strpos( $mail2["attachments"], "[pdf-form-".$attachment_id."]" ) !== FALSE;
 					$save_directory = strval( $attachment['options']['save_directory'] );
 					$create_download_link = $attachment['options']['download_link'];
+
+					//AUTO DOWNLOAD LINK :: download_link_auto
+					$create_download_link_auto = $attachment['options']['download_link_auto'];
 					
 					// skip file if it is not used anywhere
 					if( !$attach_to_mail_1
 					&& !$attach_to_mail_2
 					&& $save_directory === ""
-					&& !$create_download_link )
+					&& !$create_download_link 
+					&& !$create_download_link_auto)
 						continue;
 					
 					$options = array();
@@ -1171,8 +1175,19 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						}
 						
 						$create_download_link = $filedata['options']['download_link'];
-						if ( $create_download_link )
-							$this->get_downloads()->add_file( $filedata['file'], $filedata['filename'] );
+						$create_download_link_auto = $filedata['options']['download_link_auto'];
+						
+						if ( $create_download_link && ($create_download_link_auto == false))
+							$this->get_downloads()->add_file( $filedata['file'], $filedata['filename'],$create_download_link,$create_download_link_auto);
+
+						else if($create_download_link && $create_download_link_auto)
+
+							$this->get_downloads()->add_file( $filedata['file'], $filedata['filename'],$create_download_link,$create_download_link_auto);
+							// AUTO-DOWNLOAD CONDITION
+						else if($create_download_link_auto && ($create_download_link==false))	
+							$this->get_downloads()->add_file( $filedata['file'], $filedata['filename'],$create_download_link,$create_download_link_auto);
+
+
 					}
 				}
 			}
@@ -1894,6 +1909,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'filename' => esc_html__( 'Filename (mail-tags can be used)', 'pdf-forms-for-contact-form-7' ),
 					'save-directory'=> esc_html__( 'Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)', 'pdf-forms-for-contact-form-7' ),
 					'download-link' => esc_html__( 'Add filled PDF download link to form submission response', 'pdf-forms-for-contact-form-7' ),
+					'download-link-auto' => esc_html__( 'Auto download', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping' => esc_html__( 'Field Mapper Tool', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping-help' => esc_html__( 'This tool can be used to link form fields and mail-tags with fields in the attached PDF files. Form tags can also be generated. When your users submit the form, input from form fields and other mail-tags will be inserted into the correspoinding fields in the PDF file.', 'pdf-forms-for-contact-form-7' ),
 					'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
@@ -1975,7 +1991,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						array(
 							'filename' => $file['filename'],
 							'url' => $file['url'],
-							'size' => size_format( filesize( $file['filepath'] ) )
+							'size' => size_format( filesize( $file['filepath'] ) ),
+							'autodownload'=>$file['autodownload'],
+							'downloadlink'=>$file['downloadlink']
 						);
 				
 				// make sure to enable cron if it is down so that old download files get cleaned up
