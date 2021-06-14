@@ -1411,12 +1411,24 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( $type == 'radio' && count( $options ) == 1 )
 						$tagType = 'checkbox';
 					
-					if( count( $options ) == 1 )
-						// add pipe to prevent user confusion with singular options
-						$tagValues .= '"' . self::escape_tag_value( strval( $field['name'] ) ) . '|' . self::escape_tag_value( strval( reset( $options ) ) ) . '" ';
-					else
-						foreach( $options as $option )
-							$tagValues .= '"' . self::escape_tag_value( strval( $option ) ) . '" ';
+					$count = count( $options );
+					foreach( $options as $option )
+					{
+						$name = null;
+						
+						// prevent user confusion with singular options when it is a non-descriptive "Yes" or "On"
+						if( $count == 1 )
+							$name = $field['name'];
+						
+						// if options list is not a promitive string array then use keys as values
+						if( is_array( $option ) )
+						{
+							if( isset( $option['label'] ) ) $name = $option['label'];
+							if( isset( $option['value'] ) ) $option = $option['value'];
+						}
+						
+						$tagValues .= '"' . ( $name == null ? '' : self::escape_tag_value( strval( $name ) ) . '|' ) . self::escape_tag_value( strval( $option ) ) . '" ';
+					}
 					
 					if( $type == 'checkbox' && count( $options ) > 1 )
 						$tagOptions .= 'exclusive ';
