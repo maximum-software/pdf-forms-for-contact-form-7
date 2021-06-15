@@ -126,6 +126,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 			
 			return $this;
 		}
+
+		public function set_options( $id, $options )
+		{
+			$this->files[$id]['options'] = $options;
+			return $this;
+		}
 		
 		/**
 		 * Returns added files
