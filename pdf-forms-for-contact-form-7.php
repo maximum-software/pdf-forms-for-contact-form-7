@@ -574,7 +574,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $attachment_id;
 		}
 		
-		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false, 'auto_download' => false );
+		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false, 'auto_download' => false, 'pdf_viewer' => false );
 		
 		/**
 		 * Updates post attachment options
@@ -1093,13 +1093,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$save_directory = strval( $attachment['options']['save_directory'] );
 					$create_download_link = $attachment['options']['download_link'];
 					$create_auto_download = $attachment['options']['auto_download'];
+					$create_pdf_viewer = $attachment['options']['pdf_viewer'];
 					
 					// skip file if it is not used anywhere
 					if( !$attach_to_mail_1
 					&& !$attach_to_mail_2
 					&& $save_directory === ""
 					&& !$create_download_link
-					&& !$create_auto_download )
+					&& !$create_auto_download
+					&& !$create_pdf_viewer )
 						continue;
 					
 					$options = array();
@@ -1189,13 +1191,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						
 						$create_download_link = $filedata['options']['download_link'];
 						$create_auto_download = $filedata['options']['auto_download'];
-						if ( $create_download_link || $create_auto_download )
+						$create_pdf_viewer = $filedata['options']['pdf_viewer'];
+						if ( $create_download_link || $create_auto_download || $create_pdf_viewer )
 							$this->get_downloads()
 							->add_file( $filedata['file'], $filedata['filename'], )
 							->set_options( $id,
 							array(
 							'download_link' => $create_download_link,
-							'auto_download' => $create_auto_download ) );
+							'auto_download' => $create_auto_download,
+							'pdf_viewer' => $create_pdf_viewer ) );
 					}
 				}
 			}
@@ -1959,6 +1963,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'save-directory'=> esc_html__( 'Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)', 'pdf-forms-for-contact-form-7' ),
 					'download-link' => esc_html__( 'Add filled PDF download link to form submission response', 'pdf-forms-for-contact-form-7' ),
 					'auto-download' => esc_html__( 'Automatically download filled PDF after form submission', 'pdf-forms-for-contact-form-7' ),
+					'pdf-viewer' => esc_html__( 'PDF viewer', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping' => esc_html__( 'Field Mapper Tool', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping-help' => esc_html__( 'This tool can be used to link form fields and mail-tags with fields in the attached PDF files. Form tags can also be generated. When your users submit the form, input from form fields and other mail-tags will be inserted into the correspoinding fields in the PDF file.', 'pdf-forms-for-contact-form-7' ),
 					'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
@@ -2066,24 +2071,27 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$downloads = '';
 					foreach( $this->downloads->get_files() as $file )
 					{
-						$downloads .= "<div>" .
-							self::replace_tags(
-								esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
-								array(
-									'icon' => '<span class="dashicons dashicons-download"></span>',
-									'a-href-url' => '<a href="' . esc_html( $file['url'] ) . '" download>',
-									'filename' => esc_html( $file['filename'] ),
-									'/a' => '</a>',
-									'i' => '<span class="file-size">',
-									'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
-									'/i' => '</span>',
+						if( $file['options']['download_link'] == true )
+							$downloads .= "<div>" .
+								self::replace_tags(
+									esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
+									array(
+										'icon' => '<span class="dashicons dashicons-download"></span>',
+										'a-href-url' => '<a href="' . esc_html( $file['url'] ) . '" download>',
+										'filename' => esc_html( $file['filename'] ),
+										'/a' => '</a>',
+										'i' => '<span class="file-size">',
+										'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
+										'/i' => '</span>',
+									)
 								)
-							)
-						 . "</div>";
+							. "</div>";
 						//  only add iframe for pdf that is check for auto download
-						 if($file['options']['auto_download'] == true){
+						if( $file['options']['auto_download'] == true )
 							$downloads .= "<iframe src='".$_SERVER['REQUEST_URI']."?pdf_url=".esc_html( $file['url'] )."&pdf_name=".esc_html( $file['filename'] )."' style='display: none; height: 0; width: 0' ></iframe>";
-						 }
+
+						if( $file['options']['pdf_viewer'] == true )
+							$downloads .= "<iframe src='".esc_html( $file['url'] )."' style='height: 650px; width: 100%; margin: 10px 0px' ></iframe>";
 					}
 					$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
 

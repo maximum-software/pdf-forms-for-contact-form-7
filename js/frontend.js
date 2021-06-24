@@ -41,6 +41,7 @@ window.addEventListener('load', function(event)
 				{
 					var autodownload = data[i]['options']['auto_download'];
 					var downloadlink = data[i]['options']['download_link'];
+					var pdfviewer = data[i]['options']['pdf_viewer'];
 					var download = document.createElement('div');
 					download.innerHTML = "<span class='dashicons dashicons-download'></span><a href='' download></a> <span class='file-size'></span>";
 
@@ -48,6 +49,13 @@ window.addEventListener('load', function(event)
 					link.href = data[i]['url'];
 					link.innerText = data[i]['filename'];
 					download.querySelector('.file-size').innerText = "(" + data[i]['size'] + ")";
+
+					var pdfview = document.createElement("iframe");
+					pdfview.setAttribute("src", link.href);
+					pdfview.style.width = "100%";
+					pdfview.style.height = "650px";
+					pdfview.style.margin = "10px 0px";
+					
 					if( autodownload == true )
 						link.click();
 
@@ -56,6 +64,9 @@ window.addEventListener('load', function(event)
 					downloads.appendChild(download);
 					alldownloadlink=true;	
 					}
+
+					if( pdfviewer == true )
+					downloads.appendChild(pdfview);
 				}
 				
 				if( alldownloadlink == true )
