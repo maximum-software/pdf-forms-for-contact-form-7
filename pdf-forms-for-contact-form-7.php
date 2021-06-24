@@ -82,6 +82,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
 			
 			add_filter( 'wpcf7_form_response_output', array( $this, 'change_response_nojs' ), 10, 4 );
+			// Auto download when js disabled 
+			add_action( 'parse_request', array( $this, 'autodownload_nojs' ), 80 );
 			
 			if( defined( 'WPCF7_VERSION' ) && version_compare( WPCF7_VERSION, '5.2' ) >= 0 )
 				// hook wpcf7_feedback_response (works only with CF7 version 5.2+)
@@ -98,7 +100,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			// TODO: allow users to run this manually
 			add_action( 'admin_init', array( $this, 'upgrade_data' ) );
 		}
-		
+
 		/*
 		 * Runs after the plugin have been activated/deactivated
 		 */
@@ -2048,6 +2050,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				{
 					$downloads = '';
 					foreach( $this->downloads->get_files() as $file )
+					{
 						$downloads .= "<div>" .
 							self::replace_tags(
 								esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
@@ -2061,15 +2064,32 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 									'/i' => '</span>',
 								)
 							)
-						. "</div>";
+						 . "</div>";
+						//  only add iframe for pdf that is check for auto download
+						 if($file['options']['auto_download'] == true){
+							$downloads .= "<iframe src='".$_SERVER['REQUEST_URI']."?pdf_url=".esc_html( $file['url'] )."&pdf_name=".esc_html( $file['filename'] )."' style='display: none; height: 0; width: 0' ></iframe>";
+						 }
+					}
 					$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
-					
+
 					// make sure to enable cron if it is down so that old download files get cleaned up
 					$this->enable_cron();
 				}
 			}
 			
 			return $output;
+		}
+
+		//Auto download filled pdf file when js is disabled and handles url request made by iframe.
+		public function autodownload_nojs()
+		{
+			$url = $_GET['pdf_url'];
+			$filename = $_GET['pdf_name'];
+			if( $url != '' )
+			{		
+				header( 'Content-Disposition: attachment; filename="'. $filename .'"' );
+				readfile( $url );
+			}
 		}
 	}
 	

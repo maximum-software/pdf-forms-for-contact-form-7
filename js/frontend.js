@@ -49,9 +49,8 @@ window.addEventListener('load', function(event)
 					link.innerText = data[i]['filename'];
 					download.querySelector('.file-size').innerText = "(" + data[i]['size'] + ")";
 					if( autodownload == true )
-					{
-					link.click();
-					}
+						link.click();
+
 					if( downloadlink == true )
 					{
 					downloads.appendChild(download);

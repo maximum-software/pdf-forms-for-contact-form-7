@@ -5,7 +5,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 	class WPCF7_Pdf_Forms_Downloads
 	{
 		private static $instance = null;
-		
+
 		private $downloads_path = null;
 		private $downloads_url = null;
 		private $downloads_timeout = 3600;
@@ -127,6 +127,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 			return $this;
 		}
 
+		/**
+		 * Adds additional options to response
+		 */
 		public function set_options( $id, $options )
 		{
 			$this->files[$id]['options'] = $options;
