@@ -60,7 +60,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 			$random_max = mt_getrandmax();
 			$random_num = zeroise( mt_rand( 0, $random_max ), strlen( $random_max ) );
 			$this->subdir = wp_unique_filename( $this->get_downloads_path(), $random_num );
-			
+			/**
+			 * Keeping last created subdir in session to be accessed in redirect page.
+			 */
+			$_SESSION['subdir_name'] = $this->subdir;
 			return $this->subdir;
 		}
 		
