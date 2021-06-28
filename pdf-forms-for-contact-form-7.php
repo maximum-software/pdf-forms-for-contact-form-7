@@ -1430,6 +1430,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						$tagValues .= '"' . ( $name == null ? '' : self::escape_tag_value( strval( $name ) ) . '|' ) . self::escape_tag_value( strval( $option ) ) . '" ';
 					}
 					
+					// TODO: add multiselect support
 					if( $type == 'checkbox' && count( $options ) > 1 )
 						$tagOptions .= 'exclusive ';
 					
