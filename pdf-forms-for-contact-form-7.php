@@ -1422,6 +1422,33 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					
 					if( $type == 'checkbox' && count( $options ) > 1 )
 						$tagOptions .= 'exclusive ';
+					
+					if( isset( $field['defaultValue'] ) )
+					{
+						$default_values = $field['defaultValue'];
+						if( ! is_array( $default_values ) )
+							$default_values = array( $default_values );
+						
+						$default_string = '';
+						$count = 1;
+						foreach( $options as $option )
+						{
+							$option_value = null;
+							if( is_array( $option ) && isset( $option['value'] ) )
+								$option_value = $option['value'];
+							if( ! is_array( $option ) )
+								$option_value = $option;
+							
+							if( $option_value !== null )
+								if( in_array( $option_value, $default_values, $strict=true ) )
+									$default_string = ltrim( $default_string . '_' . $count, '_' );
+							
+							$count++;
+						}
+						
+						if( $default_string !== '' )
+							$tagOptions .= 'default:' . $default_string . ' ';
+					}
 				}
 				else
 					return null;
