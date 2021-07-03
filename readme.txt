@@ -5,7 +5,7 @@ Requires at least: 4.8
 Tested up to: 5.7.2
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.3.13
+Version: 1.3.14
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -56,6 +56,19 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.3.14 =
+
+* Release date: July 3, 2021
+
+* Added the default tag option to radio/select/checkbox tag generator
+* Fixed an issue with radio/select/checkbox tag generation with v2
+* Improved tag generator to better escape tag names and values
+* Fixed an issue with CF7 fields lists in tag generator thickbox not getting refreshed when necessary
+* Fixed padding issue in tag generator thickbox
+* Added confirmation box for the delete all mappings button
+* Fixed an issue with localization not working properly
+* Improved Enterprise Extension support messages
 
 = 1.3.13 =
 
