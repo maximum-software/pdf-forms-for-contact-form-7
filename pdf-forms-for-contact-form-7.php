@@ -33,7 +33,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		
 		private function __construct()
 		{
-			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 			add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 			add_action( 'plugins_loaded', array( $this, 'plugin_init' ) );
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'action_links' ) );
@@ -61,6 +60,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
 				return;
+			
+			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 			
 			add_action( 'wp_enqueue_scripts', array( $this, 'front_end_enqueue_scripts' ) );
 			add_filter( 'wpcf7_form_elements', array( $this, 'front_end_form_scripts' ) );
@@ -414,6 +415,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__No_WPCF7' => __( 'Please copy/paste tags manually', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Attachment' => __( 'Are you sure you want to delete this file?  This will delete field mappings and image embeds associated with this file.', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Mapping' => __( 'Are you sure you want to delete this mapping?', 'pdf-forms-for-contact-form-7' ),
+					'__Confirm_Delete_All_Mappings' => __( 'Are you sure you want to delete all mappings?', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Embed' => __( 'Are you sure you want to delete this embeded image?', 'pdf-forms-for-contact-form-7' ),
 					'__Show_Help' => __( 'Show Help', 'pdf-forms-for-contact-form-7' ),
 					'__Hide_Help' => __( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
@@ -1359,6 +1361,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return preg_replace( '/(^\s+)|(\s+$)/us', '', $str );
 		}
 		
+		private static function escape_tag_value($value)
+		{
+			$value = esc_attr($value);
+			$escape_characters = array("\\","]","|");
+			$escape_table = array('&#92;', '&#93;','&#124;');
+			$value = str_replace($escape_characters, $escape_table, $value);
+			return $value;
+		}
+		
 		/*
 		 * Generates CF7 field tag based on field data
 		 */
@@ -1376,7 +1387,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			if( $type == 'text' )
 				if( isset( $field['value'] ) )
-					$tagValues .= '"' . esc_attr( strval( $field['value'] ) ) . '" ';
+					$tagValues .= '"' . self::escape_tag_value( strval( $field['value'] ) ) . '" ';
 			
 			if( $type == 'radio' || $type == 'select' || $type == 'checkbox' )
 			{
@@ -1392,10 +1403,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					
 					if( count( $options ) == 1 )
 						// add pipe to prevent user confusion with singular options
-						$tagValues .= '"' . esc_attr( strval( $field['name'] ) ) . '|' . esc_attr( strval( reset( $options ) ) ) . '" ';
+						$tagValues .= '"' . self::escape_tag_value( strval( $field['name'] ) ) . '|' . self::escape_tag_value( strval( reset( $options ) ) ) . '" ';
 					else
 						foreach( $options as $option )
-							$tagValues .= '"' . esc_attr( strval( $option ) ) . '" ';
+							$tagValues .= '"' . self::escape_tag_value( strval( $option ) ) . '" ';
 					
 					if( $type == 'checkbox' && count( $options ) > 1 )
 						$tagOptions .= 'exclusive ';
@@ -1428,7 +1439,21 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( in_array( 'ReadOnly', $flags ) )
 					$tagOptions .= 'readonly ';
 			}
-			
+			$unavailableNames = array(
+				'm','p','posts','w','cat','withcomments','withoutcomments'
+				,'s','search','exact','sentence','calendar','page','paged'
+				,'more','tb','pb','author','order','orderby','year','monthnum'
+				,'day','hour','minute','second','name','category_name','tag','feed'
+				,'author_name','static','pagename','page_id','error','attachment'
+				,'attachment_id','subpost','subpost_id','preview','robots','taxonomy'
+				,'term','cpage','post_type','embed'
+			);
+			$tagName = sanitize_title( $tagName );
+			if( array_search( $tagName, $unavailableNames ) !== FALSE ){
+				$tagName .= '-0000';
+				do { $tagName++; }
+				while( array_search( $tagName, $unavailableNames ) !== FALSE );
+			}
 			return '[' . self::mb_trim( $tagType . ' ' . $tagName . ' ' . $tagOptions . $tagValues ) . ']';
 		}
 		
