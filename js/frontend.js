@@ -36,6 +36,7 @@ window.addEventListener('load', function(event)
 				var downloads = document.createElement('div');
 				downloads.className = 'wpcf7-pdf-forms-response-output';
 				var alldownloadlink = false;
+				var allpdfviewer = false;
 
 				for(var i=0; i<data.length; i++)
 				{
@@ -51,28 +52,29 @@ window.addEventListener('load', function(event)
 					download.querySelector('.file-size').innerText = "(" + data[i]['size'] + ")";
 
 					var pdfview = document.createElement("iframe");
-					pdfview.setAttribute("src", link.href);
-					pdfview.style.width = "100%";
-					pdfview.style.height = "650px";
-					pdfview.style.margin = "10px 0px";
+					pdfview.setAttribute("src", data[i]['url']);
+					pdfview.className = 'wpcf7-pdf-forms-pdf-view';
 					
 					if( autodownload == true )
 						link.click();
 
 					if( downloadlink == true )
 					{
-					downloads.appendChild(download);
-					alldownloadlink=true;	
+						downloads.appendChild(download);
+						alldownloadlink = true;	
 					}
 
 					if( pdfviewer == true )
-					downloads.appendChild(pdfview);
+					{
+						downloads.appendChild(pdfview);
+						allpdfviewer = true;
+					}
 				}
 				
-				if( alldownloadlink == true )
+				if( alldownloadlink == true || allpdfviewer == true )
 				{
-				var form = formDiv.querySelector('.wpcf7-form');
-				if(form)
+					var form = formDiv.querySelector('.wpcf7-form');
+					if(form)
 					form.appendChild(downloads);
 				}
 			}
