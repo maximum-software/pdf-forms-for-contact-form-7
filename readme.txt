@@ -1,4 +1,4 @@
-=== PDF Forms Filler for Contact Form 7 ===
+=== PDF Forms Filler for CF7 ===
 Contributors: maximumsoftware
 Tags: pdf, form, filler, contact form, attachment, email
 Requires at least: 4.8

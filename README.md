@@ -1,10 +1,10 @@
-# PDF Forms Filler for Contact Form 7
+# PDF Forms Filler for CF7
 
 Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically and attached to email messages upon form submission on your website.  Embed images in PDF files.
 
 ## Description
 
-[![PDF Forms Filler for Contact Form 7 Tutorial](https://img.youtube.com/vi/jy84xqnj0Zk/0.jpg)](https://www.youtube.com/watch?v=jy84xqnj0Zk "PDF Forms Filler for Contact Form 7 Tutorial")
+[![PDF Forms Filler for CF7 Tutorial](https://img.youtube.com/vi/jy84xqnj0Zk/0.jpg)](https://www.youtube.com/watch?v=jy84xqnj0Zk "PDF Forms Filler for CF7 Tutorial")
 
 This plugin gives WordPress Admin Dashboard users the ability to add fillable PDF attachments to email messages and form submission responses of Contact Form 7.
 
