@@ -426,7 +426,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		{
 			$response = json_decode( $body , true );
 			
-			if( ! $response )
+			if( ! $response || ! is_array( $response ) )
 				throw new Exception( __( "Failed to decode API server response", 'pdf-forms-for-contact-form-7' ) );
 			
 			if( $response['success'] == true && isset( $response['fileUrl'] ) )
@@ -485,7 +485,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		{
 			$response = json_decode( $body , true );
 			
-			if( ! $response )
+			if( ! $response || ! is_array( $response ) )
 				throw new Exception( __( "Failed to decode API server response", 'pdf-forms-for-contact-form-7' ) );
 			
 			if( $response['success'] == true && isset( $response['fileUrl'] ) )
@@ -520,7 +520,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( $result['success'] != true )
 			throw new Exception( $result['error'] );
 		
-		if( ! $result['key'])
+		if( ! isset( $result['key'] ) )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
 		return $result['key'];
@@ -648,7 +648,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( $result['success'] != true )
 			throw new Exception( $result['error'] );
 		
-		if( ! is_array( $result['fields'] ) )
+		if( ! isset( $result['fields'] ) || ! is_array( $result['fields'] ) )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
 		return $result['fields'];
@@ -667,7 +667,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( $result['success'] != true )
 			throw new Exception( $result['error'] );
 		
-		if( ! is_array( $result['fields'] ) ||  ! is_array( $result['pages'] ) )
+		if( ! isset( $result['fields'] ) || ! isset( $result['pages'] ) || ! is_array( $result['fields'] ) || ! is_array( $result['pages'] ) )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
 		unset( $result['success'] );
@@ -709,7 +709,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( $result['success'] != true )
 			throw new Exception( $result['error'] );
 		
-		if( !isset( $result['content'] ) || $result['content_type'] != 'image/jpeg' )
+		if( ! isset( $result['content'] ) || $result['content_type'] != 'image/jpeg' )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
 		$handle = @fopen( $destfile, 'w' );
@@ -824,7 +824,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( $result['success'] != true )
 			throw new Exception( $result['error'] );
 		
-		if( !isset( $result['content'] ) || $result['content_type'] != 'application/pdf' )
+		if( ! isset( $result['content'] ) || $result['content_type'] != 'application/pdf' )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
 		$handle = @fopen( $destfile, 'w' );
@@ -854,7 +854,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( $result['success'] != true )
 			throw new Exception( $result['error'] );
 		
-		if( !isset( $result['content'] ) || $result['content_type'] != 'application/pdf' )
+		if( ! isset( $result['content'] ) || $result['content_type'] != 'application/pdf' )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
 		$handle = @fopen( $destfile, 'w' );
