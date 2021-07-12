@@ -82,9 +82,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
 			
 			add_filter( 'wpcf7_form_response_output', array( $this, 'change_response_nojs' ), 10, 4 );
-
+			// Auto download when js disabled 
+			add_action( 'parse_request', array( $this, 'autodownload_nojs' ), 80 );
 			// wpcf7_pdf_forms_downloads using shortcode to redirected page
-			add_shortcode('wpcf7_pdf_forms_downloads', array( $this, 'shortcode_download_links_response' ));
+			add_shortcode( 'wpcf7_pdf_forms_downloads', array( $this, 'shortcode_download_links_response' ) );
 			
 			if( defined( 'WPCF7_VERSION' ) && version_compare( WPCF7_VERSION, '5.2' ) >= 0 )
 				// hook wpcf7_feedback_response (works only with CF7 version 5.2+)
@@ -2082,6 +2083,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						
 						if( $file['options']['pdf_viewer'] == true )
 							$downloads .= "<iframe src='".esc_html( $file['url'] )."' class='wpcf7-pdf-forms-pdf-view' ></iframe>";
+
+						if( $file['options']['auto_download'] == true )
+							$downloads .= "<iframe src='".esc_html( $_SERVER['REQUEST_URI'] )."?pdf_url=".esc_html( base64_encode( $file['url'] ) )."&pdf_name=".esc_html( base64_encode( $file['filename'] ) )."' class='wpcf7-pdf-forms-auto-download' ></iframe>";
 					}
 					$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
 
@@ -2091,6 +2095,23 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 			
 			return $output;
+		}
+
+		/*
+		 * Auto download filled pdf file when js is disabled and handles url request made by iframe.
+		 */
+		public function autodownload_nojs()
+		{
+			$url = base64_decode( $_REQUEST['pdf_url'] );
+			$filename = base64_decode( $_REQUEST['pdf_name'] );
+			$url_extension = pathinfo( $url, PATHINFO_EXTENSION );
+			$file_extension = pathinfo( $filename, PATHINFO_EXTENSION );
+
+			if( isset( $url ) && isset( $filename )  && $url_extension == 'pdf' && $file_extension == 'pdf' )
+			{
+				header( 'Content-Disposition: attachment; filename=' . $filename );
+				readfile( $url );
+			}
 		}
 
 		/*
@@ -2127,8 +2148,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 
 			return $output;
 		}
-
-
+		
 	}
 	
 	WPCF7_Pdf_Forms::get_instance();
