@@ -5,7 +5,7 @@ Requires at least: 4.8
 Tested up to: 5.7.2
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.3.14
+Version: 1.3.15
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -56,6 +56,15 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.3.15 =
+
+* Release date: July 14, 2021
+
+* Renamed plugin
+* Added CF7 v5.4.2 support
+* Improved API response decoding error checks
+* Small improvement in tag generator for radio/select/checkbox fields
 
 = 1.3.14 =
 
