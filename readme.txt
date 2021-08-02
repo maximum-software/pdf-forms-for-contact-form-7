@@ -5,7 +5,7 @@ Requires at least: 4.8
 Tested up to: 5.7.2
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.3.15
+Version: 1.3.16
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -56,6 +56,12 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.3.16 =
+
+* Release date: August 2, 2021
+
+* Switched the Pdf.Ninja API version setting default from v1 to v2
 
 = 1.3.15 =
 
