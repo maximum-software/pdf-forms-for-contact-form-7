@@ -194,7 +194,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		}
 		
 		if( $this->api_version === null )
-			$this->api_version = 1;
+			$this->api_version = 2; // default
 		
 		return $this->api_version;
 	}
