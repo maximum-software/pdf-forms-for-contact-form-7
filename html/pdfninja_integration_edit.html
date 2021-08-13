@@ -1,4 +1,4 @@
-<p>{top-message}</p>
+<p>{top-message-api-settings}</p>
 
 <form method="post" action="{edit-link}">
 	{nonce}
@@ -38,7 +38,23 @@
 	<p>{security-warning}</p>
 	
 	<p class="submit">
-		<input type="submit" class="button button-primary" value="{save-label}" name="submit" />
+		<input type="submit" class="button button-primary" value="{save-label}" name="save" />
+	</p>
+</form>
+
+<p>{top-message-new-key}</p>
+
+<form method="post" action="{edit-link}">
+	{nonce}
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th scope="row"><label for="email">{email-label}</label></th>
+				<td><input type="text" value="{email-value}" id="email" name="email" class="regular-text code" /></td>
+			</tr>
+		</tbody>
+	</table>
+	<p class="submit">
 		<input type="submit" class="button button-primary" value="{new-label}" name="new" />
 	</p>
 </form>
