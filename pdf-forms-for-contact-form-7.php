@@ -899,23 +899,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( !is_array( $embeds ) )
 					$embeds = array();
 				
-				$posted_data = $submission->get_posted_data();
 				$uploaded_files = $submission->uploaded_files();
-				
-				// preprocess posted data
-				$processed_data = array();
-				foreach( $posted_data as $key => $value )
-				{
-					if( is_array( $value ) )
-						$value = array_shift( $value );
-					$value = strval( $value );
-					if( $value === '' )
-						continue;
-					
-					$value = wp_unslash( $value );
-					
-					$processed_data[$key] = $value;
-				}
 				
 				// preprocess embedded images
 				$embed_files = array();
@@ -985,6 +969,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$embed_files[$id] = $filepath;
 				}
 				
+				$cf7_field_tags = array();
+				foreach( $contact_form->scan_form_tags() as $cf7_tag )
+					if( $cf7_tag->name )
+						$cf7_field_tags[ $cf7_tag->name ] = $cf7_tag;
+				
 				$files = array();
 				foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
 				{
@@ -1009,34 +998,106 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						if( !isset( $fields[$field] ) )
 							continue;
 						
+						$multiple =
+							(
+								isset( $cf7_field_tags[$mapping["cf7_field"]] ) &&
+								( $cf7_field_tag = $cf7_field_tags[$mapping["cf7_field"]] ) &&
+								$cf7_field_tag->has_option( 'multiple' )
+							)
+						||
+							(
+								isset( $fields[$field]['flags'] ) &&
+								in_array( 'MultiSelect', $fields[$field]['flags'] )
+							);
+						
 						if( isset( $mapping["cf7_field"] ) )
-							$data[$field] = wpcf7_mail_replace_tags( "[".$mapping["cf7_field"]."]" );
+						{
+							if( $multiple )
+								$data[$field] = $submission->get_posted_data( $mapping["cf7_field"] );
+							else
+								$data[$field] = wpcf7_mail_replace_tags( "[".$mapping["cf7_field"]."]" );
+						}
 						
 						if( isset( $mapping["mail_tags"] ) )
+						{
 							$data[$field] = wpcf7_mail_replace_tags( $mapping["mail_tags"] );
+							
+							if( $multiple )
+							{
+								$data[$field] = explode( ',' , $data[$field] );
+								foreach( $data[$field] as &$value )
+									$value = trim( $value );
+								unset( $value );
+							}
+						}
 					}
 					
 					// processs old style tag generator fields
-					foreach( $processed_data as $key => $value )
+					foreach( $cf7_field_tags as $name => $cf7_field_tag )
 					{
 						try
 						{
-							$field_data = self::wpcf7_field_name_decode( $key );
+							$field_data = self::wpcf7_field_name_decode( $name );
 							if( $field_data === FALSE )
-								throw new Exception();
+								continue;
 							if( $field_data['attachment_id'] != $attachment_id && $field_data['attachment_id'] != 'all' )
-								throw new Exception();
+								continue;
 							$field = $field_data['field'];
 							if( $field === '' )
-								throw new Exception();
-							
+								continue;
 							if( !isset( $fields[$field] ) )
-								throw new Exception();
+								continue;
 							
-							$data[$field] = wpcf7_mail_replace_tags( "[".$key."]" );
+							$multiple = $cf7_field_tag->has_option( 'multiple' );
+							if( $multiple )
+								$data[$field] = $submission->get_posted_data( $name );
+							else
+								$data[$field] = wpcf7_mail_replace_tags( "[".$name."]" );
 						}
 						catch(Exception $e) { }
 					}
+					
+					// filter out anything that the pdf field can't accept
+					foreach( $data as $field => &$value )
+					{
+						$type = $fields[$field]['type'];
+						
+						if( $type == 'radio' || $type == 'select' || $type == 'checkbox' )
+						{
+							// compile a list of field options
+							$pdf_field_options = null;
+							if( isset( $fields[$field]['options'] ) && is_array( $fields[$field]['options'] ) )
+							{
+								$pdf_field_options = $fields[$field]['options'];
+								
+								// if options are have more information than value, extract only the value
+								foreach( $pdf_field_options as &$option )
+									if( is_array( $option ) && isset( $option['value'] ) )
+										$option = $option['value'];
+								unset( $option );
+							}
+							
+							// if a list of options are available then filter $value
+							if( $pdf_field_options !== null )
+							{
+								if( is_array( $value ) )
+									$value = array_intersect( $value, $pdf_field_options );
+								else
+									$value = in_array( $value, $pdf_field_options ) ? $value : null;
+							}
+						}
+						
+						// if pdf field is not a multiselect field but value is an array then use the first element only
+						$pdf_field_multiselectable = isset( $fields[$field]['flags'] ) && in_array( 'MultiSelect', $fields[$field]['flags'] );
+						if( !$pdf_field_multiselectable && is_array( $value ) )
+						{
+							if( count( $value ) > 0 )
+								$value = reset( $value );
+							else
+								$value = null;
+						}
+					}
+					unset( $value );
 					
 					// remove fields with empty values form data
 					foreach( $data as $field => $value )
