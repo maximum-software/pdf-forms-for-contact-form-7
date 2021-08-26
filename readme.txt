@@ -1,11 +1,11 @@
-=== PDF Forms Filler for Contact Form 7 ===
+=== PDF Forms Filler for CF7 ===
 Contributors: maximumsoftware
 Tags: pdf, form, filler, contact form, attachment, email
-Requires at least: 4.3
-Tested up to: 5.7.1
+Requires at least: 4.8
+Tested up to: 5.8
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.3.7
+Version: 1.3.17
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -15,22 +15,27 @@ Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically 
 
 [youtube http://www.youtube.com/watch?v=jy84xqnj0Zk]
 
-This plugin gives WordPress Admin Panel users the ability to add fillable PDF attachments to email messages and form submission responses of Contact Form 7.
+This plugin gives WordPress Admin Dashboard users the ability to add fillable PDF attachments to email messages and form submission responses of Contact Form 7.
 
-If the PDF attachment has a PDF form, the plugin allows users to add fields to the CF7 form and/or link them to fields in the PDF.  The plugin also allows the attached PDF files to be embedded with images supplied by the CF7 form fields.  The filled PDF files can be saved on the web server.
+If the PDF attachment has a PDF form, the plugin allows users to add fields to the Contact Form 7 form and/or link them to fields in the PDF.  The plugin also allows the attached PDF files to be embedded with images supplied by the Contact Form 7 form fields.  The filled PDF files can be saved on the web server.
 
-When your website visitor submits the CF7 form, the form in the PDF file is filled with CF7 form information, images are embedded and the resulting PDF file is attached to the CF7 email message.
+When your website visitor submits your Contact Form 7 form, the form in the PDF file is filled with the form information, images are embedded and the resulting PDF file is attached to the Contact Form 7 email message. The resulting PDF file can also be downloaded by your website visitors if this option is enabled in your form's options.
 
-An external web API (https://pdf.ninja) is used for filling PDF forms (free usage has limitations).  An Enterprise Extension, which enables performing all PDF operations locally on your web server (no external web API), is available.
+An external web API (https://pdf.ninja) is used for filling PDF forms (free usage has limitations).  The "Enterprise Extension" plugin is available for purchase that enables the processing all PDF operations locally on your web server and disables the use of the external web API.
 
-Known problems,
- * Contact Form 7 v5.4 is unsupported due to breaking changes
- * Some UTF-8 (non-latin) characters, checkboxes and radio buttons don't render properly after being filled. Almost always the problem lies with the PDF viewers not rendering them correctly. There is a workaround in the works, however, currently it remains in development.
+Requirements:
+ * PHP 5.2 or newer
+ * WordPress 4.8 or newer
+ * Contact Form 7 5.0 or newer
+ * IE 11 (or equivalent) or newer
+
+Known problems:
  * Some third party plugins break the functionality of this plugin (see a list below). Try troubleshooting the problem by disabling likely plugins that may cause issues, such as plugins that modify WordPress or Contact Form 7 in radical ways.
  * Some image optimization plugins optimize PDFs and strip PDF forms from PDF files. This may cause your existing forms to break at a random point in the future (when PDF file cache times out at the API).
  * Multi-select checkbox fields are not currently supported. Support is planned in the future.
+ * The old version of the API (v1) produces PDFs which may not render properly in some PDF readers and with some UTF-8 (non-latin) characters, checkboxes and radio buttons.
 
-Known incompatible plugins,
+Known incompatible plugins:
  * [Imagify](https://wordpress.org/plugins/imagify/) (strips forms from PDF files)
  * [ShortPixel Image Optimizer](https://wordpress.org/plugins/shortpixel-image-optimiser/) (strips forms from PDF files)
  * [Live Preview for Contact Form 7](https://wordpress.org/plugins/cf7-live-preview/)
@@ -38,7 +43,7 @@ Known incompatible plugins,
  * [WordPress Multilingual Plugin](https://wpml.org/)
  * [Contact Form 7 Skins](https://wordpress.org/plugins/contact-form-7-skins/)
 
-Special thanks to the following sponsors of this plugin,
+Special thanks to the following sponsors of this plugin:
  * [BrowserStack](https://www.browserstack.com/)
  * [Momentum3](http://momentum3.biz/)
  * [G-FITTINGS GmbH](http://www.g-fittings.com/)
@@ -51,6 +56,93 @@ Special thanks to the following sponsors of this plugin,
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.3.17 =
+
+* Release date: August 11, 2021
+
+* Fixed a bug that caused cron schedules issues with other plugins
+* Bumped tested up to WP version
+
+= 1.3.16 =
+
+* Release date: August 2, 2021
+
+* Switched the Pdf.Ninja API version setting default from v1 to v2
+
+= 1.3.15 =
+
+* Release date: July 14, 2021
+
+* Renamed plugin
+* Added CF7 v5.4.2 support
+* Improved API response decoding error checks
+* Small improvement in tag generator for radio/select/checkbox fields
+
+= 1.3.14 =
+
+* Release date: July 3, 2021
+
+* Added the default tag option to radio/select/checkbox tag generator
+* Fixed an issue with radio/select/checkbox tag generation with v2
+* Improved tag generator to better escape tag names and values
+* Fixed an issue with CF7 fields lists in tag generator thickbox not getting refreshed when necessary
+* Fixed padding issue in tag generator thickbox
+* Added confirmation box for the delete all mappings button
+* Fixed an issue with localization not working properly
+* Improved Enterprise Extension support messages
+
+= 1.3.13 =
+
+* Release date: June 1, 2021
+
+* Added API version configuration option
+* Improved plugin activation and deactivation hooks
+* Improved and enabled the database migration scripts
+* Added 1.3.13 database migration script
+* Other bug fixes and improvements
+
+= 1.3.12 =
+
+* Release date: May 5, 2021
+
+* Certified CF7 v5.4.1 as a supported version
+* Improved admin notices
+* Improved frontend JS
+* Improved Enterprise Extension support checking code
+
+= 1.3.11 =
+
+* Release date: April 12, 2021
+
+* Fixed and improved cron code
+* Changed the default download links timeout from 1 day to 1 hour
+* Fixed a crash
+* Improved frontend JS slightly
+* Added minimum kernel version check to enterprise extension support checking code
+
+= 1.3.10 =
+
+* Release date: April 4, 2021
+
+* Fixed a bug that broke CF7 JS response
+* Minor filter correction
+* Fixed PHP warning
+
+= 1.3.9 =
+
+* Release date: April 2, 2021
+
+* Fixed an issue with the download link feature and the latest version of CF7
+
+= 1.3.8 =
+
+* Release date: April 2, 2021
+
+* Fixed and improved download link feature support in CF7 v5.4
+* Fixed old version support
+* Hid CF7 insert box to prevent it from getting in the way of the tag generator UI
+* Fixed other minor issues
 
 = 1.3.7 =
 

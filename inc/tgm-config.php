@@ -10,7 +10,7 @@
 				'name'     => 'Contact Form 7',
 				'slug'     => 'contact-form-7',
 				'required' => true,
-				'version'  => '4.2',
+				'version'  => '5.0',
 			)
 		);
 		

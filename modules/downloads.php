@@ -8,6 +8,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 		
 		private $downloads_path = null;
 		private $downloads_url = null;
+		private $downloads_timeout = 3600;
 		private $subdir = null;
 		private $files = array();
 		
@@ -17,6 +18,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 			$subdir = 'wpcf7_pdf_forms_downloads';
 			$this->downloads_path = path_join( $uploads['basedir'], $subdir );
 			$this->downloads_url = $uploads['baseurl'] . '/' . $subdir;
+			if( defined( 'WPCF7_PDF_FORMS_DOWNLOADS_TIMEOUT_SECONDS' ) )
+				$this->downloads_timeout = WPCF7_PDF_FORMS_DOWNLOADS_TIMEOUT_SECONDS;
 		}
 		
 		/*
@@ -133,14 +136,28 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 		}
 		
 		/**
+		 * Sets download files timeout (in number of seconds)
+		 */
+		public function set_timeout( $timeout )
+		{
+			$this->downloads_timeout = $timeout;
+			return $this;
+		}
+		
+		/**
+		 * Returns download files timeout (in number of seconds)
+		 */
+		public function get_timeout()
+		{
+			return $this->downloads_timeout;
+		}
+		
+		/**
 		 * Removes old downloads
 		 */
 		public function delete_old_downloads()
 		{
-			if( defined( 'WPCF7_PDF_FORMS_DOWNLOADS_TIMEOUT_SECONDS' ) )
-				$timeout = WPCF7_PDF_FORMS_DOWNLOADS_TIMEOUT_SECONDS;
-			else
-				$timeout = 24*60*60;
+			$timeout = $this->get_timeout();
 			
 			$path = $this->get_downloads_path();
 			
@@ -151,26 +168,29 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 					if( $temp_item != '.' && $temp_item != '..' )
 					{
 						$temp_item_path = trailingslashit( $path ) . $temp_item;
-						$mtime = filemtime( $temp_item_path );
-						
-						if( $mtime && time() < $mtime + $timeout )
-							continue;
-						
-						if( ( $temp_item_dir = opendir( $temp_item_path ) ) !== FALSE )
+						if( is_dir( $temp_item_path ) )
 						{
-							while( FALSE !== ( $file = readdir( $temp_item_dir ) ) )
+							$mtime = filemtime( $temp_item_path );
+							
+							if( $mtime && time() < $mtime + $timeout )
+								continue;
+							
+							if( ( $temp_item_dir = opendir( $temp_item_path ) ) !== FALSE )
 							{
-								if( $file != '.' && $file != '..' )
+								while( FALSE !== ( $file = readdir( $temp_item_dir ) ) )
 								{
-									$filepath = trailingslashit( $temp_item_path ) . $file;
-									@unlink( $filepath );
+									if( $file != '.' && $file != '..' )
+									{
+										$filepath = trailingslashit( $temp_item_path ) . $file;
+										@unlink( $filepath );
+									}
 								}
+								
+								closedir( $temp_item_dir );
 							}
 							
-							closedir( $temp_item_dir );
+							rmdir( $temp_item_path );
 						}
-						
-						rmdir( $temp_item_path );
 					}
 				}
 				

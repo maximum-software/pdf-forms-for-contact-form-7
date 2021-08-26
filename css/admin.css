@@ -263,3 +263,8 @@
 {
 	width: 20%;
 }
+
+.wpcf7-pdf-forms-admin .insert-box
+{
+	display: none;
+}

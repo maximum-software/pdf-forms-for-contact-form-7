@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: PDF Forms Filler for Contact Form 7
+Plugin Name: PDF Forms Filler for CF7
 Plugin URI: https://github.com/maximum-software/wpcf7-pdf-forms
 Description: Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically and attached to email messages and submission responses upon form submission on your website.  Embed images into PDF files.  Uses Pdf.Ninja API for working with PDF files.  See tutorial video for a demo.
-Version: 1.3.7
+Version: 1.3.17
 Author: Maximum.Software
 Author URI: https://maximum.software/
 Text Domain: pdf-forms-for-contact-form-7
@@ -17,9 +17,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 {
 	class WPCF7_Pdf_Forms
 	{
-		const VERSION = '1.3.7';
-		const MIN_WPCF7_VERSION = '4.2';
-		const MAX_WPCF7_VERSION = '5.4';
+		const VERSION = '1.3.17';
+		const MIN_WPCF7_VERSION = '5.0';
+		const MAX_WPCF7_VERSION = '5.4.2';
 		private static $BLACKLISTED_WPCF7_VERSIONS = array();
 		
 		private static $instance = null;
@@ -30,15 +30,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		private $storage = null;
 		private $cf7_forms_save_overrides = null;
 		private $cf7_mail_attachments = array();
-
+		
 		private function __construct()
 		{
 			add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 			add_action( 'plugins_loaded', array( $this, 'plugin_init' ) );
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'action_links' ) );
 			add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 99, 2 );
-			add_action( 'activate_'.plugin_basename( __FILE__ ), array( $this, 'plugin_activated') );
-			add_action( 'deactivate_'.plugin_basename( __FILE__ ), array( $this, 'plugin_deactivated') );
+			register_activation_hook( __FILE__, array( $this, 'plugin_activated' ) );
+			register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivated' ) );
 			add_action( 'wpcf7_pdf_forms_cron', array( $this, 'cron') );
 		}
 		
@@ -58,10 +58,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function plugin_init()
 		{
-			if( ! class_exists('WPCF7') )
+			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
 				return;
 			
 			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+			
+			add_action( 'wp_enqueue_scripts', array( $this, 'front_end_enqueue_scripts' ) );
+			add_filter( 'wpcf7_form_elements', array( $this, 'front_end_form_scripts' ) );
+			
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			
 			add_action( 'wp_ajax_wpcf7_pdf_forms_get_attachment_info', array( $this, 'wp_ajax_get_attachment_info' ) );
@@ -76,53 +80,129 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_pdfs' ), 1000, 3 );
 			add_filter( 'wpcf7_mail_components', array( $this, 'attach_files' ), 10, 3 );
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
-			add_action( 'wpcf7_mail_sent', array( $this, 'change_response_message' ) );
+			
+			add_filter( 'wpcf7_form_response_output', array( $this, 'change_response_nojs' ), 10, 4 );
+			
+			if( defined( 'WPCF7_VERSION' ) && version_compare( WPCF7_VERSION, '5.2' ) >= 0 )
+				// hook wpcf7_feedback_response (works only with CF7 version 5.2+)
+				add_filter( 'wpcf7_feedback_response', array( $this, 'change_response_js' ), 10, 2 );
+			else
+				// hook wpcf7_ajax_json_echo (needed only for CF7 versions < 5.2)
+				add_filter( 'wpcf7_ajax_json_echo', array( $this, 'change_response_js' ), 10, 2 );
 			
 			// hook that allows to copy media and mapping
-			add_filter( 'wpcf7_copy', array( $this,'duplicate_form_hook' ), 10, 2 );
+			add_filter( 'wpcf7_copy', array( $this, 'duplicate_form_hook' ), 10, 2 );
+			
+			add_filter( 'cron_schedules', array( $this, 'cron_schedules' ) );
 			
 			// TODO: allow users to run this manually
-			//$this->upgrade_data();
+			add_action( 'admin_init', array( $this, 'upgrade_data' ) );
 		}
 		
 		/*
 		 * Runs after the plugin have been activated/deactivated
 		 */
-		public function plugin_activated()
+		public function plugin_activated( $network_wide = false )
 		{
+			if( $network_wide )
+			{
+				$sites = get_sites( array( 'fields' => 'ids' ) );
+				foreach( $sites as $id )
+				{
+					switch_to_blog( $id );
+					$this->plugin_activated( false );
+					restore_current_blog();
+				}
+				return;
+			}
+			
 			$this->enable_cron();
 		}
-		public function plugin_deactivated()
+		public function plugin_deactivated( $network_deactivating = false )
 		{
+			if( $network_deactivating )
+			{
+				$sites = get_sites( array( 'fields' => 'ids' ) );
+				foreach( $sites as $id )
+				{
+					switch_to_blog( $id );
+					$this->plugin_deactivated( false );
+					restore_current_blog();
+				}
+				return;
+			}
+			
 			$this->disable_cron();
+			$this->get_downloads()->set_timeout(0)->delete_old_downloads();
 		}
 		
 		/*
-		 * Enables/disables cron
+		 * Hook that adds a cron schedule
+		 */
+		public function cron_schedules( $schedules )
+		{
+			$interval = $this->get_downloads()->get_timeout();
+			$display = self::replace_tags( __("Every {interval} seconds"), array( 'internval' => $interval ) );
+			$schedules['wpcf7_pdf_forms_cron_frequency'] = array(
+				'interval' => $interval,
+				'display' => $display
+			);
+			return $schedules;
+		}
+		
+		/*
+		 * Enables cron
 		 */
 		private function enable_cron()
 		{
-			if( ! wp_next_scheduled( 'wpcf7_pdf_forms_cron' ) )
-				wp_schedule_event( time(), 'daily', 'wpcf7_pdf_forms_cron' );
+			$due = wp_next_scheduled( 'wpcf7_pdf_forms_cron' );
+			$current_time = time();
+			
+			$interval = $this->get_downloads()->get_timeout();
+			
+			if( $due !== false && (
+				   $due < $current_time - ( $interval + 60 ) // cron is not functional
+				|| $due > $current_time + $interval // interval changed to a smaller value
+			) )
+			{
+				$this->cron(); // run manually
+				wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
+				$due = false;
+			}
+			
+			if( $due === false )
+				wp_schedule_event( $current_time, 'wpcf7_pdf_forms_cron_frequency', 'wpcf7_pdf_forms_cron' );
 		}
+		
+		/*
+		 * Disables cron
+		 */
 		private function disable_cron()
 		{
-			if( wp_next_scheduled( 'wpcf7_pdf_forms_cron' ) )
-				wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
+			wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
+		}
+		
+		/**
+		 * Executes scheduled tasks
+		 */
+		public function cron()
+		{
+			$this->get_downloads()->delete_old_downloads();
 		}
 		
 		/*
 		 * Runs after plugin updates and triggers data migration
 		 */
-		public function upgrader_process_complete( $upgrader_object, $options )
+		public function upgrader_process_complete( $upgrader, $hook_extra )
 		{
 			$plugin_path = plugin_basename( __FILE__ );
 			
-			if( $options['action'] == 'update'
-			&& $options['type'] == 'plugin'
-			&& isset( $options['plugins'] ) )
+			if( $hook_extra['action'] == 'update'
+			&& $hook_extra['type'] == 'plugin'
+			&& isset( $hook_extra['plugins'] )
+			&& is_array( $hook_extra['plugins'] ) )
 			{
-				foreach( $options['plugins'] as $plugin )
+				foreach( $hook_extra['plugins'] as $plugin )
 				{
 					if( $plugin == $plugin_path )
 					{
@@ -163,8 +243,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		/*
 		 * Runs data migration when triggered
 		 */
-		private function upgrade_data()
+		public function upgrade_data()
 		{
+			if( wp_doing_ajax() )
+				return;
+			
 			$old_version = get_transient( 'wpcf7_pdf_forms_updated_old_version' );
 			if( !$old_version )
 				return;
@@ -187,7 +270,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		private function run_data_migration( $script )
 		{
-			include( $script );
+			try { include( $script ); }
+			catch( Exception $e ) { }
 		}
 		
 		/*
@@ -221,21 +305,21 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function admin_notices()
 		{
-			if( ! class_exists('WPCF7') )
+			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
 			{
 				echo WPCF7_Pdf_Forms::render( 'notice_error', array(
 					'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
-					'message' => esc_html__( "The required plugin 'Contact Form 7' is not installed!", 'pdf-forms-for-contact-form-7' ),
+					'message' => esc_html__( "The required plugin 'Contact Form 7' version is not installed!", 'pdf-forms-for-contact-form-7' ),
 				) );
 				return;
 			}
 			
 			if( ! defined( 'WPCF7_VERSION' ) || ! $this->is_wpcf7_version_supported( WPCF7_VERSION ) )
-				echo WPCF7_Pdf_Forms::render( 'notice_error', array(
-							'label'   => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
+				echo WPCF7_Pdf_Forms::render( 'notice_warning', array(
+							'label'   => esc_html__( "PDF Forms Filler for CF7 plugin warning", 'pdf-forms-for-contact-form-7' ),
 							'message' =>
 								self::replace_tags(
-									esc_html__( "The currently installed version of 'Contact Form 7' plugin ({current-wpcf7-version}) is not supported by the current version of 'PDF Forms Filler for Contact Form 7' plugin ({current-plugin-version}), please switch to 'Contact Form 7' plugin version {supported-wpcf7-version} to allow 'PDF Forms Filler for Contact Form 7' plugin to work.", 'pdf-forms-for-contact-form-7' ),
+									esc_html__( "The currently installed version of 'Contact Form 7' plugin ({current-wpcf7-version}) is not supported by the current version of 'PDF Forms Filler for CF7' plugin ({current-plugin-version}), please switch to 'Contact Form 7' plugin version {supported-wpcf7-version} to allow 'PDF Forms Filler for CF7' plugin to work correctly.", 'pdf-forms-for-contact-form-7' ),
 									array(
 										'current-wpcf7-version' => esc_html( defined( 'WPCF7_VERSION' ) ? WPCF7_VERSION : __( "Unknown version", 'pdf-forms-for-contact-form-7' ) ),
 										'current-plugin-version' => esc_html( self::VERSION ),
@@ -243,6 +327,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 									)
 								),
 						) );
+			
+			if( ! class_exists('WPCF7') )
+				return;
 			
 			if( ( $service = $this->get_service() ) )
 				$service->admin_notices();
@@ -348,6 +435,31 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				wp_enqueue_script( 'wpcf7_pdf_forms_admin_script' );
 				wp_enqueue_style( 'wpcf7_pdf_forms_admin_style' );
 			}
+		}
+		
+		/**
+		 * Adds necessary global front-end scripts and styles
+		*/
+		function front_end_enqueue_scripts()
+		{
+			wp_enqueue_style( 'dashicons' ); // needed by the download link feature
+		}
+		
+		/**
+		 * Adds necessary front-end scripts and styles (only when CF7 form is displayed)
+		*/
+		function front_end_form_scripts( $form )
+		{
+			static $form_count = 0;
+			$form_count++;
+			if( $form_count == 1 ) // add only once
+			{
+				$style = '<link rel="stylesheet" href="' . plugin_dir_url( __FILE__ ) . 'css/frontend.css' . '" />';
+				$script = '<script type="text/javascript" src="' . plugin_dir_url( __FILE__ ) . 'js/frontend.js' . '?ver=' . self::VERSION . '"></script>';
+				$form = $style . $script . $form;
+			}
+			
+			return $form;
 		}
 		
 		/**
@@ -767,7 +879,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 * Files created in this function will be deleted automatically by
 		 * CF7 after it sends the email message
 		 */
-		public function fill_pdfs( $contact_form, &$abort, $object )
+		public function fill_pdfs( $contact_form, &$abort, $submission )
 		{
 			try
 			{
@@ -787,24 +899,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( !is_array( $embeds ) )
 					$embeds = array();
 				
-				$submission = WPCF7_Submission::get_instance();
-				$posted_data = $submission->get_posted_data();
 				$uploaded_files = $submission->uploaded_files();
-				
-				// preprocess posted data
-				$processed_data = array();
-				foreach( $posted_data as $key => $value )
-				{
-					if( is_array( $value ) )
-						$value = array_shift( $value );
-					$value = strval( $value );
-					if( $value === '' )
-						continue;
-					
-					$value = wp_unslash( $value );
-					
-					$processed_data[$key] = $value;
-				}
 				
 				// preprocess embedded images
 				$embed_files = array();
@@ -874,6 +969,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$embed_files[$id] = $filepath;
 				}
 				
+				$cf7_field_tags = array();
+				foreach( $contact_form->scan_form_tags() as $cf7_tag )
+					if( $cf7_tag->name )
+						$cf7_field_tags[ $cf7_tag->name ] = $cf7_tag;
+				
 				$files = array();
 				foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
 				{
@@ -898,34 +998,106 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						if( !isset( $fields[$field] ) )
 							continue;
 						
+						$multiple =
+							(
+								isset( $cf7_field_tags[$mapping["cf7_field"]] ) &&
+								( $cf7_field_tag = $cf7_field_tags[$mapping["cf7_field"]] ) &&
+								$cf7_field_tag->has_option( 'multiple' )
+							)
+						||
+							(
+								isset( $fields[$field]['flags'] ) &&
+								in_array( 'MultiSelect', $fields[$field]['flags'] )
+							);
+						
 						if( isset( $mapping["cf7_field"] ) )
-							$data[$field] = wpcf7_mail_replace_tags( "[".$mapping["cf7_field"]."]" );
+						{
+							if( $multiple )
+								$data[$field] = $submission->get_posted_data( $mapping["cf7_field"] );
+							else
+								$data[$field] = wpcf7_mail_replace_tags( "[".$mapping["cf7_field"]."]" );
+						}
 						
 						if( isset( $mapping["mail_tags"] ) )
+						{
 							$data[$field] = wpcf7_mail_replace_tags( $mapping["mail_tags"] );
+							
+							if( $multiple )
+							{
+								$data[$field] = explode( ',' , $data[$field] );
+								foreach( $data[$field] as &$value )
+									$value = trim( $value );
+								unset( $value );
+							}
+						}
 					}
 					
 					// processs old style tag generator fields
-					foreach( $processed_data as $key => $value )
+					foreach( $cf7_field_tags as $name => $cf7_field_tag )
 					{
 						try
 						{
-							$field_data = self::wpcf7_field_name_decode( $key );
+							$field_data = self::wpcf7_field_name_decode( $name );
 							if( $field_data === FALSE )
-								throw new Exception();
+								continue;
 							if( $field_data['attachment_id'] != $attachment_id && $field_data['attachment_id'] != 'all' )
-								throw new Exception();
+								continue;
 							$field = $field_data['field'];
 							if( $field === '' )
-								throw new Exception();
-							
+								continue;
 							if( !isset( $fields[$field] ) )
-								throw new Exception();
+								continue;
 							
-							$data[$field] = wpcf7_mail_replace_tags( "[".$key."]" );
+							$multiple = $cf7_field_tag->has_option( 'multiple' );
+							if( $multiple )
+								$data[$field] = $submission->get_posted_data( $name );
+							else
+								$data[$field] = wpcf7_mail_replace_tags( "[".$name."]" );
 						}
 						catch(Exception $e) { }
 					}
+					
+					// filter out anything that the pdf field can't accept
+					foreach( $data as $field => &$value )
+					{
+						$type = $fields[$field]['type'];
+						
+						if( $type == 'radio' || $type == 'select' || $type == 'checkbox' )
+						{
+							// compile a list of field options
+							$pdf_field_options = null;
+							if( isset( $fields[$field]['options'] ) && is_array( $fields[$field]['options'] ) )
+							{
+								$pdf_field_options = $fields[$field]['options'];
+								
+								// if options are have more information than value, extract only the value
+								foreach( $pdf_field_options as &$option )
+									if( is_array( $option ) && isset( $option['value'] ) )
+										$option = $option['value'];
+								unset( $option );
+							}
+							
+							// if a list of options are available then filter $value
+							if( $pdf_field_options !== null )
+							{
+								if( is_array( $value ) )
+									$value = array_intersect( $value, $pdf_field_options );
+								else
+									$value = in_array( $value, $pdf_field_options ) ? $value : null;
+							}
+						}
+						
+						// if pdf field is not a multiselect field but value is an array then use the first element only
+						$pdf_field_multiselectable = isset( $fields[$field]['flags'] ) && in_array( 'MultiSelect', $fields[$field]['flags'] );
+						if( !$pdf_field_multiselectable && is_array( $value ) )
+						{
+							if( count( $value ) > 0 )
+								$value = reset( $value );
+							else
+								$value = null;
+						}
+					}
+					unset( $value );
 					
 					// remove fields with empty values form data
 					foreach( $data as $field => $value )
@@ -1068,7 +1240,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			catch( Exception $e )
 			{
 				$abort = true;
-				$object->set_response(
+				$submission->set_response(
 						self::replace_tags(
 							__( "An error occurred while processing a PDF: {error-message}", 'pdf-forms-for-contact-form-7' ),
 							array( 'error-message' => $e->getMessage() )
@@ -1271,8 +1443,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		
 		/*
 		 * Generates CF7 field tag based on field data
+		 * $tagName must already be sanitized
 		 */
-		private static function generate_tag($field, $tagName)
+		private static function generate_tag( $field, $tagName )
 		{
 			$type = strval($field['type']);
 			
@@ -1300,15 +1473,57 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( $type == 'radio' && count( $options ) == 1 )
 						$tagType = 'checkbox';
 					
-					if( count( $options ) == 1 )
-						// add pipe to prevent user confusion with singular options
-						$tagValues .= '"' . self::escape_tag_value( strval( $field['name'] ) ) . '|' . self::escape_tag_value( strval( reset( $options ) ) ) . '" ';
-					else
-						foreach( $options as $option )
-							$tagValues .= '"' . self::escape_tag_value( strval( $option ) ) . '" ';
+					$count = count( $options );
+					foreach( $options as $option )
+					{
+						$name = null;
+						
+						// prevent user confusion with singular options when it is a non-descriptive "Yes" or "On"
+						if( $count == 1 )
+							$name = $field['name'];
+						
+						// if options list is not a promitive string array then use keys as values
+						if( is_array( $option ) )
+						{
+							if( isset( $option['label'] ) ) $name = $option['label'];
+							if( isset( $option['value'] ) ) $option = $option['value'];
+						}
+						
+						$name = strval( $name );
+						$option = strval( $option );
+						$tagValues .= '"' . ( $name == null || $name == $option ? '' : ( self::escape_tag_value( $name ) . '|' ) ) . self::escape_tag_value( $option ) . '" ';
+					}
 					
+					// TODO: add multiselect support
 					if( $type == 'checkbox' && count( $options ) > 1 )
 						$tagOptions .= 'exclusive ';
+					
+					if( isset( $field['defaultValue'] ) )
+					{
+						$default_values = $field['defaultValue'];
+						if( ! is_array( $default_values ) )
+							$default_values = array( $default_values );
+						
+						$default_string = '';
+						$count = 1;
+						foreach( $options as $option )
+						{
+							$option_value = null;
+							if( is_array( $option ) && isset( $option['value'] ) )
+								$option_value = $option['value'];
+							if( ! is_array( $option ) )
+								$option_value = $option;
+							
+							if( $option_value !== null )
+								if( in_array( $option_value, $default_values, $strict=true ) )
+									$default_string = ltrim( $default_string . '_' . $count, '_' );
+							
+							$count++;
+						}
+						
+						if( $default_string !== '' )
+							$tagOptions .= 'default:' . $default_string . ' ';
+					}
 				}
 				else
 					return null;
@@ -1338,6 +1553,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( in_array( 'ReadOnly', $flags ) )
 					$tagOptions .= 'readonly ';
 			}
+			
 			$unavailableNames = array(
 				'm','p','posts','w','cat','withcomments','withoutcomments'
 				,'s','search','exact','sentence','calendar','page','paged'
@@ -1347,12 +1563,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				,'attachment_id','subpost','subpost_id','preview','robots','taxonomy'
 				,'term','cpage','post_type','embed'
 			);
-			$tagName = sanitize_title( $tagName );
-			if( array_search( $tagName, $unavailableNames ) !== FALSE ){
+			if( array_search( $tagName, $unavailableNames ) !== FALSE )
+			{
 				$tagName .= '-0000';
 				do { $tagName++; }
 				while( array_search( $tagName, $unavailableNames ) !== FALSE );
 			}
+			
 			return '[' . self::mb_trim( $tagType . ' ' . $tagName . ' ' . $tagOptions . $tagValues ) . ']';
 		}
 		
@@ -1852,21 +2069,43 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/*
-		 * WPCF7 hook for adding some more information to response message
+		 * WPCF7 hook for adding download links to JS response
 		 */
-		public function change_response_message( $contact_form )
+		public function change_response_js( $response, $result )
 		{
 			// if downloads variable is not initialized then we don't need to do anything
 			if( $this->downloads )
 			{
-				$submission = WPCF7_Submission::get_instance();
-				$response = $submission->get_response();
-				if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' )
+				foreach( $this->downloads->get_files() as $file )
+					$response['wpcf7_pdf_forms_data']['downloads'][] =
+						array(
+							'filename' => $file['filename'],
+							'url' => $file['url'],
+							'size' => size_format( filesize( $file['filepath'] ) )
+						);
+				
+				// make sure to enable cron if it is down so that old download files get cleaned up
+				$this->enable_cron();
+			}
+			
+			return $response;
+		}
+		
+		/*
+		 * WPCF7 hook for adding download links to response message (only for when JS is disabled)
+		 */
+		public function change_response_nojs( $output, $class, $content, $contact_form )
+		{
+			$submission = WPCF7_Submission::get_instance();
+			// if downloads variable is not initialized then we don't need to do anything
+			if( $this->downloads && $submission !== null )
+			{
+				$status = $submission->get_status();
+				if( $status == 'mail_sent' )
 				{
-					// ajax request
-					$response .= "<br/>";
+					$downloads = '';
 					foreach( $this->downloads->get_files() as $file )
-						$response .= "<br/>" .
+						$downloads .= "<div>" .
 							self::replace_tags(
 								esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
 								array(
@@ -1874,33 +2113,20 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 									'a-href-url' => '<a href="' . esc_html( $file['url'] ) . '" download>',
 									'filename' => esc_html( $file['filename'] ),
 									'/a' => '</a>',
-									'i' => '<i>',
+									'i' => '<span class="file-size">',
 									'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
-									'/i' => '</i>',
+									'/i' => '</span>',
 								)
-							);
+							)
+						. "</div>";
+					$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
+					
+					// make sure to enable cron if it is down so that old download files get cleaned up
+					$this->enable_cron();
 				}
-				else
-				{
-					// non-ajax request
-					$response .= "\n";
-					foreach( $this->downloads->get_files() as $file )
-						// no need to escape html because output gets escaped by WPCF7 code in this case, $response is plain text
-						$response .= "\n" . self::replace_tags( __( "Download {filename} at {url}. ", 'pdf-forms-for-contact-form-7' ), array( 'filename' => $file['filename'], 'url' => $file['url'] ) );
-				}
-				$submission->set_response( $response );
-				
-				// make sure to enable cron if it is down so that old download files get cleaned up
-				$this->enable_cron();
 			}
-		}
-		
-		/**
-		 * Executes scheduled tasks
-		 */
-		public function cron()
-		{
-			$this->get_downloads()->delete_old_downloads();
+			
+			return $output;
 		}
 	}
 	
