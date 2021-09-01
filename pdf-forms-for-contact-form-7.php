@@ -142,7 +142,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public function cron_schedules( $schedules )
 		{
 			$interval = $this->get_downloads()->get_timeout();
-			$display = self::replace_tags( __("Every {interval} seconds"), array( 'internval' => $interval ) );
+			$display = self::replace_tags( __("Every {interval} seconds"), array( 'interval' => $interval ) );
 			$schedules['wpcf7_pdf_forms_cron_frequency'] = array(
 				'interval' => $interval,
 				'display' => $display
