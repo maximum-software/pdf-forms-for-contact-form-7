@@ -7,6 +7,7 @@ jQuery(document).ready(function($) {
 	var pluginData = {
 		attachments: [],
 		mappings: [],
+		value_mappings: [],
 		embeds: []
 	};
 	
@@ -687,11 +688,30 @@ jQuery(document).ready(function($) {
 				}
 				
 				if(data.hasOwnProperty('mappings'))
-				{
 					jQuery.each(data.mappings, function(index, mapping) {
 						addMapping(mapping);
 					});
-					refreshMappings();
+				
+				if(data.hasOwnProperty('value_mappings'))
+				{
+					var mappings = getMappings();
+					jQuery.each(data.value_mappings, function(index, value_mapping) {
+						
+						// find mapping id
+						for(var i=0, l=mappings.length; i<l; i++)
+						{
+							if(mappings[i].pdf_field == value_mapping.pdf_field)
+							{
+								value_mapping.mapping_id = mappings[i].mapping_id;
+								break;
+							}
+						}
+						
+						if(!value_mapping.hasOwnProperty('mapping_id'))
+							return;
+						
+						addValueMapping(value_mapping);
+					});
 				}
 				
 				if(data.hasOwnProperty('embeds'))
@@ -717,6 +737,14 @@ jQuery(document).ready(function($) {
 			return [];
 	};
 	
+	var getValueMappings = function() {
+		var valueMappings = getData('value_mappings');
+		if(valueMappings)
+			return valueMappings;
+		else
+			return [];
+	};
+	
 	var runAfterDoneTimers = {};
 	var runAfterDone = function(func) {
 		if(runAfterDoneTimers[func])
@@ -733,27 +761,107 @@ jQuery(document).ready(function($) {
 		
 		var mappings = getMappings();
 		
-		for(var i=0, l=mappings.length; i<l; i++)
+		for(var i=0; i<mappings.length; i++)
 			if(mappings[i].mapping_id == mapping_id)
 			{
 				mappings.splice(i, 1);
 				break;
 			}
 		
+		deleteValueMappings(mapping_id);
+		
 		setMappings(mappings);
 	};
 	
 	var deleteAllMappings = function() {
 		setMappings([]);
+		setValueMappings([]);
 		refreshMappings();
 	};
 	
-	var generateMappingId = function() {
+	var setValueMappings = function(value_mappings) {
+		setData('value_mappings', value_mappings);
+	};
+	
+	var deleteValueMapping = function(value_mapping_id) {
+		
+		var value_mappings = getValueMappings();
+		
+		for(var i=0; i<value_mappings.length; i++)
+			if(value_mappings[i].value_mapping_id == value_mapping_id)
+			{
+				value_mappings.splice(i, 1);
+				break;
+			}
+		
+		setValueMappings(value_mappings);
+	};
+	
+	var deleteValueMappings = function(mapping_id) {
+		
+		var value_mappings = getValueMappings();
+		
+		for(var i=0; i<value_mappings.length; i++)
+			if(value_mappings[i].mapping_id == mapping_id)
+				value_mappings.splice(i, 1);
+		
+		setValueMappings(value_mappings);
+		runAfterDone(refreshMappings);
+	};
+	
+	var generateId = function() {
 		return Math.random().toString(36).substring(2) + Date.now().toString();
 	}
 	
+	var addValueMapping = function(data) {
+		
+		if(typeof data.mapping_id == 'undefined'
+		|| typeof data.pdf_field == 'undefined'
+		|| typeof data.cf7_value == 'undefined'
+		|| typeof data.pdf_value == 'undefined')
+			return;
+		
+		data.value_mapping_id = generateId();
+		pluginData["value_mappings"].push(data);
+		
+		runAfterDone(updatePluginDataField);
+		
+		addValueMappingEntry(data);
+	};
+	
+	var addValueMappingEntry = function(data) {
+		
+		var template = jQuery('.wpcf7-pdf-forms-admin .pdf-mapping-row-valuemapping-template');
+		var tag = template.clone().removeClass('pdf-mapping-row-valuemapping-template').addClass('pdf-valuemapping-row');
+		tag.data('mapping_id', data.mapping_id);
+		
+		tag.find('input').data('value_mapping_id', data.value_mapping_id);
+		
+		tag.find('input.cf7-value').val(data.cf7_value);
+		tag.find('input.pdf-value').val(data.pdf_value);
+		
+		var delete_button = tag.find('.delete-valuemapping-button');
+		delete_button.data('value_mapping_id', data.value_mapping_id);
+		delete_button.click(function(event) {
+			
+			// prevent running default button click handlers
+			event.stopPropagation();
+			event.preventDefault();
+			
+			if(!confirm(wpcf7_pdf_forms.__Confirm_Delete_Mapping))
+				return;
+			
+			deleteValueMapping(jQuery(this).data('value_mapping_id'));
+			
+			jQuery(this).closest('.pdf-valuemapping-row').remove();
+		});
+		
+		var mappingTag = jQuery('.wpcf7-pdf-forms-admin .pdf-mapping-row[data-mapping_id="'+data.mapping_id+'"]');
+		tag.insertAfter(mappingTag);
+	};
+	
 	var addMapping = function(data) {
-		data.mapping_id = generateMappingId();
+		data.mapping_id = generateId();
 		pluginData["mappings"].push(data);
 		
 		runAfterDone(updatePluginDataField);
@@ -801,6 +909,8 @@ jQuery(document).ready(function($) {
 			var virtual = false;
 		}
 		
+		tag.attr('data-mapping_id', data.mapping_id);
+		
 		var delete_button = tag.find('.delete-mapping-button');
 		if(virtual)
 			delete_button.remove();
@@ -818,13 +928,25 @@ jQuery(document).ready(function($) {
 				
 				deleteMapping(jQuery(this).data('mapping_id'));
 				
-				tag.remove();
+				jQuery(this).closest('.pdf-mapping-row').remove();
 				
 				var mappings = getMappings();
 				if(mappings.length==0)
 					jQuery('.wpcf7-pdf-forms-admin .delete-all-row').hide();
 			});
 		}
+		
+		var map_value_button = tag.find('.map-value-button');
+		map_value_button.data('mapping_id', data.mapping_id);
+		map_value_button.click(function(event) {
+			
+			// prevent running default button click handlers
+			event.stopPropagation();
+			event.preventDefault();
+			
+			addValueMapping({'mapping_id': data.mapping_id, 'pdf_field': data.pdf_field, 'cf7_value': "", 'pdf_value': ""});
+		});
+		
 		tag.insertBefore(jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper .delete-all-row'));
 		jQuery('.wpcf7-pdf-forms-admin .delete-all-row').show();
 	};
@@ -832,12 +954,17 @@ jQuery(document).ready(function($) {
 	var refreshMappings = function() {
 		
 		jQuery('.wpcf7-pdf-forms-admin .pdf-mapping-row').remove();
+		jQuery('.wpcf7-pdf-forms-admin .pdf-valuemapping-row').remove();
 		
 		reloadDefaultMappings();
 		
 		var mappings = getMappings();
 		for(var i=0, l=mappings.length; i<l; i++)
 			addMappingEntry(mappings[i]);
+		
+		var value_mappings = getValueMappings();
+		for(var i=0, l=value_mappings.length; i<l; i++)
+			addValueMappingEntry(value_mappings[i]);
 		
 		if(mappings.length==0)
 			jQuery('.wpcf7-pdf-forms-admin .delete-all-row').hide();
@@ -1655,6 +1782,38 @@ jQuery(document).ready(function($) {
 		});
 		
 		setMappings(mappings);
+	});
+	
+	jQuery('.wpcf7-pdf-forms-admin .field-mapping-tool').on("keyup change", 'input.cf7-value', function(event) {
+		
+		var cf7_value = jQuery(this).val();
+		var value_mapping_id = jQuery(this).data('value_mapping_id');
+		
+		var value_mappings = getValueMappings();
+		for(var i=0, l=value_mappings.length; i<l; i++)
+			if(value_mappings[i].value_mapping_id == value_mapping_id)
+			{
+				value_mappings[i].cf7_value = cf7_value;
+				break;
+			}
+		
+		setValueMappings(value_mappings);
+	});
+	
+	jQuery('.wpcf7-pdf-forms-admin .field-mapping-tool').on("keyup change", 'input.pdf-value', function(event) {
+		
+		var pdf_value = jQuery(this).val();
+		var value_mapping_id = jQuery(this).data('value_mapping_id');
+		
+		var value_mappings = getValueMappings();
+		for(var i=0, l=value_mappings.length; i<l; i++)
+			if(value_mappings[i].value_mapping_id == value_mapping_id)
+			{
+				value_mappings[i].pdf_value = pdf_value;
+				break;
+			}
+		
+		setValueMappings(value_mappings);
 	});
 	
 	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("click", ".convert-to-mailtags-button", function(event) {
