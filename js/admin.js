@@ -215,7 +215,7 @@ jQuery(document).ready(function($) {
 	var refreshPdfFields = function() {
 		select2SharedData.unmappedPdfFields = getUnmappedPdfFields(); // TODO: optimize this
 		
-		jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').refreshSelect2Field();
+		jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').resetSelect2Field();
 		
 		updateTagHint();
 	};
@@ -354,7 +354,7 @@ jQuery(document).ready(function($) {
 	var refreshCf7Fields = function() {
 		precomputeCf7Select2Cache();
 		
-		jQuery('.wpcf7-pdf-forms-admin .cf7-field-list').refreshSelect2Field();
+		jQuery('.wpcf7-pdf-forms-admin .cf7-field-list').resetSelect2Field();
 	};
 	
 	var getData = function(field) {
@@ -612,7 +612,7 @@ jQuery(document).ready(function($) {
 		}
 	);
 	
-	jQuery.fn.refreshSelect2Field = function(id = null, force = false) {
+	jQuery.fn.resetSelect2Field = function(id = null) {
 		
 		if(!$(this).data('select2'))
 			return;
@@ -629,7 +629,7 @@ jQuery(document).ready(function($) {
 					break;
 				}
 		
-		if((force || value === null || !select2DataIncludesOption) && select2Data.length > 0)
+		if((value === null || !select2DataIncludesOption) && select2Data.length > 0)
 		{
 			var optionInfo = select2Data[id !== null ? id : 0];
 			var option = new Option(optionInfo.text, optionInfo.id, true, true);
@@ -1293,12 +1293,12 @@ jQuery(document).ready(function($) {
 		select2SharedData.pageList = pageList;
 		
 		var id = typeof info != 'undefined' && info !== null && info.pages.length > 0 ? 1 : 0;
-		jQuery('.wpcf7-pdf-forms-admin .page-list').refreshSelect2Field(id, true);
+		jQuery('.wpcf7-pdf-forms-admin .page-list').resetSelect2Field(id);
 	};
 	
 	var refreshPdfFilesList = function()
 	{
-		jQuery('.wpcf7-pdf-forms-admin .pdf-files-list').refreshSelect2Field();
+		jQuery('.wpcf7-pdf-forms-admin .pdf-files-list').resetSelect2Field();
 	}
 	
 	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("change", '.pdf-files-list', refreshPageList);
