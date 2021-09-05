@@ -215,8 +215,7 @@ jQuery(document).ready(function($) {
 	var refreshPdfFields = function() {
 		select2SharedData.unmappedPdfFields = getUnmappedPdfFields(); // TODO: optimize this
 		
-		var pdfFieldDropDown = jQuery('.wpcf7-pdf-forms-admin .pdf-field-list');
-		refreshSelect2Field(pdfFieldDropDown, select2SharedData.unmappedPdfFields);
+		jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').refreshSelect2Field();
 		
 		updateTagHint();
 	};
@@ -355,8 +354,7 @@ jQuery(document).ready(function($) {
 	var refreshCf7Fields = function() {
 		precomputeCf7Select2Cache();
 		
-		var Cf7FieldDropDown = jQuery('.wpcf7-pdf-forms-admin .cf7-field-list');
-		refreshSelect2Field(Cf7FieldDropDown, select2SharedData.cf7FieldsCache);
+		jQuery('.wpcf7-pdf-forms-admin .cf7-field-list').refreshSelect2Field();
 	};
 	
 	var getData = function(field) {
@@ -613,6 +611,35 @@ jQuery(document).ready(function($) {
 			return CustomData;
 		}
 	);
+	
+	jQuery.fn.refreshSelect2Field = function(id = null, force = false) {
+		
+		if(!$(this).data('select2'))
+			return;
+		
+		var select2Data = select2SharedData[this.data().select2.options.options.sharedDataElement];
+		var select2DataIncludesOption = false;
+		var value = $(this).val();
+		
+		if(value !== null)
+			for(var i = 0, l = select2Data.length; i < l; ++i)
+				if(value == select2Data[i])
+				{
+					select2DataIncludesOption = true;
+					break;
+				}
+		
+		if((force || value === null || !select2DataIncludesOption) && select2Data.length > 0)
+		{
+			var optionInfo = select2Data[id !== null ? id : 0];
+			var option = new Option(optionInfo.text, optionInfo.id, true, true);
+			$(this).append(option).val(optionInfo.id).trigger('change');
+		}
+		else if(select2Data.length === 0)
+			$(this).empty().trigger('change');
+		
+		return this;
+	}
 	
 	var select2SharedData = {
 		unmappedPdfFields: [], 
@@ -1265,28 +1292,13 @@ jQuery(document).ready(function($) {
 		// TODO: use a new dynamically generated data adapter for better memory efficiency
 		select2SharedData.pageList = pageList;
 		
-		var pageListDropDown = jQuery('.wpcf7-pdf-forms-admin .page-list');
 		var id = typeof info != 'undefined' && info !== null && info.pages.length > 0 ? 1 : 0;
-		
-		refreshSelect2Field(pageListDropDown, pageList, id, true);
+		jQuery('.wpcf7-pdf-forms-admin .page-list').refreshSelect2Field(id, true);
 	};
 	
 	var refreshPdfFilesList = function()
 	{
-		var pdfFileDropDown = jQuery('.wpcf7-pdf-forms-admin .pdf-files-list');
-		refreshSelect2Field(pdfFileDropDown, select2SharedData.pdfSelect2Files);
-	}
-	
-	var refreshSelect2Field = function (dropDown, select2Data, id=0, force=false)
-	{
-		if (!select2Data.includes(dropDown.val()) && select2Data.length > 0 || force)
-		{
-			var optionInfo = select2Data[id];
-			var option = new Option(optionInfo.text, optionInfo.id, true, true);
-			dropDown.append(option).val(optionInfo.id).trigger('change');
-		}
-		else if (select2Data.length == 0)
-			dropDown.empty().trigger('change');
+		jQuery('.wpcf7-pdf-forms-admin .pdf-files-list').refreshSelect2Field();
 	}
 	
 	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("change", '.pdf-files-list', refreshPageList);
