@@ -5,7 +5,7 @@ Requires at least: 4.8
 Tested up to: 5.8
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.3.17
+Version: 1.3.18
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -56,6 +56,16 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.3.18 =
+
+* Release date: September 18, 2021
+
+* Added a user-provided email address field for requesting a new key from the API
+* Fixed a minor error reporting bug when requesting a new key from the API fails
+* Fixed an issue caused by direct modification of fileId post meta in the database
+* Fixed a bug introduced recently that was causing the (deprecated) tag generator to not work
+* Fixed typo
 
 = 1.3.17 =
 
