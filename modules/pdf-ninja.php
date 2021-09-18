@@ -551,11 +551,10 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		$file_id = WPCF7_Pdf_Forms::get_meta( $attachment_id, 'file_id' );
 		if( ! $file_id )
 		{
-			$file_id = substr($attachment_id . "-" . get_site_url(), 0, 40);
-			return WPCF7_Pdf_Forms::set_meta( $attachment_id, 'file_id', $file_id );
+			$file_id = substr( $attachment_id . "-" . get_site_url(), 0, 40 );
+			WPCF7_Pdf_Forms::set_meta( $attachment_id, 'file_id', $file_id );
 		}
-		else
-			return $file_id;
+		return substr( $file_id, 0, 40 );
 	}
 	
 	/*
