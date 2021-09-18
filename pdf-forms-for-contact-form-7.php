@@ -1372,8 +1372,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		
 		/*
 		 * Generates CF7 field tag based on field data
+		 * $tagName must already be sanitized
 		 */
-		private static function generate_tag($field, $tagName)
+		private static function generate_tag( $field, $tagName )
 		{
 			$type = strval($field['type']);
 			
@@ -1480,6 +1481,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( in_array( 'ReadOnly', $flags ) )
 					$tagOptions .= 'readonly ';
 			}
+			
 			$unavailableNames = array(
 				'm','p','posts','w','cat','withcomments','withoutcomments'
 				,'s','search','exact','sentence','calendar','page','paged'
@@ -1489,12 +1491,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				,'attachment_id','subpost','subpost_id','preview','robots','taxonomy'
 				,'term','cpage','post_type','embed'
 			);
-			$tagName = sanitize_title( $tagName );
-			if( array_search( $tagName, $unavailableNames ) !== FALSE ){
+			if( array_search( $tagName, $unavailableNames ) !== FALSE )
+			{
 				$tagName .= '-0000';
 				do { $tagName++; }
 				while( array_search( $tagName, $unavailableNames ) !== FALSE );
 			}
+			
 			return '[' . self::mb_trim( $tagType . ' ' . $tagName . ' ' . $tagOptions . $tagValues ) . ']';
 		}
 		
