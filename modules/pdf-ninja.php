@@ -94,7 +94,18 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			if( $fail )
 				throw new Exception( __( "Failed to get the Pdf.Ninja API key on last attempt.  Please retry manually.", 'pdf-forms-for-contact-form-7' ) );
 			
-			$this->set_key( $this->generate_key() );
+			// create new key if it hasn't yet been set
+			try
+			{
+				$key = $this->generate_key();
+			}
+			catch(Exception $e)
+			{
+				set_transient( 'wpcf7_pdf_forms_pdfninja_key_failure', true, 12 * HOUR_IN_SECONDS );
+				throw $e;
+			}
+			
+			$this->set_key( $key );
 		}
 		
 		return $this->key;
@@ -112,49 +123,55 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	}
 	
 	/*
+	 * Determines administrator's email address (for use with requesting a new key from the API)
+	 */
+	private function get_admin_email()
+	{
+		$current_user = wp_get_current_user();
+		if( ! $current_user )
+			return null;
+		
+		$email = sanitize_email( $current_user->user_email );
+		if( ! $email )
+			return null;
+		
+		return $email;
+	}
+	
+	/*
 	 * Requests a key from the API server
 	 */
-	public function generate_key()
+	public function generate_key( $email = null )
 	{
-		try
+		if( $email === null )
+			$email = get_admin_email();
+		
+		if( $email === null )
+			throw new Exception( __( "Failed to determine the administrator's email address.", 'pdf-forms-for-contact-form-7' ) );
+		
+		$key = null;
+		
+		// try to get the key the normal way
+		try { $key = $this->api_get_key( $email ); }
+		catch(Exception $e)
 		{
-			$current_user = wp_get_current_user();
-			if( ! $current_user )
-				throw new Exception( __( "Failed to determine the current user.", 'pdf-forms-for-contact-form-7' ) );
+			// if we are not running for the first time, throw on error
+			$old_key = WPCF7::get_option( 'wpcf7_pdf_forms_pdfninja_key' );
+			if( $old_key )
+				throw $e;
 			
-			$email = sanitize_email( $current_user->user_email );
-			if( ! $email )
-				throw new Exception( __( "Failed to determine the current user's email address.", 'pdf-forms-for-contact-form-7' ) );
-			
-			$key = null;
-			
-			// try to get the key the normal way
+			// there might be an issue with certificate verification on this system, disable it and try again
+			$this->set_verify_ssl( false );
 			try { $key = $this->api_get_key( $email ); }
 			catch(Exception $e)
 			{
-				// if we are not running for the first time, throw on error
-				$old_key = WPCF7::get_option( 'wpcf7_pdf_forms_pdfninja_key' );
-				if( $old_key )
-					throw $e;
-				
-				// there might be an issue with certificate verification on this system, disable it and try again
-				$this->set_verify_ssl( false );
-				try { $key = $this->api_get_key( $email ); }
-				catch(Exception $e)
-				{
-					// if it still fails, revert and throw
-					$this->set_verify_ssl( true );
-					throw $e;
-				}
+				// if it still fails, revert and throw
+				$this->set_verify_ssl( true );
+				throw $e;
 			}
-			
-			return $key;
 		}
-		catch(Exception $e)
-		{
-			set_transient( 'wpcf7_pdf_forms_pdfninja_key_failure', true, 12 * HOUR_IN_SECONDS );
-			throw $e;
-		}
+		
+		return $key;
 	}
 	
 	/*
@@ -905,20 +922,27 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 					
 					$success = true;
 					
-					$api_url = isset( $_POST['api_url'] ) ? trim( wp_unslash( $_POST['api_url'] ) ) : null;
-					if( $success && $this->get_api_url() != $api_url ) $success = $this->set_api_url( $api_url );
-					
-					$api_version = isset( $_POST['api-version'] ) ? trim( wp_unslash( $_POST['api-version'] ) ) : false;
-					if( $success && $this->get_api_version() != $api_version ) $success = $this->set_api_version( $api_version );
-					
-					$nosslverify = isset( $_POST['nosslverify'] ) ? trim( wp_unslash( $_POST['nosslverify'] ) ) : false;
-					if( $success ) $success = $this->set_verify_ssl( !(bool)$nosslverify );
+					if( isset( $_POST['save'] ) && $_POST['save'] )
+					{
+						$api_url = isset( $_POST['api_url'] ) ? trim( wp_unslash( $_POST['api_url'] ) ) : null;
+						if( $success && $this->get_api_url() != $api_url ) $success = $this->set_api_url( $api_url );
+						
+						$api_version = isset( $_POST['api-version'] ) ? trim( wp_unslash( $_POST['api-version'] ) ) : false;
+						if( $success && $this->get_api_version() != $api_version ) $success = $this->set_api_version( $api_version );
+						
+						$nosslverify = isset( $_POST['nosslverify'] ) ? trim( wp_unslash( $_POST['nosslverify'] ) ) : false;
+						if( $success ) $success = $this->set_verify_ssl( !(bool)$nosslverify );
+						
+						$key = isset( $_POST['key'] ) ? trim( wp_unslash( $_POST['key'] ) ) : null;
+					}
 					
 					if( isset( $_POST['new'] ) && $_POST['new'] )
-						$key = $this->generate_key();
-					else
-						$key = isset( $_POST['key'] ) ? trim( wp_unslash( $_POST['key'] ) ) : null;
-					if( $success && $key ) $success = $this->set_key( $key );
+					{
+						$email = isset( $_POST['email'] ) ? trim( wp_unslash( $_POST['email'] ) ) : null;
+						$key = $this->generate_key( $email );
+					}
+					
+					if( $success && isset( $key ) && $key ) $success = $this->set_key( $key );
 					
 					if( $success )
 						wp_safe_redirect( $this->menu_page_url( array( 'message' => 'success' ) ) );
@@ -1012,7 +1036,8 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		try { $key = $this->get_key(); } catch(Exception $e) { }
 		
 		echo WPCF7_Pdf_Forms::render( 'pdfninja_integration_edit', array(
-			'top-message' => esc_html__( "The following form allows you to edit your API key.", 'pdf-forms-for-contact-form-7' ),
+			'top-message-api-settings' => esc_html__( "The following form allows you to edit your API settings.", 'pdf-forms-for-contact-form-7' ),
+			'top-message-new-key' => esc_html__( "The following form allows you to request a new key from the API.", 'pdf-forms-for-contact-form-7' ),
 			'key-label' => esc_html__( 'API Key', 'pdf-forms-for-contact-form-7' ),
 			'key' => esc_html( $key ),
 			'api-url-label' => esc_html__( 'API URL', 'pdf-forms-for-contact-form-7' ),
@@ -1025,6 +1050,8 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'security-label' => esc_html__( 'Data Security', 'pdf-forms-for-contact-form-7' ),
 			'no-ssl-verify-label' => esc_html__( 'Ignore certificate verification errors', 'pdf-forms-for-contact-form-7' ),
 			'no-ssl-verify-value' => !$this->get_verify_ssl() ? 'checked' : '',
+			'email-label' => esc_html__( "Administrator's Email Address", 'pdf-forms-for-contact-form-7' ),
+			'email-value' => esc_html__( $this->get_admin_email() ),
 			'security-warning' => esc_html__( 'Warning: Using plain HTTP or disabling certificate verification can lead to data leaks.', 'pdf-forms-for-contact-form-7' ),
 			'edit-link' => esc_url( $this->menu_page_url( 'action=edit' ) ),
 			'nonce' => wp_nonce_field( 'wpcf7-pdfninja-edit' ),
