@@ -144,7 +144,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	public function generate_key( $email = null )
 	{
 		if( $email === null )
-			$email = get_admin_email();
+			$email = $this->get_admin_email();
 		
 		if( $email === null )
 			throw new Exception( __( "Failed to determine the administrator's email address.", 'pdf-forms-for-contact-form-7' ) );
