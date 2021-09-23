@@ -617,26 +617,15 @@ jQuery(document).ready(function($) {
 		if(!$(this).data('select2'))
 			return;
 		
+		$(this).empty().trigger('change');
+		
 		var select2Data = select2SharedData[this.data().select2.options.options.sharedDataElement];
-		var select2DataIncludesOption = false;
-		var value = $(this).val();
-		
-		if(value !== null)
-			for(var i = 0, l = select2Data.length; i < l; ++i)
-				if(value == select2Data[i])
-				{
-					select2DataIncludesOption = true;
-					break;
-				}
-		
-		if((value === null || !select2DataIncludesOption) && select2Data.length > 0)
+		if(select2Data.length > 0)
 		{
 			var optionInfo = select2Data[id !== null ? id : 0];
 			var option = new Option(optionInfo.text, optionInfo.id, true, true);
 			$(this).append(option).val(optionInfo.id).trigger('change');
 		}
-		else if(select2Data.length === 0)
-			$(this).empty().trigger('change');
 		
 		return this;
 	}
