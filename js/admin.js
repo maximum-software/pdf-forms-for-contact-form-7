@@ -617,15 +617,17 @@ jQuery(document).ready(function($) {
 		if(!$(this).data('select2'))
 			return;
 		
-		$(this).empty().trigger('change');
+		$(this).empty();
 		
 		var select2Data = select2SharedData[this.data().select2.options.options.sharedDataElement];
 		if(select2Data.length > 0)
 		{
 			var optionInfo = select2Data[id !== null ? id : 0];
 			var option = new Option(optionInfo.text, optionInfo.id, true, true);
-			$(this).append(option).val(optionInfo.id).trigger('change');
+			$(this).append(option).val(optionInfo.id);
 		}
+		
+		$(this).trigger('change');
 		
 		return this;
 	}
