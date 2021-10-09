@@ -421,6 +421,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__Confirm_Delete_All_Mappings' => __( 'Are you sure you want to delete all mappings?', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Attach_Empty_Pdf' => __( 'Are you sure you want to attach a PDF file without any form fields?', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Embed' => __( 'Are you sure you want to delete this embeded image?', 'pdf-forms-for-contact-form-7' ),
+					'__Enter_Owner_Password' => __( 'Enter owner password', 'pdf-forms-for-contact-form-7' ),
 					'__Show_Help' => __( 'Show Help', 'pdf-forms-for-contact-form-7' ),
 					'__Hide_Help' => __( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
 					'__Show_Tag_Generator_Tool' => __( 'Show Tag Generator', 'pdf-forms-for-contact-form-7' ),
@@ -560,7 +561,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $attachment_id;
 		}
 		
-		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false );
+		private static $pdf_options = array( 'owner_password' => null, 'skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false );
 		
 		/**
 		 * Updates post attachment options
@@ -613,6 +614,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			wp_update_post( array( 'ID' => $attachment_id, 'post_parent' => 0 ) );
 			self::unset_meta( $attachment_id, 'options-'.$post_id );
+			self::unset_meta( $attachment_id, 'info' );
 		}
 		
 		/**
@@ -983,7 +985,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$files = array();
 				foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
 				{
-					$fields = $this->get_fields( $attachment_id );
+					$fields = $this->get_fields( $attachment_id, $attachment['options'] );
 					
 					$data = array();
 					
@@ -1154,6 +1156,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					
 					$options = array();
 					
+					$options['owner_password'] = $attachment['options']['owner_password'];
+					
 					$options['flatten'] =
 						isset($attachment['options']) &&
 						isset($attachment['options']['flatten']) &&
@@ -1305,8 +1309,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				foreach( self::$pdf_options as $option => $default )
 					$options[$option] = $default;
 				
-				$info = $this->get_info( $attachment_id );
-				$info['fields'] = $this->query_pdf_fields( $attachment_id );
+				if(isset($_POST[ 'owner_password' ]))
+					$options['owner_password'] = $_POST[ 'owner_password' ];
+				
+				$info = $this->get_info( $attachment_id, $options );
+				$info['fields'] = $this->query_pdf_fields( $attachment_id , $options );
 				
 				return wp_send_json( array(
 					'success' => true,
@@ -1318,10 +1325,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 			catch( Exception $e )
 			{
+				$reason = 'unknown';
+				if($e instanceof WPCF7_Pdf_Forms_Service_Exception)
+					$reason = $e->getReason();
+					
 				return wp_send_json( array(
 					'success'  => false,
 					'error_message' => $e->getMessage(),
 					'error_location' => basename( $e->getFile() ) . ":". $e->getLine(),
+					'reason' => $reason,
 				) );
 			}
 		}
@@ -1368,7 +1380,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		/*
 		 * Caching wrapper for $service->api_get_info()
 		 */
-		public function get_info( $attachment_id )
+		public function get_info( $attachment_id, $options )
 		{
 			$info = self::get_meta( $attachment_id, 'info' );
 			if( $info )
@@ -1386,7 +1398,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( !$service )
 				throw new Exception( __( "No service", 'pdf-forms-for-contact-form-7' ) );
 			
-			$info = $service->api_get_info( $attachment_id );
+			$info = $service->api_get_info( $attachment_id, $options );
 			
 			// set up array keys so it is easier to search
 			$fields = array();
@@ -1408,9 +1420,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		/*
 		 * Caches and returns fields for an attachment
 		 */
-		public function get_fields( $attachment_id )
+		public function get_fields( $attachment_id, $options )
 		{
-			$info = $this->get_info( $attachment_id );
+			$info = $this->get_info( $attachment_id, $options );
 			return $info['fields'];
 		}
 		
@@ -1596,12 +1608,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$attachments = array();
 				
 				$fields = array();
-				foreach( $attachments as $attachment_id )
+				foreach( $attachments as $attachment )
 				{
+					$attachment_id = $attachment['attachment_id'];
+					$options = $attachment['options'];
+					
 					if ( ! current_user_can( 'edit_post', $attachment_id ) )
 						continue;
 					
-					$fields[$attachment_id] = $this->get_fields( $attachment_id );
+					$fields[$attachment_id] = $this->get_fields( $attachment_id, $options );
 				}
 				
 				if( count($fields) == 1 && count(reset($fields)) == 0 )
@@ -1653,9 +1668,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		/**
 		 * Helper function used in wp-admin interface
 		 */
-		private function query_pdf_fields( $attachment_id )
+		private function query_pdf_fields( $attachment_id, $options )
 		{
-			$fields = $this->get_fields( $attachment_id );
+			$fields = $this->get_fields( $attachment_id, $options );
 			foreach( $fields as $id => &$field )
 			{
 				if( !isset( $field['type'] ) || !isset( $field['name'] ) )
@@ -1715,8 +1730,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( isset( $attachment['options']) )
 						$options = $attachment['options'];
 					
-					$info = $this->get_info( $attachment_id );
-					$info['fields'] = $this->query_pdf_fields( $attachment_id );
+					$info = $this->get_info( $attachment_id, $options );
+					$info['fields'] = $this->query_pdf_fields( $attachment_id, $options );
 					
 					$attachments[] = array(
 						'attachment_id' => $attachment_id,
@@ -1824,7 +1839,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		/**
 		 * Downloads and caches PDF page images, returns image attachment id
 		 */
-		public function get_pdf_snapshot( $attachment_id, $page )
+		public function get_pdf_snapshot( $attachment_id, $page, $options )
 		{
 			$args = array(
 				'post_parent' => $attachment_id,
@@ -1855,7 +1870,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			$service = $this->get_service();
 			if( $service )
-				$service->api_image( $filepath, $attachment_id, $page );
+				$service->api_image( $filepath, $attachment_id, $page, $options );
 			
 			$mimetype = self::get_mime_type( $filename );
 			
@@ -1886,6 +1901,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : null;
 				$page = isset( $_POST['page'] ) ? (int) $_POST['page'] : null;
+				$options = isset( $_POST['options'] ) ? $_POST['options'] : null;
 				
 				if ( $page < 1 )
 					throw new Exception( __( "Invalid page number", 'pdf-forms-for-contact-form-7' ) );
@@ -1893,7 +1909,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( ! current_user_can( 'edit_post', $attachment_id ) )
 					throw new Exception( __( "Permission denied", 'pdf-forms-for-contact-form-7' ) );
 				
-				$attachment_id = $this->get_pdf_snapshot( $attachment_id, $page );
+				$attachment_id = $this->get_pdf_snapshot( $attachment_id, $page, $options );
 				$snapshot = wp_get_attachment_image_src( $attachment_id, array( 500, 500 ) );
 				
 				if( !$snapshot || !is_array( $snapshot ) )
@@ -2003,6 +2019,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'attach-to-mail-1' => esc_html__( 'Attach to primary email message', 'pdf-forms-for-contact-form-7' ),
 					'attach-to-mail-2' => esc_html__( 'Attach to secondary email message', 'pdf-forms-for-contact-form-7' ),
 					'flatten' => esc_html__( 'Flatten', 'pdf-forms-for-contact-form-7' ),
+					'owner-password' => esc_html__( 'Owner password', 'pdf-forms-for-contact-form-7' ),
 					'filename' => esc_html__( 'Filename (mail-tags can be used)', 'pdf-forms-for-contact-form-7' ),
 					'save-directory'=> esc_html__( 'Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)', 'pdf-forms-for-contact-form-7' ),
 					'download-link' => esc_html__( 'Add filled PDF download link to form submission response', 'pdf-forms-for-contact-form-7' ),
