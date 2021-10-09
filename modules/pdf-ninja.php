@@ -434,39 +434,43 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			throw new Exception( implode( ', ', $response->get_error_messages() ) );
 		
 		$body = wp_remote_retrieve_body( $response );
-		
-		if( ! $body )
-			throw new Exception( __( "Failed to get API server response", 'pdf-forms-for-contact-form-7' ) );
-		
 		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
 		
 		if( strpos($content_type, 'application/json' ) !== FALSE )
 		{
-			$response = json_decode( $body , true );
+			$result = json_decode( $body , true );
 			
-			if( ! $response || ! is_array( $response ) )
+			if( ! $result || ! is_array( $result ) )
 				throw new Exception( __( "Failed to decode API server response", 'pdf-forms-for-contact-form-7' ) );
 			
-			if( $response['success'] == true && isset( $response['fileUrl'] ) )
+			if( $result['success'] == true && isset( $result['fileUrl'] ) )
 			{
 				$args2 = $this->wp_remote_args();
 				$args2['timeout'] = 100;
-				$response2 = wp_remote_get( $response['fileUrl'], $args2 );
+				$response2 = wp_remote_get( $result['fileUrl'], $args2 );
 				if( is_wp_error( $response2 ) )
 					throw new Exception( __( "Failed to download a file from the API server", 'pdf-forms-for-contact-form-7' ) );
 				
-				$response['content_type'] = wp_remote_retrieve_header( $response2, 'content-type' );
-				$response['content'] = wp_remote_retrieve_body( $response2 );
+				$result['content_type'] = wp_remote_retrieve_header( $response2, 'content-type' );
+				$result['content'] = wp_remote_retrieve_body( $response2 );
 			}
-			
-			return $response;
+		}
+		else
+		{
+			if( wp_remote_retrieve_response_code( $response ) < 400 )
+				$result = array(
+					'success' => true,
+					'content_type' => $content_type,
+					'content' => $body,
+				);
+			else
+				$result = array(
+					'success' => false,
+					'error' => wp_remote_retrieve_response_message( $response ),
+				);
 		}
 		
-		return array(
-			'success' => true,
-			'content_type' => $content_type,
-			'content' => $body,
-		);
+		return $result;
 	}
 	
 	/*
@@ -493,39 +497,43 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			throw new Exception( implode( ', ', $response->get_error_messages() ) );
 		
 		$body = wp_remote_retrieve_body( $response );
-		
-		if( ! $body )
-			throw new Exception( __( "Failed to get API server response", 'pdf-forms-for-contact-form-7' ) );
-		
 		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
 		
 		if( strpos($content_type, 'application/json' ) !== FALSE )
 		{
-			$response = json_decode( $body , true );
+			$result = json_decode( $body , true );
 			
-			if( ! $response || ! is_array( $response ) )
+			if( ! $result || ! is_array( $result ) )
 				throw new Exception( __( "Failed to decode API server response", 'pdf-forms-for-contact-form-7' ) );
 			
-			if( $response['success'] == true && isset( $response['fileUrl'] ) )
+			if( $result['success'] == true && isset( $result['fileUrl'] ) )
 			{
 				$args2 = $this->wp_remote_args();
 				$args2['timeout'] = 100;
-				$response2 = wp_remote_get( $response['fileUrl'], $args2 );
+				$response2 = wp_remote_get( $result['fileUrl'], $args2 );
 				if( is_wp_error( $response2 ) )
 					throw new Exception( __( "Failed to download a file from the API server", 'pdf-forms-for-contact-form-7' ) );
 				
-				$response['content_type'] = wp_remote_retrieve_header( $response2, 'content-type' );
-				$response['content'] = wp_remote_retrieve_body( $response2 );
+				$result['content_type'] = wp_remote_retrieve_header( $response2, 'content-type' );
+				$result['content'] = wp_remote_retrieve_body( $response2 );
 			}
-			
-			return $response;
+		}
+		else
+		{
+			if( wp_remote_retrieve_response_code( $response ) < 400 )
+				$result = array(
+					'success' => true,
+					'content_type' => $content_type,
+					'content' => $body,
+				);
+			else
+				$result = array(
+					'success' => false,
+					'error' => wp_remote_retrieve_response_message( $response ),
+				);
 		}
 		
-		return array(
-			'success' => true,
-			'content_type' => $content_type,
-			'content' => $body,
-		);
+		return $result;
 	}
 	
 	/*
