@@ -32,7 +32,6 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		return 'pdf_ninja';
 	}
 	
-	
 	/*
 	 * WPCF7_Service defined function
 	 */
@@ -370,7 +369,6 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 				$errors[2][] = $error;
 			}
 		}
-		
 		
 		$arch = php_uname( "m" );
 		if( $arch != 'x86_64' && $arch != 'amd64' )
@@ -816,10 +814,10 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$filecontents = file_get_contents( $filepath );
 			
 			$payload .= "--{$boundary}\r\n"
-					  . "Content-Disposition: form-data; name=\"images[{$fileId}]\"; filename=\"{$filename}\"\r\n"
-					  . "Content-Type: application/octet-stream\r\n"
-					  . "\r\n"
-					  . "{$filecontents}\r\n";
+			          . "Content-Disposition: form-data; name=\"images[{$fileId}]\"; filename=\"{$filename}\"\r\n"
+			          . "Content-Type: application/octet-stream\r\n"
+			          . "\r\n"
+			          . "{$filecontents}\r\n";
 		}
 		
 		$payload .= "--{$boundary}--";
