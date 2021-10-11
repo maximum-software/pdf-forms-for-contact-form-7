@@ -55,16 +55,16 @@ window.addEventListener('load', function(event)
 
 					if( downloadlink == true )
 					{
-					downloads.appendChild(download);
-					alldownloadlink=true;	
+						downloads.appendChild(download);
+						alldownloadlink = true;
 					}
 				}
 				
 				if( alldownloadlink == true )
 				{
-				var form = formDiv.querySelector('.wpcf7-form');
-				if(form)
-					form.appendChild(downloads);
+					var form = formDiv.querySelector('.wpcf7-form');
+					if(form)
+						form.appendChild(downloads);
 				}
 			}
 		}

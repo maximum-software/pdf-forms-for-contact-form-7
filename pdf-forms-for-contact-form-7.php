@@ -562,8 +562,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $attachment_id;
 		}
 		
-		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false, 'auto_download' => false );
-		
+		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false, 'auto_download' => false);
+		private static $public_pdf_options = array('download_link', 'auto_download');
+
 		/**
 		 * Updates post attachment options
 		 */
@@ -2124,24 +2125,24 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$downloads = '';
 					foreach( $this->downloads->get_files() as $file )
 					{
-						$downloads .= "<div>" .
-							self::replace_tags(
-								esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
-								array(
-									'icon' => '<span class="dashicons dashicons-download"></span>',
-									'a-href-url' => '<a href="' . esc_html( $file['url'] ) . '" download>',
-									'filename' => esc_html( $file['filename'] ),
-									'/a' => '</a>',
-									'i' => '<span class="file-size">',
-									'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
-									'/i' => '</span>',
+						if( $file['options']['download_link'] == true )
+							$downloads .= "<div>" .
+								self::replace_tags(
+									esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
+									array(
+										'icon' => '<span class="dashicons dashicons-download"></span>',
+										'a-href-url' => '<a href="' . esc_html( $file['url'] ) . '" download>',
+										'filename' => esc_html( $file['filename'] ),
+										'/a' => '</a>',
+										'i' => '<span class="file-size">',
+										'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
+										'/i' => '</span>',
+									)
 								)
-							)
-						 . "</div>";
-						//  only add iframe for pdf that is check for auto download
-						 if($file['options']['auto_download'] == true){
-							$downloads .= "<iframe src='".$_SERVER['REQUEST_URI']."?pdf_url=".esc_html( $file['url'] )."&pdf_name=".esc_html( $file['filename'] )."' style='display: none; height: 0; width: 0' ></iframe>";
-						 }
+							. "</div>";
+						
+						if( $file['options']['auto_download'] == true )
+							$downloads .= "<iframe src='".esc_html( $_SERVER['REQUEST_URI'] )."?pdf_url=".esc_html( base64_encode( $file['url'] ) )."&pdf_name=".esc_html( base64_encode( $file['filename'] ) )."' class='wpcf7-pdf-forms-auto-download' ></iframe>";
 					}
 					$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
 
@@ -2153,14 +2154,19 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $output;
 		}
 
-		//Auto download filled pdf file when js is disabled and handles url request made by iframe.
+		/*
+		 * Auto download filled pdf file when js is disabled and handles url request made by iframe.
+		 */
 		public function autodownload_nojs()
 		{
-			$url = $_GET['pdf_url'];
-			$filename = $_GET['pdf_name'];
-			if( $url != '' )
-			{		
-				header( 'Content-Disposition: attachment; filename="'. $filename .'"' );
+			$url = base64_decode( $_REQUEST['pdf_url'] );
+			$filename = base64_decode( $_REQUEST['pdf_name'] );
+			$url_extension = pathinfo( $url, PATHINFO_EXTENSION );
+			$file_extension = pathinfo( $filename, PATHINFO_EXTENSION );
+
+			if( isset( $url ) && isset( $filename )  && $url_extension == 'pdf' && $file_extension == 'pdf' )
+			{
+				header( 'Content-Disposition: attachment; filename=' . $filename );
 				readfile( $url );
 			}
 		}
