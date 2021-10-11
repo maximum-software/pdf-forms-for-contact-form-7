@@ -82,6 +82,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
 			
 			add_filter( 'wpcf7_form_response_output', array( $this, 'change_response_nojs' ), 10, 4 );
+			// Auto download when js disabled 
+			add_action( 'parse_request', array( $this, 'autodownload_nojs' ), 80 );
 			
 			if( defined( 'WPCF7_VERSION' ) && version_compare( WPCF7_VERSION, '5.2' ) >= 0 )
 				// hook wpcf7_feedback_response (works only with CF7 version 5.2+)
@@ -98,7 +100,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			// TODO: allow users to run this manually
 			add_action( 'admin_init', array( $this, 'upgrade_data' ) );
 		}
-		
+
 		/*
 		 * Runs after the plugin have been activated/deactivated
 		 */
@@ -560,7 +562,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $attachment_id;
 		}
 		
-		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false,'download_link_auto' => false );
+		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false, 'auto_download' => false );
 		
 		/**
 		 * Updates post attachment options
@@ -1144,16 +1146,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$attach_to_mail_2 = $attachment['options']['attach_to_mail_2'] || strpos( $mail2["attachments"], "[pdf-form-".$attachment_id."]" ) !== FALSE;
 					$save_directory = strval( $attachment['options']['save_directory'] );
 					$create_download_link = $attachment['options']['download_link'];
-
-					//AUTO DOWNLOAD LINK :: download_link_auto
-					$create_download_link_auto = $attachment['options']['download_link_auto'];
+					$create_auto_download = $attachment['options']['auto_download'];
 					
 					// skip file if it is not used anywhere
 					if( !$attach_to_mail_1
 					&& !$attach_to_mail_2
 					&& $save_directory === ""
-					&& !$create_download_link 
-					&& !$create_download_link_auto)
+					&& !$create_download_link
+					&& !$create_auto_download )
 						continue;
 					
 					$options = array();
@@ -1242,19 +1242,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						}
 						
 						$create_download_link = $filedata['options']['download_link'];
-						$create_download_link_auto = $filedata['options']['download_link_auto'];
-						
-						if ( $create_download_link && ($create_download_link_auto == false))
-							$this->get_downloads()->add_file( $filedata['file'], $filedata['filename'],$create_download_link,$create_download_link_auto);
-
-						else if($create_download_link && $create_download_link_auto)
-
-							$this->get_downloads()->add_file( $filedata['file'], $filedata['filename'],$create_download_link,$create_download_link_auto);
-							// AUTO-DOWNLOAD CONDITION
-						else if($create_download_link_auto && ($create_download_link==false))	
-							$this->get_downloads()->add_file( $filedata['file'], $filedata['filename'],$create_download_link,$create_download_link_auto);
-
-
+						$create_auto_download = $filedata['options']['auto_download'];
+						if ( $create_download_link || $create_auto_download )
+							$this->get_downloads()
+							->add_file( $filedata['file'], $filedata['filename'], )
+							->set_options( $id,
+							array(
+							'download_link' => $create_download_link,
+							'auto_download' => $create_auto_download ) );
 					}
 				}
 			}
@@ -2021,7 +2016,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'filename' => esc_html__( 'Filename (mail-tags can be used)', 'pdf-forms-for-contact-form-7' ),
 					'save-directory'=> esc_html__( 'Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)', 'pdf-forms-for-contact-form-7' ),
 					'download-link' => esc_html__( 'Add filled PDF download link to form submission response', 'pdf-forms-for-contact-form-7' ),
-					'download-link-auto' => esc_html__( 'Auto download', 'pdf-forms-for-contact-form-7' ),
+					'auto-download' => esc_html__( 'Automatically download filled PDF after form submission', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping' => esc_html__( 'Field Mapper Tool', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping-help' => esc_html__( 'This tool can be used to link form fields and mail-tags with fields in the attached PDF files. Form tags can also be generated. When your users submit the form, input from form fields and other mail-tags will be inserted into the correspoinding fields in the PDF file.', 'pdf-forms-for-contact-form-7' ),
 					'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
@@ -2104,8 +2099,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							'filename' => $file['filename'],
 							'url' => $file['url'],
 							'size' => size_format( filesize( $file['filepath'] ) ),
-							'autodownload'=>$file['autodownload'],
-							'downloadlink'=>$file['downloadlink']
+							'options' => $file['options']
 						);
 				
 				// make sure to enable cron if it is down so that old download files get cleaned up
@@ -2129,6 +2123,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				{
 					$downloads = '';
 					foreach( $this->downloads->get_files() as $file )
+					{
 						$downloads .= "<div>" .
 							self::replace_tags(
 								esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
@@ -2142,15 +2137,32 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 									'/i' => '</span>',
 								)
 							)
-						. "</div>";
+						 . "</div>";
+						//  only add iframe for pdf that is check for auto download
+						 if($file['options']['auto_download'] == true){
+							$downloads .= "<iframe src='".$_SERVER['REQUEST_URI']."?pdf_url=".esc_html( $file['url'] )."&pdf_name=".esc_html( $file['filename'] )."' style='display: none; height: 0; width: 0' ></iframe>";
+						 }
+					}
 					$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
-					
+
 					// make sure to enable cron if it is down so that old download files get cleaned up
 					$this->enable_cron();
 				}
 			}
 			
 			return $output;
+		}
+
+		//Auto download filled pdf file when js is disabled and handles url request made by iframe.
+		public function autodownload_nojs()
+		{
+			$url = $_GET['pdf_url'];
+			$filename = $_GET['pdf_name'];
+			if( $url != '' )
+			{		
+				header( 'Content-Disposition: attachment; filename="'. $filename .'"' );
+				readfile( $url );
+			}
 		}
 	}
 	
