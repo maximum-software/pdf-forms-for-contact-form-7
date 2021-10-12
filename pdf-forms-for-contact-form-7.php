@@ -83,8 +83,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			add_filter( 'wpcf7_form_response_output', array( $this, 'change_response_nojs' ), 10, 4 );
 			
-			// Pass downlaod links using shortcode to redirected page
-			add_shortcode('pass_download_links', array( $this, 'wpcf7_download_links_shortcode' ));
+			// wpcf7_pdf_forms_downloads using shortcode to redirected page
+			add_shortcode('wpcf7_pdf_forms_downloads', array( $this, 'shortcode_download_links_response' ));
 			
 			if( defined( 'WPCF7_VERSION' ) && version_compare( WPCF7_VERSION, '5.2' ) >= 0 )
 				// hook wpcf7_feedback_response (works only with CF7 version 5.2+)
@@ -100,16 +100,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			// TODO: allow users to run this manually
 			add_action( 'admin_init', array( $this, 'upgrade_data' ) );
-
-			//Start session to store last created subdir for redirect page.
-			add_action( 'init', array( $this, 'session_start' ) );
-		}
-		
-		/*
-		 * Session start
-		 */
-		public function session_start(){
-			session_start();
 		}
 		
 		/*
@@ -574,6 +564,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false );
+		private static $public_pdf_options = array('download_link');
 		
 		/**
 		 * Updates post attachment options
@@ -1251,8 +1242,18 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						}
 						
 						$create_download_link = $filedata['options']['download_link'];
+						
+						// TODO: remove anonymous function
+						$public_options = array_filter( $filedata['options'],
+														function ( $key )
+														{
+															return in_array( $key, self::$public_pdf_options );
+														}, ARRAY_FILTER_USE_KEY );
+						
 						if ( $create_download_link )
-							$this->get_downloads()->add_file( $filedata['file'], $filedata['filename'] );
+							$this->get_downloads()
+								->add_file( $filedata['file'], $filedata['filename'] )
+								->set_options( $id, $public_options );
 					}
 				}
 			}
@@ -2004,8 +2005,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				echo self::render( 'add_pdf', array(
 					'post-id' => esc_html( $contact_form->id() ),
 					'messages' => $messages,
-					'shortcode-title' => esc_html__( "Shortcode for CF7 redirect page", 'pdf-forms-for-contact-form-7' ),
-					'shortcode-desc' => esc_html__( "Use this [pass_download_links] to pass dowload links.", 'pdf-forms-for-contact-form-7' ),
 					'instructions' => esc_html__( "You can use this tag generator to attach a PDF file to your form, insert generated form tags into your form, and link them to fields in the PDF file. It is possible to link a combination of mail-tags to PDF fields. You can also embed images (from URLs or attached files) into the PDF file. Changes here are applied when the contact form is saved.", 'pdf-forms-for-contact-form-7' ),
 					'attach-pdf' => esc_html__( "Attach a PDF File", 'pdf-forms-for-contact-form-7' ),
 					'insert-tags' => esc_html__( "Insert Tags", 'pdf-forms-for-contact-form-7' ),
@@ -2021,6 +2020,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'filename' => esc_html__( 'Filename (mail-tags can be used)', 'pdf-forms-for-contact-form-7' ),
 					'save-directory'=> esc_html__( 'Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)', 'pdf-forms-for-contact-form-7' ),
 					'download-link' => esc_html__( 'Add filled PDF download link to form submission response', 'pdf-forms-for-contact-form-7' ),
+					'shortcode-title' => esc_html__( 'If your form redirects, use [wpcf7_pdf_forms_downloads] shortcode to display download links on the redirect page.', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping' => esc_html__( 'Field Mapper Tool', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping-help' => esc_html__( 'This tool can be used to link form fields and mail-tags with fields in the attached PDF files. Form tags can also be generated. When your users submit the form, input from form fields and other mail-tags will be inserted into the correspoinding fields in the PDF file.', 'pdf-forms-for-contact-form-7' ),
 					'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
@@ -2107,6 +2107,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				// make sure to enable cron if it is down so that old download files get cleaned up
 				$this->enable_cron();
+				
+				// keeping files in cookie to be accessed on the redirect page.
+				setcookie('wpcf7_pdf_forms_files', json_encode( $this->downloads->get_files() ), time() + 3600, "/");
 			}
 			
 			return $response;
@@ -2149,47 +2152,37 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			return $output;
 		}
-		
-	   	// function that runs when the shortcode is called
-		public function wpcf7_download_links_shortcode() 
-		{ 
-			$subdir_name = '/' . $_SESSION['subdir_name'] . '/';
-			$download_path = $this->get_downloads()->get_downloads_path() . $subdir_name; 
-			$downloads_url = $this->get_downloads()->get_downloads_url() . $subdir_name;
-		
+
+		/*
+	   	 * function that runs when the shortcode is called
+		 */
+		public function shortcode_download_links_response() 
+		{
 			$output = '';
-			$downloads = '';
-			if( is_dir( $download_path ) )
+			if( isset( $_COOKIE['wpcf7_pdf_forms_files'] ) )
 			{
-				if( ( $downloads_dir = opendir( $download_path ) ) !== FALSE )
+				$get_files = stripslashes( $_COOKIE['wpcf7_pdf_forms_files'] );
+				$get_files = json_decode( $get_files, true );
+				$downloads = '';
+				foreach( $get_files as $file )
 				{
-					while ( ( $filename = readdir( $downloads_dir ) ) !== false )
-					{
-						$extension = pathinfo( $filename, PATHINFO_EXTENSION );
-						if ( $extension == 'pdf' )
-						{
-							$size = size_format( filesize( $download_path . $filename ) );
-							$url = $downloads_url . $filename;
-							$downloads .= "<div>" .
-								self::replace_tags(
-									esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
-									array(
-										'icon' => '<span class="dashicons dashicons-download"></span>',
-										'a-href-url' => '<a href="' . esc_html( $url ) . '" download>',
-										'filename' => esc_html( $filename ),
-										'/a' => '</a>',
-										'i' => '<span class="file-size">',
-										'size' => esc_html( $size ),
-										'/i' => '</span>',
-									)
+					if( $file['options']['download_link'] == true || $file['options']['auto_download'] == true )
+						$downloads .= "<div>" .
+							self::replace_tags(
+								esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
+								array(
+									'icon' => '<span class="dashicons dashicons-download"></span>',
+									'a-href-url' => '<a href="' . esc_html( $file['url'] ) . '" download>',
+									'filename' => esc_html( $file['filename'] ),
+									'/a' => '</a>',
+									'i' => '<span class="file-size">',
+									'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
+									'/i' => '</span>',
 								)
-							. "</div>";
-						}
-					}
-					
-					closedir( $downloads_dir );
-					$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
+							)
+						. "</div>";
 				}
+				$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
 			}
 			
 			return $output;
