@@ -38,6 +38,7 @@ window.addEventListener('load', function(event)
 				
 				for(var i=0; i<data.length; i++)
 				{
+					var pdfviewer = data[i]['options']['pdf_viewer'];
 					var download = document.createElement('div');
 					download.innerHTML = "<span class='dashicons dashicons-download'></span><a href='' download></a> <span class='file-size'></span>";
 					
@@ -46,7 +47,14 @@ window.addEventListener('load', function(event)
 					link.innerText = data[i]['filename'];
 					download.querySelector('.file-size').innerText = "(" + data[i]['size'] + ")";
 					
-					downloads.appendChild(download);
+					var pdfview = document.createElement("iframe");
+					pdfview.setAttribute("src", link.href);
+					pdfview.style.width = "100%";
+					pdfview.style.height = "650px";
+					pdfview.style.margin = "10px 0px";
+					
+					if( pdfviewer == true )
+					downloads.appendChild(pdfview);
 				}
 				
 				var form = formDiv.querySelector('.wpcf7-form');
