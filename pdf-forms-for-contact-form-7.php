@@ -561,6 +561,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false, 'pdf_viewer' => false );
+		private static $public_pdf_options = array('download_link', 'pdf_viewer');
 		
 		/**
 		 * Updates post attachment options
@@ -1241,15 +1242,17 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						
 						$create_download_link = $filedata['options']['download_link'];
 						$create_pdf_viewer = $filedata['options']['pdf_viewer'];
+						// TODO: remove anonymous function
+						$public_options = array_filter( $filedata['options'],
+														function ( $key )
+														{
+															return in_array( $key, self::$public_pdf_options );
+														}, ARRAY_FILTER_USE_KEY );
+						
 						if ( $create_download_link || $create_pdf_viewer )
 							$this->get_downloads()
-								->add_file( $filedata['file'], $filedata['filename'], )
-								->set_options( $id,
-									array(
-										'download_link' => $create_download_link,
-										'pdf_viewer' => $create_pdf_viewer
-									)
-								);
+								->add_file( $filedata['file'], $filedata['filename'] )
+								->set_options( $id, $public_options );
 					}
 				}
 			}
@@ -2103,6 +2106,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				// make sure to enable cron if it is down so that old download files get cleaned up
 				$this->enable_cron();
+				
+				// keeping files in cookie to be accessed on the redirect page.
+				setcookie('wpcf7_pdf_forms_files', json_encode( $this->downloads->get_files() ), time() + 3600, "/");
 			}
 			
 			return $response;
@@ -2140,7 +2146,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							. "</div>";
 						
 						if( $file['options']['pdf_viewer'] == true )
-							$downloads .= "<iframe src='".esc_html( $file['url'] )."' style='height: 650px; width: 100%; margin: 10px 0px' ></iframe>";
+							$downloads .= "<iframe src='".esc_html( $file['url'] )."' class='wpcf7-pdf-forms-pdf-view' ></iframe>";
 					}
 					$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
 					
