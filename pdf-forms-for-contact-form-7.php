@@ -58,15 +58,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function plugin_init()
 		{
+			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+			
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+			
 			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
 				return;
 			
-			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-			
 			add_action( 'wp_enqueue_scripts', array( $this, 'front_end_enqueue_scripts' ) );
 			add_filter( 'wpcf7_form_elements', array( $this, 'front_end_form_scripts' ) );
-			
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			
 			add_action( 'wp_ajax_wpcf7_pdf_forms_get_attachment_info', array( $this, 'wp_ajax_get_attachment_info' ) );
 			add_action( 'wp_ajax_wpcf7_pdf_forms_query_tags', array( $this, 'wp_ajax_query_tags' ) );
@@ -307,7 +307,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
 			{
-				echo WPCF7_Pdf_Forms::render( 'notice_error', array(
+				echo WPCF7_Pdf_Forms::render_error_notice( 'cf7-not-installed', array(
 					'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
 					'message' => esc_html__( "The required plugin 'Contact Form 7' version is not installed!", 'pdf-forms-for-contact-form-7' ),
 				) );
@@ -315,11 +315,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 			
 			if( ! defined( 'WPCF7_VERSION' ) || ! $this->is_wpcf7_version_supported( WPCF7_VERSION ) )
-				echo WPCF7_Pdf_Forms::render( 'notice_warning', array(
+				echo WPCF7_Pdf_Forms::render_warning_notice( 'unsupported-cf7-version-'.WPCF7_VERSION, array(
 							'label'   => esc_html__( "PDF Forms Filler for CF7 plugin warning", 'pdf-forms-for-contact-form-7' ),
 							'message' =>
 								self::replace_tags(
-									esc_html__( "The currently installed version of 'Contact Form 7' plugin ({current-wpcf7-version}) is not supported by the current version of 'PDF Forms Filler for CF7' plugin ({current-plugin-version}), please switch to 'Contact Form 7' plugin version {supported-wpcf7-version} to allow 'PDF Forms Filler for CF7' plugin to work correctly.", 'pdf-forms-for-contact-form-7' ),
+									esc_html__( "The currently installed version of 'Contact Form 7' plugin ({current-wpcf7-version}) may not be supported by the current version of 'PDF Forms Filler for CF7' plugin ({current-plugin-version}), please switch to 'Contact Form 7' plugin version {supported-wpcf7-version} to ensure that 'PDF Forms Filler for CF7' plugin would work correctly.", 'pdf-forms-for-contact-form-7' ),
 									array(
 										'current-wpcf7-version' => esc_html( defined( 'WPCF7_VERSION' ) ? WPCF7_VERSION : __( "Unknown version", 'pdf-forms-for-contact-form-7' ) ),
 										'current-plugin-version' => esc_html( self::VERSION ),
@@ -402,6 +402,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function admin_enqueue_scripts( $hook )
 		{
+			wp_register_script( 'wpcf7_pdf_forms_notices_script', plugin_dir_url( __FILE__ ) . 'js/notices.js', array( 'jquery' ), self::VERSION );
+			wp_enqueue_script( 'wpcf7_pdf_forms_notices_script' );
+			
 			if( false !== strpos($hook, 'wpcf7') )
 			{
 				wp_register_style( 'select2', plugin_dir_url( __FILE__ ) . 'css/select2.min.css', array(), '4.0.13');
@@ -1946,6 +1949,41 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public static function render( $template, $attributes = array() )
 		{
 			return self::render_file( plugin_dir_path(__FILE__) . 'html/' . $template . '.html', $attributes );
+		}
+		
+		/**
+		 * Renders a notice with the given attributes
+		 */
+		public static function render_notice( $notice_id, $type, $attributes = array() )
+		{
+			$attributes['attributes'] = 'data-notice-id="'.esc_attr( $notice_id ).'"';
+			$attributes['classes'] = "notice-$type is-dismissible";
+			
+			return self::render( "notice", $attributes );
+		}
+		
+		/**
+		 * Renders a success notice with the given attributes
+		 */
+		public static function render_success_notice( $notice_id, $attributes = array() )
+		{
+			return self::render_notice( $notice_id, 'success', $attributes );
+		}
+		
+		/**
+		 * Renders a warning notice with the given attributes
+		 */
+		public static function render_warning_notice( $notice_id, $attributes = array() )
+		{
+			return self::render_notice( $notice_id, 'warning', $attributes );
+		}
+		
+		/**
+		 * Renders an error notice with the given attributes
+		 */
+		public static function render_error_notice( $notice_id, $attributes = array() )
+		{
+			return self::render_notice( $notice_id, 'error', $attributes );
 		}
 		
 		/*
