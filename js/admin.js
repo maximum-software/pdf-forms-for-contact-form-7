@@ -1287,12 +1287,16 @@ jQuery(document).ready(function($) {
 				{
 					if(data.hasOwnProperty('info'))
 					{
+						if(!data.info.hasOwnProperty('fields')
+						|| typeof data.info.fields !== 'object'
+						|| Object.keys(data.info.fields).length == 0)
+							if(!confirm(wpcf7_pdf_forms.__Confirm_Attach_Empty_Pdf))
+								return;
 						setAttachmentInfo(data.attachment_id, data.info);
 						delete data.info;
 					}
 					addAttachment(data);
 				}
-				
 			},
 			
 			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
