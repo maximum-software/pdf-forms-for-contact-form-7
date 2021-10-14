@@ -762,7 +762,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$response = wp_remote_get( $url, $args );
 			
 			if( is_wp_error( $response ) )
-				throw new Exception( __( "Failed to download file", 'pdf-forms-for-contact-form-7' ) );
+				throw new Exception(
+					self::replace_tags(
+							__( "Failed to download file: {error-message}", 'pdf-forms-for-contact-form-7' ),
+							array( 'error-message' => $response->get_error_message() )
+						)
+				);
 			
 			$mimetype = wp_remote_retrieve_header( $response, 'content-type' );
 			
