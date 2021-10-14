@@ -1110,22 +1110,4 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 				'message' => esc_html__( "Failed to get the Pdf.Ninja API key on last attempt.  Please retry manually.", 'pdf-forms-for-contact-form-7' ),
 			) );
 	}
-	
-	/*
-	 * Returns thickbox messages that need to be displayed
-	 */
-	public function thickbox_messages()
-	{
-		$messages = '';
-		try
-		{
-			$url = $this->get_api_url();
-			$verify_ssl = $this->get_verify_ssl();
-			if( substr($url,0,5) == 'http:' || !$verify_ssl)
-				$messages .= "<div class='notice notice-warning'><p>" . esc_html__( 'Warning: Your Contact Form 7 integration settings indicate that you are using an insecure connection to the Pdf.Ninja API server.', 'pdf-forms-for-contact-form-7' ) . "</p></div>";
-		}
-		catch(Exception $e) { };
-		
-		return $messages;
-	}
 }
