@@ -405,6 +405,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			wp_register_script( 'wpcf7_pdf_forms_notices_script', plugin_dir_url( __FILE__ ) . 'js/notices.js', array( 'jquery' ), self::VERSION );
 			wp_enqueue_script( 'wpcf7_pdf_forms_notices_script' );
 			
+			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
+				return;
+			
 			if( false !== strpos($hook, 'wpcf7') )
 			{
 				wp_register_script( 'wpcf7_pdf_forms_admin_script', plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery', 'jcrop' ), self::VERSION );
