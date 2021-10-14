@@ -745,6 +745,15 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	private function api_pdf_helper( $endpoint, $attachment_id, $data, $embeds, $options )
 	{
+		if( !is_array ( $data ) )
+			$data = array();
+		
+		if( !is_array ( $embeds ) )
+			$embeds = array();
+		
+		if( !is_array ( $options ) )
+			$options = array();
+		
 		if( $this->is_new_file( $attachment_id ) )
 			if( ! $this->api_upload_file( $attachment_id ) )
 				return null;
