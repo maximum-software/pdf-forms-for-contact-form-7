@@ -5,7 +5,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 	class WPCF7_Pdf_Forms_Downloads
 	{
 		private static $instance = null;
-		
+
 		private $downloads_path = null;
 		private $downloads_url = null;
 		private $downloads_timeout = 3600;
@@ -60,7 +60,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 			$random_max = mt_getrandmax();
 			$random_num = zeroise( mt_rand( 0, $random_max ), strlen( $random_max ) );
 			$this->subdir = wp_unique_filename( $this->get_downloads_path(), $random_num );
-			
+			 
 			return $this->subdir;
 		}
 		
@@ -124,6 +124,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 				'filepath' => $filepath,
 			));
 			
+			return $this;
+		}
+
+		/**
+		 * Adds additional options to response
+		 */
+		public function set_options( $id, $options )
+		{
+			$this->files[$id]['options'] = $options;
 			return $this;
 		}
 		

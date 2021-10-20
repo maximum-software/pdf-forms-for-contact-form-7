@@ -11,3 +11,17 @@
 {
 	font-style: italic;
 }
+
+.wpcf7-pdf-forms-pdf-view
+{
+	height: 650px;
+	width: 100%;
+	margin: 10px 0px;
+}
+
+.wpcf7-pdf-forms-auto-download
+{
+	display: none;
+	width: 0px;
+	height: 0px;
+}
