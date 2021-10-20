@@ -26,6 +26,7 @@
 						<div><input data-option="attach_to_mail_2" type="checkbox"/> {attach-to-mail-2}</div>
 						<div><input data-option="flatten" type="checkbox"/> {flatten}</div>
 						<div><input data-option="download_link" type="checkbox"/> {download-link}</div>
+						<div><input data-option="auto_download" type="checkbox"/> {auto-download}</div>
 						<div>{filename}<br/><input data-option="filename" type="text"/>.pdf</div>
 						<div>{save-directory}<br/><input data-option="save_directory" type="text"/></div>
 					</div>
@@ -39,7 +40,16 @@
 	</table>
 	
 	<hr/>
-	
+	<div class="shortcode-block">
+		<div>
+			<span class="dashicons dashicons-shortcode"></span>
+			<strong>{shortcode-title}</strong>
+			<div class="helpbox">
+				{shortcode-desc}
+			</div>
+		</div>
+	</div>
+	<hr/>
 	<div class="field-mapping-tool">
 		<div>
 			<span class="dashicons dashicons-randomize"></span>
