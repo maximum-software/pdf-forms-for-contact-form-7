@@ -1273,7 +1273,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( file_exists( $file ) )
 					{
 						if( ( $filedata['options']['attach_to_mail_1'] && $mail->name() == 'mail' )
-						|| ( $filedata['options']['attach_to_mail_2'] && $mail->name() == 'mail_2' ))
+						|| ( $filedata['options']['attach_to_mail_2'] && $mail->name() == 'mail_2' ) )
 							$components['attachments'][] = $file;
 					}
 				}
