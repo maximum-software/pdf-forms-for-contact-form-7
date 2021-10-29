@@ -1292,7 +1292,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					throw new Exception( __( "Nonce mismatch", 'pdf-forms-for-contact-form-7' ) );
 				
 				$attachment_id = $_POST[ 'file_id' ];
-				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : null;
+				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : "";
 				
 				$filepath = get_attached_file( $attachment_id );
 				if( !$filepath )
@@ -1605,7 +1605,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$attachments = isset( $_POST['attachments'] ) ? $_POST['attachments'] : null;
 				$all = isset( $_POST['all'] ) ? $_POST['all'] : null;
-				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : null;
+				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : "";
 				
 				if( !isset($attachments) || !is_array($attachments) )
 					$attachments = array();
@@ -1722,7 +1722,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					throw new Exception( __( "Nonce mismatch", 'pdf-forms-for-contact-form-7' ) );
 				
 				$post_id = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : null;
-				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : null;
+				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : "";
 				
 				if( ! $post_id )
 					throw new Exception( __( "Invalid post ID", 'pdf-forms-for-contact-form-7' ) );
@@ -1829,7 +1829,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if ( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
 					throw new Exception( __( "Nonce mismatch", 'pdf-forms-for-contact-form-7' ) );
 				
-				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : null;
+				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : "";
 				
 				$fields = $this->query_cf7_fields( $form );
 				
