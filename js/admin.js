@@ -98,7 +98,7 @@ jQuery(document).ready(function($) {
 		jQuery.ajax({
 			url: wpcf7_pdf_forms.ajax_url,
 			type: 'POST',
-			data: { 'action': 'wpcf7_pdf_forms_query_tags', 'attachments': attachments, 'all': all, 'nonce': wpcf7_pdf_forms.ajax_nonce },
+			data: { 'action': 'wpcf7_pdf_forms_query_tags', 'attachments': attachments, 'all': all, 'wpcf7-form': wpcf7_form.val(), 'nonce': wpcf7_pdf_forms.ajax_nonce },
 			cache: false,
 			dataType: 'json',
 			
@@ -1260,9 +1260,10 @@ jQuery(document).ready(function($) {
 		clearMessages();
 		
 		var data = new FormData();
+		data.append("action", 'wpcf7_pdf_forms_get_attachment_info');
 		data.append("post_id", post_id);
 		data.append("file_id", file_id);
-		data.append("action", 'wpcf7_pdf_forms_get_attachment_info');
+		data.append("wpcf7-form", wpcf7_form.val());
 		data.append("nonce", wpcf7_pdf_forms.ajax_nonce);
 		
 		// submit request

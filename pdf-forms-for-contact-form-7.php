@@ -1221,6 +1221,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					throw new Exception( __( "Nonce mismatch", 'pdf-forms-for-contact-form-7' ) );
 				
 				$attachment_id = $_POST[ 'file_id' ];
+				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : null;
 				
 				$filepath = get_attached_file( $attachment_id );
 				if( !$filepath )
@@ -1236,12 +1237,18 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						)
 					);
 				
+				$cf7_fields = $this->query_cf7_fields( $form );
+				
+				$unavailableNames = array();
+				foreach( $cf7_fields as $cf7_field )
+					$unavailableNames[] = $cf7_field['name'];
+				
+				$info = $this->get_info( $attachment_id );
+				$info['fields'] = $this->query_pdf_fields( $attachment_id, $unavailableNames );
+				
 				$options = array( );
 				foreach( self::$pdf_options as $option => $default )
 					$options[$option] = $default;
-				
-				$info = $this->get_info( $attachment_id );
-				$info['fields'] = $this->query_pdf_fields( $attachment_id );
 				
 				return wp_send_json( array(
 					'success' => true,
@@ -1386,7 +1393,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 * Generates CF7 field tag based on field data
 		 * $tagName must already be sanitized
 		 */
-		private static function generate_tag( $field, &$tagName )
+		private static function generate_tag( $field, &$tagName, $unavailableNames = array() )
 		{
 			$type = strval($field['type']);
 			
@@ -1494,7 +1501,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$tagOptions .= 'readonly ';
 			}
 			
-			$unavailableNames = array(
+			$reservedNames = array(
 				'm','p','posts','w','cat','withcomments','withoutcomments'
 				,'s','search','exact','sentence','calendar','page','paged'
 				,'more','tb','pb','author','order','orderby','year','monthnum'
@@ -1503,6 +1510,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				,'attachment_id','subpost','subpost_id','preview','robots','taxonomy'
 				,'term','cpage','post_type','embed'
 			);
+			$unavailableNames = array_merge( $unavailableNames, $reservedNames );
 			if( array_search( $tagName, $unavailableNames ) !== FALSE )
 			{
 				$tagName .= '-0000';
@@ -1525,6 +1533,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$attachments = isset( $_POST['attachments'] ) ? $_POST['attachments'] : null;
 				$all = isset( $_POST['all'] ) ? $_POST['all'] : null;
+				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : null;
 				
 				if( !isset($attachments) || !is_array($attachments) )
 					$attachments = array();
@@ -1542,8 +1551,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$tags = __( "This PDF file does not appear to contain a PDF form.  See https://acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for more information.", 'pdf-forms-for-contact-form-7' );
 				else
 				{
-					$tags = "";
+					$cf7_fields = $this->query_cf7_fields( $form );
 					
+					$unavailableNames = array();
+					foreach( $cf7_fields as $cf7_field )
+						$unavailableNames[] = $cf7_field['name'];
+					
+					$tags = "";
 					foreach ( $fields as $attachment_id => $fs )
 						foreach ( $fs as $field )
 						{
@@ -1558,13 +1572,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 									$tag_flag = "all";
 								
 								$tagName = self::wpcf7_field_name_encode( $tag_flag, $name );
-								$generated_tag = self::generate_tag( $field, $tagName );
+								$generated_tag = self::generate_tag( $field, $tagName, $unavailableNames );
 								
 								if( $generated_tag === null)
 									continue;
 								
 								$tag .= '    ' . $generated_tag;
 								$tags .= $tag . "\n\n";
+								
+								$unavailableNames[] = $tagName;
 							}
 						}
 				}
@@ -1587,7 +1603,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		/**
 		 * Helper function used in wp-admin interface
 		 */
-		private function query_pdf_fields( $attachment_id )
+		private function query_pdf_fields( $attachment_id, &$unavailableNames = array() )
 		{
 			$fields = $this->get_fields( $attachment_id );
 			foreach( $fields as $id => &$field )
@@ -1613,10 +1629,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$slug = sanitize_title( $name );
 				if( preg_match( '/^[a-zA-Z]$/', $slug[0] ) === 0 )
 					$slug = 'f-'.$slug;
-				$tag_hint = self::generate_tag( $field, $slug );
+				$tag_hint = self::generate_tag( $field, $slug, $unavailableNames );
 				$field['id'] = $encoded_name;
 				$field['tag_hint'] = $tag_hint;
 				$field['tag_name'] = $slug;
+				$unavailableNames[] = $slug;
 			}
 			
 			return $fields;
@@ -1641,6 +1658,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if ( ! current_user_can( 'wpcf7_edit_contact_form', $post_id ) )
 					throw new Exception( __( "Permission denied", 'pdf-forms-for-contact-form-7' ) );
 				
+				$cf7_fields = $this->query_cf7_fields( $form );
+				
+				$unavailableNames = array();
+				foreach( $cf7_fields as $cf7_field )
+					$unavailableNames[] = $cf7_field['name'];
+				
 				$attachments = array();
 				$attachment_ids = array();
 				foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
@@ -1650,7 +1673,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						$options = $attachment['options'];
 					
 					$info = $this->get_info( $attachment_id );
-					$info['fields'] = $this->query_pdf_fields( $attachment_id );
+					$info['fields'] = $this->query_pdf_fields( $attachment_id, $unavailableNames );
 					
 					$attachments[] = array(
 						'attachment_id' => $attachment_id,
@@ -1660,8 +1683,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					);
 					$attachment_ids[] = $attachment_id;
 				}
-				
-				$cf7_fields = $this->query_cf7_fields( $form );
 				
 				$mappings = self::get_meta( $post_id, 'mappings' );
 				if( $mappings )
