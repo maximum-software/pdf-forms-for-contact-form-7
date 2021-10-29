@@ -1386,7 +1386,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 * Generates CF7 field tag based on field data
 		 * $tagName must already be sanitized
 		 */
-		private static function generate_tag( $field, $tagName )
+		private static function generate_tag( $field, &$tagName )
 		{
 			$type = strval($field['type']);
 			
