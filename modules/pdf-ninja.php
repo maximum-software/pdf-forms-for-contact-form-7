@@ -1107,7 +1107,14 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		if( isset( $fail ) && $fail )
 			echo WPCF7_Pdf_Forms::render_error_notice( 'pdf-ninja-new-key-failure', array(
 				'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
-				'message' => esc_html__( "Failed to get the Pdf.Ninja API key on last attempt.  Please retry manually.", 'pdf-forms-for-contact-form-7' ),
+				'message' =>
+					WPCF7_Pdf_Forms::replace_tags(
+						esc_html__( "Failed to acquire the Pdf.Ninja API key on last attempt. {a-href-edit-service-page}Please retry manually{/a}.", 'pdf-forms-for-contact-form-7' ),
+						array(
+							'a-href-edit-service-page' => "<a href='".esc_url( $this->menu_page_url( 'action=edit' ) )."'>",
+							'/a' => "</a>",
+						)
+					)
 			) );
 	}
 }
