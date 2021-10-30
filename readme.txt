@@ -5,7 +5,7 @@ Requires at least: 4.8
 Tested up to: 5.8
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.3.20
+Version: 1.3.21
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -56,6 +56,14 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.3.21 =
+
+* Release date: October 29, 2021
+
+* Ensured support up to CF7 v5.5.2
+* Fixed issues with tag generator code when unavailable tag names are used
+* Other minor improvements
 
 = 1.3.20 =
 
