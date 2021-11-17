@@ -91,7 +91,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			// don't try to get the key from the API on every page load!
 			$fail = get_transient( 'wpcf7_pdf_forms_pdfninja_key_failure' );
 			if( $fail )
-				throw new Exception( __( "Failed to get the Pdf.Ninja API key on last attempt.  Please retry manually.", 'pdf-forms-for-contact-form-7' ) );
+				throw new Exception( __( "Failed to get the Pdf.Ninja API key on last attempt.", 'pdf-forms-for-contact-form-7' ) );
 			
 			// create new key if it hasn't yet been set
 			try
