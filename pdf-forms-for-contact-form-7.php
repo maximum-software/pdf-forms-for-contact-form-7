@@ -1294,13 +1294,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$attachment_id = $_POST[ 'file_id' ];
 				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : "";
 				
-				$filepath = get_attached_file( $attachment_id );
-				if( !$filepath )
-					throw new Exception( __( "Invalid attachment", 'pdf-forms-for-contact-form-7' ) );
-				if( ! file_exists( $filepath ) )
-					throw new Exception( __( "File not found", 'pdf-forms-for-contact-form-7' ) );
-				
-				if( ( $mimetype = self::get_mime_type( $filepath ) ) && $mimetype !== 'application/pdf' )
+				if( ( $filepath = get_attached_file( $attachment_id ) ) !== false
+				&& ( $mimetype = self::get_mime_type( $filepath ) ) != null
+				&& $mimetype !== 'application/pdf' )
 					throw new Exception(
 						self::replace_tags(
 							__( "File type {mime-type} of {file} is unsupported for {purpose}", 'pdf-forms-for-contact-form-7' ),
@@ -1356,11 +1352,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public static function update_attachment_md5sum( $attachment_id )
 		{
-			$filepath = get_attached_file( $attachment_id );
-			
-			if( ! file_exists( $filepath ) )
-				throw new Exception( __( "File not found", 'pdf-forms-for-contact-form-7' ) );
-			
 			// clear info cache
 			self::unset_meta( $attachment_id, 'info' );
 			
@@ -1375,7 +1366,34 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			foreach( get_posts( $args ) as $post )
 				wp_delete_post( $post->ID, $force_delete = true );
 			
-			return self::set_meta( $attachment_id, 'md5sum', md5_file( $filepath ) );
+			$filepath = get_attached_file( $attachment_id );
+			
+			if( $filepath !== false && is_readable( $filepath ) !== false )
+				$md5sum = @md5_file( $filepath );
+			else
+			{
+				$fileurl = wp_get_attachment_url( $attachment_id );
+				if( $fileurl === false )
+					throw new Exception( __( "Unknown attachment URL", 'pdf-forms-for-contact-form-7' ) );
+				
+				try
+				{
+					$temp_filepath = wp_tempnam();
+					self::download_file( $fileurl, $temp_filepath ); // can throw an exception
+					$md5sum = @md5_file( $temp_filepath );
+					@unlink( $temp_filepath );
+				}
+				catch(Exception $e)
+				{
+					@unlink( $temp_filepath );
+					throw $e;
+				}
+			}
+			
+			if( $md5sum === false )
+				throw new Exception( __( "Could not read attached file", 'pdf-forms-for-contact-form-7' ) );
+			
+			return self::set_meta( $attachment_id, 'md5sum', $md5sum );
 		}
 		
 		/*
@@ -1383,16 +1401,20 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function get_info( $attachment_id )
 		{
-			$info = self::get_meta( $attachment_id, 'info' );
-			if( $info )
+			// cache
+			if( ( $info = self::get_meta( $attachment_id, 'info' ) )
+			&& ( $old_md5sum = self::get_meta( $attachment_id, 'md5sum' ) ) )
 			{
+				// use cache only if file is locally accessible
 				$filepath = get_attached_file( $attachment_id );
-				$new_md5sum = md5_file( $filepath );
-				$old_md5sum = self::get_attachment_md5sum( $attachment_id );
-				if($new_md5sum === $old_md5sum )
-					return json_decode( $info, true );
-				else
-					self::update_attachment_md5sum( $attachment_id );
+				if( $filepath !== false && is_readable( $filepath ) !== false )
+				{
+					$new_md5sum = md5_file( $filepath );
+					if( $new_md5sum !== false && $new_md5sum === $old_md5sum )
+						return json_decode( $info, true );
+					else
+						self::update_attachment_md5sum( $attachment_id );
+				}
 			}
 			
 			$service = $this->get_service();
@@ -1873,9 +1895,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				throw new Exception( $wp_upload_dir['error'] );
 			
 			$attachment_path = get_attached_file( $attachment_id );
-			
-			if( ! file_exists( $attachment_path ) )
-				throw new Exception( __( "File not found", 'pdf-forms-for-contact-form-7' ) );
+			if( $attachment_path === false )
+				$attachment_path = wp_get_attachment_url( $attachment_id );
+			if( $attachment_path === false )
+				$attachment_path = "unknown";
 			
 			$filename = wp_unique_filename( $wp_upload_dir['path'], basename( $attachment_path ).'.page'.intval($page).'.jpg' );
 			$filepath = $wp_upload_dir['path'] . "/$filename";
