@@ -1301,6 +1301,8 @@ jQuery(document).ready(function($) {
 		event.stopPropagation();
 		event.preventDefault();
 		
+		clearMessages();
+		
 		var attachments = getAttachments();
 		if(attachments.length == 0)
 			return false;
@@ -1342,6 +1344,8 @@ jQuery(document).ready(function($) {
 		event.stopPropagation();
 		event.preventDefault();
 		
+		clearMessages();
+		
 		var tags = jQuery('.wpcf7-pdf-forms-admin .tags-textarea').val();
 		var wpcf7obj = getWpcf7obj();
 		if(wpcf7obj)
@@ -1359,6 +1363,8 @@ jQuery(document).ready(function($) {
 		// prevent running default button click handlers
 		event.stopPropagation();
 		event.preventDefault();
+		
+		clearMessages();
 		
 		var tag = jQuery('.wpcf7-pdf-forms-admin .tag-hint');
 		var wpcf7obj = getWpcf7obj();
@@ -1383,6 +1389,8 @@ jQuery(document).ready(function($) {
 		// prevent running default button click handlers
 		event.stopPropagation();
 		event.preventDefault();
+		
+		clearMessages();
 		
 		var wpcf7obj = getWpcf7obj();
 		var tagText = "";
@@ -1561,6 +1569,8 @@ jQuery(document).ready(function($) {
 		event.stopPropagation();
 		event.preventDefault();
 		
+		clearMessages();
+		
 		var tag = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool');
 		
 		var subject = tag.find('.cf7-field-list').val();
@@ -1651,6 +1661,8 @@ jQuery(document).ready(function($) {
 		// prevent running default button click handlers
 		event.stopPropagation();
 		event.preventDefault();
+		
+		clearMessages();
 		
 		tb_remove();
 		
