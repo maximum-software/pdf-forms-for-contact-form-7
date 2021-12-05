@@ -419,16 +419,21 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	}
 	
 	/*
-	 * Helper function for communicating with the API via the GET request
+	 * Helper function for processing the API response
 	 */
-	private function api_get( $endpoint, $params )
+	private function api_process_response( $response )
 	{
-		$version = $this->get_api_version();
-		$url = add_query_arg( $params, $this->get_api_url() . "/api/v" . $version . "/" . $endpoint );
-		$response = wp_remote_get( $url, $this->wp_remote_args() );
-		
 		if( is_wp_error( $response ) )
-			throw new Exception( implode( ', ', $response->get_error_messages() ) );
+		{
+			$errors = $response->get_error_messages();
+			foreach($errors as &$error)
+				if( stripos( $error, 'cURL error 7' ) !== false )
+					$error = WPCF7_Pdf_Forms::replace_tags(
+							__( "Failed to connect to {url}", 'pdf-forms-for-contact-form-7' ),
+							array( 'url' => $this->get_api_url() )
+						);
+			throw new Exception( implode( ', ', $errors ) );
+		}
 		
 		$body = wp_remote_retrieve_body( $response );
 		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
@@ -439,6 +444,12 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			
 			if( ! $result || ! is_array( $result ) )
 				throw new Exception( __( "Failed to decode API server response", 'pdf-forms-for-contact-form-7' ) );
+			
+			if( ! isset( $result['success'] ) || ( $result['success'] === false && ! isset( $result['error'] ) ) )
+				throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
+			
+			if( $result['success'] === false )
+				throw new WPCF7_Pdf_Ninja_Exception( $result );
 			
 			if( $result['success'] == true && isset( $result['fileUrl'] ) )
 			{
@@ -468,6 +479,68 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		}
 		
 		return $result;
+	}
+	
+	/*
+	 * Helper function that retries GET request if the file needs to be re-uploaded or md5 sum recalculated
+	 */
+	private function api_get_retry_attachment( $attachment_id, $endpoint, $params )
+	{
+		try
+		{
+			return $this->api_get( $endpoint, $params );
+		}
+		catch( WPCF7_Pdf_Ninja_Exception $e )
+		{
+			$reason = $e->getReason();
+			if( $reason == 'noSuchFileId' || $reason == 'md5sumMismatch' )
+			{
+				if( $this->is_local_attachment( $attachment_id ) )
+					$this->api_upload_file( $attachment_id );
+				else
+					// update local md5sum
+					$params['md5sum'] = WPCF7_Pdf_Forms::update_attachment_md5sum( $attachment_id );
+				
+				return $this->api_get( $endpoint, $params );
+			}
+			throw $e;
+		}
+	}
+	
+	/*
+	 * Helper function that retries POST request if the file needs to be re-uploaded or md5 sum recalculated
+	 */
+	private function api_post_retry_attachment( $attachment_id, $endpoint, $payload, $headers = array(), $args_override = array() )
+	{
+		try
+		{
+			return $this->api_post( $endpoint, $payload, $headers, $args_override );
+		}
+		catch( WPCF7_Pdf_Ninja_Exception $e )
+		{
+			$reason = $e->getReason();
+			if( $reason == 'noSuchFileId' || $reason == 'md5sumMismatch' )
+			{
+				if( $this->is_local_attachment( $attachment_id ) )
+					$this->api_upload_file( $attachment_id );
+				else
+					// update local md5sum
+					$params['md5sum'] = WPCF7_Pdf_Forms::update_attachment_md5sum( $attachment_id );
+				
+				return $this->api_post( $endpoint, $payload, $headers, $args_override );
+			}
+			throw $e;
+		}
+	}
+	
+	/*
+	 * Helper function for communicating with the API via the GET request
+	 */
+	private function api_get( $endpoint, $params )
+	{
+		$url = add_query_arg( $params, $this->get_api_url() . "/api/v" . $this->get_api_version() . "/" . $endpoint );
+		$response = wp_remote_get( $url, $this->wp_remote_args() );
+		return $this->api_process_response( $response );
 	}
 	
 	/*
@@ -487,50 +560,9 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			foreach( $args_override as $key => $value )
 				$args[$key] = $value;
 		
-		$version = $this->get_api_version();
-		$response = wp_remote_post( $this->get_api_url() . "/api/v" . $version . "/" . $endpoint, $args );
-		
-		if( is_wp_error( $response ) )
-			throw new Exception( implode( ', ', $response->get_error_messages() ) );
-		
-		$body = wp_remote_retrieve_body( $response );
-		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
-		
-		if( strpos($content_type, 'application/json' ) !== FALSE )
-		{
-			$result = json_decode( $body , true );
-			
-			if( ! $result || ! is_array( $result ) )
-				throw new Exception( __( "Failed to decode API server response", 'pdf-forms-for-contact-form-7' ) );
-			
-			if( $result['success'] == true && isset( $result['fileUrl'] ) )
-			{
-				$args2 = $this->wp_remote_args();
-				$args2['timeout'] = 100;
-				$response2 = wp_remote_get( $result['fileUrl'], $args2 );
-				if( is_wp_error( $response2 ) )
-					throw new Exception( __( "Failed to download a file from the API server", 'pdf-forms-for-contact-form-7' ) );
-				
-				$result['content_type'] = wp_remote_retrieve_header( $response2, 'content-type' );
-				$result['content'] = wp_remote_retrieve_body( $response2 );
-			}
-		}
-		else
-		{
-			if( wp_remote_retrieve_response_code( $response ) < 400 )
-				$result = array(
-					'success' => true,
-					'content_type' => $content_type,
-					'content' => $body,
-				);
-			else
-				$result = array(
-					'success' => false,
-					'error' => wp_remote_retrieve_response_message( $response ),
-				);
-		}
-		
-		return $result;
+		$url = $this->get_api_url() . "/api/v" . $this->get_api_version() . "/" . $endpoint;
+		$response = wp_remote_post( $url, $args );
+		return $this->api_process_response( $response );
 	}
 	
 	/*
@@ -538,10 +570,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function api_get_key( $email )
 	{
-		$result = $this->api_get('key', array( 'email' => $email ) );
-		
-		if( $result['success'] != true )
-			throw new Exception( $result['error'] );
+		$result = $this->api_get( 'key', array( 'email' => $email ) );
 		
 		if( ! isset( $result['key'] ) )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
@@ -572,6 +601,28 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	}
 	
 	/*
+	 * Returns true if attachment file is on the local file system
+	 */
+	private function is_local_attachment( $attachment_id )
+	{
+		$filepath = get_attached_file( $attachment_id );
+		return $filepath !== false && is_readable( $filepath ) !== false;
+	}
+	
+	/*
+	 * Returns file URL to be used with the API server
+	 */
+	private function get_file_url( $attachment_id )
+	{
+		$fileurl = wp_get_attachment_url( $attachment_id );
+		
+		if( $fileurl === false )
+			throw new Exception( __( "Unknown attachment URL", 'pdf-forms-for-contact-form-7' ) );
+		
+		return $fileurl;
+	}
+	
+	/*
 	 * Communicates with the API to upload the media file
 	 */
 	public function api_upload_file( $attachment_id )
@@ -594,11 +645,10 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			          . "\r\n"
 			          . "{$value}\r\n";
 		
+		if( ! $this->is_local_attachment( $attachment_id ) )
+			throw new Exception( __( "File is not accessible in the local file system", 'pdf-forms-for-contact-form-7' ) );
+		
 		$filepath = get_attached_file( $attachment_id );
-		
-		if( ! file_exists( $filepath ) )
-			throw new Exception( __( "File not found", 'pdf-forms-for-contact-form-7' ) );
-		
 		$filename = basename( $filepath );
 		$filecontents = file_get_contents( $filepath );
 		
@@ -622,39 +672,25 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	}
 	
 	/*
-	 * Returns true if we need to retry the action that works on the file
-	 */
-	private function api_check_retry( $previous_result, $attachment_id )
-	{
-		if( ! is_array( $previous_result ) )
-			return false;
-		
-		// retry uploading the file
-		// if file is gone from the API server
-		// or if there is a md5 mismatch
-		if( isset( $previous_result['reason'] ) )
-			if( $previous_result['reason'] == 'noSuchFileId'
-			||  $previous_result['reason'] == 'md5sumMismatch' )
-				if( $this->api_upload_file( $attachment_id ) )
-					return true;
-		
-		return false;
-	}
-	
-	/*
 	 * Helper function for communicating with the API to obtain the PDF file fields
 	 */
 	public function api_get_info_helper( $endpoint, $attachment_id )
 	{
-		if( $this->is_new_file( $attachment_id ) )
-			if( ! $this->api_upload_file( $attachment_id ) )
-				return null;
-		
-		return $this->api_get( $endpoint, array(
-			'fileId' => $this->get_file_id( $attachment_id ),
+		$params = array(
 			'md5sum' => WPCF7_Pdf_Forms::get_attachment_md5sum( $attachment_id ),
 			'key'    => $this->get_key(),
-		) );
+		);
+		
+		if( $this->is_local_attachment( $attachment_id ) )
+		{
+			if( $this->is_new_file( $attachment_id ) )
+				$this->api_upload_file( $attachment_id );
+			$params['fileId'] = $this->get_file_id( $attachment_id );
+		}
+		else
+			$params['fileUrl'] = $this->get_file_url( $attachment_id );
+		
+		return $this->api_get_retry_attachment( $attachment_id, $endpoint, $params );
 	}
 	
 	/*
@@ -663,12 +699,6 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	public function api_get_fields( $attachment_id )
 	{
 		$result = $this->api_get_info_helper( 'fields', $attachment_id );
-		
-		if( $this->api_check_retry( $result, $attachment_id ) )
-			$result = $this->api_get_info_helper( 'fields', $attachment_id );
-		
-		if( $result['success'] != true )
-			throw new Exception( $result['error'] );
 		
 		if( ! isset( $result['fields'] ) || ! is_array( $result['fields'] ) )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
@@ -683,12 +713,6 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	{
 		$result = $this->api_get_info_helper( 'info', $attachment_id );
 		
-		if( $this->api_check_retry( $result, $attachment_id ) )
-			$result = $this->api_get_info_helper( 'info', $attachment_id );
-		
-		if( $result['success'] != true )
-			throw new Exception( $result['error'] );
-		
 		if( ! isset( $result['fields'] ) || ! isset( $result['pages'] ) || ! is_array( $result['fields'] ) || ! is_array( $result['pages'] ) )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
@@ -698,16 +722,11 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	}
 	
 	/*
-	 * Helper function for communicating with the API to fill fields in the PDF file
+	 * Communicates with the API to get image of PDF pages
 	 */
-	private function api_image_helper( $attachment_id, $page )
+	public function api_image( $destfile, $attachment_id, $page )
 	{
-		if( $this->is_new_file( $attachment_id ) )
-			if( ! $this->api_upload_file( $attachment_id ) )
-				return null;
-		
 		$params = array(
-			'fileId' => $this->get_file_id( $attachment_id ),
 			'md5sum' => WPCF7_Pdf_Forms::get_attachment_md5sum( $attachment_id ),
 			'key'    => $this->get_key(),
 			'type'   => 'jpeg',
@@ -715,23 +734,18 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'dumpFile' => true,
 		);
 		
-		return $this->api_get( 'image', $params );
-	}
-	
-	/*
-	 * Communicates with the API to get image of PDF pages
-	 */
-	public function api_image( $destfile, $attachment_id, $page )
-	{
-		$result = $this->api_image_helper( $attachment_id, $page );
+		if( $this->is_local_attachment( $attachment_id ) )
+		{
+			if( $this->is_new_file( $attachment_id ) )
+				$this->api_upload_file( $attachment_id );
+			$params['fileId'] = $this->get_file_id( $attachment_id );
+		}
+		else
+			$params['fileUrl'] = $this->get_file_url( $attachment_id );
 		
-		if( $this->api_check_retry( $result, $attachment_id ) )
-			$result = $this->api_image_helper( $attachment_id, $page );
+		$result = $this->api_get_retry_attachment( $attachment_id, 'image', $params );
 		
-		if( $result['success'] != true )
-			throw new Exception( $result['error'] );
-		
-		if( ! isset( $result['content'] ) || $result['content_type'] != 'image/jpeg' )
+		if( ! isset( $result['content'] ) || ! isset( $result['content_type'] ) || $result['content_type'] != 'image/jpeg' )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
 		
 		$handle = @fopen( $destfile, 'w' );
@@ -751,7 +765,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	/*
 	 * Helper function for communicating with the API to generate PDF file
 	 */
-	private function api_pdf_helper( $endpoint, $attachment_id, $data, $embeds, $options )
+	private function api_pdf_helper( $destfile, $endpoint, $attachment_id, $data, $embeds, $options )
 	{
 		if( !is_array ( $data ) )
 			$data = array();
@@ -761,10 +775,6 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		
 		if( !is_array ( $options ) )
 			$options = array();
-		
-		if( $this->is_new_file( $attachment_id ) )
-			if( ! $this->api_upload_file( $attachment_id ) )
-				return null;
 		
 		// prepare files and embed params
 		$files = array();
@@ -798,13 +808,21 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			throw new Exception( __( "Failed to encode JSON data", 'pdf-forms-for-contact-form-7' ) );
 		
 		$params = array(
-			'fileId'   => $this->get_file_id( $attachment_id ),
 			'md5sum'   => WPCF7_Pdf_Forms::get_attachment_md5sum( $attachment_id ),
 			'key'      => $this->get_key(),
 			'data'     => $encoded_data,
 			'embeds'   => $encoded_embeds,
 			'dumpFile' => true,
 		);
+		
+		if( $this->is_local_attachment( $attachment_id ) )
+		{
+			if( $this->is_new_file( $attachment_id ) )
+				$this->api_upload_file( $attachment_id );
+			$params['fileId'] = $this->get_file_id( $attachment_id );
+		}
+		else
+			$params['fileUrl'] = $this->get_file_url( $attachment_id );
 		
 		foreach( $options as $key => $value )
 		{
@@ -839,7 +857,23 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		$headers  = array( 'Content-Type' => 'multipart/form-data; boundary=' . $boundary );
 		$args = array( 'timeout' => 300 );
 		
-		return $this->api_post( $endpoint, $payload, $headers, $args );
+		$result = $this->api_post_retry_attachment( $attachment_id, $endpoint, $payload, $headers, $args );
+		
+		if( ! isset( $result['content'] ) || ! isset( $result['content_type'] ) || $result['content_type'] != 'application/pdf' )
+			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
+		
+		$handle = @fopen( $destfile, 'w' );
+		
+		if( ! $handle )
+			throw new Exception( __( "Failed to open file for writing", 'pdf-forms-for-contact-form-7' ) );
+		
+		fwrite( $handle, $result['content'] );
+		fclose( $handle );
+		
+		if( ! file_exists( $destfile ) )
+			throw new Exception( __( "Failed to create file", 'pdf-forms-for-contact-form-7' ) );
+		
+		return true;
 	}
 	
 	/*
@@ -847,29 +881,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function api_fill( $destfile, $attachment_id, $data, $options = array() )
 	{
-		$result = $this->api_pdf_helper( 'fill', $attachment_id, $data, array(), $options );
-		
-		if( $this->api_check_retry( $result, $attachment_id ) )
-			$result = $this->api_pdf_helper( 'fill', $attachment_id, $data, array(), $options );
-		
-		if( $result['success'] != true )
-			throw new Exception( $result['error'] );
-		
-		if( ! isset( $result['content'] ) || $result['content_type'] != 'application/pdf' )
-			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
-		
-		$handle = @fopen( $destfile, 'w' );
-		
-		if( ! $handle )
-			throw new Exception( __( "Failed to open file for writing", 'pdf-forms-for-contact-form-7' ) );
-		
-		fwrite( $handle, $result['content'] );
-		fclose( $handle );
-		
-		if( ! file_exists( $destfile ) )
-			throw new Exception( __( "Failed to create file", 'pdf-forms-for-contact-form-7' ) );
-		
-		return true;
+		return $this->api_pdf_helper( $destfile, 'fill', $attachment_id, $data, array(), $options );
 	}
 	
 	/*
@@ -877,29 +889,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function api_fill_embed( $destfile, $attachment_id, $data, $embeds, $options = array() )
 	{
-		$result = $this->api_pdf_helper( 'fillembed', $attachment_id, $data, $embeds, $options );
-		
-		if( $this->api_check_retry( $result, $attachment_id ) )
-			$result = $this->api_pdf_helper( 'fillembed', $attachment_id, $data, $embeds, $options );
-		
-		if( $result['success'] != true )
-			throw new Exception( $result['error'] );
-		
-		if( ! isset( $result['content'] ) || $result['content_type'] != 'application/pdf' )
-			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
-		
-		$handle = @fopen( $destfile, 'w' );
-		
-		if( ! $handle )
-			throw new Exception( __( "Failed to open file for writing", 'pdf-forms-for-contact-form-7' ) );
-		
-		fwrite( $handle, $result['content'] );
-		fclose( $handle );
-		
-		if( ! file_exists( $destfile ) )
-			throw new Exception( __( "Failed to create file", 'pdf-forms-for-contact-form-7' ) );
-		
-		return true;
+		return $this->api_pdf_helper( $destfile, 'fillembed', $attachment_id, $data, $embeds, $options );
 	}
 	
 	/*
@@ -1117,4 +1107,28 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 					)
 			) );
 	}
+}
+
+class WPCF7_Pdf_Ninja_Exception extends Exception
+{
+	private $reason = null;
+	
+	public function __construct( $response )
+	{
+		$msg = $response;
+		
+		if( is_array( $response ) )
+		{
+			if( ! isset( $response['error'] ) || $response['error'] == "" )
+				$msg = __( "Unknown error", 'pdf-forms-for-contact-form-7' );
+			else
+				$msg = $response['error'];
+			if( isset( $response['reason'] ) )
+				$this->reason = $response['reason'];
+		}
+		
+		parent::__construct( $msg );
+	}
+	
+	public function getReason() { return $this->reason; }
 }
