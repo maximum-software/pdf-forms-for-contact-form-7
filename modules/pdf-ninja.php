@@ -1037,7 +1037,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function display_edit()
 	{
-		try { $key = $this->get_key(); } catch(Exception $e) { }
+		try { $key = $this->get_key(); } catch(Exception $e) { $key = ""; }
 		
 		echo WPCF7_Pdf_Forms::render( 'pdfninja_integration_edit', array(
 			'top-message-api-settings' => esc_html__( "The following form allows you to edit your API settings.", 'pdf-forms-for-contact-form-7' ),
