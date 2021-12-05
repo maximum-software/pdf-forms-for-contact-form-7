@@ -305,7 +305,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function admin_notices()
 		{
-			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
+			if( ( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) ) && current_user_can( 'install_plugins' ) && current_user_can( 'activate_plugins' ) )
 			{
 				echo WPCF7_Pdf_Forms::render_error_notice( 'cf7-not-installed', array(
 					'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
@@ -314,7 +314,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return;
 			}
 			
-			if( ! defined( 'WPCF7_VERSION' ) || ! $this->is_wpcf7_version_supported( WPCF7_VERSION ) )
+			if( ( ! defined( 'WPCF7_VERSION' ) || ! $this->is_wpcf7_version_supported( WPCF7_VERSION ) ) && current_user_can( 'update_plugins' ) )
 				echo WPCF7_Pdf_Forms::render_warning_notice( 'unsupported-cf7-version-'.WPCF7_VERSION, array(
 							'label'   => esc_html__( "PDF Forms Filler for CF7 plugin warning", 'pdf-forms-for-contact-form-7' ),
 							'message' =>
