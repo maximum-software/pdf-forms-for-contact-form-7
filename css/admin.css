@@ -292,3 +292,28 @@
 {
 	display: none;
 }
+
+.wpcf7-pdf-forms-admin .tag-generator-body-element
+{
+	position: relative;
+}
+
+.wpcf7-pdf-forms-admin .tag-generator-body-element .select2
+{
+	position: relative;
+	top: 0;
+	left: 0;
+	transform: none;
+	width: auto !important;
+}
+
+.wpcf7-pdf-forms-admin .tag-generator-body-element .insert-tags-button
+{
+	float: right;
+	margin-right: 10px;
+}
+
+.wpcf7-pdf-forms-admin .image-embeds td.pdf-page
+{
+	width: 10%;
+}

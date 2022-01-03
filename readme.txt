@@ -5,7 +5,7 @@ Requires at least: 4.8
 Tested up to: 5.8
 Requires PHP: 5.2
 Stable tag: trunk
-Version: 1.3.17
+Version: 1.3.22
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -56,6 +56,49 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 1.3.22 =
+
+* Release date: December 5, 2021
+
+* Ensured support up to CF7 v5.5.3
+* Added remote media support, refactored Pdf.Ninja API integration code, improved error handling
+* Hid wp-admin notices from users that don't have capabilities to act on them
+* Other minor improvements and fixes
+
+= 1.3.21 =
+
+* Release date: October 29, 2021
+
+* Ensured support up to CF7 v5.5.2
+* Fixed issues with tag generator code when unavailable tag names are used
+* Other minor improvements
+
+= 1.3.20 =
+
+* Release date: October 14, 2021
+
+* Ensured support up to CF7 v5.5.1
+* Added dismissible notices
+* Minor refactor of API communication code
+* Added a confirmation box when attaching a PDF file with no fields
+* Other minor improvements
+
+= 1.3.19 =
+
+* Release date: September 21, 2021
+
+* Crash fix
+
+= 1.3.18 =
+
+* Release date: September 18, 2021
+
+* Added a user-provided email address field for requesting a new key from the API
+* Fixed a minor error reporting bug when requesting a new key from the API fails
+* Fixed an issue caused by direct modification of fileId post meta in the database
+* Fixed a bug introduced recently that was causing the (deprecated) tag generator to not work
+* Fixed typo
 
 = 1.3.17 =
 
@@ -277,136 +320,6 @@ Special thanks to the following sponsors of this plugin:
 * Added help boxes
 * A large number of bug fixes, optimizations and UX improvements
 * Added Enterprise Extension support checking
-
-= 0.4.2 =
-
-* Release date: February 17, 2018
-
-* Crash fix
-
-= 0.4.1 =
-
-* Release date: February 13, 2018
-
-* Added bulk tag insertion feature to field mapper tool, special thanks to Momentum3 (http://momentum3.biz/) for sponsoring this feature
-* Bug fixes and improvements
-
-= 0.4.0 =
-
-* Release date: February 5, 2018
-
-* Added flatten option
-* Fixed a possible timeout issue with large PDF files
-* Other minor fixes
-
-= 0.3.3 =
-
-* Release date: December 19, 2017
-
-* Added a feature that allows changing Pdf.Ninja web API URL
-* Added a feature that allows disabling Pdf.Ninja web API TLS certificate verification
-* Bug fixes
-
-= 0.3.2 =
-
-* Release date: December 2, 2017
-
-* Bug fixes
-
-= 0.3.1 =
-
-* Release date: November 26, 2017
-
-* Bug fix
-
-= 0.3.0 =
-
-* Release date: November 24, 2017
-
-* Added field mapper tool
-* Added wildcard field mapping
-* Many bug fixes and improvements
-
-= 0.2.4 =
-
-* Release date: November 15, 2017
-
-* Added attachments to secondary CF7 email message
-* Added options that allow user to control which email message filled PDFs get attached to
-* Updated minimum WP version requirement
-* Minor refactoring and other improvements
-
-= 0.2.3 =
-
-* Release date: November 13, 2017
-
-* Added 'skip when empty' option
-* Added support for PHP 5.2 and 5.3
-* Added plugin action links
-* Other minor fixes
-
-= 0.2.2 =
-
-* Release date: October 20, 2017
-
-* Fixed a small issue
-
-= 0.2.1 =
-
-* Release date: October 9, 2017
-
-* Added a help message to tag generator window
-
-= 0.2.0 =
-
-* Release date: September 12, 2017
-
-* Added support for PDF field flags
-* Improved tag generation
-
-= 0.1.7 =
-
-* Release date: August 17, 2017
-
-* Minor refactoring and fixes
-
-= 0.1.6 =
-
-* Release date: August 7, 2017
-
-* Improved tag generation code
-
-= 0.1.5 =
-
-* Release date: June 13, 2017
-
-* Bug fixes
-
-= 0.1.4 =
-
-* Release date: June 12, 2017
-
-* Bug fixes
-
-= 0.1.3 =
-
-* Release date: May 18, 2017
-
-* Bug fixes and other minor improvements
-
-= 0.1.2 =
-
-* Release date: April 13, 2017
-
-* Added i18n support
-
-* Minor UX improvement
-
-= 0.1.1 =
-
-* Release date: March 28, 2017
-
-* Removed unnecessary files to save disk space
 
 == Frequently Asked Questions ==
 

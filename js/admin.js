@@ -105,7 +105,7 @@ jQuery(document).ready(function($) {
 		jQuery.ajax({
 			url: wpcf7_pdf_forms.ajax_url,
 			type: 'POST',
-			data: { 'action': 'wpcf7_pdf_forms_query_tags', 'attachments': attachments, 'all': all, 'nonce': wpcf7_pdf_forms.ajax_nonce },
+			data: { 'action': 'wpcf7_pdf_forms_query_tags', 'attachments': attachments, 'all': all, 'wpcf7-form': wpcf7_form.val(), 'nonce': wpcf7_pdf_forms.ajax_nonce },
 			cache: false,
 			dataType: 'json',
 			
@@ -215,7 +215,9 @@ jQuery(document).ready(function($) {
 	
 	var refreshPdfFields = function() {
 		select2SharedData.unmappedPdfFields = getUnmappedPdfFields(); // TODO: optimize this
-		jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').val('').trigger('change');
+		
+		jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').resetSelect2Field();
+		
 		updateTagHint();
 	};
 	
@@ -352,7 +354,8 @@ jQuery(document).ready(function($) {
 	
 	var refreshCf7Fields = function() {
 		precomputeCf7Select2Cache();
-		jQuery('.wpcf7-pdf-forms-admin .cf7-field-list').val('').trigger('change');
+		
+		jQuery('.wpcf7-pdf-forms-admin .cf7-field-list').resetSelect2Field();
 	};
 	
 	var getData = function(field) {
@@ -427,10 +430,18 @@ jQuery(document).ready(function($) {
 		
 		setAttachments(attachments);
 		
+		for (var i=0, l=select2SharedData.pdfSelect2Files.length; i<l; i++)
+			if (select2SharedData.pdfSelect2Files[i].id == attachment_id)
+			{
+				select2SharedData.pdfSelect2Files.splice(i, 1);
+				break;
+			}
+		
 		deleteAttachmentInfo(attachment_id);
 		
 		refreshMappings();
 		refreshEmbeds();
+		refreshPdfFilesList();
 	};
 	
 	var setAttachmentOption = function(attachment_id, option, value) {
@@ -540,8 +551,7 @@ jQuery(document).ready(function($) {
 			lowerText: String('[' + attachment_id + '] ' + filename).toLowerCase()
 		});
 		
-		if(attachments.length==1)
-			refreshPageList();
+		refreshPdfFilesList();
 		
 		jQuery('.wpcf7-pdf-forms-admin .help-button').each(function(){
 			var button = jQuery(this);
@@ -602,6 +612,26 @@ jQuery(document).ready(function($) {
 			return CustomData;
 		}
 	);
+	
+	jQuery.fn.resetSelect2Field = function(id = null) {
+		
+		if(!$(this).data('select2'))
+			return;
+		
+		$(this).empty();
+		
+		var select2Data = select2SharedData[this.data().select2.options.options.sharedDataElement];
+		if(select2Data.length > 0)
+		{
+			var optionInfo = select2Data[id !== null ? id : 0];
+			var option = new Option(optionInfo.text, optionInfo.id, true, true);
+			$(this).append(option).val(optionInfo.id);
+		}
+		
+		$(this).trigger('change');
+		
+		return this;
+	}
 	
 	var select2SharedData = {
 		unmappedPdfFields: [], 
@@ -1365,6 +1395,7 @@ jQuery(document).ready(function($) {
 		
 		var files = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .pdf-files-list');
 		var info = getAttachmentInfo(files.val());
+		
 		if(typeof info != 'undefined' && info !== null)
 		{
 			jQuery.each(info.pages, function(p, page){
@@ -1380,9 +1411,13 @@ jQuery(document).ready(function($) {
 		select2SharedData.pageList = pageList;
 		
 		var id = typeof info != 'undefined' && info !== null && info.pages.length > 0 ? 1 : 0;
-		// TODO: figure out why this doesn't work
-		jQuery('.wpcf7-pdf-forms-admin .page-list').val(id).trigger('change');
+		jQuery('.wpcf7-pdf-forms-admin .page-list').resetSelect2Field(id);
 	};
+	
+	var refreshPdfFilesList = function()
+	{
+		jQuery('.wpcf7-pdf-forms-admin .pdf-files-list').resetSelect2Field();
+	}
 	
 	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("change", '.pdf-files-list', refreshPageList);
 	
@@ -1392,6 +1427,8 @@ jQuery(document).ready(function($) {
 		// prevent running default button click handlers
 		event.stopPropagation();
 		event.preventDefault();
+		
+		clearMessages();
 		
 		var attachments = getAttachments();
 		if(attachments.length == 0)
@@ -1434,6 +1471,8 @@ jQuery(document).ready(function($) {
 		event.stopPropagation();
 		event.preventDefault();
 		
+		clearMessages();
+		
 		var tags = jQuery('.wpcf7-pdf-forms-admin .tags-textarea').val();
 		var wpcf7obj = getWpcf7obj();
 		if(wpcf7obj)
@@ -1451,6 +1490,8 @@ jQuery(document).ready(function($) {
 		// prevent running default button click handlers
 		event.stopPropagation();
 		event.preventDefault();
+		
+		clearMessages();
 		
 		var tag = jQuery('.wpcf7-pdf-forms-admin .tag-hint');
 		var wpcf7obj = getWpcf7obj();
@@ -1475,6 +1516,8 @@ jQuery(document).ready(function($) {
 		// prevent running default button click handlers
 		event.stopPropagation();
 		event.preventDefault();
+		
+		clearMessages();
 		
 		var wpcf7obj = getWpcf7obj();
 		var tagText = "";
@@ -1513,16 +1556,11 @@ jQuery(document).ready(function($) {
 	// set up 'Attach a PDF file' button handler
 	var attachPdf = function(file_id) {
 		
-		// prevent running default button click handlers
-		event.stopPropagation();
-		event.preventDefault();
-		
-		clearMessages();
-		
 		var data = new FormData();
+		data.append("action", 'wpcf7_pdf_forms_get_attachment_info');
 		data.append("post_id", post_id);
 		data.append("file_id", file_id);
-		data.append("action", 'wpcf7_pdf_forms_get_attachment_info');
+		data.append("wpcf7-form", wpcf7_form.val());
 		data.append("nonce", wpcf7_pdf_forms.ajax_nonce);
 		
 		// submit request
@@ -1547,12 +1585,16 @@ jQuery(document).ready(function($) {
 				{
 					if(data.hasOwnProperty('info'))
 					{
+						if(!data.info.hasOwnProperty('fields')
+						|| typeof data.info.fields !== 'object'
+						|| Object.keys(data.info.fields).length == 0)
+							if(!confirm(wpcf7_pdf_forms.__Confirm_Attach_Empty_Pdf))
+								return;
 						setAttachmentInfo(data.attachment_id, data.info);
 						delete data.info;
 					}
 					addAttachment(data);
 				}
-				
 			},
 			
 			error: function(jqXHR, textStatus, errorThrown) { return errorMessage(textStatus); },
@@ -1570,6 +1612,8 @@ jQuery(document).ready(function($) {
 		// prevent running default button click handlers
 		event.stopPropagation();
 		event.preventDefault();
+		
+		clearMessages();
 		
 		// create the pdf frame
 		var pdf_frame = wp.media({
@@ -1651,6 +1695,8 @@ jQuery(document).ready(function($) {
 		// prevent running default button click handlers
 		event.stopPropagation();
 		event.preventDefault();
+		
+		clearMessages();
 		
 		var tag = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool');
 		
@@ -1742,6 +1788,8 @@ jQuery(document).ready(function($) {
 		// prevent running default button click handlers
 		event.stopPropagation();
 		event.preventDefault();
+		
+		clearMessages();
 		
 		tb_remove();
 		

@@ -3,7 +3,7 @@
 Plugin Name: PDF Forms Filler for CF7
 Plugin URI: https://github.com/maximum-software/wpcf7-pdf-forms
 Description: Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically and attached to email messages and submission responses upon form submission on your website.  Embed images into PDF files.  Uses Pdf.Ninja API for working with PDF files.  See tutorial video for a demo.
-Version: 1.3.17
+Version: 1.3.22
 Author: Maximum.Software
 Author URI: https://maximum.software/
 Text Domain: pdf-forms-for-contact-form-7
@@ -17,9 +17,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 {
 	class WPCF7_Pdf_Forms
 	{
-		const VERSION = '1.3.17';
+		const VERSION = '1.3.22';
 		const MIN_WPCF7_VERSION = '5.0';
-		const MAX_WPCF7_VERSION = '5.4.2';
+		const MAX_WPCF7_VERSION = '5.5.3';
 		private static $BLACKLISTED_WPCF7_VERSIONS = array();
 		
 		private static $instance = null;
@@ -58,15 +58,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function plugin_init()
 		{
+			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+			
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+			
 			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
 				return;
 			
-			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-			
 			add_action( 'wp_enqueue_scripts', array( $this, 'front_end_enqueue_scripts' ) );
 			add_filter( 'wpcf7_form_elements', array( $this, 'front_end_form_scripts' ) );
-			
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			
 			add_action( 'wp_ajax_wpcf7_pdf_forms_get_attachment_info', array( $this, 'wp_ajax_get_attachment_info' ) );
 			add_action( 'wp_ajax_wpcf7_pdf_forms_query_tags', array( $this, 'wp_ajax_query_tags' ) );
@@ -142,7 +142,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public function cron_schedules( $schedules )
 		{
 			$interval = $this->get_downloads()->get_timeout();
-			$display = self::replace_tags( __("Every {interval} seconds"), array( 'internval' => $interval ) );
+			$display = self::replace_tags( __("Every {interval} seconds"), array( 'interval' => $interval ) );
 			$schedules['wpcf7_pdf_forms_cron_frequency'] = array(
 				'interval' => $interval,
 				'display' => $display
@@ -305,21 +305,21 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function admin_notices()
 		{
-			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
+			if( ( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) ) && current_user_can( 'install_plugins' ) && current_user_can( 'activate_plugins' ) )
 			{
-				echo WPCF7_Pdf_Forms::render( 'notice_error', array(
+				echo WPCF7_Pdf_Forms::render_error_notice( 'cf7-not-installed', array(
 					'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
 					'message' => esc_html__( "The required plugin 'Contact Form 7' version is not installed!", 'pdf-forms-for-contact-form-7' ),
 				) );
 				return;
 			}
 			
-			if( ! defined( 'WPCF7_VERSION' ) || ! $this->is_wpcf7_version_supported( WPCF7_VERSION ) )
-				echo WPCF7_Pdf_Forms::render( 'notice_warning', array(
+			if( ( ! defined( 'WPCF7_VERSION' ) || ! $this->is_wpcf7_version_supported( WPCF7_VERSION ) ) && current_user_can( 'update_plugins' ) )
+				echo WPCF7_Pdf_Forms::render_warning_notice( 'unsupported-cf7-version-'.WPCF7_VERSION, array(
 							'label'   => esc_html__( "PDF Forms Filler for CF7 plugin warning", 'pdf-forms-for-contact-form-7' ),
 							'message' =>
 								self::replace_tags(
-									esc_html__( "The currently installed version of 'Contact Form 7' plugin ({current-wpcf7-version}) is not supported by the current version of 'PDF Forms Filler for CF7' plugin ({current-plugin-version}), please switch to 'Contact Form 7' plugin version {supported-wpcf7-version} to allow 'PDF Forms Filler for CF7' plugin to work correctly.", 'pdf-forms-for-contact-form-7' ),
+									esc_html__( "The currently installed version of 'Contact Form 7' plugin ({current-wpcf7-version}) may not be supported by the current version of 'PDF Forms Filler for CF7' plugin ({current-plugin-version}), please switch to 'Contact Form 7' plugin version {supported-wpcf7-version} to ensure that 'PDF Forms Filler for CF7' plugin would work correctly.", 'pdf-forms-for-contact-form-7' ),
 									array(
 										'current-wpcf7-version' => esc_html( defined( 'WPCF7_VERSION' ) ? WPCF7_VERSION : __( "Unknown version", 'pdf-forms-for-contact-form-7' ) ),
 										'current-plugin-version' => esc_html( self::VERSION ),
@@ -402,6 +402,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function admin_enqueue_scripts( $hook )
 		{
+			wp_register_script( 'wpcf7_pdf_forms_notices_script', plugin_dir_url( __FILE__ ) . 'js/notices.js', array( 'jquery' ), self::VERSION );
+			wp_enqueue_script( 'wpcf7_pdf_forms_notices_script' );
+			
+			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
+				return;
+			
 			if( false !== strpos($hook, 'wpcf7') )
 			{
 				wp_register_style( 'select2', plugin_dir_url( __FILE__ ) . 'css/select2.min.css', array(), '4.0.13');
@@ -419,6 +425,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__Confirm_Delete_Attachment' => __( 'Are you sure you want to delete this file?  This will delete field mappings and image embeds associated with this file.', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Mapping' => __( 'Are you sure you want to delete this mapping?', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_All_Mappings' => __( 'Are you sure you want to delete all mappings?', 'pdf-forms-for-contact-form-7' ),
+					'__Confirm_Attach_Empty_Pdf' => __( 'Are you sure you want to attach a PDF file without any form fields?', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Embed' => __( 'Are you sure you want to delete this embeded image?', 'pdf-forms-for-contact-form-7' ),
 					'__Show_Help' => __( 'Show Help', 'pdf-forms-for-contact-form-7' ),
 					'__Hide_Help' => __( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
@@ -791,7 +798,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$response = wp_remote_get( $url, $args );
 			
 			if( is_wp_error( $response ) )
-				throw new Exception( __( "Failed to download file", 'pdf-forms-for-contact-form-7' ) );
+				throw new Exception(
+					self::replace_tags(
+							__( "Failed to download file: {error-message}", 'pdf-forms-for-contact-form-7' ),
+							array( 'error-message' => $response->get_error_message() )
+						)
+				);
 			
 			$mimetype = wp_remote_retrieve_header( $response, 'content-type' );
 			
@@ -1322,7 +1334,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if( file_exists( $file ) )
 					{
 						if( ( $filedata['options']['attach_to_mail_1'] && $mail->name() == 'mail' )
-						|| ( $filedata['options']['attach_to_mail_2'] && $mail->name() == 'mail_2' ))
+						|| ( $filedata['options']['attach_to_mail_2'] && $mail->name() == 'mail_2' ) )
 							$components['attachments'][] = $file;
 					}
 				}
@@ -1341,14 +1353,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					throw new Exception( __( "Nonce mismatch", 'pdf-forms-for-contact-form-7' ) );
 				
 				$attachment_id = $_POST[ 'file_id' ];
+				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : "";
 				
-				$filepath = get_attached_file( $attachment_id );
-				if( !$filepath )
-					throw new Exception( __( "Invalid attachment", 'pdf-forms-for-contact-form-7' ) );
-				if( ! file_exists( $filepath ) )
-					throw new Exception( __( "File not found", 'pdf-forms-for-contact-form-7' ) );
-				
-				if( ( $mimetype = self::get_mime_type( $filepath ) ) && $mimetype !== 'application/pdf' )
+				if( ( $filepath = get_attached_file( $attachment_id ) ) !== false
+				&& ( $mimetype = self::get_mime_type( $filepath ) ) != null
+				&& $mimetype !== 'application/pdf' )
 					throw new Exception(
 						self::replace_tags(
 							__( "File type {mime-type} of {file} is unsupported for {purpose}", 'pdf-forms-for-contact-form-7' ),
@@ -1356,12 +1365,18 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						)
 					);
 				
+				$cf7_fields = $this->query_cf7_fields( $form );
+				
+				$unavailableNames = array();
+				foreach( $cf7_fields as $cf7_field )
+					$unavailableNames[] = $cf7_field['name'];
+				
+				$info = $this->get_info( $attachment_id );
+				$info['fields'] = $this->query_pdf_fields( $attachment_id, $unavailableNames );
+				
 				$options = array( );
 				foreach( self::$pdf_options as $option => $default )
 					$options[$option] = $default;
-				
-				$info = $this->get_info( $attachment_id );
-				$info['fields'] = $this->query_pdf_fields( $attachment_id );
 				
 				return wp_send_json( array(
 					'success' => true,
@@ -1398,11 +1413,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public static function update_attachment_md5sum( $attachment_id )
 		{
-			$filepath = get_attached_file( $attachment_id );
-			
-			if( ! file_exists( $filepath ) )
-				throw new Exception( __( "File not found", 'pdf-forms-for-contact-form-7' ) );
-			
 			// clear info cache
 			self::unset_meta( $attachment_id, 'info' );
 			
@@ -1417,7 +1427,34 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			foreach( get_posts( $args ) as $post )
 				wp_delete_post( $post->ID, $force_delete = true );
 			
-			return self::set_meta( $attachment_id, 'md5sum', md5_file( $filepath ) );
+			$filepath = get_attached_file( $attachment_id );
+			
+			if( $filepath !== false && is_readable( $filepath ) !== false )
+				$md5sum = @md5_file( $filepath );
+			else
+			{
+				$fileurl = wp_get_attachment_url( $attachment_id );
+				if( $fileurl === false )
+					throw new Exception( __( "Unknown attachment URL", 'pdf-forms-for-contact-form-7' ) );
+				
+				try
+				{
+					$temp_filepath = wp_tempnam();
+					self::download_file( $fileurl, $temp_filepath ); // can throw an exception
+					$md5sum = @md5_file( $temp_filepath );
+					@unlink( $temp_filepath );
+				}
+				catch(Exception $e)
+				{
+					@unlink( $temp_filepath );
+					throw $e;
+				}
+			}
+			
+			if( $md5sum === false )
+				throw new Exception( __( "Could not read attached file", 'pdf-forms-for-contact-form-7' ) );
+			
+			return self::set_meta( $attachment_id, 'md5sum', $md5sum );
 		}
 		
 		/*
@@ -1425,16 +1462,20 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function get_info( $attachment_id )
 		{
-			$info = self::get_meta( $attachment_id, 'info' );
-			if( $info )
+			// cache
+			if( ( $info = self::get_meta( $attachment_id, 'info' ) )
+			&& ( $old_md5sum = self::get_meta( $attachment_id, 'md5sum' ) ) )
 			{
+				// use cache only if file is locally accessible
 				$filepath = get_attached_file( $attachment_id );
-				$new_md5sum = md5_file( $filepath );
-				$old_md5sum = self::get_attachment_md5sum( $attachment_id );
-				if($new_md5sum === $old_md5sum )
-					return json_decode( $info, true );
-				else
-					self::update_attachment_md5sum( $attachment_id );
+				if( $filepath !== false && is_readable( $filepath ) !== false )
+				{
+					$new_md5sum = md5_file( $filepath );
+					if( $new_md5sum !== false && $new_md5sum === $old_md5sum )
+						return json_decode( $info, true );
+					else
+						self::update_attachment_md5sum( $attachment_id );
+				}
 			}
 			
 			$service = $this->get_service();
@@ -1506,7 +1547,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 * Generates CF7 field tag based on field data
 		 * $tagName must already be sanitized
 		 */
-		private static function generate_tag( $field, $tagName )
+		private static function generate_tag( $field, &$tagName, $unavailableNames = array() )
 		{
 			$type = strval($field['type']);
 			
@@ -1615,7 +1656,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$tagOptions .= 'readonly ';
 			}
 			
-			$unavailableNames = array(
+			$reservedNames = array(
 				'm','p','posts','w','cat','withcomments','withoutcomments'
 				,'s','search','exact','sentence','calendar','page','paged'
 				,'more','tb','pb','author','order','orderby','year','monthnum'
@@ -1624,6 +1665,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				,'attachment_id','subpost','subpost_id','preview','robots','taxonomy'
 				,'term','cpage','post_type','embed'
 			);
+			$unavailableNames = array_merge( $unavailableNames, $reservedNames );
 			if( array_search( $tagName, $unavailableNames ) !== FALSE )
 			{
 				$tagName .= '-0000';
@@ -1646,6 +1688,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				$attachments = isset( $_POST['attachments'] ) ? $_POST['attachments'] : null;
 				$all = isset( $_POST['all'] ) ? $_POST['all'] : null;
+				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : "";
 				
 				if( !isset($attachments) || !is_array($attachments) )
 					$attachments = array();
@@ -1663,8 +1706,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$tags = __( "This PDF file does not appear to contain a PDF form.  See https://acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for more information.", 'pdf-forms-for-contact-form-7' );
 				else
 				{
-					$tags = "";
+					$cf7_fields = $this->query_cf7_fields( $form );
 					
+					$unavailableNames = array();
+					foreach( $cf7_fields as $cf7_field )
+						$unavailableNames[] = $cf7_field['name'];
+					
+					$tags = "";
 					foreach ( $fields as $attachment_id => $fs )
 						foreach ( $fs as $field )
 						{
@@ -1679,13 +1727,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 									$tag_flag = "all";
 								
 								$tagName = self::wpcf7_field_name_encode( $tag_flag, $name );
-								$generated_tag = self::generate_tag( $field, $tagName );
+								$generated_tag = self::generate_tag( $field, $tagName, $unavailableNames );
 								
 								if( $generated_tag === null)
 									continue;
 								
 								$tag .= '    ' . $generated_tag;
 								$tags .= $tag . "\n\n";
+								
+								$unavailableNames[] = $tagName;
 							}
 						}
 				}
@@ -1708,7 +1758,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		/**
 		 * Helper function used in wp-admin interface
 		 */
-		private function query_pdf_fields( $attachment_id )
+		private function query_pdf_fields( $attachment_id, &$unavailableNames = array() )
 		{
 			$fields = $this->get_fields( $attachment_id );
 			foreach( $fields as $id => &$field )
@@ -1734,10 +1784,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$slug = sanitize_title( $name );
 				if( preg_match( '/^[a-zA-Z]$/', $slug[0] ) === 0 )
 					$slug = 'f-'.$slug;
-				$tag_hint = self::generate_tag( $field, $slug );
+				$tag_hint = self::generate_tag( $field, $slug, $unavailableNames );
 				$field['id'] = $encoded_name;
 				$field['tag_hint'] = $tag_hint;
 				$field['tag_name'] = $slug;
+				$unavailableNames[] = $slug;
 			}
 			
 			return $fields;
@@ -1754,13 +1805,19 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					throw new Exception( __( "Nonce mismatch", 'pdf-forms-for-contact-form-7' ) );
 				
 				$post_id = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : null;
-				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : null;
+				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : "";
 				
 				if( ! $post_id )
 					throw new Exception( __( "Invalid post ID", 'pdf-forms-for-contact-form-7' ) );
 				
 				if ( ! current_user_can( 'wpcf7_edit_contact_form', $post_id ) )
 					throw new Exception( __( "Permission denied", 'pdf-forms-for-contact-form-7' ) );
+				
+				$cf7_fields = $this->query_cf7_fields( $form );
+				
+				$unavailableNames = array();
+				foreach( $cf7_fields as $cf7_field )
+					$unavailableNames[] = $cf7_field['name'];
 				
 				$attachments = array();
 				$attachment_ids = array();
@@ -1771,7 +1828,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						$options = $attachment['options'];
 					
 					$info = $this->get_info( $attachment_id );
-					$info['fields'] = $this->query_pdf_fields( $attachment_id );
+					$info['fields'] = $this->query_pdf_fields( $attachment_id, $unavailableNames );
 					
 					$attachments[] = array(
 						'attachment_id' => $attachment_id,
@@ -1781,8 +1838,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					);
 					$attachment_ids[] = $attachment_id;
 				}
-				
-				$cf7_fields = $this->query_cf7_fields( $form );
 				
 				$mappings = self::get_meta( $post_id, 'mappings' );
 				if( $mappings )
@@ -1864,7 +1919,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if ( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
 					throw new Exception( __( "Nonce mismatch", 'pdf-forms-for-contact-form-7' ) );
 				
-				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : null;
+				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : "";
 				
 				$fields = $this->query_cf7_fields( $form );
 				
@@ -1908,9 +1963,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				throw new Exception( $wp_upload_dir['error'] );
 			
 			$attachment_path = get_attached_file( $attachment_id );
-			
-			if( ! file_exists( $attachment_path ) )
-				throw new Exception( __( "File not found", 'pdf-forms-for-contact-form-7' ) );
+			if( $attachment_path === false )
+				$attachment_path = wp_get_attachment_url( $attachment_id );
+			if( $attachment_path === false )
+				$attachment_path = "unknown";
 			
 			$filename = wp_unique_filename( $wp_upload_dir['path'], basename( $attachment_path ).'.page'.intval($page).'.jpg' );
 			$filepath = $wp_upload_dir['path'] . "/$filename";
@@ -2008,6 +2064,41 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public static function render( $template, $attributes = array() )
 		{
 			return self::render_file( plugin_dir_path(__FILE__) . 'html/' . $template . '.html', $attributes );
+		}
+		
+		/**
+		 * Renders a notice with the given attributes
+		 */
+		public static function render_notice( $notice_id, $type, $attributes = array() )
+		{
+			$attributes['attributes'] = 'data-notice-id="'.esc_attr( $notice_id ).'"';
+			$attributes['classes'] = "notice-$type is-dismissible";
+			
+			return self::render( "notice", $attributes );
+		}
+		
+		/**
+		 * Renders a success notice with the given attributes
+		 */
+		public static function render_success_notice( $notice_id, $attributes = array() )
+		{
+			return self::render_notice( $notice_id, 'success', $attributes );
+		}
+		
+		/**
+		 * Renders a warning notice with the given attributes
+		 */
+		public static function render_warning_notice( $notice_id, $attributes = array() )
+		{
+			return self::render_notice( $notice_id, 'warning', $attributes );
+		}
+		
+		/**
+		 * Renders an error notice with the given attributes
+		 */
+		public static function render_error_notice( $notice_id, $attributes = array() )
+		{
+			return self::render_notice( $notice_id, 'error', $attributes );
 		}
 		
 		/*
