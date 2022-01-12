@@ -143,22 +143,42 @@ jQuery(document).ready(function($) {
 				return;
 			
 			jQuery.each(info.fields, function(f, field) {
-				pdfFieldsA.push({
-					'id': 'all-' + field.id,
-					'name': field.name,
-					'text': field.name,
-					'attachment_id': 'all',
-					'tag_hint': field.tag_hint,
-					'tag_name': field.tag_name,
-				});
-				pdfFieldsB.push({
-					'id': attachment.attachment_id + '-' + field.id,
-					'name': field.name,
-					'text': '[' + attachment.attachment_id + '] ' + field.name,
-					'attachment_id': attachment.attachment_id,
-					'tag_hint': field.tag_hint,
-					'tag_name': field.tag_name,
-				});
+				var data = {
+						'name': field.name,
+						'tag_hint': field.tag_hint,
+						'tag_name': field.tag_name,
+					};
+				
+				if(field.hasOwnProperty('options'))
+				{
+					var options = [];
+					
+					jQuery.each(field.options, function(o, option) {
+						if(typeof option === 'object')
+						{
+							if(option.hasOwnProperty('value'))
+								options.push(option.value.toString());
+						}
+						else
+							options.push(option.toString());
+					});
+					
+					data['options'] = options;
+				}
+				
+				var all_attachment_data = Object.assign({}, data); // shallow copy
+				var current_attachment_data = data;
+				
+				all_attachment_data['id'] = 'all-' + field.id;
+				all_attachment_data['text'] = field.name;
+				all_attachment_data['attachment_id'] = 'all';
+				
+				current_attachment_data['id'] = attachment.attachment_id + '-' + field.id;
+				current_attachment_data['text'] = '[' + attachment.attachment_id + '] ' + field.name;
+				current_attachment_data['attachment_id'] = attachment.attachment_id;
+				
+				pdfFieldsA.push(all_attachment_data);
+				pdfFieldsB.push(current_attachment_data);
 			});
 		});
 		
@@ -767,6 +787,14 @@ jQuery(document).ready(function($) {
 			return [];
 	};
 	
+	var getMapping = function(id) {
+		var mappings = getMappings();
+		for(var i=0; i<mappings.length; i++)
+			if(mappings[i].mapping_id == id)
+				return mappings[i];
+		return undefined;
+	};
+	
 	var getValueMappings = function() {
 		var valueMappings = getData('value_mappings');
 		if(valueMappings)
@@ -861,11 +889,81 @@ jQuery(document).ready(function($) {
 	
 	var addValueMappingEntry = function(data) {
 		
+		var mapping = getMapping(data.mapping_id);
+		
+		var cf7Field = null;
+		if(mapping && mapping.hasOwnProperty('cf7_field'))
+			cf7Field = getCf7FieldData(mapping.cf7_field);
+		
+		var pdfField = getPdfFieldData(data.pdf_field);
+		
 		var template = jQuery('.wpcf7-pdf-forms-admin .pdf-mapping-row-valuemapping-template');
 		var tag = template.clone().removeClass('pdf-mapping-row-valuemapping-template').addClass('pdf-valuemapping-row');
 		tag.data('mapping_id', data.mapping_id);
 		
 		tag.find('input').data('value_mapping_id', data.value_mapping_id);
+		
+		if(cf7Field && cf7Field.hasOwnProperty('values') && cf7Field.values.length > 0)
+		{
+			var input = tag.find('input.cf7-value');
+			var select = jQuery('<select>');
+			select.insertAfter(input);
+			input.hide();
+			
+			var options = [];
+			var add_custom = true;
+			jQuery.each(cf7Field.values, function(i, option) {
+				options.push({ id: option, text: option });
+				if(option == data.cf7_value)
+					add_custom = false;
+			});
+			if(add_custom)
+				options.push({ id: data.cf7_value, text: data.cf7_value });
+			
+			select.select2({
+				data: options,
+				tags: true,
+				width: '100%',
+				dropdownParent: jQuery('.wpcf7-pdf-forms-admin')
+			});
+			
+			select.val(data.cf7_value).trigger('change');
+			
+			select.change(function() {
+				input.val(select.val()).trigger('change');
+			});
+		}
+		
+		if(pdfField && pdfField.hasOwnProperty('options') && pdfField.options.length > 0)
+		{
+			var input = tag.find('input.pdf-value');
+			var select = jQuery('<select>');
+			select.insertAfter(input);
+			input.hide();
+			
+			var options = [];
+			var add_custom = true;
+			jQuery.each(pdfField.options, function(i, option) {
+				options.push({ id: option, text: option });
+				if(option == data.pdf_value)
+					add_custom = false;
+			});
+			if(add_custom)
+				options.push({ id: data.pdf_value, text: data.pdf_value });
+			
+			select.select2({
+				data: options,
+				tags: true,
+				width: '100%',
+				dropdownParent: jQuery('.wpcf7-pdf-forms-admin')
+			});
+			
+			select.val(data.pdf_value).trigger('change');
+			
+			select.change(function() {
+				input.val(select.val()).trigger('change');
+			});
+		}
 		
 		tag.find('input.cf7-value').val(data.cf7_value);
 		tag.find('input.pdf-value').val(data.pdf_value);

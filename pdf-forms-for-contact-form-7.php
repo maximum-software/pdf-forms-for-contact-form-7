@@ -1887,6 +1887,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$contact_form->set_properties( $properties );
 			
 			$tags = $contact_form->collect_mail_tags();
+			$tags_objs = $contact_form->scan_form_tags();
 			
 			if( !is_array( $tags ) )
 				throw new Exception( __( "Failed to get Contact Form fields", 'pdf-forms-for-contact-form-7' ) );
@@ -1898,12 +1899,29 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( $pdf_field !== FALSE )
 					$pdf_field = $pdf_field['attachment_id'].'-'.$pdf_field['encoded_field'];
 				
-				$fields[] = array(
+				$field = array(
 					'id' => $tag,
 					'name' => $tag,
 					'text' => $tag,
 					'pdf_field' => $pdf_field,
 				);
+				
+				$tag_obj = null;
+				if( is_array( $tags_objs ) )
+					foreach( $tags_objs as $to )
+						if( is_object( $to ) && property_exists( $to, 'name' ) && $to->name == $tag )
+						{
+							$tag_obj = $to;
+							break;
+						}
+				if($tag_obj != null)
+				{
+					$field['type'] = $tag_obj->basetype;
+					if( is_array( $tag_obj->values ) && count( $tag_obj->values ) > 0 )
+						$field['values'] = $tag_obj->values;
+				}
+				
+				$fields[] = $field;
 			}
 			
 			return $fields;
