@@ -1695,6 +1695,18 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/**
+		 * Helper function to assist with WPCF7 field name sanitization
+		 */
+		private static function wpcf7_sanitize_field_name( $name )
+		{
+			$slug = sanitize_key( remove_accents( $name ) );
+			// first character must be a letter
+			if( preg_match( '/^[a-zA-Z]$/', $slug[0] ) === 0 )
+				$slug = 'f-'.$slug;
+			return $slug;
+		}
+		
+		/**
 		 * Helper function used in wp-admin interface
 		 */
 		private function query_pdf_fields( $attachment_id, &$unavailableNames = array() )
@@ -1718,13 +1730,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				}
 				
 				$name = strval( $field['name'] );
-				
-				$encoded_name = self::base64url_encode( $name );
-				$slug = sanitize_title( $name );
-				if( preg_match( '/^[a-zA-Z]$/', $slug[0] ) === 0 )
-					$slug = 'f-'.$slug;
+				$slug = self::wpcf7_sanitize_field_name( $name );
 				$tag_hint = self::generate_tag( $field, $slug, $unavailableNames );
-				$field['id'] = $encoded_name;
+				$field['id'] = self::base64url_encode( $name );
 				$field['tag_hint'] = $tag_hint;
 				$field['tag_name'] = $slug;
 				$unavailableNames[] = $slug;
@@ -2143,7 +2151,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		public static function wpcf7_field_name_encode( $attachment_id, $pdf_field_name )
 		{
-			$slug = sanitize_title( $pdf_field_name );
+			$slug = self::wpcf7_sanitize_field_name( $pdf_field_name );
 			return "pdf-field-" . $attachment_id . "-" . $slug . "-" . self::base64url_encode( $pdf_field_name );
 		}
 		public static function wpcf7_field_name_decode( $wpcf7_field_name )
