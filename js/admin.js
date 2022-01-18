@@ -260,7 +260,7 @@ jQuery(document).ready(function($) {
 		jQuery.each(cf7Select2Cache, function(i, field) {
 			field = Object.assign({}, field); // shallow copy
 			field.lowerText = String(cf7Select2Cache[i].text).toLowerCase();
-			field['data-mailtags'] = false;
+			field['mailtag'] = false;
 			cf7Select2Cache[i] = field;
 		});
 		
@@ -299,7 +299,7 @@ jQuery(document).ready(function($) {
 				id: mailtag,
 				text: mailtag,
 				lowerText: String(mailtag).toLowerCase(),
-				'data-mailtags': true
+				'mailtag': true
 			});
 		});
 		
@@ -627,7 +627,14 @@ jQuery(document).ready(function($) {
 			$(this).append(option).val(optionInfo.id);
 		}
 		
+		// TODO fix
 		$(this).trigger('change');
+		$(this).trigger({
+			type: 'select2:select',
+			params: {
+				data: optionInfo
+			}
+		});
 		
 		return this;
 	}
@@ -651,12 +658,11 @@ jQuery(document).ready(function($) {
 		width: '100%',
 		dropdownAutoWidth: true,
 		sharedDataElement: "cf7FieldsCache",
-		templateSelection: function (data, container) {
-			jQuery(data.element).attr('data-mailtags', data['data-mailtags']);
-			return data.text;
-		},
 		dropdownParent: jQuery('.wpcf7-pdf-forms-admin'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
+	}).on('select2:select', function (e) {
+		var data = e.params.data;
+		jQuery(this).find('option:selected').attr('data-mailtags', data['mailtag']);
 	});
 	jQuery('.wpcf7-pdf-forms-admin .pdf-files-list').select2({
 		ajax: {},
