@@ -635,17 +635,23 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( !is_array( $mappings ) )
 				$mappings = array();
 			
+			$value_mappings = self::get_meta( $prev_post_id, 'value_mappings' );
+			if( $value_mappings )
+				$value_mappings = json_decode( $value_mappings, true );
+			if( !is_array( $value_mappings ) )
+				$value_mappings = array();
+			
 			$embeds = self::get_meta( $prev_post_id, 'embeds' );
 			if( $embeds )
 				$embeds = json_decode( $embeds, true );
 			if( !is_array( $embeds ) )
 				$embeds = array();
 			
-			$this->cf7_forms_save_overrides = array( 'attachments' => $attachments , 'mappings' => $mappings , 'embeds' => $embeds );
+			$this->cf7_forms_save_overrides = array( 'attachments' => $attachments , 'mappings' => $mappings , 'value_mappings' => $value_mappings , 'embeds' => $embeds );
 			
 			return $new;
 		}
-
+		
 		/**
 		 * Hook that runs on form save and attaches all PDFs that were attached to forms with the editor
 		 */
@@ -691,6 +697,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 										unset($mapping);
 									}
 									
+									// replace old attachment id in value mappings
+									if( isset( $data['value_mappings'] ) && is_array( $data['value_mappings'] ) )
+									{
+										foreach( $data['value_mappings'] as &$value_mapping )
+											if( isset( $value_mapping['pdf_field'] ) )
+												$value_mapping['pdf_field'] = preg_replace( '/^' . preg_quote( $attachment_id . '-' ) . '/i', intval( $new_attachment_id ) . '-', $value_mapping['pdf_field'] );
+										unset($value_mapping);
+									}
+									
 									// replace old attachment id in embeds
 									if( isset( $data['embeds'] ) && is_array( $data['embeds'] ) )
 									{
@@ -731,6 +746,17 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						$mappings[] = array( 'mail_tags' => $mapping['mail_tags'], 'pdf_field' => $mapping['pdf_field'] );
 				}
 				self::set_meta( $post_id, 'mappings', self::json_encode( $mappings ) );
+			}
+			
+			if( isset( $data['value_mappings'] ) && is_array( $new_value_mappings = $data['value_mappings'] ) )
+			{
+				$value_mappings = array();
+				foreach( $new_value_mappings as $value_mapping )
+				{
+					if( isset( $value_mapping['pdf_field'] ) && isset( $value_mapping['cf7_value'] ) && isset( $value_mapping['pdf_value'] ) )
+						$value_mappings[] = array( 'pdf_field' => $value_mapping['pdf_field'], 'cf7_value' => $value_mapping['cf7_value'], 'pdf_value' => $value_mapping['pdf_value'] );
+				}
+				self::set_meta( $post_id, 'value_mappings', self::json_encode( $value_mappings ) );
 			}
 			
 			if( isset( $data['embeds'] ) && is_array( $new_embeds = $data['embeds'] ) )
@@ -905,6 +931,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( !is_array( $mappings ) )
 					$mappings = array();
 				
+				$value_mappings = self::get_meta( $post_id, 'value_mappings' );
+				if( $value_mappings )
+					$value_mappings = json_decode( $value_mappings, true );
+				if( !is_array( $value_mappings ) )
+					$value_mappings = array();
+				
 				$embeds = self::get_meta( $post_id, 'embeds' );
 				if( $embeds )
 					$embeds = json_decode( $embeds, true );
@@ -1067,6 +1099,35 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 								$data[$field] = wpcf7_mail_replace_tags( "[".$name."]" );
 						}
 						catch(Exception $e) { }
+					}
+					
+					// process value mappings
+					foreach( $value_mappings as $value_mapping )
+					{
+						$i = strpos( $value_mapping["pdf_field"], '-' );
+						if( $i === FALSE )
+							continue;
+						
+						$aid = substr( $value_mapping["pdf_field"], 0, $i );
+						if( $aid != $attachment_id && $aid != 'all' )
+							continue;
+						
+						$field = substr( $value_mapping["pdf_field"], $i+1 );
+						$field = self::base64url_decode( $field );
+						
+						if( !isset( $data[$field] ) )
+							continue;
+						
+						if( is_array( $data[$field] ) )
+						{
+							foreach( $data[$field] as &$value )
+								if( $value === $value_mapping['cf7_value'] )
+									$value = $value_mapping['pdf_value'];
+							unset( $value );
+						}
+						else
+							if( $data[$field] === $value_mapping['cf7_value'] )
+								$data[$field] = $value_mapping['pdf_value'];
 					}
 					
 					// filter out anything that the pdf field can't accept
@@ -1792,6 +1853,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( !is_array( $mappings ) )
 					$mappings = array();
 				
+				$value_mappings = self::get_meta( $post_id, 'value_mappings' );
+				if( $value_mappings )
+					$value_mappings = json_decode( $value_mappings, true );
+				if( !is_array( $value_mappings ) )
+					$value_mappings = array();
+				
 				$embeds = self::get_meta( $post_id, 'embeds' );
 				if( $embeds )
 					$embeds = json_decode( $embeds, true );
@@ -1803,6 +1870,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'attachments' => $attachments,
 					'cf7_fields' => $cf7_fields,
 					'mappings' => $mappings,
+					'value_mappings' => $value_mappings,
 					'embeds' => $embeds,
 				) );
 			}
@@ -1827,6 +1895,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$contact_form->set_properties( $properties );
 			
 			$tags = $contact_form->collect_mail_tags();
+			$tags_objs = $contact_form->scan_form_tags();
 			
 			if( !is_array( $tags ) )
 				throw new Exception( __( "Failed to get Contact Form fields", 'pdf-forms-for-contact-form-7' ) );
@@ -1838,12 +1907,29 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( $pdf_field !== FALSE )
 					$pdf_field = $pdf_field['attachment_id'].'-'.$pdf_field['encoded_field'];
 				
-				$fields[] = array(
+				$field = array(
 					'id' => $tag,
 					'name' => $tag,
 					'text' => $tag,
 					'pdf_field' => $pdf_field,
 				);
+				
+				$tag_obj = null;
+				if( is_array( $tags_objs ) )
+					foreach( $tags_objs as $to )
+						if( is_object( $to ) && property_exists( $to, 'name' ) && $to->name == $tag )
+						{
+							$tag_obj = $to;
+							break;
+						}
+				if($tag_obj != null)
+				{
+					$field['type'] = $tag_obj->basetype;
+					if( is_array( $tag_obj->values ) && count( $tag_obj->values ) > 0 )
+						$field['values'] = $tag_obj->values;
+				}
+				
+				$fields[] = $field;
 			}
 			
 			return $fields;
@@ -2091,6 +2177,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'generate-and-insert-all-tags-message' => esc_html__( "This button allows you to generate tags for all remaining unlinked PDF fields, insert them into the form and link them to their corresponding fields.", 'pdf-forms-for-contact-form-7' ),
 					'insert-and-map-all-tags' => esc_html__( "Insert & Link All", 'pdf-forms-for-contact-form-7' ),
 					'delete' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
+					'map-value' => esc_html__( 'Map Value', 'pdf-forms-for-contact-form-7' ),
 					'options' => esc_html__( 'Options', 'pdf-forms-for-contact-form-7' ),
 					'skip-when-empty' => esc_html__( 'Skip when empty', 'pdf-forms-for-contact-form-7' ),
 					'attach-to-mail-1' => esc_html__( 'Attach to primary email message', 'pdf-forms-for-contact-form-7' ),

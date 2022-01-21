@@ -68,6 +68,7 @@
 .wpcf7-pdf-forms-admin .pdf-attachment-row-template,
 .wpcf7-pdf-forms-admin .pdf-mapping-row-template,
 .wpcf7-pdf-forms-admin .pdf-mapping-row-mailtag-template,
+.wpcf7-pdf-forms-admin .pdf-mapping-row-valuemapping-template,
 .wpcf7-pdf-forms-admin .image-embeds-row-template,
 .wpcf7-pdf-forms-admin .image-embeds-row-mailtag-template
 {
@@ -146,6 +147,29 @@
 	vertical-align: middle;
 }
 
+.wpcf7-pdf-forms-admin .pdf-valuemapping-row td.cf7-field
+{
+	padding-left: 20px;
+}
+
+.wpcf7-pdf-forms-admin .pdf-valuemapping-row td.pdf-field
+{
+	padding-right: 20px;
+}
+
+.wpcf7-pdf-forms-admin .pdf-valuemapping-row td
+{
+	background-color: rgba(100, 100, 100, 0.2);
+}
+
+.wpcf7-pdf-forms-admin .mapping-table input,
+.wpcf7-pdf-forms-admin .mapping-table textarea,
+.wpcf7-pdf-forms-admin .mapping-table select
+{
+	width: 100%;
+	min-width: 50px;
+}
+
 .wpcf7-pdf-forms-admin select
 {
 	width: 100%;
@@ -153,7 +177,7 @@
 	text-overflow: ellipsis;
 }
 
-.wpcf7-pdf-forms-admin td.select-dropdown
+.wpcf7-pdf-forms-admin td
 {
 	position: relative;
 }
@@ -163,10 +187,12 @@
 	width: calc(100% - 10px);
 	max-width: calc(100% - 10px);
 	max-height: 100%;
+	/* TODO: fix
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+	*/
 }
 
 .wpcf7-pdf-forms-admin .select2-results__option
