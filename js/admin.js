@@ -642,7 +642,7 @@ jQuery(document).ready(function($) {
 	var select2SharedData = {
 		unmappedPdfFields: [], 
 		cf7FieldsCache: [],
-		pdfSelect2Files: [],
+		pdfSelect2Files: [{id: 0,text: 'all'}],
 		pageList: []
 	};
 	
