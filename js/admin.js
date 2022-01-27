@@ -426,18 +426,22 @@ jQuery(document).ready(function($) {
 	
 	var deleteAttachment = function(attachment_id) {
 		
+		var remove_ids = [];
 		var mappings = getMappings();
 		jQuery.each(mappings, function(index, mapping) {
-			var pdf_field_data = getPdfFieldData(mapping.pdf_field);
-			if(!pdf_field_data || pdf_field_data.attachment_id == attachment_id)
-				deleteMapping(mapping.mapping_id);
+			var field_attachment_id = mapping.pdf_field.substr(0, mapping.pdf_field.indexOf('-'));
+			if(field_attachment_id == attachment_id)
+				remove_ids.push(mapping.mapping_id);
 		});
+		jQuery.each(remove_ids, function(index, id) { deleteMapping(id); });
 		
+		remove_ids = [];
 		var embeds = getEmbeds();
 		jQuery.each(embeds, function(index, embed) {
 			if(embed.attachment_id == attachment_id)
-				deleteEmbed(embed.id);
+				remove_ids.push(embed.id);
 		});
+		jQuery.each(remove_ids, function(index, id) { deleteEmbed(id); });
 		
 		var attachments = getAttachments();
 		
