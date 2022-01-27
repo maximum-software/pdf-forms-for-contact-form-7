@@ -320,7 +320,7 @@ jQuery(document).ready(function($) {
 				id: mailtag,
 				text: mailtag,
 				lowerText: String(mailtag).toLowerCase(),
-				'mailtag': true
+				mailtag: true
 			});
 		});
 		
@@ -663,7 +663,7 @@ jQuery(document).ready(function($) {
 	var select2SharedData = {
 		unmappedPdfFields: [], 
 		cf7FieldsCache: [],
-		pdfSelect2Files: [{id: 0,text: 'all'}],
+		pdfSelect2Files: [{id: 0, text: wpcf7_pdf_forms.__All_PDFs, lowerText: String(wpcf7_pdf_forms.__All_PDFs).toLowerCase()}],
 		pageList: []
 	};
 	
@@ -1189,12 +1189,16 @@ jQuery(document).ready(function($) {
 		var attachment_id = embed.attachment_id;
 		var page = embed.page;
 		
-		if(!attachment_id || !page || page < 0)
+		if(!attachment_id || !page || (page != 'all' && page < 0))
 			return;
 		
-		var attachment = getAttachment(attachment_id);
-		if(!attachment)
-			return;
+		var attachment = null;
+		if(attachment_id != 'all')
+		{
+			attachment = getAttachment(attachment_id);
+			if(!attachment)
+				return;
+		}
 		
 		if(!embed.hasOwnProperty('mail_tags') && !embed.hasOwnProperty('cf7_field'))
 			return;
@@ -1230,9 +1234,13 @@ jQuery(document).ready(function($) {
 		{
 			var embed = embeds[i];
 			
-			var attachment = getAttachment(embed.attachment_id);
-			if(!attachment)
-				continue;
+			var attachment = null;
+			if(embed.attachment_id != 'all')
+			{
+				attachment = getAttachment(embed.attachment_id);
+				if(!attachment)
+					continue;
+			}
 			
 			if(embed.hasOwnProperty('mail_tags'))
 				addEmbedEntry({mail_tags: embed.mail_tags, attachment: attachment, embed: embed});
@@ -1263,7 +1271,7 @@ jQuery(document).ready(function($) {
 		{
 			var template = jQuery('.wpcf7-pdf-forms-admin .image-embeds-row-template');
 			var tag = template.clone().removeClass('image-embeds-row-template').addClass('image-embeds-row');
-			tag.find('.convert-to-mailtags-button').data('embed_id',data.embed.id);
+			tag.find('.convert-to-mailtags-button').data('embed_id', data.embed.id);
 			tag.find('span.cf7-field-name').text(data.cf7_field_data.text);
 		}
 		
@@ -1285,11 +1293,14 @@ jQuery(document).ready(function($) {
 			return false;
 		});
 		
+		var pdf_name = wpcf7_pdf_forms.__All_PDFs;
+		if(data.hasOwnProperty('attachment') && data.attachment)
+			pdf_name = '[' + data.attachment.attachment_id + '] ' + data.attachment.filename;
 		
-		tag.find('.pdf-file-caption').text('[' + data.attachment.attachment_id + '] ' + data.attachment.filename);
-		tag.find('.page-caption').text(page > 0 ? page : 'all');
+		tag.find('.pdf-file-caption').text(pdf_name);
+		tag.find('.page-caption').text(page > 0 ? page : wpcf7_pdf_forms.__All_Pages);
 		
-		if(page > 0)
+		if(data.hasOwnProperty('attachment') && data.attachment && page > 0)
 			loadPageSnapshot(data.attachment, data.embed, tag);
 		else
 			tag.find('.page-selector-row').addBack('.page-selector-row').hide();
@@ -1493,8 +1504,8 @@ jQuery(document).ready(function($) {
 		
 		pageList.push({
 			id: 0,
-			text: 'all',
-			lowerText: String('all').toLowerCase()
+			text: wpcf7_pdf_forms.__All_Pages,
+			lowerText: String(wpcf7_pdf_forms.__All_Pages).toLowerCase()
 		});
 		
 		var files = jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool .pdf-files-list');
@@ -1520,7 +1531,8 @@ jQuery(document).ready(function($) {
 	
 	var refreshPdfFilesList = function()
 	{
-		jQuery('.wpcf7-pdf-forms-admin .pdf-files-list').resetSelect2Field();
+		var id = select2SharedData.pdfSelect2Files.length > 1 ? 1 : null;
+		jQuery('.wpcf7-pdf-forms-admin .pdf-files-list').resetSelect2Field(id);
 	}
 	
 	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("change", '.pdf-files-list', refreshPageList);
@@ -1539,6 +1551,8 @@ jQuery(document).ready(function($) {
 			return false;
 		
 		var attachment_id = jQuery('.wpcf7-pdf-forms-admin .tag-generator-tool .pdf-files-list').val();
+		if(attachment_id == 0)
+			attachment_id = 'all';
 		
 		var all = false;
 		if(!attachment_id || attachment_id == 'all')
@@ -1807,7 +1821,11 @@ jQuery(document).ready(function($) {
 		var subject = tag.find('.cf7-field-list').val();
 		var mailtags = tag.find('.cf7-field-list').find('option:selected').data('mailtags');
 		var attachment_id = tag.find('.pdf-files-list').val();
+		if(attachment_id == 0)
+			attachment_id = 'all';
 		var page = tag.find('.page-list').val();
+		if(page == 0)
+			page = 'all';
 		
 		if(subject && attachment_id && page)
 		{
