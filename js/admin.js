@@ -1847,9 +1847,14 @@ jQuery(document).ready(function($) {
 				});
 		}
 		
-		var embedRowPosition = jQuery(".wpcf7-pdf-forms-admin .image-embeds-row:visible").last().position();
-		if(embedRowPosition)
-			jQuery(this).closest('#TB_ajaxContent').animate({scrollTop: embedRowPosition.top}, 1000);
+		var imageEmbedToolElement = jQuery(this).closest('.image-embedding-tool');
+		var imageEmbedToolPosition = imageEmbedToolElement.position();
+		var scrollElement = imageEmbedToolElement.parent();
+		var embedRowElement = jQuery(".wpcf7-pdf-forms-admin .image-embeds-row:visible").last();
+		var embedRowPosition = embedRowElement.position();
+		var embedRowHeight = embedRowElement.height();
+		if(imageEmbedToolPosition && embedRowPosition && embedRowHeight)
+			scrollElement.animate({scrollTop: imageEmbedToolPosition.top + embedRowPosition.top + embedRowHeight}, 1000);
 		
 		return false;
 	});
