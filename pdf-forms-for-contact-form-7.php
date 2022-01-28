@@ -78,12 +78,15 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'admin_menu', array( $this, 'register_services') );
 			
 			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_pdfs' ), 1000, 3 );
-			add_filter( 'wpcf7_mail_components', array( $this, 'attach_files' ), 10, 3 );
+			if( version_compare( WPCF7_VERSION, '5.4.1' ) < 0 )
+				// WPCF7_Submission::add_extra_attachments didn't exist prior to CF7 v5.4.1 and a workaround is needed
+				add_filter( 'wpcf7_mail_components', array( $this, 'attach_files' ), 10, 3 );
+			
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
 			
 			add_filter( 'wpcf7_form_response_output', array( $this, 'change_response_nojs' ), 10, 4 );
 			
-			if( defined( 'WPCF7_VERSION' ) && version_compare( WPCF7_VERSION, '5.2' ) >= 0 )
+			if( version_compare( WPCF7_VERSION, '5.2' ) >= 0 )
 				// hook wpcf7_feedback_response (works only with CF7 version 5.2+)
 				add_filter( 'wpcf7_feedback_response', array( $this, 'change_response_js' ), 10, 2 );
 			else
@@ -1263,14 +1266,23 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					}
 				}
 				
-				// files will be attached to email messages in attach_files()
-				$this->cf7_mail_attachments = $files;
+				if( version_compare( WPCF7_VERSION, '5.4.1' ) < 0 )
+					// files will be attached to email messages in attach_files()
+					$this->cf7_mail_attachments = $files;
 				
 				if( count( $files ) > 0 )
 				{
 					$storage = $this->get_storage();
 					foreach( $files as $id => $filedata )
 					{
+						if( version_compare( WPCF7_VERSION, '5.4.1' ) >= 0 )
+						{
+							if( $filedata['options']['attach_to_mail_1'] )
+								$submission->add_extra_attachments( $filedata['file'], 'mail' );
+							if( $filedata['options']['attach_to_mail_2'] )
+								$submission->add_extra_attachments( $filedata['file'], 'mail_2' );
+						}
+						
 						$save_directory = strval( $filedata['options']['save_directory'] );
 						if( $save_directory !== "" )
 						{
