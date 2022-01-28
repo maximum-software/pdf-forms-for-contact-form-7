@@ -295,7 +295,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function action_links( $links )
 		{
-			$links[] = '<a target="_blank" href="https://youtu.be/jy84xqnj0Zk">'.esc_html__( "Tutorial Video", 'pdf-forms-for-contact-form-7' ).'</a>';
+			$links[] = '<a target="_blank" href="https://pdfformsfiller.org/docs/cf7/">'.esc_html__( "Docs", 'pdf-forms-for-contact-form-7' ).'</a>';
 			$links[] = '<a target="_blank" href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/">'.esc_html__( "Support", 'pdf-forms-for-contact-form-7' ).'</a>';
 			return $links;
 		}
