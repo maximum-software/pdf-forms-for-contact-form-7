@@ -711,11 +711,10 @@ jQuery(document).ready(function($) {
 	
 	var preloadData = function() {
 		
+		loadCf7Fields(); // even with no post id we can still populate CF7 field dropdowns
+		
 		if(!post_id)
-		{
-			loadCf7Fields(); // even with no post id we can still populate CF7 field dropdowns
 			return;
-		}
 		
 		jQuery.ajax({
 			url: wpcf7_pdf_forms.ajax_url,
