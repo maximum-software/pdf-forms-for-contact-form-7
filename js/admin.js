@@ -637,7 +637,10 @@ jQuery(document).ready(function($) {
 		}
 	);
 	
-	jQuery.fn.resetSelect2Field = function(id = null) {
+	jQuery.fn.resetSelect2Field = function(id) {
+		
+		if(typeof id == 'undefined')
+			id = null;
 		
 		if(!$(this).data('select2'))
 			return;
