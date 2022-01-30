@@ -1,5 +1,5 @@
 === PDF Forms Filler for CF7 ===
-Version: 1.3.23
+Version: 2.0.0
 Requires at least: 4.8
 Tested up to: 5.9
 Requires PHP: 5.2
@@ -59,6 +59,17 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor
 
 == Changelog ==
+
+= 2.0.0 =
+
+* Release date: February 1, 2022
+
+* Added multi-select field support
+* Switched to select2 dropdowns
+* Added value mapping feature
+* Fixed the scroll effect when adding an image embed
+* Switched to using WPCF7_Submission::add_extra_attachments() for CF7 v5.4.1+
+* Other bug fixes and improvements
 
 = 1.3.23 =
 
