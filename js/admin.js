@@ -1078,15 +1078,20 @@ jQuery(document).ready(function($) {
 		}
 		
 		var map_value_button = tag.find('.map-value-button');
-		map_value_button.data('mapping_id', data.mapping_id);
-		map_value_button.click(function(event) {
-			
-			// prevent running default button click handlers
-			event.stopPropagation();
-			event.preventDefault();
-			
-			addValueMapping({'mapping_id': data.mapping_id, 'pdf_field': data.pdf_field, 'cf7_value': "", 'pdf_value': ""});
-		});
+		if(virtual)
+			map_value_button.remove();
+		else
+		{
+			map_value_button.data('mapping_id', data.mapping_id);
+			map_value_button.click(function(event) {
+				
+				// prevent running default button click handlers
+				event.stopPropagation();
+				event.preventDefault();
+				
+				addValueMapping({'mapping_id': data.mapping_id, 'pdf_field': data.pdf_field, 'cf7_value': "", 'pdf_value': ""});
+			});
+		}
 		
 		tag.insertBefore(jQuery('.wpcf7-pdf-forms-admin .pdf-fields-mapper .delete-all-row'));
 		jQuery('.wpcf7-pdf-forms-admin .delete-all-row').show();
