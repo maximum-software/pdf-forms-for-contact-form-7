@@ -591,7 +591,7 @@ msgstr "Aggiungi mappatura"
 
 #: pdf-forms-for-contact-form-7.php:2208
 msgid "Delete All"
-msgstr "Cancella tutto"
+msgstr "Elimina tutti"
 
 #: pdf-forms-for-contact-form-7.php:2209
 msgid "New Tag:"
@@ -606,8 +606,9 @@ msgid ""
 "This tool allows one to create CF7 fields that are linked to PDF fields by "
 "name.  This feature is deprecated in favor of the field mapper tool."
 msgstr ""
-"Questo strumento consente di creare campi CF7 collegati ai campi PDF per "
-"nome. Questa funzione è deprecata a favore dello strumento Field Mapper."
+"Questo strumento consente di creare campi CF7 che sono collegati ai campi "
+"PDF per nome. Questa funzione è obsoleta a favore dello strumento di "
+"mappatura dei campi."
 
 #: pdf-forms-for-contact-form-7.php:2212
 msgid "Image Embedding Tool"
@@ -619,10 +620,10 @@ msgid ""
 "field attachments or field values that are URLs.  You must select a PDF "
 "file, its page and draw a bounding box for image insertion."
 msgstr ""
-"Questo strumento consente di incorporare immagini in file PDF. Le immagini "
-"sono prese da allegati di campo o valori di campo che sono URL. È necessario "
-"selezionare un file PDF, la sua pagina e disegnare un riquadro di "
-"delimitazione per l'inserimento di immagini."
+"Questo strumento consente di incorporare immagini nel file PDF. Le immagini "
+"sono tratte da allegati o valori di campo che sono URL. È necessario "
+"selezionare un file PDF, la sua pagina e disegnare un rettangolo di "
+"selezione per l'inserimento dell'immagine."
 
 #: pdf-forms-for-contact-form-7.php:2214
 msgid "Embed Image"
@@ -638,7 +639,7 @@ msgstr "Pagina"
 
 #: pdf-forms-for-contact-form-7.php:2218
 msgid "Select a region where the image needs to be embeded."
-msgstr "Seleziona una regione in cui l'immagine deve essere incorporata."
+msgstr "Seleziona una zona in cui l'immagine deve essere incorporata."
 
 #: pdf-forms-for-contact-form-7.php:2220
 msgid ""
@@ -655,7 +656,7 @@ msgstr "Ottieni tag"
 
 #: pdf-forms-for-contact-form-7.php:2233
 msgid "Return to Form"
-msgstr "Ritorna alla forma"
+msgstr "Torna al modulo"
 
 #: pdf-forms-for-contact-form-7.php:2238
 msgid "Your CF7 plugin is too out of date, please upgrade."

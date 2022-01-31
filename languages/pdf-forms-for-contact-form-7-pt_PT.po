@@ -493,7 +493,7 @@ msgstr "Anexar um arquivo PDF"
 
 #: pdf-forms-for-contact-form-7.php:2189
 msgid "Insert Tags"
-msgstr "Inserir tags"
+msgstr "Inserir Tags"
 
 #: pdf-forms-for-contact-form-7.php:2190
 msgid "Insert and Link"
@@ -514,7 +514,7 @@ msgstr "Inserir e vincular tudo"
 
 #: pdf-forms-for-contact-form-7.php:2193 pdf-forms-for-contact-form-7.php:2215
 msgid "Delete"
-msgstr "Apagar"
+msgstr "Delete"
 
 #: pdf-forms-for-contact-form-7.php:2194
 msgid "Map Value"
@@ -658,7 +658,7 @@ msgstr "Retornar ao formulário"
 
 #: pdf-forms-for-contact-form-7.php:2238
 msgid "Your CF7 plugin is too out of date, please upgrade."
-msgstr "Seu plugin CF7 é muito fora da data, faça o upgrade."
+msgstr "Seu plugin CF7 está desatualizado, por favor atualize."
 
 #: pdf-forms-for-contact-form-7.php:2310
 msgid "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}"
