@@ -944,7 +944,7 @@ jQuery(document).ready(function($) {
 			select.val(data.cf7_value).trigger('change');
 			
 			select.change(function() {
-				input.val(select.val()).trigger('change');
+				jQuery(this).prev().val(jQuery(this).val()).trigger('change');
 			});
 		}
 		
@@ -975,7 +975,7 @@ jQuery(document).ready(function($) {
 			select.val(data.pdf_value).trigger('change');
 			
 			select.change(function() {
-				input.val(select.val()).trigger('change');
+				jQuery(this).prev().val(jQuery(this).val()).trigger('change');
 			});
 		}
 		
