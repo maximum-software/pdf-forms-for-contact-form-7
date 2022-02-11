@@ -1,15 +1,18 @@
 <?php
-/*
-Plugin Name: PDF Forms Filler for CF7
-Plugin URI: https://pdfformsfiller.org/
-Description: Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically and attached to email messages and submission responses upon form submission on your website.  Embed images into PDF files.  Uses Pdf.Ninja API for working with PDF files.  See tutorial video for a demo.
-Version: 2.0.1
-Author: Maximum.Software
-Author URI: https://maximum.software/
-Text Domain: pdf-forms-for-contact-form-7
-Domain Path: /languages
-License: GPLv3
-*/
+/**
+ * Plugin Name: PDF Forms Filler for CF7
+ * Plugin URI: https://pdfformsfiller.org/
+ * Description: Build Contact Form 7 forms from PDF forms. Get PDFs auto-filled and attached to email messages and/or website responses on form submission.
+ * Version: 2.0.1
+ * Requires at least: 4.8
+ * Requires PHP: 5.2
+ * Author: Maximum.Software
+ * Author URI: https://maximum.software/
+ * Text Domain: pdf-forms-for-contact-form-7
+ * Domain Path: /languages
+ * License: GPLv3
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
+ */
 
 require_once untrailingslashit( dirname( __FILE__ ) ) . '/inc/tgm-config.php';
 

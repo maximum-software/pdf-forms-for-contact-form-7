@@ -1,10 +1,10 @@
 === PDF Forms Filler for CF7 ===
 Version: 2.0.1
+Stable tag: 2.0.1
 Requires at least: 4.8
 Tested up to: 5.9
 Requires PHP: 5.2
-Stable tag: trunk
-Tags: pdf, form, filler, contact form, attachment, email
+Tags: pdf, form, filler, contact form, attach, email, download
 Plugin URI: https://pdfformsfiller.org/
 Author: Maximum.Software
 Author URI: https://maximum.software/
@@ -12,7 +12,7 @@ Contributors: maximumsoftware
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Create Contact Form 7 forms from PDF forms.  Get PDF forms filled automatically and attached to email messages upon form submission on your website.  Embed images in PDF files.
+Build Contact Form 7 forms from PDF forms. Get PDFs auto-filled and attached to email messages and/or website responses on form submission.
 
 == Description ==
 
