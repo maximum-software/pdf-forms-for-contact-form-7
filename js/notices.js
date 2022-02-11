@@ -1,6 +1,9 @@
 jQuery(document).ready(function($) {
 	
-	var cookies = decodeURIComponent(document.cookie).split('; ');
+	var cookies = [];
+	try { cookies = decodeURIComponent(document.cookie).split('; '); }
+	catch(e) { } // ignore cookie corruption related errors
+	
 	jQuery('.wpcf7-pdf-forms-notice').each(function() {
 		
 		var notice_id = $(this).data('notice-id');
