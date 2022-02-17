@@ -1972,6 +1972,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							unset($orig_value);
 						}
 						
+						if( ( $tag_obj->basetype == 'checkbox' || $tag_obj->basetype == 'radio' ) && $tag_obj->has_option( 'free_text' ) )
+							array_pop( $values );
+						
 						$field['values'] = $values;
 					}
 				}
