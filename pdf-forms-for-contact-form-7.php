@@ -1949,7 +1949,31 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				{
 					$field['type'] = $tag_obj->basetype;
 					if( is_array( $tag_obj->values ) && count( $tag_obj->values ) > 0 )
-						$field['values'] = $tag_obj->values;
+					{
+						$values = $tag_obj->values;
+						$pipes = $tag_obj->pipes;
+						
+						if( WPCF7_USE_PIPE
+						&& $pipes instanceof WPCF7_Pipes
+						&& !$pipes->zero() )
+						{
+							foreach( $values as &$orig_value )
+							{
+								if( is_array( $orig_value ) )
+								{
+									$value = array();
+									foreach( $orig_value as $v )
+										$value[] = $pipes->do_pipe( $v );
+								}
+								else
+									$value = $pipes->do_pipe( $orig_value );
+								$orig_value = $value;
+							}
+							unset($orig_value);
+						}
+						
+						$field['values'] = $values;
+					}
 				}
 				
 				$fields[] = $field;
