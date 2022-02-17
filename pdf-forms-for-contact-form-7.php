@@ -1022,9 +1022,23 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				}
 				
 				$cf7_field_tags = array();
+				$multiselectable_cf7_fields = array();
 				foreach( $contact_form->scan_form_tags() as $cf7_tag )
-					if( $cf7_tag->name )
-						$cf7_field_tags[ $cf7_tag->name ] = $cf7_tag;
+					if( property_exists( $cf7_tag, 'name' ) )
+					{
+						$cf7_field_tags[$cf7_tag->name] = $cf7_tag;
+						if(
+							// cf7 checkboxes can have multiple values only if the form-tag contains more than one value and exclusive option is not enabled
+							( $cf7_tag->basetype == 'checkbox' && is_array( $cf7_tag->values ) && count( $cf7_tag->values ) > 1 && !$cf7_tag->has_option( 'exclusive' ) )
+							
+							// cf7 drop-down menus must have 'multiple' tag to have multiple values
+							|| ( $cf7_tag->basetype == 'select' && $cf7_tag->has_option( 'multiple' ) )
+							
+							// support for unknown field types: if posted data is an array with multiple items then it must be that this field supports multiple values
+							|| ( is_array( ( $filed_posted_data = $submission->get_posted_data( $cf7_tag->name ) ) ) && count( $filed_posted_data ) > 1 )
+						)
+							$multiselectable_cf7_fields[$cf7_tag->name] = $cf7_tag->name;
+					}
 				
 				$files = array();
 				foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
@@ -1050,17 +1064,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						if( !isset( $fields[$field] ) )
 							continue;
 						
-						$multiple =
-							(
-								isset( $cf7_field_tags[$mapping["cf7_field"]] ) &&
-								( $cf7_field_tag = $cf7_field_tags[$mapping["cf7_field"]] ) &&
-								$cf7_field_tag->has_option( 'multiple' )
-							)
-						||
-							(
-								isset( $fields[$field]['flags'] ) &&
-								in_array( 'MultiSelect', $fields[$field]['flags'] )
-							);
+						$multiple = ( isset( $mapping["cf7_field"] ) && isset( $multiselectable_cf7_fields[ $mapping["cf7_field"] ] ) )
+							|| ( isset( $fields[$field]['flags'] ) && in_array( 'MultiSelect', $fields[$field]['flags'] ) );
 						
 						if( isset( $mapping["cf7_field"] ) )
 						{
@@ -1100,7 +1105,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							if( !isset( $fields[$field] ) )
 								continue;
 							
-							$multiple = $cf7_field_tag->has_option( 'multiple' );
+							$multiple = isset( $multiselectable_cf7_fields[ $cf7_field_tag->name ] )
+								|| ( isset( $fields[$field]['flags'] ) && in_array( 'MultiSelect', $fields[$field]['flags'] ) );
 							if( $multiple )
 								$data[$field] = $submission->get_posted_data( $name );
 							else
