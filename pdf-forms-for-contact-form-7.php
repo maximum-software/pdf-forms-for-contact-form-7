@@ -1035,7 +1035,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							|| ( $cf7_tag->basetype == 'select' && $cf7_tag->has_option( 'multiple' ) )
 							
 							// support for unknown field types: if posted data is an array with multiple items then it must be that this field supports multiple values
-							|| ( is_array( ( $filed_posted_data = $submission->get_posted_data( $cf7_tag->name ) ) ) && count( $filed_posted_data ) > 1 )
+							|| ( is_array( ( $field_posted_data = $submission->get_posted_data( $cf7_tag->name ) ) ) && count( $field_posted_data ) > 1 )
 						)
 							$multiselectable_cf7_fields[$cf7_tag->name] = $cf7_tag->name;
 					}
