@@ -2237,7 +2237,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'save-directory'=> esc_html__( 'Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)', 'pdf-forms-for-contact-form-7' ),
 					'download-link' => esc_html__( 'Add filled PDF download link to form submission response', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping' => esc_html__( 'Field Mapper Tool', 'pdf-forms-for-contact-form-7' ),
-					'field-mapping-help' => esc_html__( 'This tool can be used to link form fields and mail-tags with fields in the attached PDF files. Form tags can also be generated. When your users submit the form, input from form fields and other mail-tags will be inserted into the correspoinding fields in the PDF file.', 'pdf-forms-for-contact-form-7' ),
+					'field-mapping-help' => esc_html__( 'This tool can be used to link form fields and mail-tags with fields in the attached PDF files. Form tags can also be generated. When your users submit the form, input from form fields and other mail-tags will be inserted into the correspoinding fields in the PDF file. CF7 to PDF field value mappings can also be created to enable the replacement of CF7 data when PDF fields are filled.', 'pdf-forms-for-contact-form-7' ),
 					'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
 					'cf7-field-or-mail-tags' => esc_html__( 'CF7 field/mail-tags', 'pdf-forms-for-contact-form-7' ),
 					'add-mapping' => esc_html__( 'Add Mapping', 'pdf-forms-for-contact-form-7' ),
