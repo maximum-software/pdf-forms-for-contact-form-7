@@ -94,7 +94,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 			if( file_exists( $index_file ) )
 				return;
 			
-			if( $handle = fopen( $index_file, 'w' ) )
+			if( $handle = @fopen( $index_file, 'w' ) )
 			{
 				fwrite( $handle, "<?php // Silence is golden." );
 				fclose( $handle );
@@ -161,9 +161,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 			
 			$path = $this->get_downloads_path();
 			
-			if( ( $downloads_dir = opendir( $path ) ) !== FALSE )
+			if( ( $downloads_dir = @opendir( $path ) ) !== FALSE )
 			{
-				while( FALSE !== ( $temp_item = readdir( $downloads_dir ) ) )
+				while( FALSE !== ( $temp_item = @readdir( $downloads_dir ) ) )
 				{
 					if( $temp_item != '.' && $temp_item != '..' )
 					{
@@ -175,9 +175,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 							if( $mtime && time() < $mtime + $timeout )
 								continue;
 							
-							if( ( $temp_item_dir = opendir( $temp_item_path ) ) !== FALSE )
+							if( ( $temp_item_dir = @opendir( $temp_item_path ) ) !== FALSE )
 							{
-								while( FALSE !== ( $file = readdir( $temp_item_dir ) ) )
+								while( FALSE !== ( $file = @readdir( $temp_item_dir ) ) )
 								{
 									if( $file != '.' && $file != '..' )
 									{
