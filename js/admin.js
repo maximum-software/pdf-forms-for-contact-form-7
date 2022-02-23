@@ -1861,9 +1861,8 @@ jQuery(document).ready(function($) {
 		var scrollElement = imageEmbedToolElement.parent();
 		var embedRowElement = jQuery(".wpcf7-pdf-forms-admin .image-embeds-row:visible").last();
 		var embedRowPosition = embedRowElement.position();
-		var embedRowHeight = embedRowElement.height();
-		if(imageEmbedToolPosition && embedRowPosition && embedRowHeight)
-			scrollElement.animate({scrollTop: imageEmbedToolPosition.top + embedRowPosition.top + embedRowHeight}, 1000);
+		if(imageEmbedToolPosition && embedRowPosition)
+			scrollElement.animate({scrollTop: scrollElement.scrollTop() + imageEmbedToolPosition.top + embedRowPosition.top}, 1000);
 		
 		return false;
 	});
