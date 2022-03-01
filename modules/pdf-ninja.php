@@ -322,6 +322,13 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$errors[2][] = $error;
 		}
 		
+		if( $this->is_function_disabled( 'finfo_open' ) && $this->is_function_disabled( 'mime_content_type' ) )
+		{
+			$error = __( 'PHP Fileinfo is disabled.', 'pdf-forms-for-contact-form-7' );
+			$errors[1][] = $error;
+			$errors[2][] = $error;
+		}
+		
 		// check /proc/self/stat (required for pdftk)
 		if( !@file_exists( '/proc/self/stat' ) )
 			$errors[1][] = __( 'Hosting environments with no access to /proc/self/stat are not supported.', 'pdf-forms-for-contact-form-7' );
