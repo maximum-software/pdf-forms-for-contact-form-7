@@ -659,7 +659,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			throw new Exception( __( "File is not accessible in the local file system", 'pdf-forms-for-contact-form-7' ) );
 		
 		$filepath = get_attached_file( $attachment_id );
-		$filename = basename( $filepath );
+		$filename = wp_basename( $filepath );
 		$filecontents = file_get_contents( $filepath );
 		
 		$payload .= "--{$boundary}\r\n"
@@ -852,7 +852,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		
 		foreach( $files as $fileId => $filepath )
 		{
-			$filename = basename( $filepath );
+			$filename = wp_basename( $filepath );
 			$filecontents = file_get_contents( $filepath );
 			
 			$payload .= "--{$boundary}\r\n"

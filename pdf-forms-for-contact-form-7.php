@@ -982,7 +982,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						$filepath = $uploaded_files[$embed['cf7_field']]; // array in CF7 v5.4, string in prior versions
 						if( is_array( $filepath ) )
 							$filepath = reset( $filepath ); // take only the first file
-						$filename = basename( $filepath );
+						$filename = wp_basename( $filepath );
 					}
 					
 					if( ! $filepath )
@@ -1246,7 +1246,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					if ( $filename !== "" )
 						$destfilename = wpcf7_mail_replace_tags( $filename );
 					else
-						$destfilename = basename( $filepath, '.pdf' );
+						$destfilename = wp_basename( $filepath, '.pdf' );
 					
 					$destfile = self::create_wpcf7_tmp_filepath( $destfilename.'.pdf' ); // if $destfilename is empty create_wpcf7_tmp_filepath generates unnamed-file.pdf
 					
@@ -1269,7 +1269,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						throw new Exception(
 							self::replace_tags(
 								__( "Error generating PDF: {error-message} at {error-file}:{error-line}", 'pdf-forms-for-contact-form-7' ),
-								array( 'error-message' => $e->getMessage(), 'error-file' => basename( $e->getFile() ), 'error-line' => $e->getLine() )
+								array( 'error-message' => $e->getMessage(), 'error-file' => wp_basename( $e->getFile() ), 'error-line' => $e->getLine() )
 							)
 						);
 					}
@@ -1384,7 +1384,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					throw new Exception(
 						self::replace_tags(
 							__( "File type {mime-type} of {file} is unsupported for {purpose}", 'pdf-forms-for-contact-form-7' ),
-							array( 'mime-type' => $mimetype, 'file' => basename( $filepath ), 'purpose' => __("PDF form filling", 'pdf-forms-for-contact-form-7') )
+							array( 'mime-type' => $mimetype, 'file' => wp_basename( $filepath ), 'purpose' => __("PDF form filling", 'pdf-forms-for-contact-form-7') )
 						)
 					);
 				
@@ -1404,7 +1404,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success' => true,
 					'attachment_id' => $attachment_id,
-					'filename' => basename( $filepath ),
+					'filename' => wp_basename( $filepath ),
 					'options' => $options,
 					'info' => $info,
 				) );
@@ -1414,7 +1414,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success'  => false,
 					'error_message' => $e->getMessage(),
-					'error_location' => basename( $e->getFile() ) . ":". $e->getLine(),
+					'error_location' => wp_basename( $e->getFile() ) . ":". $e->getLine(),
 				) );
 			}
 		}
@@ -1773,7 +1773,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success'  => false,
 					'error_message' => $e->getMessage(),
-					'error_location' => basename( $e->getFile() ) . ":". $e->getLine(),
+					'error_location' => wp_basename( $e->getFile() ) . ":". $e->getLine(),
 				) );
 			}
 		}
@@ -1863,7 +1863,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					
 					$attachments[] = array(
 						'attachment_id' => $attachment_id,
-						'filename' => basename( get_attached_file( $attachment_id ) ),
+						'filename' => wp_basename( get_attached_file( $attachment_id ) ),
 						'options' => $options,
 						'info' => $info,
 					);
@@ -1902,7 +1902,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success'  => false,
 					'error_message' => $e->getMessage(),
-					'error_location' => basename( $e->getFile() ) . ":". $e->getLine(),
+					'error_location' => wp_basename( $e->getFile() ) . ":". $e->getLine(),
 				) );
 			}
 		}
@@ -2009,7 +2009,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success'  => false,
 					'error_message' => $e->getMessage(),
-					'error_location' => basename( $e->getFile() ) . ":". $e->getLine(),
+					'error_location' => wp_basename( $e->getFile() ) . ":". $e->getLine(),
 				) );
 			}
 		}
@@ -2044,7 +2044,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( $attachment_path === false )
 				$attachment_path = "unknown";
 			
-			$filename = wp_unique_filename( $wp_upload_dir['path'], basename( $attachment_path ).'.page'.intval($page).'.jpg' );
+			$filename = wp_unique_filename( $wp_upload_dir['path'], wp_basename( $attachment_path ).'.page'.intval($page).'.jpg' );
 			$filepath = $wp_upload_dir['path'] . "/$filename";
 			
 			$service = $this->get_service();
@@ -2103,7 +2103,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return wp_send_json( array(
 					'success'  => false,
 					'error_message' => $e->getMessage(),
-					'error_location' => basename( $e->getFile() ) . ":". $e->getLine(),
+					'error_location' => wp_basename( $e->getFile() ) . ":". $e->getLine(),
 				) );
 			}
 		}
