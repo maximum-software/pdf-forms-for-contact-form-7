@@ -1135,12 +1135,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						if( is_array( $data[$field] ) )
 						{
 							foreach( $data[$field] as &$value )
-								if( $value === $value_mapping['cf7_value'] )
+								if( self::mb_strtolower( $value ) === self::mb_strtolower( $value_mapping['cf7_value'] ) )
 									$value = $value_mapping['pdf_value'];
 							unset( $value );
 						}
 						else
-							if( $data[$field] === $value_mapping['cf7_value'] )
+							if( self::mb_strtolower( $data[$field] ) === self::mb_strtolower( $value_mapping['cf7_value'] ) )
 								$data[$field] = $value_mapping['pdf_value'];
 					}
 					
@@ -1555,6 +1555,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public static function mb_trim($str)
 		{
 			return preg_replace( '/(^\s+)|(\s+$)/us', '', $str );
+		}
+		
+		/*
+		 * Multibyte strtolower
+		 */
+		public static function mb_strtolower($str)
+		{
+			return function_exists( 'mb_strtolower' ) ? mb_strtolower( $str ) : mb_strtolower( $str );
 		}
 		
 		private static function escape_tag_value($value)
