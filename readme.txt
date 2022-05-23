@@ -16,7 +16,7 @@ Build Contact Form 7 forms from PDF forms. Get PDFs auto-filled and attached to 
 
 == Description ==
 
-[youtube http://www.youtube.com/watch?v=jy84xqnj0Zk]
+[youtube http://www.youtube.com/watch?v=PhcPZwDXlh8]
 
 This plugin gives WordPress Admin Dashboard users the ability to add fillable PDF attachments to email messages and form submission responses of Contact Form 7.
 
