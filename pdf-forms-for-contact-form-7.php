@@ -2330,28 +2330,28 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function parse_data_uri( $uri )
 		{
-				if( ! preg_match( '/data:([a-zA-Z-\/+.]*)((;[a-zA-Z0-9-_=.+]+)*),(.*)/', $uri, $matches ) )
+			if( ! preg_match( '/data:([a-zA-Z-\/+.]*)((;[a-zA-Z0-9-_=.+]+)*),(.*)/', $uri, $matches ) )
+				return false;
+			
+			$data = $matches[4];
+			$mime = $matches[1] ? $matches[1] : null;
+			
+			$base64 = false;
+			foreach( explode( ';', $matches[2] ) as $ext )
+				if( $ext == "base64" )
+				{
+					$base64 = true; 
+					if( ! ( $data = base64_decode( $data, $strict=true ) ) )
 						return false;
-				
-				$data = $matches[4];
-				$mime = $matches[1] ? $matches[1] : null;
-				
-				$base64 = false;
-				foreach( explode( ';', $matches[2] ) as $ext )
-						if( $ext == "base64" )
-						{
-								$base64 = true; 
-								if( ! ( $data = base64_decode( $data, $strict=true ) ) )
-									return false;
-						}
-				
-				if( ! $base64 )
-						$data = rawurldecode( $data );
-				
-				return array(
-						'data' => $data,
-						'mime' => $mime,
-				);
+				}
+			
+			if( ! $base64 )
+				$data = rawurldecode( $data );
+			
+			return array(
+				'data' => $data,
+				'mime' => $mime,
+			);
 		}
 		
 		/*
