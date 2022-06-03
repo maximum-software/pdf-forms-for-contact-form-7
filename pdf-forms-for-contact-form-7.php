@@ -975,6 +975,19 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							self::download_file( $url, $filepath, $url_mimetype ); // can throw an exception
 							$filename = $url;
 						}
+						
+						if( substr( $url, 0, 5 ) === 'data:' )
+						{
+							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.tmp' );
+							$filename = $url;
+							
+							$parsed = self::parse_data_uri( $url );
+							if( $parsed !== false )
+							{
+								$url_mimetype = $parsed['mime'];
+								file_put_contents( $filepath, $parsed['data'] );
+							}
+						}
 					}
 					
 					if( isset($embed['cf7_field']) && isset( $uploaded_files[$embed['cf7_field']] ) )
@@ -2310,6 +2323,35 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return FALSE;
 			
 			return array( 'attachment_id' => $attachment_id, 'field' => $field, 'encoded_field' => $matches[3] );
+		}
+		
+		/*
+		 * Parses data URI
+		 */
+		public function parse_data_uri( $uri )
+		{
+				if( ! preg_match( '/data:([a-zA-Z-\/+.]*)((;[a-zA-Z0-9-_=.+]+)*),(.*)/', $uri, $matches ) )
+						return false;
+				
+				$data = $matches[4];
+				$mime = $matches[1] ? $matches[1] : null;
+				
+				$base64 = false;
+				foreach( explode( ';', $matches[2] ) as $ext )
+						if( $ext == "base64" )
+						{
+								$base64 = true; 
+								if( ! ( $data = base64_decode( $data, $strict=true ) ) )
+									return false;
+						}
+				
+				if( ! $base64 )
+						$data = rawurldecode( $data );
+				
+				return array(
+						'data' => $data,
+						'mime' => $mime,
+				);
 		}
 		
 		/*
