@@ -777,6 +777,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 		}
 		
+		/**
+		 * Downloads a file from the given URL and saves the contents to the given filepath, returns mime type via argument
+		 */
 		private static function download_file( $url, $filepath, &$mimetype = null )
 		{
 			// if this url points to the site, copy the file directly
@@ -978,7 +981,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						
 						if( substr( $url, 0, 5 ) === 'data:' )
 						{
-							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.tmp' );
+							$filepath = self::create_wpcf7_tmp_filepath( 'img_data_'.count($embed_files).'.tmp' );
 							$filename = $url;
 							
 							$parsed = self::parse_data_uri( $url );
@@ -2328,7 +2331,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		/*
 		 * Parses data URI
 		 */
-		public function parse_data_uri( $uri )
+		public static function parse_data_uri( $uri )
 		{
 			if( ! preg_match( '/data:([a-zA-Z-\/+.]*)((;[a-zA-Z0-9-_=.+]+)*),(.*)/', $uri, $matches ) )
 				return false;
