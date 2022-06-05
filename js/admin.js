@@ -642,22 +642,22 @@ jQuery(document).ready(function($) {
 		if(typeof id == 'undefined')
 			id = null;
 		
-		if(!$(this).data('select2'))
+		if(!jQuery(this).data('select2'))
 			return;
 		
-		$(this).empty();
+		jQuery(this).empty();
 		
 		var select2Data = select2SharedData[this.data().select2.options.options.sharedDataElement];
 		if(select2Data.length > 0)
 		{
 			var optionInfo = select2Data[id !== null ? id : 0];
 			var option = new Option(optionInfo.text, optionInfo.id, true, true);
-			$(this).append(option).val(optionInfo.id);
+			jQuery(this).append(option).val(optionInfo.id);
 		}
 		
 		// TODO fix
-		$(this).trigger('change');
-		$(this).trigger({
+		jQuery(this).trigger('change');
+		jQuery(this).trigger({
 			type: 'select2:select',
 			params: {
 				data: optionInfo
@@ -2009,7 +2009,7 @@ jQuery(document).ready(function($) {
 		event.stopPropagation();
 		event.preventDefault();
 		
-		var embed_id = $(this).data('embed_id');
+		var embed_id = jQuery(this).data('embed_id');
 		
 		var embeds = getEmbeds();
 		for(var i=0, l=embeds.length; i<l; i++){
@@ -2026,8 +2026,8 @@ jQuery(document).ready(function($) {
 	
 	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("keyup change", "textarea.mail-tags", function(event) {
 		
-		var mail_tags = $(this).val();
-		var embed_id = $(this).data('embed_id');
+		var mail_tags = jQuery(this).val();
+		var embed_id = jQuery(this).data('embed_id');
 		
 		var embeds = getEmbeds();
 		jQuery.each(embeds, function(index, embed) {
