@@ -2171,8 +2171,18 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public static function render_notice( $notice_id, $type, $attributes = array() )
 		{
-			$attributes['attributes'] = 'data-notice-id="'.esc_attr( $notice_id ).'"';
-			$attributes['classes'] = "notice-$type is-dismissible";
+			if( ! isset( $attributes['classes'] ) )
+				$attributes['classes'] = "";
+			$attributes['classes'] = trim( $attributes['classes'] . " notice-$type" );
+			
+			if( !isset( $attributes['label'] ) )
+				$attributes['label'] = __( "PDF Forms Filler for CF7" );
+			
+			if( $notice_id )
+			{
+				$attributes['attributes'] = 'data-notice-id="'.esc_attr( $notice_id ).'"';
+				$attributes['classes'] .= ' is-dismissible';
+			}
 			
 			return self::render( "notice", $attributes );
 		}

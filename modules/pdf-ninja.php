@@ -1080,19 +1080,19 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	public function admin_notice( $message = '' )
 	{
 		if( 'error' == $message )
-			echo WPCF7_Pdf_Forms::render( 'notice_error', array(
-				'label' => esc_html__( "PDF Forms for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
+			echo WPCF7_Pdf_Forms::render_error_notice( null, array(
+				'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
 				'message' => esc_html__( "Can't save new key.", 'pdf-forms-for-contact-form-7' ),
 			) );
 		
 		if( $this->error )
-			echo WPCF7_Pdf_Forms::render( 'notice_error', array(
-				'label' => esc_html__( "PDF Forms for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
+			echo WPCF7_Pdf_Forms::render_error_notice( null, array(
+				'label' => esc_html__( "PDF Forms Filler for CF7 plugin error", 'pdf-forms-for-contact-form-7' ),
 				'message' => esc_html( $this->error ),
 			) );
 		
 		if( 'success' == $message )
-			echo WPCF7_Pdf_Forms::render( 'notice_success', array(
+			echo WPCF7_Pdf_Forms::render_success_notice( null, array(
 				'message' => esc_html__( "Settings saved.", 'pdf-forms-for-contact-form-7' ),
 			) );
 	}
