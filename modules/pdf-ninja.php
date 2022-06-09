@@ -368,10 +368,11 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		}
 		else
 		{
-			exec( 'which which', $output, $retval );
-			if( $retval !== 0 )
+			$output = null;
+			exec( 'echo works', $output, $retval );
+			if( $retval !== 0 || ! is_array( $output ) || $output[0] != 'works' )
 			{
-				$error = __( 'PHP execute function (exec) is disabled.', 'pdf-forms-for-contact-form-7' );
+				$error = __( 'PHP execute function (exec) is not working.', 'pdf-forms-for-contact-form-7' );
 				$errors[1][] = $error;
 				$errors[2][] = $error;
 			}
