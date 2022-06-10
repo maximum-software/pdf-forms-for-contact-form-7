@@ -997,7 +997,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function display_info()
 	{
-		try { $key = $this->get_key(); } catch(Exception $e) { }
+		try { $key = $this->get_key(); } catch(Exception $e) { $key = ""; }
 		
 		echo WPCF7_Pdf_Forms::render( 'pdfninja_integration_info', array(
 			'top-message' =>
@@ -1103,7 +1103,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function admin_notices()
 	{
-		try { $key = $this->get_key(); } catch(Exception $e) { };
+		try { $this->get_key(); } catch(Exception $e) { };
 		$fail = get_transient( 'wpcf7_pdf_forms_pdfninja_key_failure' );
 		if( isset( $fail ) && $fail && current_user_can( 'wpcf7_manage_integration' ) )
 			echo WPCF7_Pdf_Forms::render_error_notice( 'pdf-ninja-new-key-failure', array(
