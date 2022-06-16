@@ -1578,7 +1578,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public static function mb_strtolower($str)
 		{
-			return function_exists( 'mb_strtolower' ) ? mb_strtolower( $str ) : mb_strtolower( $str );
+			return function_exists( 'mb_strtolower' ) ? mb_strtolower( $str ) : strtolower( $str );
 		}
 		
 		private static function escape_tag_value($value)
