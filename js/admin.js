@@ -917,7 +917,7 @@ jQuery(document).ready(function($) {
 		
 		tag.find('input').data('value_mapping_id', data.value_mapping_id);
 		
-		if(cf7Field && cf7Field.hasOwnProperty('values') && cf7Field.values.length > 0)
+		if(cf7Field && cf7Field.hasOwnProperty('values') && Array.isArray(cf7Field.values) && cf7Field.values.length > 0)
 		{
 			var input = tag.find('input.cf7-value');
 			var select = jQuery('<select>');
@@ -948,7 +948,7 @@ jQuery(document).ready(function($) {
 			});
 		}
 		
-		if(pdfField && pdfField.hasOwnProperty('options') && pdfField.options.length > 0)
+		if(pdfField && pdfField.hasOwnProperty('options') && Array.isArray(pdfField.options) && pdfField.options.length > 0)
 		{
 			var input = tag.find('input.pdf-value');
 			var select = jQuery('<select>');
