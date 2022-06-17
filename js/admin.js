@@ -1010,6 +1010,8 @@ jQuery(document).ready(function($) {
 		runAfterDone(refreshPdfFields);
 		
 		addMappingEntry(data);
+
+		return data.mapping_id;
 	};
 	
 	var addMappingEntry = function(data) {
@@ -1631,10 +1633,12 @@ jQuery(document).ready(function($) {
 		{
 			jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tagText);
 			jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
-			loadCf7Fields();
-			addMapping({
-				cf7_field: tag.data('cf7_field'),
-				pdf_field: tag.data('pdf_field'),
+			loadCf7Fields(function() {
+				var mapping_id = addMapping({
+					cf7_field: tag.data('cf7_field'),
+					pdf_field: tag.data('pdf_field'),
+				});
+				generateValueMappings(mapping_id, tag.data('cf7_field'), tag.data('pdf_field'));
 			});
 		}
 		
@@ -1668,16 +1672,18 @@ jQuery(document).ready(function($) {
 			{
 				jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tagText);
 				jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
-				loadCf7Fields();
-				
-				jQuery.each(pdf_fields, function(f, field) {
-					if(field.attachment_id == 'all' && field.tag_hint)
-						addMapping({
-							cf7_field: field.tag_name,
-							pdf_field: field.id,
-						});
+				loadCf7Fields(function() {
+					jQuery.each(pdf_fields, function(f, field) {
+						if(field.attachment_id == 'all' && field.tag_hint)
+						{
+							var mapping_id = addMapping({
+								cf7_field: field.tag_name,
+								pdf_field: field.id,
+							});
+							generateValueMappings(mapping_id, field.tag_name, field.id);
+						}
+					});
 				});
-				
 			}
 		}
 		
@@ -1770,6 +1776,94 @@ jQuery(document).ready(function($) {
 		});
 		pdf_frame.open();
 	});
+
+	var generateValueMappings = function(mapping_id, cf7_field, pdf_field) {
+
+		var mapping = getMapping(mapping_id);
+		
+		if(!mapping || !mapping.hasOwnProperty('cf7_field'))
+			return;
+
+		var cf7Field = getCf7FieldData(cf7_field);
+		var pdfField = getPdfFieldData(pdf_field);
+
+		if(!cf7Field || !pdfField)
+			return;
+		
+		if(!cf7Field.hasOwnProperty('values') || !Array.isArray(cf7Field.values))
+			return;
+		
+		if(!pdfField.hasOwnProperty('options') || !Array.isArray(pdfField.options))
+			return;
+
+		if(cf7Field.values.length == 0 || pdfField.options.length == 0)
+			return;
+
+		var cf7Values = cf7Field.values.filter(function(item){
+			return pdfField.options.indexOf(item) < 0;
+		});
+
+		var pdfOptions = pdfField.options.filter(function(item){
+			return item != 'Off' && cf7Field.values.indexOf(item) < 0;
+		});
+
+		for(var i=0; i<cf7Values.length; i++)
+		{
+			var bestScore = 0;
+			var bestValueIndex = 0;
+			
+			for(var j=0; j<pdfOptions.length; j++)
+			{
+				var score = similarity(cf7Values[i], pdfOptions[j]);
+				if(score > bestScore)
+				{
+					bestScore = score;
+					bestValueIndex = j;
+				}
+			}
+			addValueMapping({'mapping_id': mapping_id, 'pdf_field': pdfField.id, 'cf7_value': cf7Values[i], 'pdf_value': pdfOptions[bestValueIndex]});
+		}
+	};
+
+	// implementation of levenshtein algorithm taken from https://stackoverflow.com/a/36566052/8915264
+	function similarity(s1, s2) {
+		var longer = s1;
+		var shorter = s2;
+		if (s1.length < s2.length) {
+			longer = s2;
+			shorter = s1;
+		}
+		var longerLength = longer.length;
+		if (longerLength == 0) {
+			return 1.0;
+		}
+		return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+	}
+	function editDistance(s1, s2) {
+		s1 = s1.toLowerCase();
+		s2 = s2.toLowerCase();
+		
+		var costs = new Array();
+		for (var i = 0; i <= s1.length; i++) {
+			var lastValue = i;
+			for (var j = 0; j <= s2.length; j++) {
+				if (i == 0)
+					costs[j] = j;
+				else {
+					if (j > 0) {
+						var newValue = costs[j - 1];
+						if (s1.charAt(i - 1) != s2.charAt(j - 1))
+							newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+						costs[j - 1] = lastValue;
+						lastValue = newValue;
+					}
+				}
+			}
+			if (i > 0)
+				costs[s2.length] = lastValue;
+		}
+		return costs[s2.length];
+	}
 	
 	// set up 'Add Mapping' button handler
 	jQuery('.wpcf7-pdf-forms-admin').on("click", '.add-mapping-button', function(event) {
@@ -1794,10 +1888,13 @@ jQuery(document).ready(function($) {
 					pdf_field: pdf_field,
 				});
 			else
-				addMapping({
+			{
+				var mapping_id = addMapping({
 					cf7_field: subject,
 					pdf_field: pdf_field,
 				});
+				generateValueMappings(mapping_id, subject, pdf_field);
+			}
 		}
 		
 		return false;

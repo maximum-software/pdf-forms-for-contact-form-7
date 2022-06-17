@@ -1640,7 +1640,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						
 						$name = strval( $name );
 						$option = strval( $option );
-						$tagValues .= '"' . ( $name == null || $name == $option ? '' : ( self::escape_tag_value( $name ) . '|' ) ) . self::escape_tag_value( $option ) . '" ';
+						$tagValues .= '"' . self::escape_tag_value( $name == null ? $option : $name ) . '" ';
 					}
 					
 					if( $type == 'checkbox' && count( $options ) > 1 )
