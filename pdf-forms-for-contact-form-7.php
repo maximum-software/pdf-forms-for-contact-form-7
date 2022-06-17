@@ -1631,7 +1631,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						if( $count == 1 )
 							$name = $field['name'];
 						
-						// if options list is not a promitive string array then use keys as values
+						// if options list is not a primitive string array then use keys as values
 						if( is_array( $option ) )
 						{
 							if( isset( $option['label'] ) ) $name = $option['label'];
