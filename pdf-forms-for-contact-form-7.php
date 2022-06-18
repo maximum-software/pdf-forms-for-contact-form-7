@@ -1607,7 +1607,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$tagValues = '';
 			
 			if( $type == 'text' )
-				if( isset( $field['value'] ) )
+				if( isset( $field['value'] ) && strval( $field['value'] ) != "" )
 					$tagValues .= '"' . self::escape_tag_value( strval( $field['value'] ) ) . '" ';
 			
 			if( $type == 'radio' || $type == 'select' || $type == 'checkbox' )
@@ -1972,6 +1972,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				{
 					$field['type'] = $tag_obj->basetype;
 					if( is_array( $tag_obj->values ) && count( $tag_obj->values ) > 0 )
+					// don't bother with values if it is a text field
+					if( in_array( $tag_obj->basetype, array( 'text', 'textarea', 'tel', 'email', 'url', 'number', 'range' ) ) )
 					{
 						$values = $tag_obj->values;
 						$pipes = $tag_obj->pipes;
@@ -1995,8 +1997,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							unset($orig_value);
 						}
 						
+						// remove extra item appended by a free input text field feature
 						if( ( $tag_obj->basetype == 'checkbox' || $tag_obj->basetype == 'radio' ) && $tag_obj->has_option( 'free_text' ) )
 							array_pop( $values );
+						
+						// if the only option is an empty string, assume there are no options
+						if( count( $values ) == 0 || reset( $values ) === "" )
+							$values = array();
 						
 						$field['values'] = $values;
 					}
