@@ -1973,7 +1973,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$field['type'] = $tag_obj->basetype;
 					if( is_array( $tag_obj->values ) && count( $tag_obj->values ) > 0 )
 					// don't bother with values if it is a text field
-					if( in_array( $tag_obj->basetype, array( 'text', 'textarea', 'tel', 'email', 'url', 'number', 'range' ) ) )
+					if( !in_array( $tag_obj->basetype, array( 'text', 'textarea', 'tel', 'email', 'url', 'number', 'range' ) ) )
 					{
 						$values = $tag_obj->values;
 						$pipes = $tag_obj->pipes;
