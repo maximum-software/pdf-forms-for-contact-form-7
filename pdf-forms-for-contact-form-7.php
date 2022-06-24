@@ -2002,7 +2002,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							array_pop( $values );
 						
 						// if the only option is an empty string, assume there are no options
-						if( count( $values ) == 0 || reset( $values ) === "" )
+						if( count( $values ) == 1 && reset( $values ) === "" )
 							$values = array();
 						
 						$field['values'] = $values;
