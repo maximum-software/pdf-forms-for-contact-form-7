@@ -22,7 +22,7 @@ This plugin gives WordPress Admin Dashboard users the ability to add fillable PD
 
 If the PDF attachment has a PDF form, the plugin allows users to add fields to the Contact Form 7 form and/or link them to fields in the PDF. The plugin also allows the attached PDF files to be embedded with images supplied by the Contact Form 7 form fields. The filled PDF files can be saved on the web server.
 
-When your website visitor submits your Contact Form 7 form, the form in the PDF file is filled with the form information, images are embedded and the resulting PDF file is attached to the Contact Form 7 email message. The resulting PDF file can also be downloaded by your website visitors if this option is enabled in your form's options.
+When your website visitor submits your Contact Form 7 form, the form in the PDF file is filled with the CF7 form information, images are embedded and the resulting PDF file is attached to the Contact Form 7 email message. The resulting PDF file can also be downloaded by your website visitors if this option is enabled in your form's options. It is possible to save the resulting PDF file to your server's wp-content/uploads directory.
 
 An external web API (https://pdf.ninja) is used for filling PDF forms (free usage has limitations). The "Enterprise Extension" plugin is available for purchase that enables the processing all PDF operations locally on your web server and disables the use of the external web API.
 
@@ -35,7 +35,6 @@ Requirements:
 Known problems:
  * Some third party plugins break the functionality of this plugin (see a list below). Try troubleshooting the problem by disabling likely plugins that may cause issues, such as plugins that modify WordPress or Contact Form 7 in radical ways.
  * Some image optimization plugins optimize PDFs and strip PDF forms from PDF files. This may cause your existing forms to break at a random point in the future (when PDF file cache times out at the API).
- * Multi-select checkbox fields are not currently supported. Support is planned in the future.
  * The old version of the API (v1) produces PDFs which may not render properly in some PDF readers and with some UTF-8 (non-latin) characters, checkboxes and radio buttons.
 
 Known incompatible plugins:
@@ -392,36 +391,32 @@ No. This plugin adds features to the [Contact Form 7](https://wordpress.org/plug
 
 = Does this plugin require special software installation on the web server? =
 
-No. The plugin uses core WordPress features only. No special software or PHP extensions are needed. Working with PDF files is done through [Pdf.Ninja API](https://pdf.ninja). It is recommended to have a working SSL/TLS certificate verification with cURL.
+No. The plugin uses core WordPress and CF7 features only. No special software or PHP extensions are needed. Working with PDF files is done through [Pdf.Ninja API](https://pdf.ninja). It is recommended to have a working SSL/TLS certificate validation with cURL. [Enterprise Extension](https://maximum.software/store/pdf-forms-filler-for-contact-form-7-enterprise-extension-2/) is available if your business requirements prevent the use of a third party API.
 
-= How are the CF7 form fields mapped to the PDF form fields? =
+= How are CF7 form fields mapped to PDF form fields? =
 
-There are two ways to map fields with this plugin. The field mapper tool allows you to map fields individually and, when needed, generate new CF7 fields on the fly. The tag generator tool maps to the fields in the PDF form using the random looking code in the CF7 field name that it generates.  Here is the format: pdf-field-{attachment-id}-{human-readable-field-name}-{random-looking-code}. The '{attachment-id}' can be 'all' to allow it to map to all PDFs attached to the CF7 form (in case you ever want to swap out the PDF file without needing to fix the generated tags).  If you remove the random looking code, the field will no longer be mapped to the field in the PDF.
+The field mapper tool allows you to map fields individually and, when needed, generate new CF7 fields on the fly. CF7 fields can be mapped to multiple PDF fields. Mappings can be associated with a specific PDF attachment or all PDF attachments.
 
 = My fields are not getting filled, what is wrong? =
 
-If you reuploaded the PDF file and your mapping was using the old file ID then your mapping will no longer work and you will need to recreate it.
-
-If you are using the field mapper tool, make sure the mapping exists in the list of mappings and the field names match. If you are using the tag generator tool, make sure the attachment ID matches (or is 'all') and the base64-encoded part of the tag name is unchanged.
-
-If you renamed the PDF field, you will need to remove the old mapping and recreate the mapping with the new name.
+Make sure the mapping exists in the list of mappings and the field names match. If you reuploaded and reattached your PDF file and your mappings were using the old attachment ID then your mappings will no longer work and you will need to recreate them. Sometimes PDF form fields have validation scripts which prevent value with an incorrect format to be filled in. Date PDF fields must be [formatted with the format mail-tag](https://contactform7.com/date-field/#Format_Date_Value_in_Mail).
 
 = My checkboxes and/or radio buttons are not getting filled, what is wrong? =
 
-Make sure your PDF checkbox/radio field's exported value matches the value of the CF7 form's checkbox tag. Usually, it is "On" or "Yes". If you need to display a different value in the CF7 form, use [pipes](https://contactform7.com/selectable-recipient-with-pipes/).
+Make sure your PDF checkbox/radio field's exported value matches the value of the CF7 form's checkbox tag. Usually, it is "On" or "Yes". If you need to display a different value in the CF7 form, you will need to create a value mapping or use [pipes](https://contactform7.com/selectable-recipient-with-pipes/).
 
-Some PDF viewers don't render checkboxes correctly in some PDF files due to incompatible PDF formatting. You may be able to solve this issue by recreating the PDF in a different PDF editor.
+Some PDF viewers don't render checkboxes correctly in some PDF files. You may be able to solve this issue by recreating the PDF in a different PDF editor. If you are still using Pdf.Ninja API v1, switching to v2 may resolve your issue.
 
 = How do I remove the watermark in the filled PDF files? =
 
-Please see the [Pdf.Ninja API website](https://pdf.ninja) and the [Enterprise Extension plugin](https://maximum.software/store/pdf-forms-for-contact-form-7-wordpress-plugin-enterprise-extension/).
+Please see the [Pdf.Ninja API website](https://pdf.ninja) and the [Enterprise Extension plugin page](https://maximum.software/store/pdf-forms-filler-for-contact-form-7-enterprise-extension-2/).
 
 = How do I set up PDF form filling on my local web server? =
 
-Please see the [Enterprise Extension plugin](https://maximum.software/store/pdf-forms-for-contact-form-7-wordpress-plugin-enterprise-extension/).
+Please see the [Enterprise Extension plugin page](https://maximum.software/store/pdf-forms-filler-for-contact-form-7-enterprise-extension-2/).
 
 == Screenshots ==
 
 1. PDF Form button is available to access PDF attachments interface
 2. Form-tag Generator interface that allows users to upload and attach PDF files and generate tags
-3. Email message in Thunderbird with the attached PDF file
+3. Filled PDF file

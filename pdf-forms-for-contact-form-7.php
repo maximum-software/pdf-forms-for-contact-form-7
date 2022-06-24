@@ -777,6 +777,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 		}
 		
+		/**
+		 * Downloads a file from the given URL and saves the contents to the given filepath, returns mime type via argument
+		 */
 		private static function download_file( $url, $filepath, &$mimetype = null )
 		{
 			// if this url points to the site, copy the file directly
@@ -974,6 +977,19 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.tmp' );
 							self::download_file( $url, $filepath, $url_mimetype ); // can throw an exception
 							$filename = $url;
+						}
+						
+						if( substr( $url, 0, 5 ) === 'data:' )
+						{
+							$filepath = self::create_wpcf7_tmp_filepath( 'img_data_'.count($embed_files).'.tmp' );
+							$filename = $url;
+							
+							$parsed = self::parse_data_uri( $url );
+							if( $parsed !== false )
+							{
+								$url_mimetype = $parsed['mime'];
+								file_put_contents( $filepath, $parsed['data'] );
+							}
 						}
 					}
 					
@@ -1562,7 +1578,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public static function mb_strtolower($str)
 		{
-			return function_exists( 'mb_strtolower' ) ? mb_strtolower( $str ) : mb_strtolower( $str );
+			return function_exists( 'mb_strtolower' ) ? mb_strtolower( $str ) : strtolower( $str );
 		}
 		
 		private static function escape_tag_value($value)
@@ -1591,7 +1607,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$tagValues = '';
 			
 			if( $type == 'text' )
-				if( isset( $field['value'] ) )
+				if( isset( $field['value'] ) && strval( $field['value'] ) != "" )
 					$tagValues .= '"' . self::escape_tag_value( strval( $field['value'] ) ) . '" ';
 			
 			if( $type == 'radio' || $type == 'select' || $type == 'checkbox' )
@@ -1615,7 +1631,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						if( $count == 1 )
 							$name = $field['name'];
 						
-						// if options list is not a promitive string array then use keys as values
+						// if options list is not a primitive string array then use keys as values
 						if( is_array( $option ) )
 						{
 							if( isset( $option['label'] ) ) $name = $option['label'];
@@ -1624,10 +1640,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						
 						$name = strval( $name );
 						$option = strval( $option );
-						$tagValues .= '"' . ( $name == null || $name == $option ? '' : ( self::escape_tag_value( $name ) . '|' ) ) . self::escape_tag_value( $option ) . '" ';
+						$tagValues .= '"' . self::escape_tag_value( $name == null ? $option : $name ) . '" ';
 					}
 					
-					// TODO: add multiselect support
 					if( $type == 'checkbox' && count( $options ) > 1 )
 						$tagOptions .= 'exclusive ';
 					
@@ -1957,6 +1972,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				{
 					$field['type'] = $tag_obj->basetype;
 					if( is_array( $tag_obj->values ) && count( $tag_obj->values ) > 0 )
+					// don't bother with values if it is a text field
+					if( !in_array( $tag_obj->basetype, array( 'text', 'textarea', 'tel', 'email', 'url', 'number', 'range' ) ) )
 					{
 						$values = $tag_obj->values;
 						$pipes = $tag_obj->pipes;
@@ -1980,8 +1997,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							unset($orig_value);
 						}
 						
+						// remove extra item appended by a free input text field feature
 						if( ( $tag_obj->basetype == 'checkbox' || $tag_obj->basetype == 'radio' ) && $tag_obj->has_option( 'free_text' ) )
 							array_pop( $values );
+						
+						// if the only option is an empty string, assume there are no options
+						if( count( $values ) == 1 && reset( $values ) === "" )
+							$values = array();
 						
 						$field['values'] = $values;
 					}
@@ -2155,8 +2177,18 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public static function render_notice( $notice_id, $type, $attributes = array() )
 		{
-			$attributes['attributes'] = 'data-notice-id="'.esc_attr( $notice_id ).'"';
-			$attributes['classes'] = "notice-$type is-dismissible";
+			if( ! isset( $attributes['classes'] ) )
+				$attributes['classes'] = "";
+			$attributes['classes'] = trim( $attributes['classes'] . " notice-$type" );
+			
+			if( !isset( $attributes['label'] ) )
+				$attributes['label'] = __( "PDF Forms Filler for CF7" );
+			
+			if( $notice_id )
+			{
+				$attributes['attributes'] = 'data-notice-id="'.esc_attr( $notice_id ).'"';
+				$attributes['classes'] .= ' is-dismissible';
+			}
 			
 			return self::render( "notice", $attributes );
 		}
@@ -2310,6 +2342,35 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return FALSE;
 			
 			return array( 'attachment_id' => $attachment_id, 'field' => $field, 'encoded_field' => $matches[3] );
+		}
+		
+		/*
+		 * Parses data URI
+		 */
+		public static function parse_data_uri( $uri )
+		{
+			if( ! preg_match( '/data:([a-zA-Z-\/+.]*)((;[a-zA-Z0-9-_=.+]+)*),(.*)/', $uri, $matches ) )
+				return false;
+			
+			$data = $matches[4];
+			$mime = $matches[1] ? $matches[1] : null;
+			
+			$base64 = false;
+			foreach( explode( ';', $matches[2] ) as $ext )
+				if( $ext == "base64" )
+				{
+					$base64 = true; 
+					if( ! ( $data = base64_decode( $data, $strict=true ) ) )
+						return false;
+				}
+			
+			if( ! $base64 )
+				$data = rawurldecode( $data );
+			
+			return array(
+				'data' => $data,
+				'mime' => $mime,
+			);
 		}
 		
 		/*

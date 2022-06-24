@@ -6,7 +6,7 @@ jQuery(document).ready(function($) {
 	
 	jQuery('.wpcf7-pdf-forms-notice').each(function() {
 		
-		var notice_id = $(this).data('notice-id');
+		var notice_id = jQuery(this).data('notice-id');
 		
 		if(typeof notice_id === "undefined")
 			return;
@@ -27,7 +27,7 @@ jQuery(document).ready(function($) {
 	
 	jQuery('.wpcf7-pdf-forms-notice').on("click", ".notice-dismiss", function(event) {
 		
-		var notice_id = $(this).closest('.wpcf7-pdf-forms-notice').data('notice-id');
+		var notice_id = jQuery(this).closest('.wpcf7-pdf-forms-notice').data('notice-id');
 		if(typeof notice_id == 'string')
 		{
 			var date = new Date();
