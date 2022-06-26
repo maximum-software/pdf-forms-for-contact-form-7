@@ -1744,6 +1744,7 @@ jQuery(document).ready(function($) {
 		return false;
 	};
 	
+	// set up 'Attach a PDF File' button handler
 	jQuery('.wpcf7-pdf-forms-admin').on("click", '.attach-btn', function(event) {
 		
 		// prevent running default button click handlers
