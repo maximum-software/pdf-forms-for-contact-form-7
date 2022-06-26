@@ -1714,7 +1714,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$unavailableNames = array_merge( $unavailableNames, $reservedNames );
 			if( array_search( $tagName, $unavailableNames ) !== FALSE )
 			{
-				$tagName .= '-0000';
+				if( $tagName[ strlen( $tagName ) - 1 ] != '-' )
+					$tagName .= '-';
+				$tagName .= '0000';
 				do { $tagName++; }
 				while( array_search( $tagName, $unavailableNames ) !== FALSE );
 			}
@@ -1807,9 +1809,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		private static function wpcf7_sanitize_field_name( $name )
 		{
 			$slug = sanitize_key( remove_accents( $name ) );
+			if( $slug == '' )
+				$slug = 'field';
 			// first character must be a letter
 			if( preg_match( '/^[a-zA-Z]$/', $slug[0] ) === 0 )
-				$slug = 'f-'.$slug;
+				$slug = 'field-'.$slug;
 			return $slug;
 		}
 		
