@@ -1586,17 +1586,6 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
-	var getWpcf7obj = function() {
-		var wpcf7obj;
-		if(typeof _wpcf7 != 'undefined' && _wpcf7 !== null)
-			wpcf7obj = _wpcf7;
-		if(typeof wpcf7 != 'undefined' && wpcf7 !== null)
-			wpcf7obj = wpcf7;
-		if(!wpcf7obj)
-			alert(wpcf7_pdf_forms.__No_WPCF7);
-		return wpcf7obj;
-	};
-	
 	// set up 'Insert Tags' button handler
 	jQuery('.wpcf7-pdf-forms-admin').on("click", '.insert-tags-button', function(event) {
 		
@@ -1607,12 +1596,8 @@ jQuery(document).ready(function($) {
 		clearMessages();
 		
 		var tags = jQuery('.wpcf7-pdf-forms-admin .tags-textarea').val();
-		var wpcf7obj = getWpcf7obj();
-		if(wpcf7obj)
-		{
-			jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tags);
-			jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
-		}
+		jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tags);
+		jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
 		
 		return false;
 	});
@@ -1627,18 +1612,19 @@ jQuery(document).ready(function($) {
 		clearMessages();
 		
 		var tag = jQuery('.wpcf7-pdf-forms-admin .tag-hint');
-		var wpcf7obj = getWpcf7obj();
 		var tagText = tag.text();
-		if(wpcf7obj && tagText)
+		var cf7_field = tag.data('cf7_field');
+		var pdf_field = tag.data('pdf_field');
+		if(tagText !="" && (typeof cf7_field != 'undefined') && (typeof pdf_field != 'undefined'))
 		{
 			jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tagText);
 			jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
 			loadCf7Fields(function() {
 				var mapping_id = addMapping({
-					cf7_field: tag.data('cf7_field'),
-					pdf_field: tag.data('pdf_field'),
+					cf7_field: cf7_field,
+					pdf_field: pdf_field,
 				});
-				generateValueMappings(mapping_id, tag.data('cf7_field'), tag.data('pdf_field'));
+				generateValueMappings(mapping_id, cf7_field, pdf_field);
 			});
 		}
 		
@@ -1654,37 +1640,33 @@ jQuery(document).ready(function($) {
 		
 		clearMessages();
 		
-		var wpcf7obj = getWpcf7obj();
 		var tagText = "";
 		
 		var pdf_fields = getUnmappedPdfFields();
 		
-		if(wpcf7obj)
+		jQuery.each(pdf_fields, function(f, field) {
+			if(field.attachment_id == 'all' && field.tag_hint)
+				tagText +=
+					'<label>' + jQuery("<div>").text(field.name).html() + '</label>\n' +
+					'    ' + field.tag_hint + '\n\n';
+		});
+		
+		if(tagText)
 		{
-			jQuery.each(pdf_fields, function(f, field) {
-				if(field.attachment_id == 'all' && field.tag_hint)
-					tagText +=
-						'<label>' + jQuery("<div>").text(field.name).html() + '</label>\n' +
-						'    ' + field.tag_hint + '\n\n';
-			});
-			
-			if(tagText)
-			{
-				jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tagText);
-				jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
-				loadCf7Fields(function() {
-					jQuery.each(pdf_fields, function(f, field) {
-						if(field.attachment_id == 'all' && field.tag_hint)
-						{
-							var mapping_id = addMapping({
-								cf7_field: field.tag_name,
-								pdf_field: field.id,
-							});
-							generateValueMappings(mapping_id, field.tag_name, field.id);
-						}
-					});
+			jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tagText);
+			jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
+			loadCf7Fields(function() {
+				jQuery.each(pdf_fields, function(f, field) {
+					if(field.attachment_id == 'all' && field.tag_hint)
+					{
+						var mapping_id = addMapping({
+							cf7_field: field.tag_name,
+							pdf_field: field.id,
+						});
+						generateValueMappings(mapping_id, field.tag_name, field.id);
+					}
 				});
-			}
+			});
 		}
 		
 		return false;
