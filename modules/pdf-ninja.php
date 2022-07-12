@@ -378,6 +378,13 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			}
 		}
 		
+		if( $this->is_function_disabled( 'escapeshellarg' ) )
+		{
+			$error = __( 'PHP function `escapeshellarg()` is disabled.', 'pdf-forms-for-contact-form-7' );
+			$errors[1][] = $error;
+			$errors[2][] = $error;
+		}
+		
 		$arch = php_uname( "m" );
 		if( $arch != 'x86_64' && $arch != 'amd64' )
 		{
