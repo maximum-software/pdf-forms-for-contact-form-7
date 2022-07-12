@@ -26,6 +26,8 @@ When your website visitor submits your Contact Form 7 form, the form in the PDF 
 
 An external web API (https://pdf.ninja) is used for filling PDF forms (free usage has limitations). The "Enterprise Extension" plugin is available for purchase that enables the processing all PDF operations locally on your web server and disables the use of the external web API.
 
+Please see the [tutorial video](https://youtu.be/jy84xqnj0Zk) and the [documentation](https://pdfformsfiller.org/docs/cf7/) for detailed information.
+
 Requirements:
  * PHP 5.2 or newer
  * WordPress 4.8 or newer
