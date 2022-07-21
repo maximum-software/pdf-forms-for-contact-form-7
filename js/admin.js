@@ -194,7 +194,7 @@ jQuery(document).ready(function($) {
 			}
 		});
 		
-		runAfterDone(refreshPdfFields);
+		runWhenDone(refreshPdfFields);
 	};
 	var getPdfFieldData = function(id) {
 		
@@ -384,7 +384,7 @@ jQuery(document).ready(function($) {
 	
 	var setData = function(field, value) {
 		pluginData[field] = value;
-		runAfterDone(updatePluginDataField);
+		runWhenDone(updatePluginDataField);
 	};
 	
 	var updatePluginDataField = function() {
@@ -817,16 +817,16 @@ jQuery(document).ready(function($) {
 			return [];
 	};
 	
-	var runAfterDoneTimers = {};
-	var runAfterDone = function(func) {
-		if(runAfterDoneTimers[func])
+	var runWhenDoneTimers = {};
+	var runWhenDone = function(func) {
+		if(runWhenDoneTimers[func])
 			return;
-		runAfterDoneTimers[func] = setTimeout(function(){ delete runAfterDoneTimers[func]; func(); }, 0);
+		runWhenDoneTimers[func] = setTimeout(function(func){ delete runWhenDoneTimers[func]; func(); }, 0, func);
 	}
 	
 	var setMappings = function(mappings) {
 		setData('mappings', mappings);
-		runAfterDone(refreshPdfFields);
+		runWhenDone(refreshPdfFields);
 	};
 	
 	var deleteMapping = function(mapping_id) {
@@ -878,7 +878,7 @@ jQuery(document).ready(function($) {
 				value_mappings.splice(i, 1);
 		
 		setValueMappings(value_mappings);
-		runAfterDone(refreshMappings);
+		runWhenDone(refreshMappings);
 	};
 	
 	var generateId = function() {
@@ -896,7 +896,7 @@ jQuery(document).ready(function($) {
 		data.value_mapping_id = generateId();
 		pluginData["value_mappings"].push(data);
 		
-		runAfterDone(updatePluginDataField);
+		runWhenDone(updatePluginDataField);
 		
 		addValueMappingEntry(data);
 	};
@@ -1006,8 +1006,8 @@ jQuery(document).ready(function($) {
 		data.mapping_id = generateId();
 		pluginData["mappings"].push(data);
 		
-		runAfterDone(updatePluginDataField);
-		runAfterDone(refreshPdfFields);
+		runWhenDone(updatePluginDataField);
+		runWhenDone(refreshPdfFields);
 		
 		addMappingEntry(data);
 
