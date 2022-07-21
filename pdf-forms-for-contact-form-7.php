@@ -1877,7 +1877,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$unavailableNames[] = $cf7_field['name'];
 				
 				$attachments = array();
-				$attachment_ids = array();
 				foreach( $this->post_get_all_pdfs( $post_id ) as $attachment_id => $attachment )
 				{
 					$options = array();
@@ -1893,7 +1892,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						'options' => $options,
 						'info' => $info,
 					);
-					$attachment_ids[] = $attachment_id;
 				}
 				
 				$mappings = self::get_meta( $post_id, 'mappings' );
