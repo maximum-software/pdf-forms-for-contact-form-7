@@ -1136,7 +1136,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		{
 			$url = $this->get_api_url();
 			$verify_ssl = $this->get_verify_ssl();
-			if( substr($url,0,5) == 'http:' || !$verify_ssl)
+			if( substr( $url, 0, 5 ) == 'http:' || !$verify_ssl )
 				$messages .= WPCF7_Pdf_Forms::render_warning_notice( 'insecure-pdf-ninja', array(
 				'label' => esc_html__( "Warning", 'pdf-forms-for-wpforms' ),
 				'message' => esc_html__( "Your Contact Form 7 integration settings indicate that you are using an insecure connection to the Pdf.Ninja API server.", 'pdf-forms-for-contact-form-7' ),
