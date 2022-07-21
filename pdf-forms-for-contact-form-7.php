@@ -1381,7 +1381,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/**
-		 * Used for uploading a pdf file to the server in wp-admin interface
+		 * Used for attaching a PDF file and retreiving PDF file information in wp-admin interface
 		 */
 		public function wp_ajax_get_attachment_info()
 		{
