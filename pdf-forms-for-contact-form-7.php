@@ -22,7 +22,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 	{
 		const VERSION = '2.0.6';
 		const MIN_WPCF7_VERSION = '5.0';
-		const MAX_WPCF7_VERSION = '5.6';
+		const MAX_WPCF7_VERSION = '5.6.99';
 		private static $BLACKLISTED_WPCF7_VERSIONS = array();
 		
 		private static $instance = null;
