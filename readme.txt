@@ -1,6 +1,6 @@
 === PDF Forms Filler for CF7 ===
-Version: 2.0.6
-Stable tag: 2.0.6
+Version: 2.0.7
+Stable tag: 2.0.7
 Requires at least: 4.8
 Tested up to: 6.0
 Requires PHP: 5.2
@@ -60,6 +60,13 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor.
 
 == Changelog ==
+
+= 2.0.7 =
+
+* Release date: July 25, 2022
+
+* Assuming support for all CF7 v5.6.* revisions
+* Minor cleanup and improvements
 
 = 2.0.6 =
 
