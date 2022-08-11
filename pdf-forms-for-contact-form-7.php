@@ -1130,6 +1130,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					}
 					
 					// process value mappings
+					$processed_value_mappings = array();
 					foreach( $value_mappings as $value_mapping )
 					{
 						$i = strpos( $value_mapping["pdf_field"], '-' );
@@ -1146,17 +1147,23 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						if( !isset( $data[$field] ) )
 							continue;
 						
-						if( is_array( $data[$field] ) )
-						{
-							foreach( $data[$field] as &$value )
-								if( self::mb_strtolower( $value ) === self::mb_strtolower( $value_mapping['cf7_value'] ) )
-									$value = $value_mapping['pdf_value'];
-							unset( $value );
-						}
-						else
-							if( self::mb_strtolower( $data[$field] ) === self::mb_strtolower( $value_mapping['cf7_value'] ) )
-								$data[$field] = $value_mapping['pdf_value'];
+						$processed_value_mappings[$field][$value_mapping['cf7_value']][] = $value_mapping;
 					}
+					
+					foreach($processed_value_mappings as $field => $cf7_mappings_list)
+						foreach($cf7_mappings_list as $cf7_value => $list)
+						{
+							if( !is_array( $data[$field] ) )
+								$data[$field] = array($data[$field]);
+							
+							foreach( $data[$field] as $key => $value )
+								if( self::mb_strtolower( $value ) === self::mb_strtolower( $cf7_value ) )
+								{
+									unset($data[$field][$key]);
+									foreach( $list as $item )
+										$data[$field][] = $item['pdf_value'];
+								}
+						}
 					
 					// filter out anything that the pdf field can't accept
 					foreach( $data as $field => &$value )
