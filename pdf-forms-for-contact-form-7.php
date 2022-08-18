@@ -42,7 +42,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 99, 2 );
 			register_activation_hook( __FILE__, array( $this, 'plugin_activated' ) );
 			register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivated' ) );
-			add_action( 'wpcf7_pdf_forms_cron', array( $this, 'cron') );
+			add_action( 'wpcf7_pdf_forms_cron', array( $this, 'cron' ) );
 		}
 		
 		/*

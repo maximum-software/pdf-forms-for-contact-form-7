@@ -1010,7 +1010,7 @@ jQuery(document).ready(function($) {
 		runWhenDone(refreshPdfFields);
 		
 		addMappingEntry(data);
-
+		
 		return data.mapping_id;
 	};
 	
@@ -1768,17 +1768,17 @@ jQuery(document).ready(function($) {
 		});
 		pdf_frame.open();
 	});
-
+	
 	var generateValueMappings = function(mapping_id, cf7_field, pdf_field) {
-
+		
 		var mapping = getMapping(mapping_id);
 		
 		if(!mapping || !mapping.hasOwnProperty('cf7_field'))
 			return;
-
+		
 		var cf7Field = getCf7FieldData(cf7_field);
 		var pdfField = getPdfFieldData(pdf_field);
-
+		
 		if(!cf7Field || !pdfField)
 			return;
 		
@@ -1787,18 +1787,18 @@ jQuery(document).ready(function($) {
 		
 		if(!pdfField.hasOwnProperty('options') || !Array.isArray(pdfField.options))
 			return;
-
+		
 		if(cf7Field.values.length == 0 || pdfField.options.length == 0)
 			return;
-
+		
 		var cf7Values = cf7Field.values.filter(function(item){
 			return pdfField.options.indexOf(item) < 0;
 		});
-
+		
 		var pdfOptions = pdfField.options.filter(function(item){
 			return item != 'Off' && cf7Field.values.indexOf(item) < 0;
 		});
-
+		
 		for(var i=0; i<cf7Values.length; i++)
 		{
 			var bestScore = 0;
@@ -1816,7 +1816,7 @@ jQuery(document).ready(function($) {
 			addValueMapping({'mapping_id': mapping_id, 'pdf_field': pdfField.id, 'cf7_value': cf7Values[i], 'pdf_value': pdfOptions[bestValueIndex]});
 		}
 	};
-
+	
 	// implementation of levenshtein algorithm taken from https://stackoverflow.com/a/36566052/8915264
 	function similarity(s1, s2) {
 		var longer = s1;
