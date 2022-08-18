@@ -2049,7 +2049,7 @@ jQuery(document).ready(function($) {
 		refreshMappings();
 	});
 	
-	jQuery('.wpcf7-pdf-forms-admin .field-mapping-tool').on("keyup change", 'textarea.mail-tags', function(event) {
+	jQuery('.wpcf7-pdf-forms-admin .field-mapping-tool').on("input change", 'textarea.mail-tags', function(event) {
 		
 		var mail_tags = jQuery(this).val();
 		var mapping_id = jQuery(this).data('mapping_id');
@@ -2066,7 +2066,7 @@ jQuery(document).ready(function($) {
 		setMappings(mappings);
 	});
 	
-	jQuery('.wpcf7-pdf-forms-admin .field-mapping-tool').on("keyup change", 'input.cf7-value', function(event) {
+	jQuery('.wpcf7-pdf-forms-admin .field-mapping-tool').on("input change", 'input.cf7-value', function(event) {
 		
 		var cf7_value = jQuery(this).val();
 		var value_mapping_id = jQuery(this).data('value_mapping_id');
@@ -2082,7 +2082,7 @@ jQuery(document).ready(function($) {
 		setValueMappings(value_mappings);
 	});
 	
-	jQuery('.wpcf7-pdf-forms-admin .field-mapping-tool').on("keyup change", 'input.pdf-value', function(event) {
+	jQuery('.wpcf7-pdf-forms-admin .field-mapping-tool').on("input change", 'input.pdf-value', function(event) {
 		
 		var pdf_value = jQuery(this).val();
 		var value_mapping_id = jQuery(this).data('value_mapping_id');
@@ -2119,7 +2119,7 @@ jQuery(document).ready(function($) {
 		refreshEmbeds();
 	});
 	
-	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("keyup change", "textarea.mail-tags", function(event) {
+	jQuery('.wpcf7-pdf-forms-admin .image-embedding-tool').on("input change", "textarea.mail-tags", function(event) {
 		
 		var mail_tags = jQuery(this).val();
 		var embed_id = jQuery(this).data('embed_id');
