@@ -614,6 +614,9 @@ jQuery(document).ready(function($) {
 						if(count > totalNeeded)
 							return false;
 						
+						if(!item.hasOwnProperty("lowerText"))
+							item.lowerText = item.text.toLowerCase();
+						
 						var counts = item.lowerText.indexOf(upperTerm) >= 0;
 						
 						if(counts)
