@@ -1334,9 +1334,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							$save_directory = implode( "/", $tag_replaced_path_elements );
 							$save_directory = preg_replace( '|/+|', '/', $save_directory ); // remove double slashes
 							
-							// remove preceeding slashes and dots and space characters
-							$save_directory = trim( $save_directory, $trim_characters );
-							
 							$storage->set_subpath( $save_directory );
 							$storage->save( $filedata['file'], $filedata['filename'] );
 						}
