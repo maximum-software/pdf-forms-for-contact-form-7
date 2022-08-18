@@ -668,7 +668,7 @@ jQuery(document).ready(function($) {
 	}
 	
 	var select2SharedData = {
-		unmappedPdfFields: [], 
+		unmappedPdfFields: [],
 		cf7FieldsCache: [],
 		pdfSelect2Files: [{id: 0, text: wpcf7_pdf_forms.__All_PDFs, lowerText: String(wpcf7_pdf_forms.__All_PDFs).toLowerCase()}],
 		pageList: []
