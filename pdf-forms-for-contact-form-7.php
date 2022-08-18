@@ -1061,7 +1061,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					
 					$data = array();
 					
-					// processs mappings
+					// process mappings
 					foreach( $mappings as $mapping )
 					{
 						$i = strpos( $mapping["pdf_field"], '-' );
@@ -1103,7 +1103,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						}
 					}
 					
-					// processs old style tag generator fields
+					// process old style tag generator fields
 					foreach( $cf7_field_tags as $name => $cf7_field_tag )
 					{
 						try
@@ -1262,7 +1262,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					else
 						$destfilename = wp_basename( $filepath, '.pdf' );
 					
-					$destfile = self::create_wpcf7_tmp_filepath( $destfilename.'.pdf' ); // if $destfilename is empty create_wpcf7_tmp_filepath generates unnamed-file.pdf
+					$destfile = self::create_wpcf7_tmp_filepath( $destfilename.'.pdf' ); // if $destfilename is empty, create_wpcf7_tmp_filepath generates unnamed-file.pdf
 					
 					try
 					{
@@ -1312,7 +1312,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							// standardize directory separator
 							$save_directory = str_replace( '\\', '/', $save_directory );
 							
-							// remove preceeding slashes and dots and space characters
+							// remove preceding slashes and dots and space characters
 							$trim_characters = "/\\. \t\n\r\0\x0B";
 							$save_directory = trim( $save_directory, $trim_characters );
 							
