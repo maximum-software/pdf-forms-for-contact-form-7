@@ -281,8 +281,8 @@ jQuery(document).ready(function($) {
 		jQuery.each(cf7Select2Cache, function(i, field) {
 			field = Object.assign({}, field); // shallow copy
 			field.lowerText = String(cf7Select2Cache[i].text).toLowerCase();
-			field['mailtag'] = false;
-			cf7Select2Cache[i] = field;
+			field.mailtag = false;
+			cf7Select2Cache.push(field);
 		});
 		
 		var mailtags = [
