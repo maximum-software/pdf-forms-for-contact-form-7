@@ -1142,12 +1142,10 @@ jQuery(document).ready(function($) {
 		});
 	};
 	
-	var removeOldMappings = function() {
+	var removeOldMappingsAndEmbeds = function() {
 		
 		var mappings = getMappings();
-		
 		for(var i=0; i<mappings.length; i++)
-		{
 			if(mappings[i].hasOwnProperty('cf7_field'))
 			{
 				var cf7_field_data = getCf7FieldData(mappings[i].cf7_field);
@@ -1157,11 +1155,22 @@ jQuery(document).ready(function($) {
 					i--;
 				}
 			}
-		}
-		
 		setMappings(mappings);
-		
 		refreshMappings();
+		
+		var embeds = getEmbeds();
+		for(var i=0; i<embeds.length; i++)
+			if(embeds[i].hasOwnProperty('cf7_field'))
+			{
+				var cf7_field_data = getCf7FieldData(embeds[i].cf7_field);
+				if(!cf7_field_data)
+				{
+					embeds.splice(i, 1);
+					i--;
+				}
+			}
+		setEmbeds(embeds);
+		refreshEmbeds();
 	};
 	
 	var updateTagHint = function() {
@@ -2122,7 +2131,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	var changeHandler = function() {
-		loadCf7Fields(removeOldMappings);
+		loadCf7Fields(removeOldMappingsAndEmbeds);
 	};
 	wpcf7_form.change(changeHandler);
 	jQuery('form.tag-generator-panel .insert-tag').click(changeHandler);
