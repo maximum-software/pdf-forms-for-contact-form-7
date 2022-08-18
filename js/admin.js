@@ -2045,7 +2045,10 @@ jQuery(document).ready(function($) {
 		var mappings = getMappings();
 		jQuery.each(mappings, function(index, mapping) {
 			if(mapping.mapping_id == mapping_id)
+			{
 				mappings[index].mail_tags = mail_tags;
+				return false; // break
+			}
 		});
 		
 		setMappings(mappings);
