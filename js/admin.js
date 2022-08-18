@@ -157,10 +157,10 @@ jQuery(document).ready(function($) {
 						if(typeof option === 'object')
 						{
 							if(option.hasOwnProperty('value'))
-								options.push(option.value.toString());
+								options.push(String(option.value));
 						}
 						else
-							options.push(option.toString());
+							options.push(String(option));
 					});
 					
 					data['options'] = options;
