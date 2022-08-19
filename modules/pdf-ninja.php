@@ -329,10 +329,6 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$errors[2][] = $error;
 		}
 		
-		// check /proc/self/stat (required for pdftk)
-		if( !@file_exists( '/proc/self/stat' ) )
-			$errors[1][] = __( 'Hosting environments with no access to /proc/self/stat are not supported.', 'pdf-forms-for-contact-form-7' );
-		
 		$min_kernel_version = array( 'Linux' => '2.6.32' );
 		$matches = array();
 		if( isset( $min_kernel_version[PHP_OS] ) && preg_match('/(\d+)(?:\.\d+)+/', php_uname( 'r' ), $matches) == 1 )
@@ -369,7 +365,8 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		else
 		{
 			$output = null;
-			exec( 'echo works', $output, $retval );
+			$retval = -1;
+			@exec( 'echo works', $output, $retval );
 			if( $retval !== 0 || ! is_array( $output ) || $output[0] != 'works' )
 			{
 				$error = __( 'PHP execute function (exec) is not working.', 'pdf-forms-for-contact-form-7' );
@@ -377,6 +374,20 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 				$errors[2][] = $error;
 			}
 		}
+		
+		// check /proc/self/stat (required by pdftk)
+		if( ini_get('open_basedir') )
+		{
+			// if open_basedir is set then use exec to check access to the /proc filesystem
+			$output = null;
+			$retval = -1;
+			@exec( 'cat /proc/self/stat', $output, $retval );
+			$proc_accessible =  $retval === 0 && is_array( $output );
+		}
+		else
+			$proc_accessible = @file_exists( '/proc/self/stat' );
+		if( ! $proc_accessible )
+			$errors[1][] = __( 'Hosting environments with no access to /proc/self/stat are not supported.', 'pdf-forms-for-contact-form-7' );
 		
 		if( $this->is_function_disabled( 'escapeshellarg' ) )
 		{
