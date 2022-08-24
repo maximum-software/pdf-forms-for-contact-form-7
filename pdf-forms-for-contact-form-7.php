@@ -1476,7 +1476,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				$fileurl = wp_get_attachment_url( $attachment_id );
 				if( $fileurl === false )
-					throw new Exception( __( "Unknown attachment URL", 'pdf-forms-for-contact-form-7' ) );
+					throw new Exception( __( "Attachment file is not accessible", 'pdf-forms-for-contact-form-7' ) );
 				
 				try
 				{
