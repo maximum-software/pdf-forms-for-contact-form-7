@@ -31,6 +31,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		private $registered_services = false;
 		private $downloads = null;
 		private $storage = null;
+		private $tmp_dir = null;
 		private $cf7_forms_save_overrides = null;
 		private $cf7_mail_attachments = array();
 		
@@ -84,6 +85,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( version_compare( WPCF7_VERSION, '5.4.1' ) < 0 )
 				// WPCF7_Submission::add_extra_attachments didn't exist prior to CF7 v5.4.1 and a workaround is needed
 				add_filter( 'wpcf7_mail_components', array( $this, 'attach_files' ), 10, 3 );
+			add_action( 'wpcf7_mail_sent', array( $this, 'remove_tmp_dir' ), 99, 0 );
 			
 			add_action( 'wpcf7_after_save', array( $this, 'update_post_attachments' ) );
 			
@@ -831,17 +833,55 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/**
-		 * Creates a temporary file path (but not the file itself)
+		 * Get temporary directory path
 		 */
-		private static function create_wpcf7_tmp_filepath( $filename )
+		public static function get_tmp_path()
 		{
 			static $uploads_dir;
 			if( ! $uploads_dir )
 			{
 				wpcf7_init_uploads(); // Confirm upload dir
 				$uploads_dir = wpcf7_upload_tmp_dir();
-				$uploads_dir = wpcf7_maybe_add_random_dir( $uploads_dir );
 			}
+			
+			return trailingslashit( $uploads_dir );
+		}
+		
+		/**
+		 * Creates a temporary directory
+		 */
+		public function create_tmp_dir()
+		{
+			if( ! $this->tmp_dir )
+				$this->tmp_dir = wpcf7_maybe_add_random_dir( self::get_tmp_path() );
+			
+			return trailingslashit( $this->tmp_dir );
+		}
+		
+		/**
+		 * Removes a temporary directory
+		 */
+		public function remove_tmp_dir()
+		{
+			if( ! $this->tmp_dir )
+				return;
+			
+			// remove files in the directory
+			$files = glob( trailingslashit( $this->tmp_dir ) . '{,.}*', GLOB_BRACE );
+			while( $file = array_shift( $files ) )
+				if( is_file( $file ) )
+					@unlink( $file );
+			
+			@rmdir( $this->tmp_dir );
+			$this->tmp_dir = null;
+		}
+		
+		/**
+		 * Creates a temporary file path (but not the file itself)
+		 */
+		private function create_tmp_filepath( $filename )
+		{
+			$uploads_dir = $this->create_tmp_dir();
 			$filename = sanitize_file_name( wpcf7_canonicalize( $filename ) );
 			$filename = wp_unique_filename( $uploads_dir, $filename );
 			return trailingslashit( $uploads_dir ) . $filename;
@@ -972,14 +1012,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						if( filter_var( $url, FILTER_VALIDATE_URL ) !== FALSE )
 						if( substr( $url, 0, 5 ) === 'http:' || substr( $url, 0, 6 ) === 'https:' )
 						{
-							$filepath = self::create_wpcf7_tmp_filepath( 'img_download_'.count($embed_files).'.tmp' );
+							$filepath = $this->create_tmp_filepath( 'img_download_'.count($embed_files).'.tmp' );
 							self::download_file( $url, $filepath, $url_mimetype ); // can throw an exception
 							$filename = $url;
 						}
 						
 						if( substr( $url, 0, 5 ) === 'data:' )
 						{
-							$filepath = self::create_wpcf7_tmp_filepath( 'img_data_'.count($embed_files).'.tmp' );
+							$filepath = $this->create_tmp_filepath( 'img_data_'.count($embed_files).'.tmp' );
 							$filename = $url;
 							
 							$parsed = self::parse_data_uri( $url );
@@ -1269,7 +1309,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					else
 						$destfilename = wp_basename( $filepath, '.pdf' );
 					
-					$destfile = self::create_wpcf7_tmp_filepath( $destfilename.'.pdf' ); // if $destfilename is empty, create_wpcf7_tmp_filepath generates unnamed-file.pdf
+					$destfile = $this->create_tmp_filepath( $destfilename.'.pdf' ); // if $destfilename is empty, create_tmp_filepath generates unnamed-file.pdf
 					
 					try
 					{
@@ -1285,8 +1325,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					}
 					catch(Exception $e)
 					{
-						// TODO: check to see if we need to clean up temporary files
-						
 						throw new Exception(
 							self::replace_tags(
 								__( "Error generating PDF: {error-message} at {error-file}:{error-line}", 'pdf-forms-for-contact-form-7' ),
@@ -1360,6 +1398,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							array( 'error-message' => $e->getMessage() )
 						)
 					);
+				
+				// clean up
+				$this->remove_tmp_dir();
+				$this->cf7_mail_attachments = array();
 			}
 		}
 		
