@@ -30,7 +30,7 @@ msgid ""
 "to email messages and/or website responses on form submission."
 msgstr ""
 "Создавайте формы Contact Form 7 из форм PDF. Настройте автоматическое "
-"заполнение PDF форм и прилажение их к сообщениям на вашем сайте."
+"заполнение PDF форм и прикрепление их к сообщениям на вашем сайте."
 
 #. Author of the plugin
 msgid "Maximum.Software"
