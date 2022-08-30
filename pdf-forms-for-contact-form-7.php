@@ -521,7 +521,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			else
 			{
 				// wp bug workaround
-				// TODO: find a better solution
+				// https://developer.wordpress.org/reference/functions/update_post_meta/#workaround
 				$fixed_value = wp_slash( $value );
 				
 				update_post_meta( $post_id, "wpcf7-pdf-forms-" . $key, $fixed_value, $oldval );
