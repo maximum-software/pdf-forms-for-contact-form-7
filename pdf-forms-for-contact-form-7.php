@@ -1193,16 +1193,27 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					foreach($processed_value_mappings as $field => $cf7_mappings_list)
 						foreach($cf7_mappings_list as $cf7_value => $list)
 						{
-							if( !is_array( $data[$field] ) )
-								$data[$field] = array($data[$field]);
+							$array = is_array( $data[$field] );
+							if( ! $array )
+								$data[$field] = array( $data[$field] );
 							
 							foreach( $data[$field] as $key => $value )
 								if( self::mb_strtolower( $value ) === self::mb_strtolower( $cf7_value ) )
 								{
-									unset($data[$field][$key]);
+									unset( $data[$field][$key] );
 									foreach( $list as $item )
 										$data[$field][] = $item['pdf_value'];
 								}
+							
+							$data[$field] = array_unique( $data[$field] );
+							
+							if( ! $array && count( $data[$field] ) < 2 )
+							{
+								if( count( $data[$field] ) > 0 )
+									$data[$field] = reset( $data[$field] );
+								else
+									$data[$field] = null;
+							}
 						}
 					
 					// filter out anything that the pdf field can't accept
