@@ -1997,8 +1997,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$properties['form'] = $form;
 			$contact_form->set_properties( $properties );
 			
-			$tags = $contact_form->collect_mail_tags();
-			$tags_objs = $contact_form->scan_form_tags();
+			$tags = $contact_form->scan_form_tags();
 			
 			if( !is_array( $tags ) )
 				throw new Exception( __( "Failed to get Contact Form fields", 'pdf-forms-for-contact-form-7' ) );
@@ -2006,70 +2005,62 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$fields = array();
 			foreach( $tags as $tag )
 			{
-				$pdf_field = self::wpcf7_field_name_decode( $tag );
+				if( ! is_object($tag) || ! property_exists( $tag, 'name' ) || strval($tag->name) === "" )
+					continue;
+				
+				$pdf_field = self::wpcf7_field_name_decode( $tag->name );
 				if( $pdf_field !== FALSE )
 					$pdf_field = $pdf_field['attachment_id'].'-'.$pdf_field['encoded_field'];
 				
 				$field = array(
-					'id' => $tag,
-					'name' => $tag,
-					'text' => $tag,
+					'id' => $tag->name,
+					'name' => $tag->name,
+					'text' => $tag->name,
+					'type' => $tag->basetype,
 					'pdf_field' => $pdf_field,
 				);
 				
-				$tag_obj = null;
-				if( is_array( $tags_objs ) )
-					foreach( $tags_objs as $to )
-						if( is_object( $to ) && property_exists( $to, 'name' ) && $to->name == $tag )
-						{
-							$tag_obj = $to;
-							break;
-						}
-				if($tag_obj != null)
+				if( is_array( $tag->values ) && count( $tag->values ) > 0 )
+				// don't bother with values if it is a text field
+				if( ! in_array( $tag->basetype, array( 'text', 'textarea', 'tel', 'email', 'url', 'number', 'range' ) ) )
 				{
-					$field['type'] = $tag_obj->basetype;
-					if( is_array( $tag_obj->values ) && count( $tag_obj->values ) > 0 )
-					// don't bother with values if it is a text field
-					if( !in_array( $tag_obj->basetype, array( 'text', 'textarea', 'tel', 'email', 'url', 'number', 'range' ) ) )
+					$values = $tag->values;
+					$pipes = $tag->pipes;
+					
+					if( WPCF7_USE_PIPE
+					&& $pipes instanceof WPCF7_Pipes
+					&& !$pipes->zero() )
 					{
-						$values = $tag_obj->values;
-						$pipes = $tag_obj->pipes;
-						
-						if( WPCF7_USE_PIPE
-						&& $pipes instanceof WPCF7_Pipes
-						&& !$pipes->zero() )
+						foreach( $values as &$orig_value )
 						{
-							foreach( $values as &$orig_value )
+							if( is_array( $orig_value ) )
 							{
-								if( is_array( $orig_value ) )
-								{
-									$value = array();
-									foreach( $orig_value as $v )
-										$value[] = $pipes->do_pipe( $v );
-								}
-								else
-									$value = $pipes->do_pipe( $orig_value );
-								$orig_value = $value;
+								$value = array();
+								foreach( $orig_value as $v )
+									$value[] = $pipes->do_pipe( $v );
 							}
-							unset($orig_value);
+							else
+								$value = $pipes->do_pipe( $orig_value );
+							$orig_value = $value;
 						}
-						
-						// remove extra item appended by a free input text field feature
-						if( ( $tag_obj->basetype == 'checkbox' || $tag_obj->basetype == 'radio' ) && $tag_obj->has_option( 'free_text' ) )
-							array_pop( $values );
-						
-						// if the only option is an empty string, assume there are no options
-						if( count( $values ) == 1 && reset( $values ) === "" )
-							$values = array();
-						
-						$field['values'] = $values;
+						unset($orig_value);
 					}
+					
+					// remove extra item appended by a free input text field feature
+					if( ( $tag->basetype == 'checkbox' || $tag->basetype == 'radio' ) && $tag->has_option( 'free_text' ) )
+						array_pop( $values );
+					
+					// if the only option is an empty string, assume there are no options
+					if( count( $values ) == 1 && reset( $values ) === "" )
+						$values = array();
+					
+					$field['values'] = $values;
 				}
 				
-				$fields[] = $field;
+				$fields[$tag->name] = $field;
 			}
 			
-			return $fields;
+			return array_values( $fields );
 		}
 		
 		/**
