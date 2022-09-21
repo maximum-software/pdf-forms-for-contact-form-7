@@ -1,6 +1,6 @@
 === PDF Forms Filler for CF7 ===
-Version: 2.0.7
-Stable tag: 2.0.7
+Version: 2.0.8
+Stable tag: 2.0.8
 Requires at least: 4.8
 Tested up to: 6.0
 Requires PHP: 5.2
@@ -60,6 +60,17 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor.
 
 == Changelog ==
+
+= 2.0.8 =
+
+* Release date: September 20, 2022
+
+* Add duplicate CF7 value mappings to multiple unique PDF values support to multiselect feature
+* Improved value mappings processing code
+* Fixed German translation
+* Added code to remove no longer relevant embeds
+* Improved temporary file management
+* Other improvements
 
 = 2.0.7 =
 
