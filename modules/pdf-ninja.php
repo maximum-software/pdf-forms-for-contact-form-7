@@ -304,111 +304,123 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		$errors = array( 1 => array(), 2 => array() );
 		$warnings = array( 1 => array(), 2 => array() );
 		
-		$required_php_version = '5.4.0';
-		if( version_compare( PHP_VERSION, $required_php_version ) < 0 )
+		try
 		{
-			$error = WPCF7_Pdf_Forms::replace_tags(
-				__( 'PHP {version} or higher is required.', 'pdf-forms-for-contact-form-7' ),
-				array( 'version' => $required_php_version )
-			);
-			$errors[1][] = $error;
-			$errors[2][] = $error;
-		}
-		
-		if( strncasecmp(PHP_OS, 'WIN', 3) == 0 )
-		{
-			$error = __( 'Windows platform is not supported.', 'pdf-forms-for-contact-form-7' );
-			$errors[1][] = $error;
-			$errors[2][] = $error;
-		}
-		
-		if( $this->is_function_disabled( 'finfo_open' ) && $this->is_function_disabled( 'mime_content_type' ) )
-		{
-			$error = __( 'PHP Fileinfo is disabled.', 'pdf-forms-for-contact-form-7' );
-			$errors[1][] = $error;
-			$errors[2][] = $error;
-		}
-		
-		$min_kernel_version = array( 'Linux' => '2.6.32' );
-		$matches = array();
-		if( isset( $min_kernel_version[PHP_OS] ) && preg_match('/(\d+)(?:\.\d+)+/', php_uname( 'r' ), $matches) == 1 )
-		{
-			$cur_kernel_version = $matches[0];
-			if( !$cur_kernel_version || version_compare( $cur_kernel_version, $min_kernel_version[PHP_OS] ) < 0 )
+			$required_php_version = '5.4.0';
+			if( version_compare( PHP_VERSION, $required_php_version ) < 0 )
 			{
-				if(!$cur_kernel_version)
-					$cur_kernel_version = __( 'unknown', 'pdf-forms-for-contact-form-7' );
 				$error = WPCF7_Pdf_Forms::replace_tags(
-					__( 'Minimum kernel version supported is {min-kernel-version}, current kernel version is {cur-kernel-version}.', 'pdf-forms-for-contact-form-7' ),
-					array(
-						'min-kernel-version' => $min_kernel_version[PHP_OS],
-						'cur-kernel-version' => $cur_kernel_version,
-					)
+					__( 'PHP {version} or higher is required.', 'pdf-forms-for-contact-form-7' ),
+					array( 'version' => $required_php_version )
 				);
 				$errors[1][] = $error;
 				$errors[2][] = $error;
 			}
-		}
-		else
-		{
-			$warning = __( 'Warning: Failed to detect kernel version support.', 'pdf-forms-for-contact-form-7' );
-			$warnings[1][] = $warning;
-			$warnings[2][] = $warning;
-		}
-		
-		if( $this->is_function_disabled( 'exec' ) )
-		{
-			$error = __( 'PHP execute function (exec) is disabled.', 'pdf-forms-for-contact-form-7' );
-			$errors[1][] = $error;
-			$errors[2][] = $error;
-		}
-		else
-		{
-			$output = null;
-			$retval = -1;
-			@exec( 'echo works', $output, $retval );
-			if( $retval !== 0 || ! is_array( $output ) || $output[0] != 'works' )
+			
+			if( strncasecmp(PHP_OS, 'WIN', 3) == 0 )
 			{
-				$error = __( 'PHP execute function (exec) is not working.', 'pdf-forms-for-contact-form-7' );
+				$error = __( 'Windows platform is not supported.', 'pdf-forms-for-contact-form-7' );
 				$errors[1][] = $error;
 				$errors[2][] = $error;
 			}
+			
+			if( $this->is_function_disabled( 'finfo_open' ) && $this->is_function_disabled( 'mime_content_type' ) )
+			{
+				$error = __( 'PHP Fileinfo is disabled.', 'pdf-forms-for-contact-form-7' );
+				$errors[1][] = $error;
+				$errors[2][] = $error;
+			}
+			
+			$min_kernel_version = array( 'Linux' => '2.6.32' );
+			$matches = array();
+			if( isset( $min_kernel_version[PHP_OS] ) && preg_match('/(\d+)(?:\.\d+)+/', php_uname( 'r' ), $matches) == 1 )
+			{
+				$cur_kernel_version = $matches[0];
+				if( !$cur_kernel_version || version_compare( $cur_kernel_version, $min_kernel_version[PHP_OS] ) < 0 )
+				{
+					if(!$cur_kernel_version)
+						$cur_kernel_version = __( 'unknown', 'pdf-forms-for-contact-form-7' );
+					$error = WPCF7_Pdf_Forms::replace_tags(
+						__( 'Minimum kernel version supported is {min-kernel-version}, current kernel version is {cur-kernel-version}.', 'pdf-forms-for-contact-form-7' ),
+						array(
+							'min-kernel-version' => $min_kernel_version[PHP_OS],
+							'cur-kernel-version' => $cur_kernel_version,
+						)
+					);
+					$errors[1][] = $error;
+					$errors[2][] = $error;
+				}
+			}
+			else
+			{
+				$warning = __( 'Warning: Failed to detect kernel version support.', 'pdf-forms-for-contact-form-7' );
+				$warnings[1][] = $warning;
+				$warnings[2][] = $warning;
+			}
+			
+			if( $this->is_function_disabled( 'exec' ) )
+			{
+				$error = __( 'PHP execute function (exec) is disabled.', 'pdf-forms-for-contact-form-7' );
+				$errors[1][] = $error;
+				$errors[2][] = $error;
+			}
+			else
+			{
+				$output = null;
+				$retval = -1;
+				@exec( 'echo works', $output, $retval );
+				if( $retval !== 0 || ! is_array( $output ) || $output[0] != 'works' )
+				{
+					$error = __( 'PHP execute function (exec) is not working.', 'pdf-forms-for-contact-form-7' );
+					$errors[1][] = $error;
+					$errors[2][] = $error;
+				}
+				else
+				{
+					// check /proc/self/stat (required by pdftk)
+					if( ini_get('open_basedir') )
+					{
+						// if open_basedir is set then use exec to check access to the /proc filesystem
+						$output = null;
+						$retval = -1;
+						@exec( 'cat /proc/self/stat', $output, $retval );
+						$proc_accessible = $retval === 0 && is_array( $output );
+					}
+					else
+						$proc_accessible = @file_exists( '/proc/self/stat' );
+					if( ! $proc_accessible )
+						$errors[1][] = __( 'Hosting environments with no access to /proc/self/stat are not supported.', 'pdf-forms-for-contact-form-7' );
+					
+					$getenforce = null;
+					$retval = -1;
+					@exec( 'getenforce', $getenforce, $retval );
+					if( $retval === 0 && is_array( $getenforce ) && isset( $getenforce[0] ) && trim( $getenforce[0] ) != "Disabled" ) // TODO: fix localization
+					{
+						$warning = __( 'Warning: SELinux may cause problems with using required binaries. You may need to turn off SELinux or adjust its policies.', 'pdf-forms-for-contact-form-7' );
+						$warnings[1][] = $warning;
+						$warnings[2][] = $warning;
+					}
+				}
+			}
+			
+			if( $this->is_function_disabled( 'escapeshellarg' ) )
+			{
+				$error = __( 'PHP function `escapeshellarg()` is disabled.', 'pdf-forms-for-contact-form-7' );
+				$errors[1][] = $error;
+				$errors[2][] = $error;
+			}
+			
+			$arch = php_uname( "m" );
+			if( $arch != 'x86_64' && $arch != 'amd64' )
+			{
+				$warnings[1][] = __( 'Warning: Bundled binaries are not available for this platform. Enterprise Extension 1 can use pdftk/qpdf/poppler/imagemagick package binaries ONLY if they are installed on the server system-wide.', 'pdf-forms-for-contact-form-7' );
+				$errors[2][] = __( 'Enterprise Extension 2 is not available for this platform.', 'pdf-forms-for-contact-form-7' );
+			}
 		}
-		
-		// check /proc/self/stat (required by pdftk)
-		if( ini_get('open_basedir') )
+		catch(Exception $e)
 		{
-			// if open_basedir is set then use exec to check access to the /proc filesystem
-			$output = null;
-			$retval = -1;
-			@exec( 'cat /proc/self/stat', $output, $retval );
-			$proc_accessible =  $retval === 0 && is_array( $output );
-		}
-		else
-			$proc_accessible = @file_exists( '/proc/self/stat' );
-		if( ! $proc_accessible )
-			$errors[1][] = __( 'Hosting environments with no access to /proc/self/stat are not supported.', 'pdf-forms-for-contact-form-7' );
-		
-		if( $this->is_function_disabled( 'escapeshellarg' ) )
-		{
-			$error = __( 'PHP function `escapeshellarg()` is disabled.', 'pdf-forms-for-contact-form-7' );
-			$errors[1][] = $error;
-			$errors[2][] = $error;
-		}
-		
-		$arch = php_uname( "m" );
-		if( $arch != 'x86_64' && $arch != 'amd64' )
-		{
-			$warnings[1][] = __( 'Warning: Bundled binaries are not available for this platform. Enterprise Extension 1 can use pdftk/qpdf/poppler/imagemagick package binaries ONLY if they are installed on the server system-wide.', 'pdf-forms-for-contact-form-7' );
-			$errors[2][] = __( 'Enterprise Extension 2 is not available for this platform.', 'pdf-forms-for-contact-form-7' );
-		}
-		
-		exec( 'getenforce', $getenforce, $retval );
-		if( !$retval && trim( $getenforce[0] ) == "Enforced" ) // TODO: fix localization
-		{
-			$warning = __( 'Warning: SELinux may cause problems with using required binaries. You may need to turn off SELinux or adjust its policies.', 'pdf-forms-for-contact-form-7' );
-			$warnings[1][] = $warning;
-			$warnings[2][] = $warning;
+			$errors[1][] = $e->getMessage();
+			$errors[2][] = $e->getMessage();
 		}
 		
 		$common_errors = array_intersect( $errors[1], $errors[2] );
