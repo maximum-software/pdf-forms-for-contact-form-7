@@ -1258,11 +1258,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					}
 					unset( $value );
 					
-					// remove fields with empty values form data
-					foreach( $data as $field => $value )
-						if( $value === "" || is_null( $value ) || $value === array() )
-							unset( $data[$field] );
-					
 					// process image embeds
 					$embeds_data = array();
 					foreach( $embeds as $id => $embed )
@@ -1288,10 +1283,19 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						}
 					
 					// skip file if 'skip when empty' option is enabled and nothing is being done to the file
-					if( count( $data ) == 0
-					&& count( $embeds_data ) == 0
-					&& $attachment['options']['skip_empty'] )
-						continue;
+					if($attachment['options']['skip_empty'] )
+					{
+						$empty_data = true;
+						foreach( $data as $field => $value )
+							if( !( $value === "" || is_null( $value ) || $value === array() ) )
+							{
+								$empty_data = false;
+								break;
+							}
+						
+						if( $empty_data && count( $embeds_data ) == 0 )
+							continue;
+					}
 					
 					$attach_to_mail_1 = $attachment['options']['attach_to_mail_1'] || strpos( $mail["attachments"], "[pdf-form-".$attachment_id."]" ) !== FALSE;
 					$attach_to_mail_2 = $attachment['options']['attach_to_mail_2'] || strpos( $mail2["attachments"], "[pdf-form-".$attachment_id."]" ) !== FALSE;
