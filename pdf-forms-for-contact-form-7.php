@@ -1352,6 +1352,32 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						isset($attachment['options']['flatten']) &&
 						$attachment['options']['flatten'] == true;
 					
+					// determine if the attachment would be changed
+					$filling_data = false;
+					foreach( $data as $field => $value )
+					{
+						if( $value === null || $value === '' )
+							$value = array();
+						else if( ! is_array( $value ) )
+							$value = array( $value );
+						
+						$pdf_value = null;
+						if( isset( $fields[$field]['value'] ) )
+							$pdf_value = $fields[$field]['value'];
+						if( $pdf_value === null || $pdf_value === '' )
+							$pdf_value = array();
+						else if( ! is_array( $pdf_value ) )
+							$pdf_value = array( $pdf_value );
+						
+						// check if values don't match
+						if( ! ( array_diff( $value, $pdf_value ) == array() && array_diff( $pdf_value, $value ) == array() ) )
+						{
+							$filling_data = true;
+							break;
+						}
+					}
+					$attachment_affected = $filling_data || count( $embeds_data ) > 0 || $options['flatten'];
+					
 					$filepath = get_attached_file( $attachment_id );
 					
 					$filename = strval( $attachment['options']['filename'] );
@@ -1367,8 +1393,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						$service = $this->get_service();
 						$filled = false;
 						if( $service )
-							// we only want to use the API when there is actual data to be embedded into the PDF file
-							if( count( $data ) > 0 || $options['flatten'] || count( $embeds_data ) > 0 )
+							// we only want to use the API when something needs to be done to the file
+							if( $attachment_affected )
 								$filled = $service->api_fill_embed( $destfile, $attachment_id, $data, $embeds_data, $options );
 						if( ! $filled )
 							copy( $filepath, $destfile );
