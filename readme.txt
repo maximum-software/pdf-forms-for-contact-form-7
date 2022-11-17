@@ -430,7 +430,7 @@ No. This plugin adds features to the [Contact Form 7](https://wordpress.org/plug
 
 = Does this plugin require special software installation on the web server? =
 
-No. The plugin uses core WordPress and CF7 features only. No special software or PHP extensions are needed. Working with PDF files is done through [Pdf.Ninja API](https://pdf.ninja). It is recommended to have a working SSL/TLS certificate validation with cURL. [Enterprise Extension](https://maximum.software/store/pdf-forms-filler-for-contact-form-7-enterprise-extension-2/) is available if your business requirements prevent the use of a third party API.
+No. The plugin uses core WordPress and CF7 features only. No special software or PHP extensions are needed. Working with PDF files is done through [Pdf.Ninja API](https://pdf.ninja). It is recommended to have a working SSL/TLS certificate validation with cURL. [Enterprise Extension](https://maximum.software/store/pdf-forms-filler-enterprise-extension-2/) is available if your business requirements prevent the use of a third party API.
 
 = How are CF7 form fields mapped to PDF form fields? =
 
@@ -450,11 +450,11 @@ Some PDF viewers don't render checkboxes correctly in some PDF files. You may be
 
 = How do I remove the watermark in the filled PDF files? =
 
-Please see the [Pdf.Ninja API website](https://pdf.ninja) and the [Enterprise Extension plugin page](https://maximum.software/store/pdf-forms-filler-for-contact-form-7-enterprise-extension-2/).
+Please see the [Pdf.Ninja API website](https://pdf.ninja) and the [Enterprise Extension plugin page](https://maximum.software/store/pdf-forms-filler-enterprise-extension-2/).
 
 = How do I set up PDF form filling on my local web server? =
 
-Please see the [Enterprise Extension plugin page](https://maximum.software/store/pdf-forms-filler-for-contact-form-7-enterprise-extension-2/).
+Please see the [Enterprise Extension plugin page](https://maximum.software/store/pdf-forms-filler-enterprise-extension-2/).
 
 == Screenshots ==
 
