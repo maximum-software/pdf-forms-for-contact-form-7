@@ -1318,7 +1318,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							}
 						}
 					
-					// skip file if 'skip when empty' option is enabled and nothing is being done to the file
+					// skip file if 'skip when empty' option is enabled and form data is blank
 					if($attachment['options']['skip_empty'] )
 					{
 						$empty_data = true;
