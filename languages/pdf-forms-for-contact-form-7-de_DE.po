@@ -91,11 +91,11 @@ msgstr "Warnung: Kernel-Versionsunterstützung konnte nicht erkannt werden."
 
 #: modules/pdf-ninja.php:365
 msgid "PHP execute function (exec) is disabled."
-msgstr "Warnung: Kernel-Versionsunterstützung konnte nicht erkannt werden."
+msgstr "Die PHP-Ausführungsfunktion (exec) ist deaktiviert."
 
 #: modules/pdf-ninja.php:375
 msgid "PHP execute function (exec) is not working."
-msgstr "Die PHP-Ausführungsfunktion (exec) ist deaktiviert."
+msgstr "Die PHP-Ausführungsfunktion (exec) funktioniert nicht."
 
 #: modules/pdf-ninja.php:384
 msgid ""
@@ -271,7 +271,7 @@ msgstr "Neuen Schlüssel abrufen"
 #: modules/pdf-ninja.php:1085 modules/pdf-ninja.php:1091
 #: modules/pdf-ninja.php:1110 pdf-forms-for-contact-form-7.php:317
 msgid "PDF Forms Filler for CF7 plugin error"
-msgstr "PDF Forms Filler für CF7-Plugin-Fehler"
+msgstr "PDF Forms Filler for CF7 Plugin-Fehler"
 
 #: modules/pdf-ninja.php:1086
 msgid "Can't save new key."
@@ -321,7 +321,7 @@ msgstr ""
 
 #: pdf-forms-for-contact-form-7.php:325
 msgid "PDF Forms Filler for CF7 plugin warning"
-msgstr "PDF Forms Filler für CF7 Plugin-Warnung"
+msgstr "PDF Forms Filler for CF7 Plugin-Warnung"
 
 #: pdf-forms-for-contact-form-7.php:328
 msgid ""
@@ -525,11 +525,11 @@ msgstr ""
 
 #: pdf-forms-for-contact-form-7.php:2271
 msgid "Insert & Link All"
-msgstr "Löschen"
+msgstr "Alles einfügen und verknüpfen"
 
 #: pdf-forms-for-contact-form-7.php:2272 pdf-forms-for-contact-form-7.php:2294
 msgid "Delete"
-msgstr "Wert zuordnen"
+msgstr "Löschen"
 
 #: pdf-forms-for-contact-form-7.php:2273
 msgid "Map Value"
