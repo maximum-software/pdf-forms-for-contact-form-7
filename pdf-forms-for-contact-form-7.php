@@ -1189,7 +1189,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						if( !isset( $existing_data_fields[$field] ) )
 							continue;
 						
-						$value_mapping_data[$field] = $data[$field];
+						if( !isset( $value_mapping_data[$field] ) )
+							$value_mapping_data[$field] = $data[$field];
 						
 						$cf7_value = strval( $value_mapping['cf7_value'] );
 						if( ! isset( $processed_value_mappings[$field] ) )
