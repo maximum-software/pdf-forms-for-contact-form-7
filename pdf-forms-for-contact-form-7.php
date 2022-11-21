@@ -1172,6 +1172,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					// process value mappings
 					$processed_value_mappings = array();
 					$value_mapping_data = array();
+					$existing_data_fields = array_fill_keys( array_keys( $data ), true );
 					foreach( $value_mappings as $value_mapping )
 					{
 						$i = strpos( $value_mapping["pdf_field"], '-' );
@@ -1185,12 +1186,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						$field = substr( $value_mapping["pdf_field"], $i+1 );
 						$field = self::base64url_decode( $field );
 						
-						if( !isset( $data[$field] ) )
+						if( !isset( $existing_data_fields[$field] ) )
 							continue;
 						
 						$value_mapping_data[$field] = $data[$field];
 						
-						$cf7_value = strval($value_mapping['cf7_value']);
+						$cf7_value = strval( $value_mapping['cf7_value'] );
 						if( ! isset( $processed_value_mappings[$field] ) )
 							$processed_value_mappings[$field] = array();
 						if( ! isset( $processed_value_mappings[$field][$cf7_value] ) )
