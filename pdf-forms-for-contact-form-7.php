@@ -1169,90 +1169,93 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						catch(Exception $e) { }
 					}
 					
-					// process value mappings
-					$processed_value_mappings = array();
-					$value_mapping_data = array();
-					$existing_data_fields = array_fill_keys( array_keys( $data ), true );
-					foreach( $value_mappings as $value_mapping )
+					if( count( $value_mappings ) > 0 )
 					{
-						$i = strpos( $value_mapping["pdf_field"], '-' );
-						if( $i === FALSE )
-							continue;
+						// process value mappings
+						$processed_value_mappings = array();
+						$value_mapping_data = array();
+						$existing_data_fields = array_fill_keys( array_keys( $data ), true );
+						foreach( $value_mappings as $value_mapping )
+						{
+							$i = strpos( $value_mapping["pdf_field"], '-' );
+							if( $i === FALSE )
+								continue;
+							
+							$aid = substr( $value_mapping["pdf_field"], 0, $i );
+							if( $aid != $attachment_id && $aid != 'all' )
+								continue;
+							
+							$field = substr( $value_mapping["pdf_field"], $i+1 );
+							$field = self::base64url_decode( $field );
+							
+							if( !isset( $existing_data_fields[$field] ) )
+								continue;
+							
+							if( !isset( $value_mapping_data[$field] ) )
+								$value_mapping_data[$field] = $data[$field];
+							
+							$cf7_value = strval( $value_mapping['cf7_value'] );
+							if( ! isset( $processed_value_mappings[$field] ) )
+								$processed_value_mappings[$field] = array();
+							if( ! isset( $processed_value_mappings[$field][$cf7_value] ) )
+								$processed_value_mappings[$field][$cf7_value] = array();
+							$processed_value_mappings[$field][$cf7_value][] = $value_mapping;
+						}
 						
-						$aid = substr( $value_mapping["pdf_field"], 0, $i );
-						if( $aid != $attachment_id && $aid != 'all' )
-							continue;
+						// convert plain text values to arrays for processing
+						foreach( $value_mapping_data as $field => &$value )
+							if( ! is_array( $value ) )
+								$value = array( $value );
+						unset( $value );
 						
-						$field = substr( $value_mapping["pdf_field"], $i+1 );
-						$field = self::base64url_decode( $field );
+						// determine old and new values
+						$add_data = array();
+						$remove_data = array();
+						foreach($processed_value_mappings as $field => $cf7_mappings_list)
+							foreach($cf7_mappings_list as $cf7_value => $list)
+							{
+								foreach( $value_mapping_data[$field] as $key => $value )
+									if( self::mb_strtolower( $value ) === self::mb_strtolower( $cf7_value ) )
+									{
+										if( ! isset( $remove_data[$field] ) )
+											$remove_data[$field] = array();
+										$remove_data[$field][] = $value;
+										
+										if( ! isset( $add_data[$field] ) )
+											$add_data[$field] = array();
+										foreach( $list as $item )
+											$add_data[$field][] = $item['pdf_value'];
+									}
+							}
 						
-						if( !isset( $existing_data_fields[$field] ) )
-							continue;
+						// remove old values
+						foreach( $value_mapping_data as $field => &$value )
+							if( isset( $remove_data[$field] ) )
+								$value = array_diff( $value, $remove_data[$field] );
+						unset( $value );
 						
-						if( !isset( $value_mapping_data[$field] ) )
-							$value_mapping_data[$field] = $data[$field];
+						// add new values
+						foreach( $value_mapping_data as $field => &$value )
+							if( isset( $add_data[$field] ) )
+								$value = array_unique( array_merge( $value, $add_data[$field] ) );
+						unset( $value );
 						
-						$cf7_value = strval( $value_mapping['cf7_value'] );
-						if( ! isset( $processed_value_mappings[$field] ) )
-							$processed_value_mappings[$field] = array();
-						if( ! isset( $processed_value_mappings[$field][$cf7_value] ) )
-							$processed_value_mappings[$field][$cf7_value] = array();
-						$processed_value_mappings[$field][$cf7_value][] = $value_mapping;
+						// convert arrays back to plain text where needed
+						foreach( $value_mapping_data as $field => &$value )
+							if( count( $value ) < 2 )
+							{
+								if( count( $value ) > 0 )
+									$value = reset( $value );
+								else
+									$value = null;
+							}
+						unset( $value );
+						
+						// update data
+						foreach( $value_mapping_data as $field => &$value )
+							$data[$field] = $value;
+						unset( $value );
 					}
-					
-					// convert plain text values to arrays for processing
-					foreach( $value_mapping_data as $field => &$value )
-						if( ! is_array( $value ) )
-							$value = array( $value );
-					unset( $value );
-					
-					// determine old and new values
-					$add_data = array();
-					$remove_data = array();
-					foreach($processed_value_mappings as $field => $cf7_mappings_list)
-						foreach($cf7_mappings_list as $cf7_value => $list)
-						{
-							foreach( $value_mapping_data[$field] as $key => $value )
-								if( self::mb_strtolower( $value ) === self::mb_strtolower( $cf7_value ) )
-								{
-									if( ! isset( $remove_data[$field] ) )
-										$remove_data[$field] = array();
-									$remove_data[$field][] = $value;
-									
-									if( ! isset( $add_data[$field] ) )
-										$add_data[$field] = array();
-									foreach( $list as $item )
-										$add_data[$field][] = $item['pdf_value'];
-								}
-						}
-					
-					// remove old values
-					foreach( $value_mapping_data as $field => &$value )
-						if( isset( $remove_data[$field] ) )
-							$value = array_diff( $value, $remove_data[$field] );
-					unset( $value );
-					
-					// add new values
-					foreach( $value_mapping_data as $field => &$value )
-						if( isset( $add_data[$field] ) )
-							$value = array_unique( array_merge( $value, $add_data[$field] ) );
-					unset( $value );
-					
-					// convert arrays back to plain text where needed
-					foreach( $value_mapping_data as $field => &$value )
-						if( count( $value ) < 2 )
-						{
-							if( count( $value ) > 0 )
-								$value = reset( $value );
-							else
-								$value = null;
-						}
-					unset( $value );
-					
-					// update data
-					foreach( $value_mapping_data as $field => &$value )
-						$data[$field] = $value;
-					unset( $value );
 					
 					// filter out anything that the pdf field can't accept
 					foreach( $data as $field => &$value )
