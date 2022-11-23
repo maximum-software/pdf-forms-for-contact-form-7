@@ -442,6 +442,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'__Custom_String' => __( "Custom text string...", 'pdf-forms-for-contact-form-7' ),
 					'__All_PDFs' => __( 'All PDFs', 'pdf-forms-for-contact-form-7' ),
 					'__All_Pages' => __( 'All', 'pdf-forms-for-contact-form-7' ),
+					'__Null_Value_Mapping' => __( '--- EMPTY ---', 'pdf-forms-for-contact-form-7' ),
 				) );
 				
 				add_thickbox();

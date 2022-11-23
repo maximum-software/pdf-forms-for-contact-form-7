@@ -934,8 +934,9 @@ jQuery(document).ready(function($) {
 				if(option == data.cf7_value)
 					add_custom = false;
 			});
-			if(add_custom)
+			if(add_custom && data.cf7_value != '')
 				options.push({ id: data.cf7_value, text: data.cf7_value });
+			options.unshift({ id: '', text: wpcf7_pdf_forms.__Null_Value_Mapping });
 			
 			select.select2({
 				data: options,
@@ -965,8 +966,9 @@ jQuery(document).ready(function($) {
 				if(option == data.pdf_value)
 					add_custom = false;
 			});
-			if(add_custom)
+			if(add_custom && data.pdf_value != '')
 				options.push({ id: data.pdf_value, text: data.pdf_value });
+			options.unshift({ id: '', text: wpcf7_pdf_forms.__Null_Value_Mapping });
 			
 			select.select2({
 				data: options,
