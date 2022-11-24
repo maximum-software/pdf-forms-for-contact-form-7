@@ -1,8 +1,8 @@
 === PDF Forms Filler for CF7 ===
-Version: 2.0.9
-Stable tag: 2.0.9
+Version: 2.1.0
+Stable tag: 2.1.0
 Requires at least: 4.8
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 5.2
 Tags: pdf, form, filler, contact form, attach, email, download
 Plugin URI: https://pdfformsfiller.org/
@@ -60,6 +60,23 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor.
 
 == Changelog ==
+
+= 2.1.0 =
+
+* Release date: November 23, 2022
+
+* Some fixes were applied that affect the filling process logic. Please check your forms after the update to make sure everything is working as expected if you think they might be affected!
+
+* Fixed an issue with PDF fields not being cleared with empty CF7 field values (affects prefilled fields in the original PDF file)
+* Fixed an issue: value mappings get applied recursively (affects field value mappings that have matching CF7/PDF values)
+* Bug fix: value mapping fail to work with null values
+* Improved labeling of empty value mapping options
+* Improved PDF attachment affecting action detection
+* Fixed German translation
+* Updated Spanish translation
+* Updated Italian translation
+* Updated other language files
+* Other minor improvements
 
 = 2.0.9 =
 
