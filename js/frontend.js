@@ -1,13 +1,5 @@
 window.addEventListener('load', function(event)
 {
-	document.querySelector('input.wpcf7-submit').addEventListener("click", function()
-	{
-		// delete previous div
-		var prevDiv = this.form.querySelector('.wpcf7-pdf-forms-response-output');
-		if(prevDiv)
-			prevDiv.parentNode.removeChild(prevDiv);
-	});
-	
 	document.addEventListener('wpcf7submit', function(event)
 	{
 		if(typeof event.detail !== 'object'
@@ -23,18 +15,18 @@ window.addEventListener('load', function(event)
 		if(!formDiv)
 			return;
 		
-		// delete previous div
-		var prevDiv = formDiv.querySelector('.wpcf7-pdf-forms-response-output');
-		if(prevDiv)
-			prevDiv.parentNode.removeChild(prevDiv);
+		// delete previous response
+		var prevResponse = formDiv.querySelector('.wpcf7-pdf-forms-response-output');
+		if(prevResponse)
+			prevResponse.parentNode.removeChild(prevResponse);
 		
 		if(typeof event.detail.apiResponse.wpcf7_pdf_forms_data.downloads === 'object')
 		{
 			var data = event.detail.apiResponse.wpcf7_pdf_forms_data.downloads;
 			if(data.length > 0)
 			{
-				var downloads = document.createElement('div');
-				downloads.className = 'wpcf7-pdf-forms-response-output';
+				var response = document.createElement('div');
+				response.className = 'wpcf7-pdf-forms-response-output';
 				
 				for(var i=0; i<data.length; i++)
 				{
@@ -46,12 +38,32 @@ window.addEventListener('load', function(event)
 					link.innerText = data[i]['filename'];
 					download.querySelector('.file-size').innerText = "(" + data[i]['size'] + ")";
 					
-					downloads.appendChild(download);
+					response.appendChild(download);
 				}
 				
 				var form = formDiv.querySelector('.wpcf7-form');
 				if(form)
-					form.appendChild(downloads);
+				{
+					form.appendChild(response);
+					
+					// add response removal event listener to all submit buttons if not already added
+					var submitButtons = form.querySelectorAll('input[type="submit"], button[type="submit"]');
+					for(var i=0; i<submitButtons.length; i++)
+					{
+						if(submitButtons[i].getAttribute('data-wpcf7-pdf-forms-event-listener') !== 'true')
+						{
+							submitButtons[i].addEventListener("click", function()
+							{
+								// delete previous response
+								var prevResponse = this.form.querySelector('.wpcf7-pdf-forms-response-output');
+								if(prevResponse)
+									prevResponse.parentNode.removeChild(prevResponse);
+							});
+							
+							submitButtons[i].setAttribute('data-wpcf7-pdf-forms-event-listener', 'true');
+						}
+					}
+				}
 			}
 		}
 		
