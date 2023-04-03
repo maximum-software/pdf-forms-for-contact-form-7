@@ -331,7 +331,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 				$errors[2][] = $error;
 			}
 			
-			$min_kernel_version = array( 'Linux' => '2.6.32' );
+			$min_kernel_version = array( 'Linux' => '3.2.0' );
 			$matches = array();
 			if( isset( $min_kernel_version[PHP_OS] ) && preg_match('/(\d+)(?:\.\d+)+/', php_uname( 'r' ), $matches) == 1 )
 			{
