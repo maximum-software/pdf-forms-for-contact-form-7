@@ -40,6 +40,7 @@ Known problems:
  * If you are still using the old version of the API (v1) or the old version of Enterprise Extension (v1), please note that resulting PDFs may not render properly in some PDF readers and with some UTF-8 (non-latin) characters, checkboxes and radio buttons.
 
 Known incompatible plugins:
+ * [Post SMTP](https://wordpress.org/plugins/post-smtp/) (breaks PDF attachment to email messages)
  * [Imagify](https://wordpress.org/plugins/imagify/) (strips forms from PDF files)
  * [ShortPixel Image Optimizer](https://wordpress.org/plugins/shortpixel-image-optimiser/) (strips forms from PDF files)
  * [Live Preview for Contact Form 7](https://wordpress.org/plugins/cf7-live-preview/)
