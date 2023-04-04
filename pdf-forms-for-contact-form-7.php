@@ -2500,13 +2500,16 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			// if downloads variable is not initialized then we don't need to do anything
 			if( $this->downloads )
 			{
-				foreach( $this->downloads->get_files() as $file )
-					$response['wpcf7_pdf_forms_data']['downloads'][] =
-						array(
-							'filename' => $file['filename'],
-							'url' => $file['url'],
-							'size' => size_format( filesize( $file['filepath'] ) )
-						);
+				// make sure response status is not a failure
+				$valid_statuses = array( 'mail_sent', 'spam' );
+				if( in_array( $response['status'], $valid_statuses ) )
+					foreach( $this->downloads->get_files() as $file )
+						$response['wpcf7_pdf_forms_data']['downloads'][] =
+							array(
+								'filename' => $file['filename'],
+								'url' => $file['url'],
+								'size' => size_format( filesize( $file['filepath'] ) )
+							);
 				
 				// make sure to enable cron if it is down so that old download files get cleaned up
 				$this->enable_cron();
