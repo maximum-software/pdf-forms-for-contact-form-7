@@ -2528,7 +2528,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( $this->downloads && $submission !== null )
 			{
 				$status = $submission->get_status();
-				if( $status == 'mail_sent' )
+				$valid_statuses = array( 'mail_sent', 'spam' );
+				if( in_array( $status, $valid_statuses ) )
 				{
 					$downloads = '';
 					foreach( $this->downloads->get_files() as $file )
