@@ -2529,7 +2529,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			{
 				$status = $submission->get_status();
 				$valid_statuses = array( 'mail_sent', 'spam' );
-				if( in_array( $status, $valid_statuses ) )
+				if( in_array( $status, $valid_statuses ) && $contact_form->id() == $submission->get_contact_form()->id() )
 				{
 					$downloads = '';
 					foreach( $this->downloads->get_files() as $file )

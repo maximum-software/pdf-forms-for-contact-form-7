@@ -11,3 +11,8 @@
 {
 	font-style: italic;
 }
+
+.wpcf7 form.init .wpcf7-pdf-forms-response-output
+{
+	display: none;
+}
