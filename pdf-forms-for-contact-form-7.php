@@ -867,7 +867,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return;
 			
 			// remove files in the directory
-			$files = glob( trailingslashit( $this->tmp_dir ) . '{,.}*', GLOB_BRACE );
+			$tmp_dir_slash = trailingslashit( $this->tmp_dir );
+			$files = array_merge( glob( $tmp_dir_slash . '*' ), glob( $tmp_dir_slash . '.*' ) );
 			while( $file = array_shift( $files ) )
 				if( is_file( $file ) )
 					@unlink( $file );
