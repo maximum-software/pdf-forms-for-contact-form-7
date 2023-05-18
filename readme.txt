@@ -1,6 +1,6 @@
 === PDF Forms Filler for CF7 ===
-Version: 2.1.3
-Stable tag: 2.1.3
+Version: 2.1.4
+Stable tag: 2.1.4
 Requires at least: 4.8
 Tested up to: 6.2
 Requires PHP: 5.2
@@ -61,6 +61,12 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor.
 
 == Changelog ==
+
+= 2.1.4 =
+
+* Release date: May 17, 2023
+
+* Added a workaround for GLOB_BRACE flag not being available on some non GNU systems
 
 = 2.1.3 =
 
