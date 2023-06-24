@@ -1518,7 +1518,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if ( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
 					throw new Exception( __( "Nonce mismatch", 'pdf-forms-for-contact-form-7' ) );
 				
-				$attachment_id = $_POST[ 'file_id' ];
+				$attachment_id = intval( $_POST[ 'file_id' ] );
 				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : "";
 				
 				if( ( $filepath = get_attached_file( $attachment_id ) ) !== false
@@ -1861,8 +1861,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
 					throw new Exception( __( "Nonce mismatch", 'pdf-forms-for-contact-form-7' ) );
 				
-				$attachments = isset( $_POST['attachments'] ) ? $_POST['attachments'] : null;
-				$all = isset( $_POST['all'] ) ? $_POST['all'] : null;
+				$attachments = isset( $_POST['attachments'] ) ? wp_unslash( $_POST['attachments'] ) : null;
+				$all = isset( $_POST['all'] ) ? wp_unslash( $_POST['all'] ) : null;
 				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : "";
 				
 				if( !isset($attachments) || !is_array($attachments) )
@@ -1871,6 +1871,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$fields = array();
 				foreach( $attachments as $attachment_id )
 				{
+					$attachment_id = intval( $attachment_id );
 					if ( ! current_user_can( 'edit_post', $attachment_id ) )
 						continue;
 					
@@ -1989,7 +1990,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if ( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
 					throw new Exception( __( "Nonce mismatch", 'pdf-forms-for-contact-form-7' ) );
 				
-				$post_id = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : null;
+				$post_id = isset( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : null;
 				$form = isset( $_POST['wpcf7-form'] ) ? wp_unslash( $_POST['wpcf7-form'] ) : "";
 				
 				if( ! $post_id )
@@ -2228,8 +2229,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if ( ! check_ajax_referer( 'wpcf7-pdf-forms-ajax-nonce', 'nonce', false ) )
 					throw new Exception( __( "Nonce mismatch", 'pdf-forms-for-contact-form-7' ) );
 				
-				$attachment_id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : null;
-				$page = isset( $_POST['page'] ) ? (int) $_POST['page'] : null;
+				$attachment_id = isset( $_POST['attachment_id'] ) ? intval( $_POST['attachment_id'] ) : null;
+				$page = isset( $_POST['page'] ) ? intval( $_POST['page'] ) : null;
 				
 				if ( $page < 1 )
 					throw new Exception( __( "Invalid page number", 'pdf-forms-for-contact-form-7' ) );
