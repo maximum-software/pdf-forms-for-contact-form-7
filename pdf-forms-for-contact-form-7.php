@@ -961,6 +961,38 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/**
+		 * Wrapper for CF7's wpcf7_mail_replace_tags()
+		 */
+		public static function wpcf7_mail_replace_tags( $content, $args = '' )
+		{
+			$content = wpcf7_mail_replace_tags( $content, $args );
+			
+			// this is a hack to make conditional fields plugin's groups work
+			// see https://wordpress.org/support/topic/conditional-fields-cf7-support/
+			// see https://github.com/rocklobster-in/contact-form-7/issues/1071
+			// remove the following after the above issue is resolved
+			if( class_exists( 'Wpcf7cfMailParser' )
+			&& isset( $_POST['_wpcf7cf_hidden_groups'] )
+			&& isset( $_POST['_wpcf7cf_visible_groups'] )
+			&& isset( $_POST['_wpcf7cf_repeaters'] ) )
+			{
+				$hidden_groups = json_decode( wp_unslash( $_POST['_wpcf7cf_hidden_groups'] ) );
+				$visible_groups = json_decode( wp_unslash( $_POST['_wpcf7cf_visible_groups'] ) );
+				$repeaters = json_decode( wp_unslash( $_POST['_wpcf7cf_repeaters'] ) );
+				try
+				{
+					$parser = new Wpcf7cfMailParser( $content, $visible_groups, $hidden_groups, $repeaters, $_POST );
+					if( method_exists( $parser, 'getParsedMail' ) )
+						$content = $parser->getParsedMail();
+				}
+				catch(Exception $e) { } // ignore
+				catch(Throwable $e) { } // ignore
+			}
+			
+			return $content;
+		}
+		
+		/**
 		 * When form data is posted, this function communicates with the API
 		 * to fill the form data and get the PDF file with filled form fields
 		 * 
@@ -1005,9 +1037,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					
 					$url = null;
 					if( isset( $embed['cf7_field'] ) )
-						$url = wpcf7_mail_replace_tags( "[".$embed['cf7_field']."]" );
+						$url = self::wpcf7_mail_replace_tags( "[".$embed['cf7_field']."]" );
 					if( isset( $embed['mail_tags'] ) )
-						$url = wpcf7_mail_replace_tags( $embed['mail_tags'] );
+						$url = self::wpcf7_mail_replace_tags( $embed['mail_tags'] );
 					if( $url != null )
 					{
 						if( filter_var( $url, FILTER_VALIDATE_URL ) !== FALSE )
@@ -1127,12 +1159,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							if( $multiple )
 								$data[$field] = $submission->get_posted_data( $mapping["cf7_field"] );
 							else
-								$data[$field] = wpcf7_mail_replace_tags( "[".$mapping["cf7_field"]."]" );
+								$data[$field] = self::wpcf7_mail_replace_tags( "[".$mapping["cf7_field"]."]" );
 						}
 						
 						if( isset( $mapping["mail_tags"] ) )
 						{
-							$data[$field] = wpcf7_mail_replace_tags( $mapping["mail_tags"] );
+							$data[$field] = self::wpcf7_mail_replace_tags( $mapping["mail_tags"] );
 							
 							if( $multiple )
 							{
@@ -1165,7 +1197,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							if( $multiple )
 								$data[$field] = $submission->get_posted_data( $name );
 							else
-								$data[$field] = wpcf7_mail_replace_tags( "[".$name."]" );
+								$data[$field] = self::wpcf7_mail_replace_tags( "[".$name."]" );
 						}
 						catch(Exception $e) { }
 					}
@@ -1388,7 +1420,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					
 					$filename = strval( $attachment['options']['filename'] );
 					if ( $filename !== "" )
-						$destfilename = wpcf7_mail_replace_tags( $filename );
+						$destfilename = self::wpcf7_mail_replace_tags( $filename );
 					else
 						$destfilename = wp_basename( $filepath, '.pdf' );
 					
@@ -1446,7 +1478,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							
 							// replace WPCF7 tags in path elements
 							$path_elements = explode( "/", $save_directory );
-							$tag_replaced_path_elements = wpcf7_mail_replace_tags( $path_elements );
+							$tag_replaced_path_elements = self::wpcf7_mail_replace_tags( $path_elements );
 							
 							foreach( $tag_replaced_path_elements as $elmid => &$new_element )
 							{
