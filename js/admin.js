@@ -539,6 +539,11 @@ jQuery(document).ready(function($) {
 			setAttachmentOption(attachment_id, option, jQuery(this).val());
 		});
 		tag.find('.pdf-options-button').click(function() {
+			
+			// prevent running default button click handlers
+			event.stopPropagation();
+			event.preventDefault();
+			
 			jQuery(this).closest('.pdf-attachment-row').find('.pdf-options').toggle('.pdf-options-hidden');
 		});
 		
