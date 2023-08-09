@@ -2228,13 +2228,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$attachment_path = "unknown";
 			
 			$filename = wp_unique_filename( $wp_upload_dir['path'], wp_basename( $attachment_path ).'.page'.intval($page).'.jpg' );
-			$filepath = $wp_upload_dir['path'] . "/$filename";
+			$filepath = trailingslashit( $wp_upload_dir['path'] ) . $filename;
 			
 			$service = $this->get_service();
 			if( $service )
 				$service->api_image( $filepath, $attachment_id, $page );
 			
-			$mimetype = self::get_mime_type( $filename );
+			$mimetype = self::get_mime_type( $filepath );
 			
 			$attachment = array(
 				'guid'           => $wp_upload_dir['url'] . '/' . $filename,
