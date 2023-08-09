@@ -893,45 +893,48 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public static function get_mime_type( $filepath )
 		{
+			if( ! is_file( $filepath ) )
+				return null;
+			
 			$mimetype = null;
 			
-			if( file_exists( $filepath ) )
+			if( function_exists( 'finfo_open' ) )
 			{
-				if( function_exists( 'finfo_open' ) )
+				if( version_compare( phpversion(), "5.3" ) < 0 )
 				{
-					if( version_compare( phpversion(), "5.3" ) < 0 )
+					$finfo = finfo_open( FILEINFO_MIME );
+					if($finfo)
 					{
-						$finfo = finfo_open( FILEINFO_MIME );
-						if($finfo)
-						{
-							$mimetype = finfo_file( $finfo, $filepath );
-							$mimetype = explode( ";", $mimetype );
-							$mimetype = reset( $mimetype );
-							finfo_close( $finfo );
-						}
-					}
-					else
-					{
-						$finfo = finfo_open( FILEINFO_MIME_TYPE );
-						if($finfo)
-						{
-							$mimetype = finfo_file( $finfo, $filepath );
-							finfo_close( $finfo );
-						}
+						$mimetype = finfo_file( $finfo, $filepath );
+						$mimetype = explode( ";", $mimetype );
+						$mimetype = reset( $mimetype );
+						finfo_close( $finfo );
 					}
 				}
-				
-				if( !$mimetype && function_exists( 'mime_content_type' ) )
-					$mimetype = mime_content_type( $filepath );
+				else
+				{
+					$finfo = finfo_open( FILEINFO_MIME_TYPE );
+					if($finfo)
+					{
+						$mimetype = finfo_file( $finfo, $filepath );
+						finfo_close( $finfo );
+					}
+				}
 			}
 			
+			if( ! $mimetype && function_exists( 'mime_content_type' ) )
+				$mimetype = mime_content_type( $filepath );
+			
 			// fallback
-			if( !$mimetype )
+			if( ! $mimetype )
 			{
 				$type = wp_check_filetype( $filepath );
 				if( isset( $type['type'] ) )
 					$mimetype = $type['type'];
 			}
+			
+			if( ! $mimetype )
+				return 'application/octet-stream';
 			
 			return $mimetype;
 		}
