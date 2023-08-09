@@ -790,8 +790,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$home_path = trailingslashit( realpath( dirname(__FILE__) . '/../../../' ) );
 				$sourcepath = realpath( $home_path . $path );
 				if( $home_path && $sourcepath && substr( $sourcepath, 0, strlen( $home_path ) ) == $home_path )
-					if( file_exists( $sourcepath ) )
-						if( copy($sourcepath, $filepath) )
+					if( is_file( $sourcepath ) )
+						if( copy( $sourcepath, $filepath ) )
 						{
 							$mimetype = self::get_mime_type( $sourcepath );
 							return;
@@ -828,7 +828,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			fwrite( $handle, $body );
 			fclose( $handle );
 			
-			if( ! file_exists( $filepath ) )
+			if( ! is_file( $filepath ) )
 				throw new Exception( __( "Failed to create file", 'pdf-forms-for-contact-form-7' ) );
 		}
 		
