@@ -2448,6 +2448,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'pdf-file' => esc_html__( 'PDF file', 'pdf-forms-for-contact-form-7' ),
 					'page' => esc_html__( 'Page', 'pdf-forms-for-contact-form-7' ),
 					'image-region-selection-hint' => esc_html__( 'Select a region where the image needs to be embeded.', 'pdf-forms-for-contact-form-7' ),
+					'top' => esc_html__( 'Top', 'pdf-forms-for-contact-form-7' ),
+					'left' => esc_html__( 'Left', 'pdf-forms-for-contact-form-7' ),
+					'width' => esc_html__( 'Width', 'pdf-forms-for-contact-form-7' ),
+					'height' => esc_html__( 'Height', 'pdf-forms-for-contact-form-7' ),
+					'pts' => esc_html__( 'pts', 'pdf-forms-for-contact-form-7' ),
 					'help-message' => self::replace_tags(
 						esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'pdf-forms-for-contact-form-7' ),
 						array(
