@@ -2,7 +2,7 @@
 Version: 2.1.5
 Stable tag: 2.1.5
 Requires at least: 4.8
-Tested up to: 6.2
+Tested up to: 6.3
 Requires PHP: 5.2
 Tags: pdf, form, filler, contact form, attach, email, download
 Plugin URI: https://pdfformsfiller.org/
