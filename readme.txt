@@ -481,7 +481,7 @@ Special thanks to the following sponsors of this plugin:
 
 Please check your server's email configuration. Please check to make sure your SPAM mitigation technique is not causing the problem (reCaptcha/Akismet/etc).
 
-= Does this plugin allow my website users to work with PDF files? =
+= Does this plugin allow my website users to edit PDF files? =
 
 No. This plugin adds features to the [Contact Form 7](https://wordpress.org/plugins/contact-form-7) interface in the WordPress Admin Panel only.
 
