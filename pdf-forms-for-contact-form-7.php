@@ -2221,8 +2221,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return $old_attachment_id;
 			}
 			
-			if( ! ( ( $wp_upload_dir = wp_upload_dir() ) && false === $wp_upload_dir['error'] ) )
+			$wp_upload_dir = wp_upload_dir();
+			if( isset( $wp_upload_dir['error'] ) && false !== $wp_upload_dir['error'] )
 				throw new Exception( $wp_upload_dir['error'] );
+			if( ! isset( $wp_upload_dir['path'] ) || ! isset( $wp_upload_dir['url'] ) )
+				throw new Exception( __( "Failed to determine upload path", 'pdf-forms-for-contact-form-7' ) );
 			
 			$attachment_path = get_attached_file( $attachment_id );
 			if( $attachment_path === false )
