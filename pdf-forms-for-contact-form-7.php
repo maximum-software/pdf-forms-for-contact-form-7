@@ -2589,7 +2589,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 								esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
 								array(
 									'icon' => '<span class="dashicons dashicons-download"></span>',
-									'a-href-url' => '<a href="' . esc_html( $file['url'] ) . '" download>',
+									'a-href-url' => '<a href="' . esc_attr( $file['url'] ) . '" download>',
 									'filename' => esc_html( $file['filename'] ),
 									'/a' => '</a>',
 									'i' => '<span class="file-size">',
