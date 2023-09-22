@@ -903,7 +903,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				if( version_compare( phpversion(), "5.3" ) < 0 )
 				{
 					$finfo = finfo_open( FILEINFO_MIME );
-					if($finfo)
+					if( $finfo )
 					{
 						$mimetype = finfo_file( $finfo, $filepath );
 						$mimetype = explode( ";", $mimetype );
@@ -914,7 +914,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				else
 				{
 					$finfo = finfo_open( FILEINFO_MIME_TYPE );
-					if($finfo)
+					if( $finfo )
 					{
 						$mimetype = finfo_file( $finfo, $filepath );
 						finfo_close( $finfo );
@@ -2296,7 +2296,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			catch( Exception $e )
 			{
 				return wp_send_json( array(
-					'success'  => false,
+					'success' => false,
 					'error_message' => $e->getMessage(),
 					'error_location' => wp_basename( $e->getFile() ) . ":". $e->getLine(),
 				) );
