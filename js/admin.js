@@ -2152,5 +2152,14 @@ jQuery(document).ready(function($) {
 	wpcf7_form.change(changeHandler);
 	jQuery('form.tag-generator-panel .insert-tag').click(changeHandler);
 	
+	// auto-resizing textareas
+	jQuery('.wpcf7-pdf-forms-admin').on("input change focus", "textarea.mail-tags", function() {
+		if(this.scrollHeight > this.clientHeight)
+		{
+			this.style.height = 'auto';
+			this.style.height = (this.scrollHeight) + 'px';
+		}
+	});
+	
 	preloadData();
 });
