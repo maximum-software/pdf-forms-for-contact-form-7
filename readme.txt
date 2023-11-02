@@ -495,7 +495,15 @@ The field mapper tool allows you to map fields individually and, when needed, ge
 
 = My fields are not getting filled, what is wrong? =
 
-Make sure the mapping exists in the list of mappings and the field names match. If you reuploaded and reattached your PDF file and your mappings were using the old attachment ID then your mappings will no longer work and you will need to recreate them. Sometimes PDF form fields have validation scripts which prevent value with an incorrect format to be filled in. Date PDF fields must be [formatted with the format mail-tag](https://contactform7.com/date-field/#Format_Date_Value_in_Mail).
+Make sure the mapping exists in the list of mappings and the field names match.
+
+If you attached an updated PDF file and your mappings were associated with the old attachment ID then those mappings will be deleted and you will need to recreate them.
+
+Sometimes PDF form fields have validation scripts which prevent value with an incorrect format to be filled in. Date PDF fields must be [formatted with the format mail-tag](https://contactform7.com/date-field/#Format_Date_Value_in_Mail).
+
+= How do I update the attached PDF file without attaching a new version and losing attachment ID associated mappings and embeds? =
+
+Try using the [Enable Media Replace plugin](https://wordpress.org/plugins/enable-media-replace/) to replace the PDF file in-place in the Media Library.
 
 = My checkboxes and/or radio buttons are not getting filled, what is wrong? =
 
