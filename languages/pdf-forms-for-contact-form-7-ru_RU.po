@@ -18,7 +18,7 @@ msgstr ""
 
 #. Plugin Name of the plugin
 msgid "PDF Forms Filler for CF7"
-msgstr "Заполнитель PDF форм для Contact Form 7"
+msgstr "Заполнитель форм PDF для Contact Form 7"
 
 #. Plugin URI of the plugin
 msgid "https://pdfformsfiller.org/"
