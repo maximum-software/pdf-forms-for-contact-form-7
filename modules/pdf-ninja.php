@@ -83,8 +83,19 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function get_key()
 	{
+		if( $this->key )
+			return $this->key;
+		
 		if( ! $this->key )
 			$this->key = WPCF7::get_option( 'wpcf7_pdf_forms_pdfninja_key' );
+		
+		if( ! $this->key )
+		{
+			// attempt to get the key from another plugin
+			$key = $this->get_external_key();
+			if( $key )
+				$this->set_key( $key );
+		}
 		
 		if( ! $this->key )
 		{
@@ -119,6 +130,24 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		WPCF7::update_option( 'wpcf7_pdf_forms_pdfninja_key', $value );
 		delete_transient( 'wpcf7_pdf_forms_pdfninja_key_failure' );
 		return true;
+	}
+	
+	/**
+	 * Searches for key in other plugins
+	 */
+	public function get_external_key()
+	{
+		// from PDF Forms Filler for WPForms
+		$option = get_option( 'wpforms_settings' );
+		if( $option !== false && is_array( $option ) && isset( $option['pdf-ninja-api_key'] ) )
+			return $option['pdf-ninja-api_key'];
+		
+		// from PDF Forms Filler for WooCommerce
+		$option = get_option( 'pdf-forms-for-woocommerce-settings-pdf-ninja-api-key' );
+		if( $option !== false )
+			return $option;
+		
+		return null;
 	}
 	
 	/*
