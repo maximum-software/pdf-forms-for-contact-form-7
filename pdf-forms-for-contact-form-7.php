@@ -1419,10 +1419,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					}
 					$attachment_affected = $filling_data || count( $embeds_data ) > 0 || $options['flatten'];
 					
-					$filename = strval( $attachment['options']['filename'] );
-					if ( $filename !== "" )
-						$destfilename = self::wpcf7_mail_replace_tags( $filename );
-					if( empty( $destfilename ) )
+					$destfilename = strval( $attachment['options']['filename'] );
+					if ( $destfilename != "" )
+						$destfilename = strval( self::wpcf7_mail_replace_tags( $destfilename ) );
+					if( $destfilename == "" )
 						$destfilename = sanitize_file_name( get_the_title( $attachment_id ) );
 					
 					$destfile = $this->create_tmp_filepath( $destfilename . '.pdf' ); // if $destfilename is empty, create_tmp_filepath generates unnamed-file.pdf
