@@ -705,7 +705,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'key'    => $this->get_key(),
 		);
 		
-		$boundary = wp_generate_password( 24 );
+		$boundary = wp_generate_password( 48, $special_chars = false, $extra_special_chars = false );
 		
 		$payload = "";
 		
@@ -892,7 +892,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 				$params[$key] = $value;
 		}
 		
-		$boundary = wp_generate_password( 24 );
+		$boundary = wp_generate_password( 48, $special_chars = false, $extra_special_chars = false );
 		
 		$payload = "";
 		
