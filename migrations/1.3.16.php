@@ -1,5 +1,8 @@
 <?php
 	
+	if( ! defined( 'ABSPATH' ) )
+		return;
+	
 	if( ! class_exists('WPCF7') )
 		return;
 	

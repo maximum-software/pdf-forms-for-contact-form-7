@@ -1,5 +1,8 @@
 <?php
 
+if( ! defined( 'ABSPATH' ) )
+	return;
+
 class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 {
 	private static $instance = null;

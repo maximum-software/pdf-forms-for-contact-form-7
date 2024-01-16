@@ -1,5 +1,8 @@
 <?php
 
+if( ! defined( 'ABSPATH' ) )
+	return;
+
 if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 {
 	class WPCF7_Pdf_Forms_Downloads

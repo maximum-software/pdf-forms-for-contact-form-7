@@ -1,5 +1,8 @@
 <?php
 	
+	if( ! defined( 'ABSPATH' ) )
+		return;
+	
 	abstract class WPCF7_Pdf_Forms_Service extends WPCF7_Service
 	{
 		public function api_get_fields( $attachment_id )
