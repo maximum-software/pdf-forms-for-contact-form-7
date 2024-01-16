@@ -24,6 +24,8 @@ If the PDF attachment has a PDF form, the plugin allows users to add fields to t
 
 When your website visitor submits your Contact Form 7 form, the form in the PDF file is filled with CF7 form data, images are embedded and the resulting PDF file is attached to the Contact Form 7 email message. The resulting PDF file can also be downloaded by your website visitors if this option is enabled in your form's options. It is possible to save the resulting PDF file to your server's wp-content/uploads directory.
 
+What makes this plugin special is its approach to preparing PDF files. It is not generating PDF documents from scratch. It modifies the original PDF document that was prepared using third party software and supplied to the plugin. This allows users the freedom to design exactly what they need and use their pre-existing documents.
+
 An external web API (https://pdf.ninja) is used for filling PDF forms (free usage has limitations). The "Enterprise Extension" plugin is available for purchase that enables the processing all PDF operations locally on your web server and disables the use of the external web API.
 
 Please see the [tutorial video](https://youtu.be/jy84xqnj0Zk) and the [documentation](https://pdfformsfiller.org/docs/cf7/) for detailed information.
