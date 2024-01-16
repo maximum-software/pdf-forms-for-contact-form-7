@@ -2448,7 +2448,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'tag-generator' => esc_html__( 'Tag Generator Tool (deprecated)', 'pdf-forms-for-contact-form-7' ),
 					'tag-generator-help' => esc_html__( 'This tool allows one to create CF7 fields that are linked to PDF fields by name. This feature is deprecated in favor of the field mapper tool.', 'pdf-forms-for-contact-form-7' ),
 					'image-embedding' => esc_html__( 'Image Embedding Tool', 'pdf-forms-for-contact-form-7' ),
-					'image-embedding-help'=> esc_html__( 'This tool allows embedding of images into PDF files. Images are taken from field attachments or field values that are URLs. You can select a PDF file page and draw a bounding box for image insertion. Alternatively, you can insert your image in the center of every page.', 'pdf-forms-for-contact-form-7' ),
+					'image-embedding-help'=> esc_html__( 'This tool allows embedding of images into PDF files. Images are taken from file upload fields or URL field values. You can select a PDF file page and draw a bounding box for image insertion. Alternatively, you can insert your image in the center of every page.', 'pdf-forms-for-contact-form-7' ),
 					'add-cf7-field-embed' => esc_html__( 'Embed Image', 'pdf-forms-for-contact-form-7' ),
 					'delete-cf7-field-embed' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
 					'pdf-file' => esc_html__( 'PDF file', 'pdf-forms-for-contact-form-7' ),
