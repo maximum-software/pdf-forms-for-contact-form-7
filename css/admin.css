@@ -11,7 +11,8 @@
 }
 
 .wpcf7-pdf-forms-admin table,
-.wpcf7-pdf-forms-admin input[type=file]
+.wpcf7-pdf-forms-settings-panel table,
+.wpcf7-pdf-forms-settings-panel input[type=file]
 {
 	width: 100%;
 	max-width: 100%;
@@ -66,54 +67,57 @@
 }
 
 .wpcf7-pdf-forms-admin .pdf-options-hidden,
-.wpcf7-pdf-forms-admin .pdf-attachment-row-template,
+.wpcf7-pdf-forms-settings-panel .pdf-attachment-row-template,
 .wpcf7-pdf-forms-admin .pdf-mapping-row-template,
 .wpcf7-pdf-forms-admin .pdf-mapping-row-mailtag-template,
 .wpcf7-pdf-forms-admin .pdf-mapping-row-valuemapping-template,
-.wpcf7-pdf-forms-admin .image-embeds-row-template,
-.wpcf7-pdf-forms-admin .image-embeds-row-mailtag-template
+.wpcf7-pdf-forms-settings-panel .image-embeds-row-template,
+.wpcf7-pdf-forms-settings-panel .image-embeds-row-mailtag-template
 {
 	display: none;
 }
 
-.wpcf7-pdf-forms-admin .convert-to-mailtags-button
+.wpcf7-pdf-forms-settings-panel .convert-to-mailtags-button
 {
 	text-decoration: none;
 }
 
-.wpcf7-pdf-forms-admin .filename-column
+.wpcf7-pdf-forms-settings-panel .filename-column
 {
 	width: 100%
 }
 
-.wpcf7-pdf-forms-admin .pdf-attachment-row .pdf-filename
+.wpcf7-pdf-forms-settings-panel .pdf-attachment-row .pdf-filename
 {
 	word-break: break-all;
 }
 
-.wpcf7-pdf-forms-admin div.pdf-options
+.wpcf7-pdf-forms-settings-panel div.pdf-options
 {
 	padding: 10px;
 }
 
-.wpcf7-pdf-forms-admin div.pdf-options div
+.wpcf7-pdf-forms-settings-panel div.pdf-options div
 {
 	padding-bottom: 10px;
 }
 
-.wpcf7-pdf-forms-admin .pdf-buttons
+.wpcf7-pdf-forms-settings-panel .pdf-buttons
 {
 	vertical-align: top;
 	white-space: nowrap;
 }
 
-.wpcf7-pdf-forms-admin .mapping-table
+.wpcf7-pdf-forms-admin .mapping-table,
+.wpcf7-pdf-forms-settings-panel .mapping-table
 {
 	width: 100%;
 }
 
 .wpcf7-pdf-forms-admin .mapping-table th,
-.wpcf7-pdf-forms-admin .mapping-table td
+.wpcf7-pdf-forms-admin .mapping-table td,
+.wpcf7-pdf-forms-settings-panel .mapping-table th,
+.wpcf7-pdf-forms-settings-panel .mapping-table td
 {
 	vertical-align: top;
 	text-align: center;
@@ -121,7 +125,8 @@
 	word-break: break-all;
 }
 
-.wpcf7-pdf-forms-admin .mapping-table td.buttons
+.wpcf7-pdf-forms-admin .mapping-table td.buttons,
+.wpcf7-pdf-forms-settings-panel .mapping-table td.buttons
 {
 	text-align: left;
 	white-space: nowrap;
@@ -129,6 +134,8 @@
 
 .wpcf7-pdf-forms-admin .mapping-table td,
 .wpcf7-pdf-forms-admin .mapping-table th
+.wpcf7-pdf-forms-settings-panel .mapping-table td,
+.wpcf7-pdf-forms-settings-panel .mapping-table th
 {
 	vertical-align: middle;
 }
@@ -142,7 +149,11 @@
 .wpcf7-pdf-forms-admin .pdf-fields-mapper td.cf7-field,
 .wpcf7-pdf-forms-admin .pdf-fields-mapper th.cf7-field,
 .wpcf7-pdf-forms-admin .pdf-fields-mapper td.pdf-field,
-.wpcf7-pdf-forms-admin .pdf-fields-mapper th.pdf-field
+.wpcf7-pdf-forms-admin .pdf-fields-mapper th.pdf-field,
+.wpcf7-pdf-forms-settings-panel .pdf-fields-mapper td.cf7-field,
+.wpcf7-pdf-forms-settings-panel .pdf-fields-mapper th.cf7-field,
+.wpcf7-pdf-forms-settings-panel .pdf-fields-mapper td.pdf-field,
+.wpcf7-pdf-forms-settings-panel .pdf-fields-mapper th.pdf-field
 {
 	width: 40%;
 	vertical-align: middle;
@@ -165,25 +176,31 @@
 
 .wpcf7-pdf-forms-admin .mapping-table input,
 .wpcf7-pdf-forms-admin .mapping-table textarea,
-.wpcf7-pdf-forms-admin .mapping-table select
+.wpcf7-pdf-forms-admin .mapping-table select,
+.wpcf7-pdf-forms-settings-panel .mapping-table input,
+.wpcf7-pdf-forms-settings-panel .mapping-table textarea,
+.wpcf7-pdf-forms-settings-panel .mapping-table select
 {
 	width: 100%;
 	min-width: 50px;
 }
 
-.wpcf7-pdf-forms-admin select
+.wpcf7-pdf-forms-admin select,
+.wpcf7-pdf-forms-settings-panel select
 {
 	width: 100%;
 	min-width: 50px;
 	text-overflow: ellipsis;
 }
 
-.wpcf7-pdf-forms-admin td
+.wpcf7-pdf-forms-admin td,
+.wpcf7-pdf-forms-settings-panel td
 {
 	position: relative;
 }
 
-.wpcf7-pdf-forms-admin .select2
+.wpcf7-pdf-forms-admin .select2,
+.wpcf7-pdf-forms-settings-panel .select2
 {
 	width: calc(100% - 10px);
 	max-width: calc(100% - 10px);
@@ -194,22 +211,26 @@
 	transform: translate(-50%, -50%);
 }
 
-.wpcf7-pdf-forms-admin .select2-results__option
+.wpcf7-pdf-forms-admin .select2-results__option,
+.wpcf7-pdf-forms-settings-panel .select2-results__option
 {
 	margin-bottom: 0;
 }
 
-.wpcf7-pdf-forms-admin .footer
+.wpcf7-pdf-forms-admin .footer,
+.wpcf7-pdf-forms-settings-panel .footer
 {
 	padding-bottom: 15px;
 }
 
-.wpcf7-pdf-forms-admin .helpbox
+.wpcf7-pdf-forms-admin .helpbox,
+.wpcf7-pdf-forms-settings-panel .helpbox
 {
 	margin-top: 15px;
 }
 
-.wpcf7-pdf-forms-admin .help-button
+.wpcf7-pdf-forms-admin .help-button,
+.wpcf7-pdf-forms-settings-panel .help-button
 {
 	float: right;
 	padding-right: 10px;
@@ -237,59 +258,60 @@
 	background-color: rgba(100, 100, 100, 0.2);
 }
 
-.wpcf7-pdf-forms-admin .image-embeds td.cf7-field,
-.wpcf7-pdf-forms-admin .image-embeds th.cf7-field,
-.wpcf7-pdf-forms-admin .image-embeds td.pdf-file,
-.wpcf7-pdf-forms-admin .image-embeds th.pdf-file
+.wpcf7-pdf-forms-settings-panel .image-embeds td.cf7-field,
+.wpcf7-pdf-forms-settings-panel .image-embeds th.cf7-field,
+.wpcf7-pdf-forms-settings-panel .image-embeds td.pdf-file,
+.wpcf7-pdf-forms-settings-panel .image-embeds th.pdf-file
 {
 	width: 30%;
 }
 
-.wpcf7-pdf-forms-admin .image-embeds td,
-.wpcf7-pdf-forms-admin .image-embeds th
+.wpcf7-pdf-forms-settings-panel .image-embeds td,
+.wpcf7-pdf-forms-settings-panel .image-embeds th
 {
 	vertical-align: middle;
 }
 
-.wpcf7-pdf-forms-admin .jcrop-container
+.wpcf7-pdf-forms-settings-panel .jcrop-container
 {
 	margin: 0 auto;
 	width: 500px;
 	overflow: hidden;
 }
 
-.wpcf7-pdf-forms-admin .jcrop-page
+.wpcf7-pdf-forms-settings-panel .jcrop-page
 {
 	width: 500px;
 }
 
-.wpcf7-pdf-forms-admin input.coordinate
+.wpcf7-pdf-forms-settings-panel input.coordinate
 {
 	width: 50px !important;
 }
 
-.wpcf7-pdf-forms-admin .page-coordinates span
+.wpcf7-pdf-forms-settings-panel .page-coordinates span
 {
 	margin: 0 5px;
 }
 
-.wpcf7-pdf-forms-admin .image-region-selection-hint
+.wpcf7-pdf-forms-settings-panel .image-region-selection-hint
 {
 	font-style: italic;
 }
 
-.wpcf7-pdf-forms-admin .return-to-form-button
+.wpcf7-pdf-forms-admin .return-to-form-button,
+.wpcf7-pdf-forms-settings-panel .return-to-form-button
 {
 	float: right;
 	margin-right: 10px;
 }
 
-.wpcf7-pdf-forms-admin .tag-generator-tool .pdf-files-list
+.wpcf7-pdf-forms-settings-panel .tag-generator-tool .pdf-files-list
 {
 	width: 20%;
 }
 
-.wpcf7-pdf-forms-admin .insert-box
+.wpcf7-pdf-forms-settings-panel .insert-box
 {
 	display: none;
 }
@@ -314,7 +336,7 @@
 	margin-right: 10px;
 }
 
-.wpcf7-pdf-forms-admin .image-embeds td.pdf-page
+.wpcf7-pdf-forms-settings-panel .image-embeds td.pdf-page
 {
 	width: 10%;
 }
