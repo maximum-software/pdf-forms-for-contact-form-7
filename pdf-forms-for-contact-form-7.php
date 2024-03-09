@@ -3,7 +3,7 @@
  * Plugin Name: PDF Forms Filler for CF7
  * Plugin URI: https://pdfformsfiller.org/
  * Description: Build Contact Form 7 forms from PDF forms. Get PDFs auto-filled and attached to email messages and/or website responses on form submission.
- * Version: 2.1.9
+ * Version: 2.1.10
  * Requires at least: 4.8
  * Requires PHP: 5.2
  * Author: Maximum.Software
@@ -23,9 +23,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 {
 	class WPCF7_Pdf_Forms
 	{
-		const VERSION = '2.1.9';
+		const VERSION = '2.1.10';
 		const MIN_WPCF7_VERSION = '5.0';
-		const MAX_WPCF7_VERSION = '5.8.99';
+		const MAX_WPCF7_VERSION = '5.9.99';
 		private static $BLACKLISTED_WPCF7_VERSIONS = array();
 		
 		private static $instance = null;
