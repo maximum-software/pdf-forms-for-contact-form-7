@@ -60,12 +60,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				if( class_exists('WPCF7_TagGenerator') )
 					echo $that::render( 'settings_panel', array(
-						'pdf-forms-filler-title' => __( "PDF Forms Filler" ),
 						'post-id' => esc_html( $post_id ),
+						'pdf-forms-filler-title' => __( "PDF Forms Filler" ),
 						'messages' => $messages,
 						'instructions' => esc_html__( "You can use this tag generator to attach a PDF file to your form, insert generated form tags into your form, and link them to fields in the PDF file. It is possible to link a combination of mail-tags to PDF fields. You can also embed images (from URLs or attached files) into the PDF file. Changes here are applied when the contact form is saved.", 'pdf-forms-for-contact-form-7' ),
 						'attach-pdf' => esc_html__( "Attach a PDF File", 'pdf-forms-for-contact-form-7' ),
 						'delete' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
+						'map-value' => esc_html__( 'Map Value', 'pdf-forms-for-contact-form-7' ),
 						'options' => esc_html__( 'Options', 'pdf-forms-for-contact-form-7' ),
 						'skip-when-empty' => esc_html__( 'Skip when empty', 'pdf-forms-for-contact-form-7' ),
 						'attach-to-mail-1' => esc_html__( 'Attach to primary email message', 'pdf-forms-for-contact-form-7' ),
@@ -74,8 +75,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						'filename' => esc_html__( 'Filename (mail-tags can be used)', 'pdf-forms-for-contact-form-7' ),
 						'save-directory'=> esc_html__( 'Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)', 'pdf-forms-for-contact-form-7' ),
 						'download-link' => esc_html__( 'Add filled PDF download link to form submission response', 'pdf-forms-for-contact-form-7' ),
+						'field-mapping' => esc_html__( 'Field Mapper Tool', 'pdf-forms-for-contact-form-7' ),
+						'field-mapping-help' => esc_html__( 'This tool can be used to link form fields and mail-tags to fields in the attached PDF files. When your users submit the form, input from form fields and other mail-tags will be inserted into the corresponding fields in the PDF file. CF7 to PDF field value mappings can also be created to enable the replacement of CF7 data when PDF fields are filled.', 'pdf-forms-for-contact-form-7' ),
 						'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
 						'cf7-field-or-mail-tags' => esc_html__( 'CF7 field/mail-tags', 'pdf-forms-for-contact-form-7' ),
+						'add-mapping' => esc_html__( 'Add Mapping', 'pdf-forms-for-contact-form-7' ),
+						'delete-all-mappings' => esc_html__( 'Delete All', 'pdf-forms-for-contact-form-7' ),
 						'image-embedding' => esc_html__( 'Image Embedding Tool', 'pdf-forms-for-contact-form-7' ),
 						'image-embedding-help'=> esc_html__( 'This tool allows embedding of images into PDF files. Images are taken from file upload fields or URL field values. You can select a PDF file page and draw a bounding box for image insertion. Alternatively, you can insert your image in the center of every page.', 'pdf-forms-for-contact-form-7' ),
 						'add-cf7-field-embed' => esc_html__( 'Embed Image', 'pdf-forms-for-contact-form-7' ),
@@ -98,11 +103,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						),
 						'show-help' => esc_html__( 'Show Help', 'pdf-forms-for-contact-form-7' ),
 						'hide-help' => esc_html__( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
-						'return-to-form' => esc_html__( "Return to Form", 'pdf-forms-for-contact-form-7' ),
 					) );
 				// support for older CF7 versions
 				else
-					echo $that::render( 'settings_panel_unsupported', array(
+					echo $that::render( 'add_pdf_unsupported', array(
 						'unsupported-message' => esc_html__( 'Your CF7 plugin is too out of date, please upgrade.', 'pdf-forms-for-contact-form-7' ),
 					) );
 			};
@@ -2496,12 +2500,9 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'delete' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
 					'map-value' => esc_html__( 'Map Value', 'pdf-forms-for-contact-form-7' ),
 					'options' => esc_html__( 'Options', 'pdf-forms-for-contact-form-7' ),
-					'field-mapping' => esc_html__( 'Field Mapper Tool', 'pdf-forms-for-contact-form-7' ),
-					'field-mapping-help' => esc_html__( 'This tool can be used to link form fields and mail-tags to fields in the attached PDF files. Form tags can also be generated. When your users submit the form, input from form fields and other mail-tags will be inserted into the corresponding fields in the PDF file. CF7 to PDF field value mappings can also be created to enable the replacement of CF7 data when PDF fields are filled.', 'pdf-forms-for-contact-form-7' ),
+					'field-mapping-generator' => esc_html__( 'Field Mapping Generator', 'pdf-forms-for-contact-form-7' ),
+					'field-mapping-generator-help' => esc_html__( 'This tool can be used to generate form tags.', 'pdf-forms-for-contact-form-7' ),
 					'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
-					'cf7-field-or-mail-tags' => esc_html__( 'CF7 field/mail-tags', 'pdf-forms-for-contact-form-7' ),
-					'add-mapping' => esc_html__( 'Add Mapping', 'pdf-forms-for-contact-form-7' ),
-					'delete-all-mappings' => esc_html__( 'Delete All', 'pdf-forms-for-contact-form-7' ),
 					'new-tag' => esc_html__( 'New Tag:', 'pdf-forms-for-contact-form-7' ),
 					'tag-generator' => esc_html__( 'Tag Generator Tool (deprecated)', 'pdf-forms-for-contact-form-7' ),
 					'tag-generator-help' => esc_html__( 'This tool allows one to create CF7 fields that are linked to PDF fields by name. This feature is deprecated in favor of the field mapper tool.', 'pdf-forms-for-contact-form-7' ),
@@ -2513,11 +2514,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							'/a' => '</a>',
 						)
 					),
+					'show-help' => esc_html__( 'Show Help', 'pdf-forms-for-contact-form-7' ),
+					'hide-help' => esc_html__( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
 					'show-tag-generator' => __( 'Show Tag Generator', 'pdf-forms-for-contact-form-7' ),
 					'hide-tag-generator' => __( 'Hide Tag Generator', 'pdf-forms-for-contact-form-7' ),
 					'get-tags' => esc_html__( 'Get Tags', 'pdf-forms-for-contact-form-7' ),
 					'all-pdfs' => esc_html__( 'All PDFs', 'pdf-forms-for-contact-form-7' ),
-					'return-to-form' => esc_html__( "Return to Form", 'pdf-forms-for-contact-form-7' ),
 				) );
 			// support for older CF7 versions
 			else

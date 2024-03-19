@@ -20,21 +20,21 @@ jQuery(document).ready(function($) {
 	var errorMessage = function(msg) {
 		if(!msg)
 			msg = wpcf7_pdf_forms.__Unknown_error;
-		jQuery('.wpcf7-pdf-forms-settings-panel .messages').append(
+		jQuery('.wpcf7-pdf-forms-admin .messages').append(
 			jQuery('<div class="error"/>').text(msg)
 		);
 		location.href = '#wpcf7-pdf-form-messages';
 	};
 	
 	var warningMessage = function(msg) {
-		jQuery('.wpcf7-pdf-forms-settings-panel .messages').append(
+		jQuery('.wpcf7-pdf-forms-admin .messages').append(
 			jQuery('<div class="warning"/>').text(msg)
 		);
 		location.href = '#wpcf7-pdf-form-messages';
 	};
 	
 	var successMessage = function(msg) {
-		jQuery('.wpcf7-pdf-forms-settings-panel .messages').append(
+		jQuery('.wpcf7-pdf-forms-admin .messages').append(
 			jQuery('<div class="updated"/>').text(msg)
 		);
 		location.href = '#wpcf7-pdf-form-messages';
@@ -588,7 +588,7 @@ jQuery(document).ready(function($) {
 		
 		refreshPdfFilesList();
 		
-		jQuery('.wpcf7-pdf-forms-settings-panel .help-button').each(function(){
+		jQuery('.wpcf7-pdf-forms-admin .help-button').each(function(){
 			var button = jQuery(this);
 			var helpbox = button.parent().find('.helpbox');
 			hideHelp(button, helpbox);
@@ -688,23 +688,19 @@ jQuery(document).ready(function($) {
 		pageList: []
 	};
 	
-	jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').select2({
+	jQuery('.wpcf7-pdf-forms-tag-generator-panel .pdf-field-list').select2({
 		ajax: {},
 		width: '100%',
 		sharedDataElement: "unmappedPdfFields",
-		dropdownParent: jQuery('.wpcf7-pdf-forms-admin'),
+		dropdownParent: jQuery('.wpcf7-pdf-forms-tag-generator-panel'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
-	jQuery('.wpcf7-pdf-forms-admin .cf7-field-list').select2({
+	jQuery('.wpcf7-pdf-forms-settings-panel .pdf-field-list').select2({
 		ajax: {},
 		width: '100%',
-		dropdownAutoWidth: true,
-		sharedDataElement: "cf7FieldsCache",
-		dropdownParent: jQuery('.wpcf7-pdf-forms-admin'),
+		sharedDataElement: "unmappedPdfFields",
+		dropdownParent: jQuery('.wpcf7-pdf-forms-settings-panel'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
-	}).on('select2:select', function (e) {
-		var data = e.params.data;
-		jQuery(this).find('option:selected').attr('data-mailtags', data['mailtag']);
 	});
 	jQuery('.wpcf7-pdf-forms-settings-panel .cf7-field-list').select2({
 		ajax: {},
@@ -1202,12 +1198,12 @@ jQuery(document).ready(function($) {
 	
 	var updateTagHint = function() {
 		
-		var tag = jQuery('.wpcf7-pdf-forms-admin .tag-hint');
-		tag.text('');
+		var tag = jQuery('.wpcf7-pdf-forms-admin-insert-box .tag-hint');
+		tag.val('');
 		tag.data('pdf_field', '');
 		tag.data('cf7_field', '');
 		
-		var pdf_field = jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').val();
+		var pdf_field = jQuery('.wpcf7-pdf-forms-tag-generator-panel .pdf-field-list').val();
 		if(!pdf_field)
 			return;
 		
@@ -1215,12 +1211,12 @@ jQuery(document).ready(function($) {
 		if(!pdf_field_data)
 			return;
 		
-		tag.text(pdf_field_data.tag_hint);
+		tag.val(pdf_field_data.tag_hint);
 		tag.data('cf7_field', pdf_field_data.tag_name);
 		tag.data('pdf_field', pdf_field_data.id);
 	};
 	
-	jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').change(updateTagHint);
+	jQuery('.wpcf7-pdf-forms-tag-generator-panel .pdf-field-list').change(updateTagHint);
 	
 	var getEmbeds = function() {
 		var embeds = getData('embeds');
@@ -1638,8 +1634,9 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
+	
 	// set up 'Insert And Link' button handler
-	jQuery('.wpcf7-pdf-forms-admin').on("click", '.insert-tag-hint-btn', function(event) {
+	jQuery('.wpcf7-pdf-forms-admin-insert-box').on("click", '.insert-tag-hint-btn', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1647,17 +1644,15 @@ jQuery(document).ready(function($) {
 		
 		clearMessages();
 		
-		var tag = jQuery('.wpcf7-pdf-forms-admin .tag-hint');
-		var tagText = tag.text();
+		var tag = jQuery('.wpcf7-pdf-forms-admin-insert-box .tag-hint');
+		var tagText = tag.val();
 		var cf7_field = tag.data('cf7_field');
 		var pdf_field = tag.data('pdf_field');
 		if(tagText !="" && (typeof cf7_field != 'undefined') && (typeof pdf_field != 'undefined'))
 		{
-		//[checkbox entrylevelkitchen "Entry Level Kitchen"]
 			jQuery('.postbox-container a[href$="#form-panel"]').click();
-			jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tagText);
-			console.log(tagText);
-			jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
+			jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
+			jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
 			
 			loadCf7Fields(function() {
 				var mapping_id = addMapping({
@@ -1672,7 +1667,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Insert & Link All' button handler
-	jQuery('.wpcf7-pdf-forms-admin').on("click", '.insert-and-map-all-tags-btn', function(event) {
+	jQuery('.wpcf7-pdf-forms-admin-insert-box').on("click", '.insert-and-map-all-tags-btn', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1693,8 +1688,8 @@ jQuery(document).ready(function($) {
 		
 		if(tagText)
 		{
-			jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tagText);
-			jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
+			jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
+			jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
 			loadCf7Fields(function() {
 				jQuery.each(pdf_fields, function(f, field) {
 					if(field.attachment_id == 'all' && field.tag_hint)
@@ -2037,20 +2032,6 @@ jQuery(document).ready(function($) {
 			elements.show();
 			button.text(wpcf7_pdf_forms.__Hide_Tag_Generator_Tool);
 		}
-		
-		return false;
-	});
-	
-	// set up 'Return to Form' button handler
-	jQuery('.wpcf7-pdf-forms-admin').on("click", '.return-to-form-button', function(event) {
-		
-		// prevent running default button click handlers
-		event.stopPropagation();
-		event.preventDefault();
-		
-		clearMessages();
-		
-		tb_remove();
 		
 		return false;
 	});
