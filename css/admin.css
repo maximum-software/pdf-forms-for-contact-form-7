@@ -17,6 +17,11 @@
 	max-width: 100%;
 }
 
+.wpcf7-pdf-forms-admin .form-table td
+{
+	padding: 2px;
+}
+
 .wpcf7-pdf-forms-admin .tags-textarea
 {
 	min-height: 180px;
@@ -84,6 +89,11 @@
 .wpcf7-pdf-forms-admin .filename-column
 {
 	width: 100%
+}
+
+.wpcf7-pdf-forms-admin .pdf-attachment-row
+{
+	border-bottom: 1px dotted #ccc;
 }
 
 .wpcf7-pdf-forms-admin .pdf-attachment-row .pdf-filename
@@ -276,6 +286,11 @@
 .wpcf7-pdf-forms-admin .tag-generator-tool .pdf-files-list
 {
 	width: 20%;
+}
+
+.wpcf7-pdf-forms-tag-generator-panel fieldset > *
+{
+	margin-bottom: 20px;
 }
 
 .wpcf7-pdf-forms-admin .insert-box
