@@ -1707,6 +1707,20 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
+	// set up 'PDF Forms Filler panel' button handler
+	jQuery('.wpcf7-pdf-forms-tag-generator-panel').on("click", '.switch-to-wpcf7-forms-panel-btn', function(event) {
+		
+		// prevent running default button click handlers
+		event.stopPropagation();
+		event.preventDefault();
+		
+		tb_remove();
+		
+		jQuery('#wpcf7-forms-panel-tab a[href$="#wpcf7-forms-panel"]').click();
+		
+		return false;
+	});
+	
 	// set up 'Attach a PDF file' button handler
 	var attachPdf = function(file_id) {
 		

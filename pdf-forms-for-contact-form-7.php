@@ -2506,6 +2506,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'new-tag' => esc_html__( 'New Tag:', 'pdf-forms-for-contact-form-7' ),
 					'tag-generator' => esc_html__( 'Tag Generator Tool (deprecated)', 'pdf-forms-for-contact-form-7' ),
 					'tag-generator-help' => esc_html__( 'This tool allows one to create CF7 fields that are linked to PDF fields by name. This feature is deprecated in favor of the field mapper tool.', 'pdf-forms-for-contact-form-7' ),
+					'update-message' => self::replace_tags(
+						esc_html__( "The Field Mapper Tool and the Image Embedding Tool have moved to the {a-href-panel-link}PDF Forms Filler panel{/a}.", 'pdf-forms-for-contact-form-7' ),
+						array(
+							'a-href-panel-link' => '<a href="#wpcf7-forms-panel" class="switch-to-wpcf7-forms-panel-btn">',
+							'/a' => '</a>',
+						)
+					),
 					'help-message' => self::replace_tags(
 						esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'pdf-forms-for-contact-form-7' ),
 						array(
