@@ -1,0 +1,77 @@
+<div class="control-box wpcf7-pdf-forms-admin wpcf7-pdf-forms-tag-generator-panel" style="height: auto;">
+	<div class="wpcf7-pdf-forms-spinner-overlay-box"></div>
+	<fieldset>
+		<legend>{help-message}</legend>
+		
+		{messages}
+		
+		<a name="wpcf7-pdf-form-messages"></a>
+		<div class="messages"></div>
+		
+		<div class="tag-generator-tool">
+			<a name="wpcf7-pdf-form-tags-textarea"></a>
+			
+			<div>
+				<span class="dashicons dashicons-welcome-write-blog"></span>
+				<strong>{tag-generator}</strong>
+				<a class="tag-generator-toggle-button" href="#">{show-tag-generator}</a>
+				<a class="help-button tag-generator-body-element" href="#">{hide-help}</a>
+				
+				<div class="tag-generator-body-element">
+					<div class="helpbox">
+						<span class="dashicons dashicons-editor-help"></span>
+						{tag-generator-help}
+					</div>
+				</div>
+			</div>
+			
+			<textarea wrap="hard" name="text" class="tag code tags-textarea tag-generator-body-element"></textarea>
+			
+			<div class="submitbox tag-generator-body-element">
+				<select class="pdf-files-list" name="tag-generator-pdf-list"><option value="all">{all-pdfs}</option></select>
+				<a class="button button-primary get-tags-all-button" href="#">{get-tags}</a>
+				<input type="button" class="button button-primary insert-tags-button" value="{insert-tags}" />
+			</div>
+		</div>
+		
+		<hr/>
+		
+		<div class="field-mapping-generator-tool">
+			<div>
+				<span class="dashicons dashicons-plus-alt"></span>
+				<strong>{field-mapping-generator}</strong>
+				<a class="help-button" href="#">{hide-help}</a>
+				<div class="helpbox">
+					<span class="dashicons dashicons-editor-help"></span>
+					{field-mapping-generator-help}
+				</div>
+			</div>
+			<table class="form-table field-mapping-generator-table">
+				<tbody>
+					<tr>
+						<th scope="row">{pdf-field}</th>
+						<td class="pdf-field select-dropdown"><select class="pdf-field-list"></select></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</fieldset>
+</div>
+
+<div class="insert-box wpcf7-pdf-forms-admin-insert-box">
+	<table>
+		<tbody>
+			<tr>
+				<td colspan="3" class="tag-hint-row"><input type="text" class="tag-hint code" readonly="readonly" onfocus="this.select()"></td>
+				<td class="buttons"><input type="button" class="button button-primary insert-tag-hint-btn" value="{insert-tag}" /></td>
+			</tr>
+			<tr class="marked-row-background">
+				<td colspan="3" class="generate-and-insert-all-tags-message">{generate-and-insert-all-tags-message}</td>
+				<td class="buttons"><input type="button" class="button button-primary insert-and-map-all-tags-btn" value="{insert-and-map-all-tags}" /></td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="hidden" name="text" class="tag code" value="" onfocus="this.select()" />
+	<input type="button" class="button insert-tag hidden" value="" />
+</div>
+

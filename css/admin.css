@@ -220,16 +220,11 @@
 	display: none;
 }
 
-.wpcf7-pdf-forms-admin .tag-hint-row
+.wpcf7-pdf-forms-admin-insert-box .tag-hint
 {
-	vertical-align: middle !important;
-	text-align: left !important;
-}
-
-.wpcf7-pdf-forms-admin .tag-hint
-{
-	font-weight: bold;
-	word-break: break-all;
+	width: 450px;
+	background-color: transparent;
+	box-shadow: none;
 }
 
 .wpcf7-pdf-forms-admin .marked-row-background
@@ -276,12 +271,6 @@
 .wpcf7-pdf-forms-admin .image-region-selection-hint
 {
 	font-style: italic;
-}
-
-.wpcf7-pdf-forms-admin .return-to-form-button
-{
-	float: right;
-	margin-right: 10px;
 }
 
 .wpcf7-pdf-forms-admin .tag-generator-tool .pdf-files-list
