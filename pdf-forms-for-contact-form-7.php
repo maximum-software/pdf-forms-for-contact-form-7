@@ -51,7 +51,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		
 		function editor_panels( $panels ) {
 			$that = $this;
-			$post_id =  WPCF7_ContactForm::get_current()->id;
+			$post_id = WPCF7_ContactForm::get_current()->id();
 			$editor_panel = static function() use ( $that, $post_id )  {
 				$service = $that->get_service();
 				$messages = '';
