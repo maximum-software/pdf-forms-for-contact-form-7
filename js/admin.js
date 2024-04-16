@@ -1986,13 +1986,8 @@ jQuery(document).ready(function($) {
 				});
 		}
 		
-		var imageEmbedToolElement = jQuery(this).closest('.image-embedding-tool');
-		var imageEmbedToolPosition = imageEmbedToolElement.position();
-		var scrollElement = imageEmbedToolElement.parent();
 		var embedRowElement = jQuery(".wpcf7-pdf-forms-settings-panel .image-embeds-row:visible").last();
-		var embedRowPosition = embedRowElement.position();
-		if(imageEmbedToolPosition && embedRowPosition)
-			scrollElement.animate({scrollTop: scrollElement.scrollTop() + imageEmbedToolPosition.top + embedRowPosition.top}, 1000);
+		jQuery('html, body').animate({scrollTop: embedRowElement.offset().top}, 1000);
 		
 		return false;
 	});
