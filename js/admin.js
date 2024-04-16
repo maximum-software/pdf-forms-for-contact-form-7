@@ -699,7 +699,6 @@ jQuery(document).ready(function($) {
 		ajax: {},
 		width: '100%',
 		sharedDataElement: "unmappedPdfFields",
-		dropdownParent: jQuery('.wpcf7-pdf-forms-settings-panel'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	jQuery('.wpcf7-pdf-forms-settings-panel .cf7-field-list').select2({
@@ -707,18 +706,23 @@ jQuery(document).ready(function($) {
 		width: '100%',
 		dropdownAutoWidth: true,
 		sharedDataElement: "cf7FieldsCache",
-		dropdownParent: jQuery('.wpcf7-pdf-forms-settings-panel'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	}).on('select2:select', function (e) {
 		var data = e.params.data;
 		jQuery(this).find('option:selected').attr('data-mailtags', data['mailtag']);
+	});
+	jQuery('.wpcf7-pdf-forms-tag-generator-panel .pdf-files-list').select2({
+		ajax: {},
+		dropdownAutoWidth: true,
+		dropdownParent: jQuery('.wpcf7-pdf-forms-tag-generator-panel'),
+		sharedDataElement: "pdfSelect2Files",
+		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	jQuery('.wpcf7-pdf-forms-settings-panel .pdf-files-list').select2({
 		ajax: {},
 		width: '100%',
 		dropdownAutoWidth: true,
 		sharedDataElement: "pdfSelect2Files",
-		dropdownParent: jQuery('.wpcf7-pdf-forms-settings-panel'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	jQuery('.wpcf7-pdf-forms-settings-panel .page-list').select2({
@@ -726,7 +730,6 @@ jQuery(document).ready(function($) {
 		width: '100%',
 		dropdownAutoWidth: true,
 		sharedDataElement: "pageList",
-		dropdownParent: jQuery('.wpcf7-pdf-forms-settings-panel'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	
@@ -960,7 +963,6 @@ jQuery(document).ready(function($) {
 				data: options,
 				tags: true,
 				width: '100%',
-				dropdownParent: jQuery('.wpcf7-pdf-forms-admin')
 			});
 			
 			select.val(data.cf7_value).trigger('change');
@@ -992,7 +994,6 @@ jQuery(document).ready(function($) {
 				data: options,
 				tags: true,
 				width: '100%',
-				dropdownParent: jQuery('.wpcf7-pdf-forms-admin')
 			});
 			
 			select.val(data.pdf_value).trigger('change');
