@@ -1629,12 +1629,12 @@ jQuery(document).ready(function($) {
 		clearMessages();
 		
 		var tags = jQuery('.wpcf7-pdf-forms-admin .tags-textarea').val();
-		jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tags);
-		jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
+		jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tags);
+		jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
+		jQuery('.wpcf7-pdf-forms-admin .tags-textarea').val("");
 		
 		return false;
 	});
-	
 	
 	// set up 'Insert And Link' button handler
 	jQuery('.wpcf7-pdf-forms-admin-insert-box').on("click", '.insert-tag-hint-btn', function(event) {
@@ -1651,7 +1651,6 @@ jQuery(document).ready(function($) {
 		var pdf_field = tag.data('pdf_field');
 		if(tagText !="" && (typeof cf7_field != 'undefined') && (typeof pdf_field != 'undefined'))
 		{
-			jQuery('.postbox-container a[href$="#form-panel"]').click();
 			jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
 			jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
 			
