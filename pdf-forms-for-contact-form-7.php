@@ -2493,6 +2493,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				echo self::render( 'tag_generator', array(
 					'post-id' => esc_html( $contact_form->id() ),
 					'messages' => $messages,
+					'go-to-pdf-files' => esc_html__( "Go to PDF files", 'pdf-forms-for-contact-form-7' ),
+					'go-to-field-mappings' => esc_html__( "Go to Field Mappings", 'pdf-forms-for-contact-form-7' ),
 					'insert-tags' => esc_html__( "Insert Tags", 'pdf-forms-for-contact-form-7' ),
 					'insert-tag' => esc_html__( "Insert and Link", 'pdf-forms-for-contact-form-7' ),
 					'generate-and-insert-all-tags-message' => esc_html__( "The 'Insert & Link All' button allows you to generate tags for all remaining unlinked PDF fields, insert them into the form and link them to their corresponding fields.", 'pdf-forms-for-contact-form-7' ),

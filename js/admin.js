@@ -1707,8 +1707,8 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
-	// set up 'PDF Forms Filler panel' button handler
-	jQuery('.wpcf7-pdf-forms-tag-generator-panel').on("click", '.switch-to-wpcf7-forms-panel-btn', function(event) {
+	// set up 'PDF Forms Filler panel' buttons handler
+	jQuery('.wpcf7-pdf-forms-tag-generator-panel').on("click", '.switch-to-wpcf7-forms-panel-btn, .go-to-wpcf7-forms-panel-btn', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();

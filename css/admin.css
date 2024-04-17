@@ -327,3 +327,18 @@
 {
 	width: 10%;
 }
+
+.field-mapping-generator-table
+{
+	height: 50px;
+}
+
+.field-mapping-generator-table th
+{
+	vertical-align: middle;
+}
+
+.field-mapping-generator-bnts
+{
+	text-align: right;
+}
