@@ -109,6 +109,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			// TODO: allow users to run this manually
 			add_action( 'admin_init', array( $this, 'upgrade_data' ) );
+			
+			// handle change_response_nojs() hidden iframe download requests
+			if( isset( $_GET['wpcf7-pdf-forms-download'] ) )
+				$this->handle_hidden_iframe_download();
 		}
 		
 		/*
@@ -578,7 +582,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $attachment_id;
 		}
 		
-		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false );
+		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false, 'download_link_auto' => false );
+		private static $public_pdf_options = array('download_link', 'download_link_auto');
 		
 		/**
 		 * Updates post attachment options
@@ -706,6 +711,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				'filename' => esc_html__( 'Filename (mail-tags can be used)', 'pdf-forms-for-contact-form-7' ),
 				'save-directory'=> esc_html__( 'Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)', 'pdf-forms-for-contact-form-7' ),
 				'download-link' => esc_html__( 'Add filled PDF download link to form submission response', 'pdf-forms-for-contact-form-7' ),
+				'download-link-auto' => esc_html__( 'Trigger an automatic download of the filled PDF file on a successful form submission response', 'pdf-forms-for-contact-form-7' ),
 				'field-mapping' => esc_html__( 'Field Mapper Tool', 'pdf-forms-for-contact-form-7' ),
 				'field-mapping-help' => esc_html__( 'This tool can be used to link form fields and mail-tags to fields in the attached PDF files. When your users submit the form, input from form fields and other mail-tags will be inserted into the corresponding fields in the PDF file. CF7 to PDF field value mappings can also be created to enable the replacement of CF7 data when PDF fields are filled.', 'pdf-forms-for-contact-form-7' ),
 				'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
@@ -1448,12 +1454,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$attach_to_mail_2 = $attachment['options']['attach_to_mail_2'] || strpos( $mail2["attachments"], "[pdf-form-".$attachment_id."]" ) !== FALSE;
 					$save_directory = strval( $attachment['options']['save_directory'] );
 					$create_download_link = $attachment['options']['download_link'];
+					$create_download_link_auto = $attachment['options']['download_link_auto'];
 					
 					// skip file if it is not used anywhere
 					if( !$attach_to_mail_1
 					&& !$attach_to_mail_2
 					&& $save_directory === ""
-					&& !$create_download_link )
+					&& !$create_download_link
+					&& !$create_download_link_auto )
 						continue;
 					
 					$options = array();
@@ -1584,8 +1592,19 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						}
 						
 						$create_download_link = $filedata['options']['download_link'];
-						if ( $create_download_link )
-							$this->get_downloads()->add_file( $filedata['file'], $filedata['filename'] );
+						$create_download_link_auto = $filedata['options']['download_link_auto'];
+						if( $create_download_link || $create_download_link_auto )
+						{
+							$public_options = array();
+							foreach( self::$public_pdf_options as $option )
+								$public_options[$option] = $filedata['options'][$option];
+							
+							$this->get_downloads()->add_file(
+								$filedata['file'],
+								$filedata['filename'],
+								$public_options
+							);
+						}
 					}
 				}
 			}
@@ -2610,7 +2629,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							array(
 								'filename' => $file['filename'],
 								'url' => $file['url'],
-								'size' => size_format( filesize( $file['filepath'] ) )
+								'size' => size_format( filesize( $file['filepath'] ) ),
+								'options' => $file['options'],
 							);
 				
 				// make sure to enable cron if it is down so that old download files get cleaned up
@@ -2635,21 +2655,35 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				{
 					$downloads = '';
 					foreach( $this->downloads->get_files() as $file )
-						$downloads .= "<div>" .
-							self::replace_tags(
-								esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
-								array(
-									'icon' => '<span class="dashicons dashicons-download"></span>',
-									'a-href-url' => '<a href="' . esc_attr( $file['url'] ) . '" download>',
-									'filename' => esc_html( $file['filename'] ),
-									'/a' => '</a>',
-									'i' => '<span class="file-size">',
-									'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
-									'/i' => '</span>',
+					if( isset( $file['options'] ) && is_array( $file['options'] ) )
+					{
+						$options = $file['options'];
+						
+						if( $options['download_link'] )
+							$downloads .= "<div>" .
+								self::replace_tags(
+									esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
+									array(
+										'icon' => '<span class="dashicons dashicons-download"></span>',
+										'a-href-url' => '<a href="' . esc_attr( $file['url'] ) . '" download>',
+										'filename' => esc_html( $file['filename'] ),
+										'/a' => '</a>',
+										'i' => '<span class="file-size">',
+										'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
+										'/i' => '</span>',
+									)
 								)
-							)
-						. "</div>";
-					$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
+							. "</div>";
+						
+						if( $options['download_link_auto'] )
+						{
+							$file_path = substr( $file['filepath'], strlen( $this->downloads->get_downloads_path() ) + 1 );
+							$hash = wp_hash( $file_path . wp_salt() );
+							$output .= "<iframe src='?wpcf7-pdf-forms-download=" . esc_attr( $file_path ) . "&hash=" . esc_attr( $hash ) . "' style='display:none;'></iframe>";
+						}
+					}
+					if($downloads !== '')
+						$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
 					
 					// make sure to enable cron if it is down so that old download files get cleaned up
 					$this->enable_cron();
@@ -2657,6 +2691,57 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 			
 			return $output;
+		}
+		
+		/**
+		 * Hook for change_response_nojs() that allows hidden iframe download to work
+		 */
+		public function handle_hidden_iframe_download()
+		{
+			if( isset( $_GET['wpcf7-pdf-forms-download'] ) )
+			{
+				$downloads = $this->get_downloads();
+				$filepath = $_GET['wpcf7-pdf-forms-download'];
+				$hash = $_GET['hash'];
+				
+				// invasive pat down
+				$path_parts = explode( '/', $filepath );
+				$sanitized_parts = array_map( 'sanitize_file_name', $path_parts );
+				$filepath = implode( DIRECTORY_SEPARATOR, $sanitized_parts );
+				
+				// additional security checks
+				$downloads_path = realpath( $downloads->get_downloads_path() );
+				$fullfilepath = $downloads_path . DIRECTORY_SEPARATOR . $filepath;
+				$realfilepath = realpath( $fullfilepath );
+				if( $downloads_path !== false && $realfilepath !== false && $fullfilepath === $realfilepath
+				&& self::get_mime_type( $realfilepath ) == 'application/pdf'
+				&& self::hash_equals( wp_hash( $filepath . wp_salt() ), $hash ) )
+				{
+					header( 'Content-Type: application/pdf' );
+					header( 'Content-Disposition: attachment; filename="' . basename( $realfilepath ) . '"' );
+					header( 'Content-Length: ' . filesize( $realfilepath ) );
+					readfile( $realfilepath );
+					exit;
+				}
+			}
+		}
+		
+		/**
+		 * hash_equals() for PHP < 5.6
+		 */
+		public static function hash_equals( $str1, $str2 )
+		{
+			if( function_exists( 'hash_equals' ) )
+				return hash_equals( $str1, $str2 );
+			
+			if( strlen( $str1 ) != strlen( $str2 ) )
+				return false;
+			
+			$res = $str1 ^ $str2;
+			$ret = 0;
+			for( $i = strlen( $res ) - 1; $i >= 0; $i-- )
+				$ret |= ord( $res[$i] );
+			return !$ret;
 		}
 	}
 	
