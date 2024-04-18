@@ -49,76 +49,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_pdf_forms_cron', array( $this, 'cron' ) );
 		}
 		
-		function editor_panels( $panels ) {
-			$that = $this;
-			$post_id = WPCF7_ContactForm::get_current()->id();
-			$editor_panel = static function() use ( $that, $post_id )  {
-				$service = $that->get_service();
-				$messages = '';
-				if( $service && is_callable( array( $service, 'thickbox_messages' ) ) )
-					$messages .= $service->thickbox_messages();
-				
-				if( class_exists('WPCF7_TagGenerator') )
-					echo $that::render( 'settings_panel', array(
-						'post-id' => esc_html( $post_id ),
-						'pdf-forms-filler-title' => __( "PDF Forms Filler" ),
-						'messages' => $messages,
-						'instructions' => esc_html__( "You can use this panel to attach a PDF file to this contact form and link form-tags and mail-tags to fields in the PDF file. It is possible to link a combination of mail-tags to PDF fields. You can also embed images (from URLs or attached files) into the PDF file. Changes here are applied when the contact form is saved.", 'pdf-forms-for-contact-form-7' ),
-						'attach-pdf' => esc_html__( "Attach a PDF File", 'pdf-forms-for-contact-form-7' ),
-						'delete' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
-						'map-value' => esc_html__( 'Map Value', 'pdf-forms-for-contact-form-7' ),
-						'options' => esc_html__( 'Options', 'pdf-forms-for-contact-form-7' ),
-						'skip-when-empty' => esc_html__( 'Skip when empty', 'pdf-forms-for-contact-form-7' ),
-						'attach-to-mail-1' => esc_html__( 'Attach to primary email message', 'pdf-forms-for-contact-form-7' ),
-						'attach-to-mail-2' => esc_html__( 'Attach to secondary email message', 'pdf-forms-for-contact-form-7' ),
-						'flatten' => esc_html__( 'Flatten', 'pdf-forms-for-contact-form-7' ),
-						'filename' => esc_html__( 'Filename (mail-tags can be used)', 'pdf-forms-for-contact-form-7' ),
-						'save-directory'=> esc_html__( 'Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)', 'pdf-forms-for-contact-form-7' ),
-						'download-link' => esc_html__( 'Add filled PDF download link to form submission response', 'pdf-forms-for-contact-form-7' ),
-						'field-mapping' => esc_html__( 'Field Mapper Tool', 'pdf-forms-for-contact-form-7' ),
-						'field-mapping-help' => esc_html__( 'This tool can be used to link form fields and mail-tags to fields in the attached PDF files. When your users submit the form, input from form fields and other mail-tags will be inserted into the corresponding fields in the PDF file. CF7 to PDF field value mappings can also be created to enable the replacement of CF7 data when PDF fields are filled.', 'pdf-forms-for-contact-form-7' ),
-						'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
-						'cf7-field-or-mail-tags' => esc_html__( 'CF7 field/mail-tags', 'pdf-forms-for-contact-form-7' ),
-						'add-mapping' => esc_html__( 'Add Mapping', 'pdf-forms-for-contact-form-7' ),
-						'delete-all-mappings' => esc_html__( 'Delete All', 'pdf-forms-for-contact-form-7' ),
-						'image-embedding' => esc_html__( 'Image Embedding Tool', 'pdf-forms-for-contact-form-7' ),
-						'image-embedding-help'=> esc_html__( 'This tool allows embedding of images into PDF files. Images are taken from file upload fields or URL field values. You can select a PDF file page and draw a bounding box for image insertion. Alternatively, you can insert your image in the center of every page.', 'pdf-forms-for-contact-form-7' ),
-						'add-cf7-field-embed' => esc_html__( 'Embed Image', 'pdf-forms-for-contact-form-7' ),
-						'delete-cf7-field-embed' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
-						'pdf-file' => esc_html__( 'PDF file', 'pdf-forms-for-contact-form-7' ),
-						'page' => esc_html__( 'Page', 'pdf-forms-for-contact-form-7' ),
-						'image-region-selection-hint' => esc_html__( 'Select a region where the image needs to be embeded.', 'pdf-forms-for-contact-form-7' ),
-						'top' => esc_html__( 'Top', 'pdf-forms-for-contact-form-7' ),
-						'left' => esc_html__( 'Left', 'pdf-forms-for-contact-form-7' ),
-						'width' => esc_html__( 'Width', 'pdf-forms-for-contact-form-7' ),
-						'height' => esc_html__( 'Height', 'pdf-forms-for-contact-form-7' ),
-						'pts' => esc_html__( 'pts', 'pdf-forms-for-contact-form-7' ),
-						'help-message' => $that::replace_tags(
-							esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'pdf-forms-for-contact-form-7' ),
-							array(
-								'a-href-forum' => '<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
-								'a-href-tutorial' => '<a href="https://youtu.be/jy84xqnj0Zk" target="_blank">',
-								'/a' => '</a>',
-							)
-						),
-						'show-help' => esc_html__( 'Show Help', 'pdf-forms-for-contact-form-7' ),
-						'hide-help' => esc_html__( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
-					) );
-				// support for older CF7 versions
-				else
-					echo $that::render( 'add_pdf_unsupported', array(
-						'unsupported-message' => esc_html__( 'Your CF7 plugin is too out of date, please upgrade.', 'pdf-forms-for-contact-form-7' ),
-					) );
-			};
-			$panels += array(
-				'wpcf7-forms-panel' => array(
-					'title' => __( "PDF Forms Filler" ),
-					'callback' => $editor_panel,
-				),
-			);
-			return $panels;
-		}
-		
 		/*
 		 * Returns a global instance of this class
 		 */
@@ -153,7 +83,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			add_action( 'admin_init', array( $this, 'extend_tag_generator' ), 80 );
 			add_action( 'admin_menu', array( $this, 'register_services') );
-			add_filter( 'wpcf7_editor_panels', array( $this, 'editor_panels'), 10, 1);
+			add_filter( 'wpcf7_editor_panels', array( $this, 'editor_panels'), 10, 1 );
 			
 			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_pdfs' ), 1000, 3 );
 			if( version_compare( WPCF7_VERSION, '5.4.1' ) < 0 )
@@ -732,6 +662,73 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$this->cf7_forms_save_overrides = array( 'attachments' => $attachments , 'mappings' => $mappings , 'value_mappings' => $value_mappings , 'embeds' => $embeds );
 			
 			return $new;
+		}
+		
+		function editor_panels( $panels )
+		{
+			$panels += array(
+				'wpcf7-forms-panel' => array(
+					'title' => __( "PDF Forms Filler" ),
+					'callback' => array( $this, 'editor_panel' ),
+				),
+			);
+			
+			return $panels;
+		}
+		
+		function editor_panel( $panels )
+		{
+			$messages = '';
+			
+			$service = $this->get_service();
+			if( $service && is_callable( array( $service, 'thickbox_messages' ) ) )
+				$messages .= $service->thickbox_messages();
+			
+			echo self::render( 'settings_panel', array(
+				'post-id' => esc_html( WPCF7_ContactForm::get_current()->id() ),
+				'pdf-forms-filler-title' => esc_html__( "PDF Forms Filler" ),
+				'messages' => $messages,
+				'instructions' => esc_html__( "You can use this panel to attach a PDF file to this contact form and link form-tags and mail-tags to fields in the PDF file. It is possible to link a combination of mail-tags to PDF fields. You can also embed images (from URLs or attached files) into the PDF file. Changes here are applied when the contact form is saved.", 'pdf-forms-for-contact-form-7' ),
+				'attach-pdf' => esc_html__( "Attach a PDF File", 'pdf-forms-for-contact-form-7' ),
+				'delete' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
+				'map-value' => esc_html__( 'Map Value', 'pdf-forms-for-contact-form-7' ),
+				'options' => esc_html__( 'Options', 'pdf-forms-for-contact-form-7' ),
+				'skip-when-empty' => esc_html__( 'Skip when empty', 'pdf-forms-for-contact-form-7' ),
+				'attach-to-mail-1' => esc_html__( 'Attach to primary email message', 'pdf-forms-for-contact-form-7' ),
+				'attach-to-mail-2' => esc_html__( 'Attach to secondary email message', 'pdf-forms-for-contact-form-7' ),
+				'flatten' => esc_html__( 'Flatten', 'pdf-forms-for-contact-form-7' ),
+				'filename' => esc_html__( 'Filename (mail-tags can be used)', 'pdf-forms-for-contact-form-7' ),
+				'save-directory'=> esc_html__( 'Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)', 'pdf-forms-for-contact-form-7' ),
+				'download-link' => esc_html__( 'Add filled PDF download link to form submission response', 'pdf-forms-for-contact-form-7' ),
+				'field-mapping' => esc_html__( 'Field Mapper Tool', 'pdf-forms-for-contact-form-7' ),
+				'field-mapping-help' => esc_html__( 'This tool can be used to link form fields and mail-tags to fields in the attached PDF files. When your users submit the form, input from form fields and other mail-tags will be inserted into the corresponding fields in the PDF file. CF7 to PDF field value mappings can also be created to enable the replacement of CF7 data when PDF fields are filled.', 'pdf-forms-for-contact-form-7' ),
+				'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
+				'cf7-field-or-mail-tags' => esc_html__( 'CF7 field/mail-tags', 'pdf-forms-for-contact-form-7' ),
+				'add-mapping' => esc_html__( 'Add Mapping', 'pdf-forms-for-contact-form-7' ),
+				'delete-all-mappings' => esc_html__( 'Delete All', 'pdf-forms-for-contact-form-7' ),
+				'image-embedding' => esc_html__( 'Image Embedding Tool', 'pdf-forms-for-contact-form-7' ),
+				'image-embedding-help'=> esc_html__( 'This tool allows embedding of images into PDF files. Images are taken from file upload fields or URL field values. You can select a PDF file page and draw a bounding box for image insertion. Alternatively, you can insert your image in the center of every page.', 'pdf-forms-for-contact-form-7' ),
+				'add-cf7-field-embed' => esc_html__( 'Embed Image', 'pdf-forms-for-contact-form-7' ),
+				'delete-cf7-field-embed' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
+				'pdf-file' => esc_html__( 'PDF file', 'pdf-forms-for-contact-form-7' ),
+				'page' => esc_html__( 'Page', 'pdf-forms-for-contact-form-7' ),
+				'image-region-selection-hint' => esc_html__( 'Select a region where the image needs to be embeded.', 'pdf-forms-for-contact-form-7' ),
+				'top' => esc_html__( 'Top', 'pdf-forms-for-contact-form-7' ),
+				'left' => esc_html__( 'Left', 'pdf-forms-for-contact-form-7' ),
+				'width' => esc_html__( 'Width', 'pdf-forms-for-contact-form-7' ),
+				'height' => esc_html__( 'Height', 'pdf-forms-for-contact-form-7' ),
+				'pts' => esc_html__( 'pts', 'pdf-forms-for-contact-form-7' ),
+				'help-message' => self::replace_tags(
+					esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'pdf-forms-for-contact-form-7' ),
+					array(
+						'a-href-forum' => '<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
+						'a-href-tutorial' => '<a href="https://youtu.be/jy84xqnj0Zk" target="_blank">',
+						'/a' => '</a>',
+					)
+				),
+				'show-help' => esc_html__( 'Show Help', 'pdf-forms-for-contact-form-7' ),
+				'hide-help' => esc_html__( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
+			) );
 		}
 		
 		/**
