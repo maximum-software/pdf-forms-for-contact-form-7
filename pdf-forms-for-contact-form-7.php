@@ -49,7 +49,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_pdf_forms_cron', array( $this, 'cron' ) );
 		}
 		
-		/*
+		/**
 		 * Returns a global instance of this class
 		 */
 		public static function get_instance()
@@ -60,7 +60,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return self::$instance;
 		}
 		
-		/*
+		/**
 		 * Runs after all plugins have been loaded
 		 */
 		public function plugin_init()
@@ -115,7 +115,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				$this->handle_hidden_iframe_download();
 		}
 		
-		/*
+		/**
 		 * Runs after the plugin have been activated/deactivated
 		 */
 		public function plugin_activated( $network_wide = false )
@@ -152,7 +152,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$this->get_downloads()->set_timeout(0)->delete_old_downloads();
 		}
 		
-		/*
+		/**
 		 * Hook that adds a cron schedule
 		 */
 		public function cron_schedules( $schedules )
@@ -166,7 +166,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $schedules;
 		}
 		
-		/*
+		/**
 		 * Enables cron
 		 */
 		private function enable_cron()
@@ -190,7 +190,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				wp_schedule_event( $current_time, 'wpcf7_pdf_forms_cron_frequency', 'wpcf7_pdf_forms_cron' );
 		}
 		
-		/*
+		/**
 		 * Disables cron
 		 */
 		private function disable_cron()
@@ -206,7 +206,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$this->get_downloads()->delete_old_downloads();
 		}
 		
-		/*
+		/**
 		 * Runs after plugin updates and triggers data migration
 		 */
 		public function upgrader_process_complete( $upgrader, $hook_extra )
@@ -229,7 +229,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 		}
 		
-		/*
+		/**
 		 * Returns sorted list of data migration scripts in the migrations directory
 		 */
 		private function get_migrations()
@@ -256,7 +256,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $migrations;
 		}
 		
-		/*
+		/**
 		 * Runs data migration when triggered
 		 */
 		public function upgrade_data()
@@ -290,7 +290,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			catch( Exception $e ) { }
 		}
 		
-		/*
+		/**
 		 * Checks if CF7 version is supported
 		 */
 		public function is_wpcf7_version_supported( $version )
@@ -507,7 +507,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			do_action( 'wpcf7_pdf_forms_register_services' );
 		}
 		
-		/*
+		/**
 		 * Function for working with metadata
 		 */
 		public static function get_meta( $post_id, $key )
@@ -518,7 +518,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $value;
 		}
 		
-		/*
+		/**
 		 * Function for working with metadata
 		 */
 		public static function set_meta( $post_id, $key, $value )
@@ -537,7 +537,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $value;
 		}
 		
-		/*
+		/**
 		 * Function for working with metadata
 		 */
 		public static function unset_meta( $post_id, $key )
@@ -684,7 +684,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $panels;
 		}
 		
-		/* 
+		/**
 		 * Renders the settings panel
 		 */
 		function render_settings_panel()
@@ -1624,7 +1624,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 		}
 		
-		/*
+		/**
 		 * Attaches files to CF7 email messages when needed
 		 */
 		public function attach_files( $components, $form = null, $mail = null )
@@ -1698,7 +1698,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 		}
 		
-		/*
+		/**
 		 * Returns (and computes, if necessary) the md5 sum of the media file
 		 */
 		public static function get_attachment_md5sum( $attachment_id )
@@ -1710,7 +1710,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return $md5sum;
 		}
 		
-		/*
+		/**
 		 * Computes, saves and returns the md5 sum of the media file
 		 */
 		public static function update_attachment_md5sum( $attachment_id )
@@ -1759,7 +1759,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return self::set_meta( $attachment_id, 'md5sum', $md5sum );
 		}
 		
-		/*
+		/**
 		 * Caching wrapper for $service->api_get_info()
 		 */
 		public function get_info( $attachment_id )
@@ -1804,7 +1804,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $info;
 		}
 		
-		/*
+		/**
 		 * Caches and returns fields for an attachment
 		 */
 		public function get_fields( $attachment_id )
@@ -1813,7 +1813,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $info['fields'];
 		}
 		
-		/*
+		/**
 		 * PHP version specific wrapper for json_encode function
 		 */
 		public static function json_encode( $value )
@@ -1829,7 +1829,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return json_encode( $value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 		}
 		
-		/*
+		/**
 		 * Multibyte trim
 		 */
 		public static function mb_trim($str)
@@ -1837,7 +1837,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return preg_replace( '/(^\s+)|(\s+$)/us', '', $str );
 		}
 		
-		/*
+		/**
 		 * Multibyte strtolower
 		 */
 		public static function mb_strtolower($str)
@@ -1854,7 +1854,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $value;
 		}
 		
-		/*
+		/**
 		 * Generates CF7 field tag based on field data
 		 * $tagName must already be sanitized
 		 */
@@ -2584,7 +2584,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return array( 'attachment_id' => $attachment_id, 'field' => $field, 'encoded_field' => $matches[3] );
 		}
 		
-		/*
+		/**
 		 * Parses data URI
 		 */
 		public static function parse_data_uri( $uri )
@@ -2613,7 +2613,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			);
 		}
 		
-		/*
+		/**
 		 * WPCF7 hook for adding download links to JS response
 		 */
 		public function change_response_js( $response, $result )
@@ -2640,7 +2640,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $response;
 		}
 		
-		/*
+		/**
 		 * WPCF7 hook for adding download links to response message (only for when JS is disabled)
 		 */
 		public function change_response_nojs( $output, $class, $content, $contact_form )
