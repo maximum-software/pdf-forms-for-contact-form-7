@@ -664,19 +664,25 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $new;
 		}
 		
+		/**
+		 * Adds editor panels
+		 */
 		function editor_panels( $panels )
 		{
 			$panels += array(
 				'wpcf7-forms-panel' => array(
 					'title' => __( "PDF Forms Filler" ),
-					'callback' => array( $this, 'editor_panel' ),
+					'callback' => array( $this, 'render_settings_panel' ),
 				),
 			);
 			
 			return $panels;
 		}
 		
-		function editor_panel( $panels )
+		/* 
+		 * Renders the settings panel
+		 */
+		function render_settings_panel()
 		{
 			$messages = '';
 			
