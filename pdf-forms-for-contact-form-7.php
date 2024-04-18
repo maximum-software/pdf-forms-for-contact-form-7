@@ -2488,7 +2488,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$args = wp_parse_args( $args, array() );
 			if( class_exists('WPCF7_TagGenerator') )
 				echo self::render( 'tag_generator', array(
-					'post-id' => esc_html( $contact_form->id() ),
 					'messages' => $messages,
 					'go-to-pdf-files' => esc_html__( "Go to PDF files", 'pdf-forms-for-contact-form-7' ),
 					'go-to-field-mappings' => esc_html__( "Go to Field Mappings", 'pdf-forms-for-contact-form-7' ),
@@ -2496,9 +2495,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'insert-tag' => esc_html__( "Insert and Link", 'pdf-forms-for-contact-form-7' ),
 					'generate-and-insert-all-tags-message' => esc_html__( "The 'Insert & Link All' button allows you to generate tags for all remaining unlinked PDF fields, insert them into the form and link them to their corresponding fields.", 'pdf-forms-for-contact-form-7' ),
 					'insert-and-map-all-tags' => esc_html__( "Insert & Link All", 'pdf-forms-for-contact-form-7' ),
-					'delete' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
-					'map-value' => esc_html__( 'Map Value', 'pdf-forms-for-contact-form-7' ),
-					'options' => esc_html__( 'Options', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping-generator' => esc_html__( 'Field Mapping Generator', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping-generator-help' => esc_html__( 'This tool can be used to generate form-tags based on PDF fields after attaching a PDF file with a form.', 'pdf-forms-for-contact-form-7' ),
 					'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
