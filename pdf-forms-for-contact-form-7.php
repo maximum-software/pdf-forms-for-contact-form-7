@@ -1399,6 +1399,16 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							}
 						}
 						
+						// if pdf field is a text box but value is an array then we need to concatenate values
+						if( $type == 'text' && is_array( $value ) )
+						{
+							$pdf_field_multiline = isset( $fields[$field]['flags'] ) && in_array( 'Multiline', $fields[$field]['flags'] );
+							if( $pdf_field_multiline )
+								$value = implode( "\n", $value );
+							else
+								$value = implode( __( ", ", 'pdf-forms-for-wpforms' ), $value );
+						}
+						
 						// if pdf field is not a multiselect field but value is an array then use the first element only
 						$pdf_field_multiselectable = isset( $fields[$field]['flags'] ) && in_array( 'MultiSelect', $fields[$field]['flags'] );
 						if( !$pdf_field_multiselectable && is_array( $value ) )
