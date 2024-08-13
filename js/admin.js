@@ -243,8 +243,6 @@ jQuery(document).ready(function($) {
 		select2SharedData.unmappedPdfFields = getUnmappedPdfFields(); // TODO: optimize this
 		
 		jQuery('.wpcf7-pdf-forms-admin .pdf-field-list').resetSelect2Field();
-		
-		updateTagHint();
 	};
 	
 	var cf7FieldsCache = [];
@@ -1196,28 +1194,6 @@ jQuery(document).ready(function($) {
 		refreshEmbeds();
 	};
 	
-	var updateTagHint = function() {
-		
-		var tag = jQuery('.wpcf7-pdf-forms-admin-insert-box .tag-hint');
-		tag.val('');
-		tag.data('pdf_field', '');
-		tag.data('cf7_field', '');
-		
-		var pdf_field = jQuery('.wpcf7-pdf-forms-tag-generator-panel .pdf-field-list').val();
-		if(!pdf_field)
-			return;
-		
-		var pdf_field_data = getPdfFieldData(pdf_field);
-		if(!pdf_field_data)
-			return;
-		
-		tag.val(pdf_field_data.tag_hint);
-		tag.data('cf7_field', pdf_field_data.tag_name);
-		tag.data('pdf_field', pdf_field_data.id);
-	};
-	
-	jQuery('.wpcf7-pdf-forms-tag-generator-panel .pdf-field-list').change(updateTagHint);
-	
 	var getEmbeds = function() {
 		var embeds = getData('embeds');
 		if(embeds)
@@ -1634,9 +1610,38 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
+	// set up 'Pdf Field List' change handler
+	jQuery('.wpcf7-pdf-forms-admin').on("change", '.pdf-field-list', function(event) {
+		
+		// prevent running default button click handlers
+		event.stopPropagation();
+		event.preventDefault();
+		
+		var tag;
+		if(jQuery(this).closest('.wpcf7-pdf-forms-tag-generator-panel').length > 0)
+			tag = jQuery('.wpcf7-pdf-forms-admin-insert-box .tag-hint');
+		else
+			tag = jQuery('.wpcf7-pdf-forms-settings-panel .tag-hint');
+		
+		tag.val('');
+		tag.data('pdf_field', '');
+		tag.data('cf7_field', '');
+		
+		var pdf_field = jQuery(this).val();
+		if(!pdf_field)
+			return;
+		
+		var pdf_field_data = getPdfFieldData(pdf_field);
+		if(!pdf_field_data)
+			return;
+		
+		tag.val(pdf_field_data.tag_hint);
+		tag.data('cf7_field', pdf_field_data.tag_name);
+		tag.data('pdf_field', pdf_field_data.id);
+	});
 	
 	// set up 'Insert And Link' button handler
-	jQuery('.wpcf7-pdf-forms-admin-insert-box').on("click", '.insert-tag-hint-btn', function(event) {
+	jQuery('.wpcf7-pdf-forms-admin-insert-box, .wpcf7-pdf-forms-settings-panel').on("click", '.insert-tag-hint-btn', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1644,15 +1649,21 @@ jQuery(document).ready(function($) {
 		
 		clearMessages();
 		
-		var tag = jQuery('.wpcf7-pdf-forms-admin-insert-box .tag-hint');
+		var flag = jQuery(this).closest('.wpcf7-pdf-forms-admin-insert-box').length > 0;
+		var tag = jQuery(flag ? '.wpcf7-pdf-forms-admin-insert-box .tag-hint' : '.wpcf7-pdf-forms-settings-panel .tag-hint');
 		var tagText = tag.val();
 		var cf7_field = tag.data('cf7_field');
 		var pdf_field = tag.data('pdf_field');
 		if(tagText !="" && (typeof cf7_field != 'undefined') && (typeof pdf_field != 'undefined'))
 		{
-			jQuery('.postbox-container a[href$="#form-panel"]').click();
-			jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
-			jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
+			if(flag)
+			{
+				jQuery('.postbox-container a[href$="#form-panel"]').click();
+				jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
+				jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
+			}
+			else
+				wpcf7.taggen.insert(tagText);
 			
 			loadCf7Fields(function() {
 				var mapping_id = addMapping({
@@ -1667,7 +1678,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Insert & Link All' button handler
-	jQuery('.wpcf7-pdf-forms-admin-insert-box').on("click", '.insert-and-map-all-tags-btn', function(event) {
+	jQuery('.wpcf7-pdf-forms-admin-insert-box, .wpcf7-pdf-forms-settings-panel').on("click", '.insert-and-map-all-tags-btn', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1676,8 +1687,8 @@ jQuery(document).ready(function($) {
 		clearMessages();
 		
 		var tagText = "";
-		
 		var pdf_fields = getUnmappedPdfFields();
+		var flag = jQuery(this).closest('.wpcf7-pdf-forms-admin-insert-box').length > 0;
 		
 		jQuery.each(pdf_fields, function(f, field) {
 			if(field.attachment_id == 'all' && field.tag_hint)
@@ -1688,8 +1699,14 @@ jQuery(document).ready(function($) {
 		
 		if(tagText)
 		{
-			jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
-			jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
+			if(flag)
+			{
+				jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
+				jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
+			}
+			else
+				wpcf7.taggen.insert(tagText);
+			
 			loadCf7Fields(function() {
 				jQuery.each(pdf_fields, function(f, field) {
 					if(field.attachment_id == 'all' && field.tag_hint)

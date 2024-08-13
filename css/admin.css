@@ -220,6 +220,12 @@
 	display: none;
 }
 
+.wpcf7-pdf-forms-admin .tag-hint
+{
+	background-color: transparent;
+	box-shadow: none;
+}
+
 .wpcf7-pdf-forms-admin-insert-box .tag-hint
 {
 	width: 450px;
