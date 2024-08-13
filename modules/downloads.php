@@ -107,7 +107,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 		/**
 		 * Copies a source file into a temporary location available for download
 		 */
-		public function add_file( $srcfile, $filename )
+		public function add_file( $srcfile, $filename, $options = array() )
 		{
 			$full_path = $this->get_full_path();
 			
@@ -125,6 +125,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads' ) )
 				'filename' => $filename,
 				'url' => $url,
 				'filepath' => $filepath,
+				'options' => $options,
 			));
 			
 			return $this;

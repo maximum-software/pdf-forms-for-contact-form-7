@@ -697,7 +697,6 @@ jQuery(document).ready(function($) {
 		ajax: {},
 		width: '100%',
 		sharedDataElement: "unmappedPdfFields",
-		dropdownParent: jQuery('.wpcf7-pdf-forms-settings-panel'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	jQuery('.wpcf7-pdf-forms-settings-panel .cf7-field-list').select2({
@@ -705,18 +704,23 @@ jQuery(document).ready(function($) {
 		width: '100%',
 		dropdownAutoWidth: true,
 		sharedDataElement: "cf7FieldsCache",
-		dropdownParent: jQuery('.wpcf7-pdf-forms-settings-panel'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	}).on('select2:select', function (e) {
 		var data = e.params.data;
 		jQuery(this).find('option:selected').attr('data-mailtags', data['mailtag']);
+	});
+	jQuery('.wpcf7-pdf-forms-tag-generator-panel .pdf-files-list').select2({
+		ajax: {},
+		dropdownAutoWidth: true,
+		dropdownParent: jQuery('.wpcf7-pdf-forms-tag-generator-panel'),
+		sharedDataElement: "pdfSelect2Files",
+		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	jQuery('.wpcf7-pdf-forms-settings-panel .pdf-files-list').select2({
 		ajax: {},
 		width: '100%',
 		dropdownAutoWidth: true,
 		sharedDataElement: "pdfSelect2Files",
-		dropdownParent: jQuery('.wpcf7-pdf-forms-settings-panel'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	jQuery('.wpcf7-pdf-forms-settings-panel .page-list').select2({
@@ -724,7 +728,6 @@ jQuery(document).ready(function($) {
 		width: '100%',
 		dropdownAutoWidth: true,
 		sharedDataElement: "pageList",
-		dropdownParent: jQuery('.wpcf7-pdf-forms-settings-panel'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	
@@ -958,7 +961,6 @@ jQuery(document).ready(function($) {
 				data: options,
 				tags: true,
 				width: '100%',
-				dropdownParent: jQuery('.wpcf7-pdf-forms-admin')
 			});
 			
 			select.val(data.cf7_value).trigger('change');
@@ -990,7 +992,6 @@ jQuery(document).ready(function($) {
 				data: options,
 				tags: true,
 				width: '100%',
-				dropdownParent: jQuery('.wpcf7-pdf-forms-admin')
 			});
 			
 			select.val(data.pdf_value).trigger('change');
@@ -1604,8 +1605,9 @@ jQuery(document).ready(function($) {
 		clearMessages();
 		
 		var tags = jQuery('.wpcf7-pdf-forms-admin .tags-textarea').val();
-		jQuery('.wpcf7-pdf-forms-admin .insert-box .tag').val(tags);
-		jQuery('.wpcf7-pdf-forms-admin .insert-box .insert-tag').click();
+		jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tags);
+		jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
+		jQuery('.wpcf7-pdf-forms-admin .tags-textarea').val("");
 		
 		return false;
 	});
@@ -1658,7 +1660,6 @@ jQuery(document).ready(function($) {
 		{
 			if(flag)
 			{
-				jQuery('.postbox-container a[href$="#form-panel"]').click();
 				jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
 				jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
 			}
@@ -1720,6 +1721,20 @@ jQuery(document).ready(function($) {
 				});
 			});
 		}
+		
+		return false;
+	});
+	
+	// set up 'PDF Forms Filler panel' buttons handler
+	jQuery('.wpcf7-pdf-forms-tag-generator-panel').on("click", '.switch-to-wpcf7-forms-panel-btn, .go-to-wpcf7-forms-panel-btn', function(event) {
+		
+		// prevent running default button click handlers
+		event.stopPropagation();
+		event.preventDefault();
+		
+		tb_remove();
+		
+		jQuery('#wpcf7-forms-panel-tab a[href$="#wpcf7-forms-panel"]').click();
 		
 		return false;
 	});
@@ -1988,13 +2003,8 @@ jQuery(document).ready(function($) {
 				});
 		}
 		
-		var imageEmbedToolElement = jQuery(this).closest('.image-embedding-tool');
-		var imageEmbedToolPosition = imageEmbedToolElement.position();
-		var scrollElement = imageEmbedToolElement.parent();
 		var embedRowElement = jQuery(".wpcf7-pdf-forms-settings-panel .image-embeds-row:visible").last();
-		var embedRowPosition = embedRowElement.position();
-		if(imageEmbedToolPosition && embedRowPosition)
-			scrollElement.animate({scrollTop: scrollElement.scrollTop() + imageEmbedToolPosition.top + embedRowPosition.top}, 1000);
+		jQuery('html, body').animate({scrollTop: embedRowElement.offset().top}, 1000);
 		
 		return false;
 	});

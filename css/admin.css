@@ -17,6 +17,11 @@
 	max-width: 100%;
 }
 
+.wpcf7-pdf-forms-admin .form-table td
+{
+	padding: 2px;
+}
+
 .wpcf7-pdf-forms-admin .tags-textarea
 {
 	min-height: 180px;
@@ -83,7 +88,17 @@
 
 .wpcf7-pdf-forms-admin .filename-column
 {
-	width: 100%
+	width: 100%;
+}
+
+.wpcf7-pdf-forms-admin .pdf-attachments
+{
+	border-top: 1px dotted #ccc;
+}
+
+.wpcf7-pdf-forms-admin .pdf-attachment-row
+{
+	border-bottom: 1px dotted #ccc;
 }
 
 .wpcf7-pdf-forms-admin .pdf-attachment-row .pdf-filename
@@ -284,6 +299,11 @@
 	width: 20%;
 }
 
+.wpcf7-pdf-forms-tag-generator-panel fieldset > *
+{
+	margin-bottom: 20px;
+}
+
 .wpcf7-pdf-forms-admin .insert-box
 {
 	display: none;
@@ -312,4 +332,19 @@
 .wpcf7-pdf-forms-admin .image-embeds td.pdf-page
 {
 	width: 10%;
+}
+
+.field-mapping-generator-table
+{
+	height: 50px;
+}
+
+.field-mapping-generator-table th
+{
+	vertical-align: middle;
+}
+
+.field-mapping-generator-bnts
+{
+	text-align: right;
 }

@@ -49,81 +49,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			add_action( 'wpcf7_pdf_forms_cron', array( $this, 'cron' ) );
 		}
 		
-		function editor_panels( $panels ) {
-			$that = $this;
-			$post_id =  WPCF7_ContactForm::get_current()->id;
-			$editor_panel = static function() use ( $that, $post_id )  {
-				$service = $that->get_service();
-				$messages = '';
-				if( $service && is_callable( array( $service, 'thickbox_messages' ) ) )
-					$messages .= $service->thickbox_messages();
-				
-				if( class_exists('WPCF7_TagGenerator') )
-					echo $that::render( 'settings_panel', array(
-						'post-id' => esc_html( $post_id ),
-						'pdf-forms-filler-title' => __( "PDF Forms Filler" ),
-						'messages' => $messages,
-						'instructions' => esc_html__( "You can use this tag generator to attach a PDF file to your form, insert generated form tags into your form, and link them to fields in the PDF file. It is possible to link a combination of mail-tags to PDF fields. You can also embed images (from URLs or attached files) into the PDF file. Changes here are applied when the contact form is saved.", 'pdf-forms-for-contact-form-7' ),
-						'attach-pdf' => esc_html__( "Attach a PDF File", 'pdf-forms-for-contact-form-7' ),
-						'delete' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
-						'map-value' => esc_html__( 'Map Value', 'pdf-forms-for-contact-form-7' ),
-						'options' => esc_html__( 'Options', 'pdf-forms-for-contact-form-7' ),
-						'skip-when-empty' => esc_html__( 'Skip when empty', 'pdf-forms-for-contact-form-7' ),
-						'attach-to-mail-1' => esc_html__( 'Attach to primary email message', 'pdf-forms-for-contact-form-7' ),
-						'attach-to-mail-2' => esc_html__( 'Attach to secondary email message', 'pdf-forms-for-contact-form-7' ),
-						'flatten' => esc_html__( 'Flatten', 'pdf-forms-for-contact-form-7' ),
-						'filename' => esc_html__( 'Filename (mail-tags can be used)', 'pdf-forms-for-contact-form-7' ),
-						'save-directory'=> esc_html__( 'Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)', 'pdf-forms-for-contact-form-7' ),
-						'download-link' => esc_html__( 'Add filled PDF download link to form submission response', 'pdf-forms-for-contact-form-7' ),
-						'field-mapping' => esc_html__( 'Field Mapper Tool', 'pdf-forms-for-contact-form-7' ),
-						'field-mapping-help' => esc_html__( 'This tool can be used to link form fields and mail-tags to fields in the attached PDF files. When your users submit the form, input from form fields and other mail-tags will be inserted into the corresponding fields in the PDF file. CF7 to PDF field value mappings can also be created to enable the replacement of CF7 data when PDF fields are filled.', 'pdf-forms-for-contact-form-7' ),
-						'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
-						'cf7-field-or-mail-tags' => esc_html__( 'CF7 field/mail-tags', 'pdf-forms-for-contact-form-7' ),
-						'add-mapping' => esc_html__( 'Add Mapping', 'pdf-forms-for-contact-form-7' ),
-						'delete-all-mappings' => esc_html__( 'Delete All', 'pdf-forms-for-contact-form-7' ),
-						'new-tag' => esc_html__( 'New Tag:', 'pdf-forms-for-contact-form-7' ),
-						'insert-tag' => esc_html__( "Insert and Link", 'pdf-forms-for-contact-form-7' ),
-						'generate-and-insert-all-tags-message' => esc_html__( "This button allows you to generate tags for all remaining unlinked PDF fields, insert them into the form and link them to their corresponding fields.", 'pdf-forms-for-contact-form-7' ),
-						'insert-and-map-all-tags' => esc_html__( "Insert & Link All", 'pdf-forms-for-contact-form-7' ),
-						'image-embedding' => esc_html__( 'Image Embedding Tool', 'pdf-forms-for-contact-form-7' ),
-						'image-embedding-help'=> esc_html__( 'This tool allows embedding of images into PDF files. Images are taken from file upload fields or URL field values. You can select a PDF file page and draw a bounding box for image insertion. Alternatively, you can insert your image in the center of every page.', 'pdf-forms-for-contact-form-7' ),
-						'add-cf7-field-embed' => esc_html__( 'Embed Image', 'pdf-forms-for-contact-form-7' ),
-						'delete-cf7-field-embed' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
-						'pdf-file' => esc_html__( 'PDF file', 'pdf-forms-for-contact-form-7' ),
-						'page' => esc_html__( 'Page', 'pdf-forms-for-contact-form-7' ),
-						'image-region-selection-hint' => esc_html__( 'Select a region where the image needs to be embeded.', 'pdf-forms-for-contact-form-7' ),
-						'top' => esc_html__( 'Top', 'pdf-forms-for-contact-form-7' ),
-						'left' => esc_html__( 'Left', 'pdf-forms-for-contact-form-7' ),
-						'width' => esc_html__( 'Width', 'pdf-forms-for-contact-form-7' ),
-						'height' => esc_html__( 'Height', 'pdf-forms-for-contact-form-7' ),
-						'pts' => esc_html__( 'pts', 'pdf-forms-for-contact-form-7' ),
-						'help-message' => $that::replace_tags(
-							esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'pdf-forms-for-contact-form-7' ),
-							array(
-								'a-href-forum' => '<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
-								'a-href-tutorial' => '<a href="https://youtu.be/jy84xqnj0Zk" target="_blank">',
-								'/a' => '</a>',
-							)
-						),
-						'show-help' => esc_html__( 'Show Help', 'pdf-forms-for-contact-form-7' ),
-						'hide-help' => esc_html__( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
-					) );
-				// support for older CF7 versions
-				else
-					echo $that::render( 'add_pdf_unsupported', array(
-						'unsupported-message' => esc_html__( 'Your CF7 plugin is too out of date, please upgrade.', 'pdf-forms-for-contact-form-7' ),
-					) );
-			};
-			$panels += array(
-				'wpcf7-forms-panel' => array(
-					'title' => __( "PDF Forms Filler" ),
-					'callback' => $editor_panel,
-				),
-			);
-			return $panels;
-		}
-		
-		/*
+		/**
 		 * Returns a global instance of this class
 		 */
 		public static function get_instance()
@@ -134,7 +60,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return self::$instance;
 		}
 		
-		/*
+		/**
 		 * Runs after all plugins have been loaded
 		 */
 		public function plugin_init()
@@ -157,7 +83,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			add_action( 'admin_init', array( $this, 'extend_tag_generator' ), 80 );
 			add_action( 'admin_menu', array( $this, 'register_services') );
-			add_filter( 'wpcf7_editor_panels', array( $this, 'editor_panels'), 10, 1);
+			add_filter( 'wpcf7_editor_panels', array( $this, 'editor_panels'), 10, 1 );
 			
 			add_action( 'wpcf7_before_send_mail', array( $this, 'fill_pdfs' ), 1000, 3 );
 			if( version_compare( WPCF7_VERSION, '5.4.1' ) < 0 )
@@ -183,9 +109,13 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			// TODO: allow users to run this manually
 			add_action( 'admin_init', array( $this, 'upgrade_data' ) );
+			
+			// handle change_response_nojs() hidden iframe download requests
+			if( isset( $_GET['wpcf7-pdf-forms-download'] ) )
+				$this->handle_hidden_iframe_download();
 		}
 		
-		/*
+		/**
 		 * Runs after the plugin have been activated/deactivated
 		 */
 		public function plugin_activated( $network_wide = false )
@@ -222,7 +152,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$this->get_downloads()->set_timeout(0)->delete_old_downloads();
 		}
 		
-		/*
+		/**
 		 * Hook that adds a cron schedule
 		 */
 		public function cron_schedules( $schedules )
@@ -236,7 +166,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $schedules;
 		}
 		
-		/*
+		/**
 		 * Enables cron
 		 */
 		private function enable_cron()
@@ -260,7 +190,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				wp_schedule_event( $current_time, 'wpcf7_pdf_forms_cron_frequency', 'wpcf7_pdf_forms_cron' );
 		}
 		
-		/*
+		/**
 		 * Disables cron
 		 */
 		private function disable_cron()
@@ -276,7 +206,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$this->get_downloads()->delete_old_downloads();
 		}
 		
-		/*
+		/**
 		 * Runs after plugin updates and triggers data migration
 		 */
 		public function upgrader_process_complete( $upgrader, $hook_extra )
@@ -299,7 +229,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 		}
 		
-		/*
+		/**
 		 * Returns sorted list of data migration scripts in the migrations directory
 		 */
 		private function get_migrations()
@@ -326,7 +256,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $migrations;
 		}
 		
-		/*
+		/**
 		 * Runs data migration when triggered
 		 */
 		public function upgrade_data()
@@ -360,7 +290,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			catch( Exception $e ) { }
 		}
 		
-		/*
+		/**
 		 * Checks if CF7 version is supported
 		 */
 		public function is_wpcf7_version_supported( $version )
@@ -577,7 +507,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			do_action( 'wpcf7_pdf_forms_register_services' );
 		}
 		
-		/*
+		/**
 		 * Function for working with metadata
 		 */
 		public static function get_meta( $post_id, $key )
@@ -588,7 +518,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $value;
 		}
 		
-		/*
+		/**
 		 * Function for working with metadata
 		 */
 		public static function set_meta( $post_id, $key, $value )
@@ -607,7 +537,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $value;
 		}
 		
-		/*
+		/**
 		 * Function for working with metadata
 		 */
 		public static function unset_meta( $post_id, $key )
@@ -652,7 +582,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $attachment_id;
 		}
 		
-		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false );
+		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false, 'download_link_auto' => false );
+		private static $public_pdf_options = array('download_link', 'download_link_auto');
 		
 		/**
 		 * Updates post attachment options
@@ -736,6 +667,80 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$this->cf7_forms_save_overrides = array( 'attachments' => $attachments , 'mappings' => $mappings , 'value_mappings' => $value_mappings , 'embeds' => $embeds );
 			
 			return $new;
+		}
+		
+		/**
+		 * Adds editor panels
+		 */
+		function editor_panels( $panels )
+		{
+			$panels += array(
+				'wpcf7-forms-panel' => array(
+					'title' => __( "PDF Forms Filler" ),
+					'callback' => array( $this, 'render_settings_panel' ),
+				),
+			);
+			
+			return $panels;
+		}
+		
+		/**
+		 * Renders the settings panel
+		 */
+		function render_settings_panel()
+		{
+			$messages = '';
+			
+			$service = $this->get_service();
+			if( $service && is_callable( array( $service, 'thickbox_messages' ) ) )
+				$messages .= $service->thickbox_messages();
+			
+			echo self::render( 'settings_panel', array(
+				'post-id' => esc_html( WPCF7_ContactForm::get_current()->id() ),
+				'pdf-forms-filler-title' => esc_html__( "PDF Forms Filler" ),
+				'messages' => $messages,
+				'instructions' => esc_html__( "You can use this panel to attach a PDF file to this contact form and link form-tags and mail-tags to fields in the PDF file. It is possible to link a combination of mail-tags to PDF fields. You can also embed images (from URLs or attached files) into the PDF file. Changes here are applied when the contact form is saved.", 'pdf-forms-for-contact-form-7' ),
+				'attach-pdf' => esc_html__( "Attach a PDF File", 'pdf-forms-for-contact-form-7' ),
+				'delete' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
+				'map-value' => esc_html__( 'Map Value', 'pdf-forms-for-contact-form-7' ),
+				'options' => esc_html__( 'Options', 'pdf-forms-for-contact-form-7' ),
+				'skip-when-empty' => esc_html__( 'Skip when empty', 'pdf-forms-for-contact-form-7' ),
+				'attach-to-mail-1' => esc_html__( 'Attach to primary email message', 'pdf-forms-for-contact-form-7' ),
+				'attach-to-mail-2' => esc_html__( 'Attach to secondary email message', 'pdf-forms-for-contact-form-7' ),
+				'flatten' => esc_html__( 'Flatten', 'pdf-forms-for-contact-form-7' ),
+				'filename' => esc_html__( 'Filename (mail-tags can be used)', 'pdf-forms-for-contact-form-7' ),
+				'save-directory'=> esc_html__( 'Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)', 'pdf-forms-for-contact-form-7' ),
+				'download-link' => esc_html__( 'Add filled PDF download link to form submission response', 'pdf-forms-for-contact-form-7' ),
+				'download-link-auto' => esc_html__( 'Trigger an automatic download of the filled PDF file on a successful form submission response', 'pdf-forms-for-contact-form-7' ),
+				'field-mapping' => esc_html__( 'Field Mapper Tool', 'pdf-forms-for-contact-form-7' ),
+				'field-mapping-help' => esc_html__( 'This tool can be used to link form fields and mail-tags to fields in the attached PDF files. When your users submit the form, input from form fields and other mail-tags will be inserted into the corresponding fields in the PDF file. CF7 to PDF field value mappings can also be created to enable the replacement of CF7 data when PDF fields are filled.', 'pdf-forms-for-contact-form-7' ),
+				'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
+				'cf7-field-or-mail-tags' => esc_html__( 'CF7 field/mail-tags', 'pdf-forms-for-contact-form-7' ),
+				'add-mapping' => esc_html__( 'Add Mapping', 'pdf-forms-for-contact-form-7' ),
+				'delete-all-mappings' => esc_html__( 'Delete All', 'pdf-forms-for-contact-form-7' ),
+				'image-embedding' => esc_html__( 'Image Embedding Tool', 'pdf-forms-for-contact-form-7' ),
+				'image-embedding-help'=> esc_html__( 'This tool allows embedding of images into PDF files. Images are taken from file upload fields or URL field values. You can select a PDF file page and draw a bounding box for image insertion. Alternatively, you can insert your image in the center of every page.', 'pdf-forms-for-contact-form-7' ),
+				'add-cf7-field-embed' => esc_html__( 'Embed Image', 'pdf-forms-for-contact-form-7' ),
+				'delete-cf7-field-embed' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
+				'pdf-file' => esc_html__( 'PDF file', 'pdf-forms-for-contact-form-7' ),
+				'page' => esc_html__( 'Page', 'pdf-forms-for-contact-form-7' ),
+				'image-region-selection-hint' => esc_html__( 'Select a region where the image needs to be embeded.', 'pdf-forms-for-contact-form-7' ),
+				'top' => esc_html__( 'Top', 'pdf-forms-for-contact-form-7' ),
+				'left' => esc_html__( 'Left', 'pdf-forms-for-contact-form-7' ),
+				'width' => esc_html__( 'Width', 'pdf-forms-for-contact-form-7' ),
+				'height' => esc_html__( 'Height', 'pdf-forms-for-contact-form-7' ),
+				'pts' => esc_html__( 'pts', 'pdf-forms-for-contact-form-7' ),
+				'help-message' => self::replace_tags(
+					esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'pdf-forms-for-contact-form-7' ),
+					array(
+						'a-href-forum' => '<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
+						'a-href-tutorial' => '<a href="https://youtu.be/jy84xqnj0Zk" target="_blank">',
+						'/a' => '</a>',
+					)
+				),
+				'show-help' => esc_html__( 'Show Help', 'pdf-forms-for-contact-form-7' ),
+				'hide-help' => esc_html__( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
+			) );
 		}
 		
 		/**
@@ -1394,6 +1399,16 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							}
 						}
 						
+						// if pdf field is a text box but value is an array then we need to concatenate values
+						if( $type == 'text' && is_array( $value ) )
+						{
+							$pdf_field_multiline = isset( $fields[$field]['flags'] ) && in_array( 'Multiline', $fields[$field]['flags'] );
+							if( $pdf_field_multiline )
+								$value = implode( "\n", $value );
+							else
+								$value = implode( __( ", ", 'pdf-forms-for-wpforms' ), $value );
+						}
+						
 						// if pdf field is not a multiselect field but value is an array then use the first element only
 						$pdf_field_multiselectable = isset( $fields[$field]['flags'] ) && in_array( 'MultiSelect', $fields[$field]['flags'] );
 						if( !$pdf_field_multiselectable && is_array( $value ) )
@@ -1449,12 +1464,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					$attach_to_mail_2 = $attachment['options']['attach_to_mail_2'] || strpos( $mail2["attachments"], "[pdf-form-".$attachment_id."]" ) !== FALSE;
 					$save_directory = strval( $attachment['options']['save_directory'] );
 					$create_download_link = $attachment['options']['download_link'];
+					$create_download_link_auto = $attachment['options']['download_link_auto'];
 					
 					// skip file if it is not used anywhere
 					if( !$attach_to_mail_1
 					&& !$attach_to_mail_2
 					&& $save_directory === ""
-					&& !$create_download_link )
+					&& !$create_download_link
+					&& !$create_download_link_auto )
 						continue;
 					
 					$options = array();
@@ -1585,8 +1602,19 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						}
 						
 						$create_download_link = $filedata['options']['download_link'];
-						if ( $create_download_link )
-							$this->get_downloads()->add_file( $filedata['file'], $filedata['filename'] );
+						$create_download_link_auto = $filedata['options']['download_link_auto'];
+						if( $create_download_link || $create_download_link_auto )
+						{
+							$public_options = array();
+							foreach( self::$public_pdf_options as $option )
+								$public_options[$option] = $filedata['options'][$option];
+							
+							$this->get_downloads()->add_file(
+								$filedata['file'],
+								$filedata['filename'],
+								$public_options
+							);
+						}
 					}
 				}
 			}
@@ -1606,7 +1634,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 		}
 		
-		/*
+		/**
 		 * Attaches files to CF7 email messages when needed
 		 */
 		public function attach_files( $components, $form = null, $mail = null )
@@ -1680,7 +1708,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 		}
 		
-		/*
+		/**
 		 * Returns (and computes, if necessary) the md5 sum of the media file
 		 */
 		public static function get_attachment_md5sum( $attachment_id )
@@ -1692,7 +1720,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				return $md5sum;
 		}
 		
-		/*
+		/**
 		 * Computes, saves and returns the md5 sum of the media file
 		 */
 		public static function update_attachment_md5sum( $attachment_id )
@@ -1741,7 +1769,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return self::set_meta( $attachment_id, 'md5sum', $md5sum );
 		}
 		
-		/*
+		/**
 		 * Caching wrapper for $service->api_get_info()
 		 */
 		public function get_info( $attachment_id )
@@ -1786,7 +1814,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $info;
 		}
 		
-		/*
+		/**
 		 * Caches and returns fields for an attachment
 		 */
 		public function get_fields( $attachment_id )
@@ -1795,7 +1823,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $info['fields'];
 		}
 		
-		/*
+		/**
 		 * PHP version specific wrapper for json_encode function
 		 */
 		public static function json_encode( $value )
@@ -1811,7 +1839,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return json_encode( $value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 		}
 		
-		/*
+		/**
 		 * Multibyte trim
 		 */
 		public static function mb_trim($str)
@@ -1819,7 +1847,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return preg_replace( '/(^\s+)|(\s+$)/us', '', $str );
 		}
 		
-		/*
+		/**
 		 * Multibyte strtolower
 		 */
 		public static function mb_strtolower($str)
@@ -1836,7 +1864,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $value;
 		}
 		
-		/*
+		/**
 		 * Generates CF7 field tag based on field data
 		 * $tagName must already be sanitized
 		 */
@@ -2495,21 +2523,26 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$args = wp_parse_args( $args, array() );
 			if( class_exists('WPCF7_TagGenerator') )
 				echo self::render( 'tag_generator', array(
-					'post-id' => esc_html( $contact_form->id() ),
 					'messages' => $messages,
+					'go-to-pdf-files' => esc_html__( "Go to PDF files", 'pdf-forms-for-contact-form-7' ),
+					'go-to-field-mappings' => esc_html__( "Go to Field Mappings", 'pdf-forms-for-contact-form-7' ),
 					'insert-tags' => esc_html__( "Insert Tags", 'pdf-forms-for-contact-form-7' ),
 					'insert-tag' => esc_html__( "Insert and Link", 'pdf-forms-for-contact-form-7' ),
-					'generate-and-insert-all-tags-message' => esc_html__( "This button allows you to generate tags for all remaining unlinked PDF fields, insert them into the form and link them to their corresponding fields.", 'pdf-forms-for-contact-form-7' ),
+					'generate-and-insert-all-tags-message' => esc_html__( "The 'Insert & Link All' button allows you to generate tags for all remaining unlinked PDF fields, insert them into the form and link them to their corresponding fields.", 'pdf-forms-for-contact-form-7' ),
 					'insert-and-map-all-tags' => esc_html__( "Insert & Link All", 'pdf-forms-for-contact-form-7' ),
-					'delete' => esc_html__( 'Delete', 'pdf-forms-for-contact-form-7' ),
-					'map-value' => esc_html__( 'Map Value', 'pdf-forms-for-contact-form-7' ),
-					'options' => esc_html__( 'Options', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping-generator' => esc_html__( 'Field Mapping Generator', 'pdf-forms-for-contact-form-7' ),
-					'field-mapping-generator-help' => esc_html__( 'This tool can be used to generate form tags.', 'pdf-forms-for-contact-form-7' ),
+					'field-mapping-generator-help' => esc_html__( 'This tool can be used to generate form-tags based on PDF fields after attaching a PDF file with a form.', 'pdf-forms-for-contact-form-7' ),
 					'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
 					'new-tag' => esc_html__( 'New Tag:', 'pdf-forms-for-contact-form-7' ),
 					'tag-generator' => esc_html__( 'Tag Generator Tool (deprecated)', 'pdf-forms-for-contact-form-7' ),
 					'tag-generator-help' => esc_html__( 'This tool allows one to create CF7 fields that are linked to PDF fields by name. This feature is deprecated in favor of the field mapper tool.', 'pdf-forms-for-contact-form-7' ),
+					'update-message' => self::replace_tags(
+						esc_html__( "The PDF file attachment tool, the field mapper tool and the image embedding tool have moved to the {a-href-panel-link}PDF Forms Filler panel{/a}.", 'pdf-forms-for-contact-form-7' ),
+						array(
+							'a-href-panel-link' => '<a href="#wpcf7-forms-panel" class="switch-to-wpcf7-forms-panel-btn">',
+							'/a' => '</a>',
+						)
+					),
 					'help-message' => self::replace_tags(
 						esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'pdf-forms-for-contact-form-7' ),
 						array(
@@ -2561,7 +2594,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return array( 'attachment_id' => $attachment_id, 'field' => $field, 'encoded_field' => $matches[3] );
 		}
 		
-		/*
+		/**
 		 * Parses data URI
 		 */
 		public static function parse_data_uri( $uri )
@@ -2590,7 +2623,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			);
 		}
 		
-		/*
+		/**
 		 * WPCF7 hook for adding download links to JS response
 		 */
 		public function change_response_js( $response, $result )
@@ -2606,7 +2639,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							array(
 								'filename' => $file['filename'],
 								'url' => $file['url'],
-								'size' => size_format( filesize( $file['filepath'] ) )
+								'size' => size_format( filesize( $file['filepath'] ) ),
+								'options' => $file['options'],
 							);
 				
 				// make sure to enable cron if it is down so that old download files get cleaned up
@@ -2616,7 +2650,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			return $response;
 		}
 		
-		/*
+		/**
 		 * WPCF7 hook for adding download links to response message (only for when JS is disabled)
 		 */
 		public function change_response_nojs( $output, $class, $content, $contact_form )
@@ -2631,21 +2665,35 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				{
 					$downloads = '';
 					foreach( $this->downloads->get_files() as $file )
-						$downloads .= "<div>" .
-							self::replace_tags(
-								esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
-								array(
-									'icon' => '<span class="dashicons dashicons-download"></span>',
-									'a-href-url' => '<a href="' . esc_attr( $file['url'] ) . '" download>',
-									'filename' => esc_html( $file['filename'] ),
-									'/a' => '</a>',
-									'i' => '<span class="file-size">',
-									'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
-									'/i' => '</span>',
+					if( isset( $file['options'] ) && is_array( $file['options'] ) )
+					{
+						$options = $file['options'];
+						
+						if( $options['download_link'] )
+							$downloads .= "<div>" .
+								self::replace_tags(
+									esc_html__( "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}", 'pdf-forms-for-contact-form-7' ),
+									array(
+										'icon' => '<span class="dashicons dashicons-download"></span>',
+										'a-href-url' => '<a href="' . esc_attr( $file['url'] ) . '" download>',
+										'filename' => esc_html( $file['filename'] ),
+										'/a' => '</a>',
+										'i' => '<span class="file-size">',
+										'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
+										'/i' => '</span>',
+									)
 								)
-							)
-						. "</div>";
-					$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
+							. "</div>";
+						
+						if( $options['download_link_auto'] )
+						{
+							$file_path = substr( $file['filepath'], strlen( $this->downloads->get_downloads_path() ) + 1 );
+							$hash = wp_hash( $file_path . wp_salt() );
+							$output .= "<iframe src='?wpcf7-pdf-forms-download=" . esc_attr( $file_path ) . "&hash=" . esc_attr( $hash ) . "' style='display:none;'></iframe>";
+						}
+					}
+					if($downloads !== '')
+						$output .= "<div class='wpcf7-pdf-forms-response-output'>$downloads</div>";
 					
 					// make sure to enable cron if it is down so that old download files get cleaned up
 					$this->enable_cron();
@@ -2653,6 +2701,57 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			}
 			
 			return $output;
+		}
+		
+		/**
+		 * Hook for change_response_nojs() that allows hidden iframe download to work
+		 */
+		public function handle_hidden_iframe_download()
+		{
+			if( isset( $_GET['wpcf7-pdf-forms-download'] ) )
+			{
+				$downloads = $this->get_downloads();
+				$filepath = $_GET['wpcf7-pdf-forms-download'];
+				$hash = $_GET['hash'];
+				
+				// invasive pat down
+				$path_parts = explode( '/', $filepath );
+				$sanitized_parts = array_map( 'sanitize_file_name', $path_parts );
+				$filepath = implode( DIRECTORY_SEPARATOR, $sanitized_parts );
+				
+				// additional security checks
+				$downloads_path = realpath( $downloads->get_downloads_path() );
+				$fullfilepath = $downloads_path . DIRECTORY_SEPARATOR . $filepath;
+				$realfilepath = realpath( $fullfilepath );
+				if( $downloads_path !== false && $realfilepath !== false && $fullfilepath === $realfilepath
+				&& self::get_mime_type( $realfilepath ) == 'application/pdf'
+				&& self::hash_equals( wp_hash( $filepath . wp_salt() ), $hash ) )
+				{
+					header( 'Content-Type: application/pdf' );
+					header( 'Content-Disposition: attachment; filename="' . basename( $realfilepath ) . '"' );
+					header( 'Content-Length: ' . filesize( $realfilepath ) );
+					readfile( $realfilepath );
+					exit;
+				}
+			}
+		}
+		
+		/**
+		 * hash_equals() for PHP < 5.6
+		 */
+		public static function hash_equals( $str1, $str2 )
+		{
+			if( function_exists( 'hash_equals' ) )
+				return hash_equals( $str1, $str2 );
+			
+			if( strlen( $str1 ) != strlen( $str2 ) )
+				return false;
+			
+			$res = $str1 ^ $str2;
+			$ret = 0;
+			for( $i = strlen( $res ) - 1; $i >= 0; $i-- )
+				$ret |= ord( $res[$i] );
+			return !$ret;
 		}
 	}
 	
