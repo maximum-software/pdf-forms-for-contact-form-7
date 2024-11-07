@@ -65,7 +65,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function plugin_init()
 		{
-			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+			add_action( 'init', array( $this, 'load_textdomain' ) );
 			
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			
@@ -108,6 +108,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			// TODO: allow users to run this manually
 			add_action( 'admin_init', array( $this, 'upgrade_data' ) );
+		}
+		
+		/*
+		 * Loads plugin textdomain
+		 */
+		public function load_textdomain()
+		{
+			load_plugin_textdomain( 'pdf-forms-for-contact-form-7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 		}
 		
 		/*
