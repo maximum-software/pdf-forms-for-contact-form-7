@@ -539,7 +539,7 @@ Try using the [Enable Media Replace plugin](https://wordpress.org/plugins/enable
 
 = My checkboxes and/or radio buttons are not getting filled, what is wrong? =
 
-Make sure your PDF checkbox/radio field's exported value matches the value of the CF7 form's checkbox tag. Usually, it is "On" or "Yes". If you need to display a different value in the CF7 form, you will need to create a value mapping or use [pipes](https://contactform7.com/selectable-recipient-with-pipes/).
+Make sure your PDF checkbox/radio field's exported value matches the value of the CF7 form's checkbox tag. Usually, it is "On" or "Yes". If you need to display a different value in the CF7 form, you will need to create a [value mapping](https://pdfformsfiller.org/docs/cf7/tools/mapping-field-values/) or use [pipes](https://contactform7.com/selectable-recipient-with-pipes/).
 
 CF7 allows you to have multiselect checkboxes, however, PDFs can't have multiple values with checkbox fields. You either need to switch to using a listbox in your PDF or rename your checkboxes such that each has a unique name and then map them appropriately.
 
