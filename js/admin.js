@@ -1620,10 +1620,12 @@ jQuery(document).ready(function($) {
 		event.preventDefault();
 		
 		var tag;
-		if(jQuery(this).closest('.wpcf7-pdf-forms-tag-generator-panel').length > 0)
-			tag = jQuery('.wpcf7-pdf-forms-admin-insert-box .tag-hint');
+		var tagGenerator = jQuery(this).closest('.tag-generator-panel');
+		var inTagGenerator = tagGenerator.length > 0;
+		if(inTagGenerator)
+			tag = tagGenerator.find('input.tag-hint');
 		else
-			tag = jQuery('.wpcf7-pdf-forms-settings-panel .tag-hint');
+			tag = jQuery('.wpcf7-pdf-forms-settings-panel input.tag-hint');
 		
 		tag.val('');
 		tag.data('pdf_field', '');
@@ -1651,14 +1653,20 @@ jQuery(document).ready(function($) {
 		
 		clearMessages();
 		
-		var flag = jQuery(this).closest('.wpcf7-pdf-forms-admin-insert-box').length > 0;
-		var tag = jQuery(flag ? '.wpcf7-pdf-forms-admin-insert-box .tag-hint' : '.wpcf7-pdf-forms-settings-panel .tag-hint');
+		var tag;
+		var tagGenerator = jQuery(this).closest('.tag-generator-panel');
+		var inTagGenerator = tagGenerator.length > 0;
+		if(inTagGenerator)
+			tag = tagGenerator.find('input.tag-hint');
+		else
+			tag = jQuery('.wpcf7-pdf-forms-settings-panel input.tag-hint');
+		
 		var tagText = tag.val();
 		var cf7_field = tag.data('cf7_field');
 		var pdf_field = tag.data('pdf_field');
 		if(tagText !="" && (typeof cf7_field != 'undefined') && (typeof pdf_field != 'undefined'))
 		{
-			if(flag)
+			if(inTagGenerator)
 			{
 				jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
 				jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
@@ -1689,7 +1697,6 @@ jQuery(document).ready(function($) {
 		
 		var tagText = "";
 		var pdf_fields = getUnmappedPdfFields();
-		var flag = jQuery(this).closest('.wpcf7-pdf-forms-admin-insert-box').length > 0;
 		
 		jQuery.each(pdf_fields, function(f, field) {
 			if(field.attachment_id == 'all' && field.tag_hint)
@@ -1700,7 +1707,9 @@ jQuery(document).ready(function($) {
 		
 		if(tagText)
 		{
-			if(flag)
+			var tagGenerator = jQuery(this).closest('.tag-generator-panel');
+			var inTagGenerator = tagGenerator.length > 0;
+			if(inTagGenerator)
 			{
 				jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
 				jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
