@@ -727,7 +727,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				'cf7-field-or-mail-tags' => esc_html__( 'CF7 field/mail-tags', 'pdf-forms-for-contact-form-7' ),
 				'add-mapping' => esc_html__( 'Add Mapping', 'pdf-forms-for-contact-form-7' ),
 				'delete-all-mappings' => esc_html__( 'Delete All', 'pdf-forms-for-contact-form-7' ),
-				'new-tag' => esc_html__( 'New Tag:', 'pdf-forms-for-contact-form-7' ),
 				'insert-tag' => esc_html__( "Insert and Link", 'pdf-forms-for-contact-form-7' ),
 				'generate-and-insert-all-tags-message' => esc_html__( "This button allows you to generate tags for all remaining unlinked PDF fields, insert them into the form and link them to their corresponding fields.", 'pdf-forms-for-contact-form-7' ),
 				'insert-and-map-all-tags' => esc_html__( "Insert & Link All", 'pdf-forms-for-contact-form-7' ),
@@ -2546,7 +2545,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'field-mapping-generator' => esc_html__( 'Field Mapping Generator', 'pdf-forms-for-contact-form-7' ),
 					'field-mapping-generator-help' => esc_html__( 'This tool can be used to generate form-tags based on PDF fields after attaching a PDF file with a form.', 'pdf-forms-for-contact-form-7' ),
 					'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
-					'new-tag' => esc_html__( 'New Tag:', 'pdf-forms-for-contact-form-7' ),
 					'tag-generator' => esc_html__( 'Tag Generator Tool (deprecated)', 'pdf-forms-for-contact-form-7' ),
 					'tag-generator-help' => esc_html__( 'This tool allows one to create CF7 fields that are linked to PDF fields by name. This feature is deprecated in favor of the field mapper tool.', 'pdf-forms-for-contact-form-7' ),
 					'update-message' => self::replace_tags(
