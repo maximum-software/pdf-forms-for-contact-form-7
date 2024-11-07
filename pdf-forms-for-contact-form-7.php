@@ -6,6 +6,7 @@
  * Version: 2.1.10
  * Requires at least: 4.8
  * Requires PHP: 5.2
+ * Requires Plugins: contact-form-7
  * Author: Maximum.Software
  * Author URI: https://maximum.software/
  * Text Domain: pdf-forms-for-contact-form-7
