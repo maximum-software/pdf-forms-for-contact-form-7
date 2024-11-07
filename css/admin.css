@@ -19,7 +19,7 @@
 
 .wpcf7-pdf-forms-admin .form-table td
 {
-	padding: 2px;
+	padding: 4px;
 }
 
 .wpcf7-pdf-forms-admin .tags-textarea
@@ -233,6 +233,12 @@
 .wpcf7-pdf-forms-admin .tag-generator-body-element
 {
 	display: none;
+}
+
+.wpcf7-pdf-forms-admin .tag-hint
+{
+	background-color: transparent;
+	box-shadow: none;
 }
 
 .wpcf7-pdf-forms-admin-insert-box .tag-hint
