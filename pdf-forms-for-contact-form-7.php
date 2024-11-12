@@ -2547,7 +2547,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				'field-mapping-generator-help' => esc_html__( 'This tool can be used to generate form-tags based on PDF fields after attaching a PDF file with a form.', 'pdf-forms-for-contact-form-7' ),
 				'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
 				'tag-generator' => esc_html__( 'Tag Generator Tool (deprecated)', 'pdf-forms-for-contact-form-7' ),
-				'tag-generator-help' => esc_html__( 'This tool allows one to create CF7 fields that are linked to PDF fields by name. This feature is deprecated in favor of the field mapper tool.', 'pdf-forms-for-contact-form-7' ),
+				'tag-generator-help' => esc_html__( 'This tool allows creation of CF7 fields that are linked to PDF fields by name. This feature is deprecated in favor of the field mapper tool.', 'pdf-forms-for-contact-form-7' ),
 				'update-message' => self::replace_tags(
 					esc_html__( "The PDF file attachment tool, the field mapper tool and the image embedding tool have moved to the {a-href-panel-link}PDF Forms Filler panel{/a}.", 'pdf-forms-for-contact-form-7' ),
 					array(
@@ -2597,7 +2597,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				'field-mapping-generator-help' => esc_html__( 'This tool can be used to generate form-tags based on PDF fields after attaching a PDF file with a form.', 'pdf-forms-for-contact-form-7' ),
 				'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
 				'tag-generator' => esc_html__( 'Tag Generator Tool (deprecated)', 'pdf-forms-for-contact-form-7' ),
-				'tag-generator-help' => esc_html__( 'This tool allows one to create CF7 fields that are linked to PDF fields by name. This feature is deprecated in favor of the field mapper tool.', 'pdf-forms-for-contact-form-7' ),
+				'tag-generator-help' => esc_html__( 'This tool allows creation of CF7 fields that are linked to PDF fields by name. This feature is deprecated in favor of the field mapper tool.', 'pdf-forms-for-contact-form-7' ),
 				'update-message' => self::replace_tags(
 					esc_html__( "The PDF file attachment tool, the field mapper tool and the image embedding tool have moved to the {a-href-panel-link}PDF Forms Filler panel{/a}.", 'pdf-forms-for-contact-form-7' ),
 					array(
