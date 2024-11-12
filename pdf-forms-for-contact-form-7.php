@@ -26,7 +26,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 	{
 		const VERSION = '2.1.10';
 		const MIN_WPCF7_VERSION = '5.0';
-		const MAX_WPCF7_VERSION = '5.9.99';
+		const MAX_WPCF7_VERSION = '6.0.99';
 		private static $BLACKLISTED_WPCF7_VERSIONS = array();
 		
 		private static $instance = null;
@@ -441,6 +441,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				wp_register_style( 'wpcf7_pdf_forms_admin_style', plugin_dir_url( __FILE__ ) . 'css/admin.css', array( 'jcrop', 'select2' ), self::VERSION );
 				
 				wp_localize_script( 'wpcf7_pdf_forms_admin_script', 'wpcf7_pdf_forms', array(
+					'WPCF7_VERSION' => WPCF7_VERSION,
 					'ajax_url' => admin_url( 'admin-ajax.php' ),
 					'ajax_nonce' => wp_create_nonce( 'wpcf7-pdf-forms-ajax-nonce' ),
 					'__Unknown_error' => __( 'Unknown error', 'pdf-forms-for-contact-form-7' ),
@@ -2423,11 +2424,19 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			if( class_exists('WPCF7_TagGenerator') )
 			{
 				$tag_generator = WPCF7_TagGenerator::get_instance();
-				$tag_generator->add(
-					'pdf_form',
-					__( 'PDF Form', 'pdf-forms-for-contact-form-7' ),
-					array( $this, 'render_tag_generator')
-				);
+				if( version_compare( WPCF7_VERSION, '6' ) < 0 )
+					$tag_generator->add(
+						'pdf_form',
+						__( 'PDF Form', 'pdf-forms-for-contact-form-7' ),
+						array( $this, 'render_tag_generator_v1' )
+					);
+				else
+					$tag_generator->add(
+						'pdf_form',
+						__( 'PDF Form', 'pdf-forms-for-contact-form-7' ),
+						array( $this, 'render_tag_generator' ),
+						array( 'version' => '2' )
+					);
 			}
 			// support for older CF7 versions
 			else if( function_exists('wpcf7_add_tag_generator') )
@@ -2436,7 +2445,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					'pdf_form',
 					__( 'PDF Form', 'pdf-forms-for-contact-form-7' ),
 					'wpcf7-tg-pane-pdfninja',
-					array( $this, 'render_tag_generator')
+					array( $this, 'render_tag_generator_unsupported')
 				);
 			}
 		}
@@ -2523,57 +2532,101 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/**
-		 * Renders the contents of a thickbox that comes up when user clicks the tag in the form editor
+		 * Renders the contents of a thickbox that comes up when user clicks the tag generator button in the form editor
 		 */
-		public function render_tag_generator( $contact_form, $args = '' )
+		public function render_tag_generator_v1( $contact_form, $args = '' )
 		{
-			$messages = '';
-			$service = $this->get_service();
-			if( $service && is_callable( array( $service, 'thickbox_messages' ) ) )
-				$messages .= $service->thickbox_messages();
+			echo self::render( 'tag_generator_v1', array(
+				'go-to-pdf-files' => esc_html__( "Go to PDF files", 'pdf-forms-for-contact-form-7' ),
+				'go-to-field-mappings' => esc_html__( "Go to Field Mappings", 'pdf-forms-for-contact-form-7' ),
+				'insert-tags' => esc_html__( "Insert Tags", 'pdf-forms-for-contact-form-7' ),
+				'insert-tag' => esc_html__( "Insert and Link", 'pdf-forms-for-contact-form-7' ),
+				'generate-and-insert-all-tags-message' => esc_html__( "The 'Insert & Link All' button allows you to generate tags for all remaining unlinked PDF fields, insert them into the form and link them to their corresponding fields.", 'pdf-forms-for-contact-form-7' ),
+				'insert-and-map-all-tags' => esc_html__( "Insert & Link All", 'pdf-forms-for-contact-form-7' ),
+				'field-mapping-generator' => esc_html__( 'Field Mapping Generator', 'pdf-forms-for-contact-form-7' ),
+				'field-mapping-generator-help' => esc_html__( 'This tool can be used to generate form-tags based on PDF fields after attaching a PDF file with a form.', 'pdf-forms-for-contact-form-7' ),
+				'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
+				'tag-generator' => esc_html__( 'Tag Generator Tool (deprecated)', 'pdf-forms-for-contact-form-7' ),
+				'tag-generator-help' => esc_html__( 'This tool allows one to create CF7 fields that are linked to PDF fields by name. This feature is deprecated in favor of the field mapper tool.', 'pdf-forms-for-contact-form-7' ),
+				'update-message' => self::replace_tags(
+					esc_html__( "The PDF file attachment tool, the field mapper tool and the image embedding tool have moved to the {a-href-panel-link}PDF Forms Filler panel{/a}.", 'pdf-forms-for-contact-form-7' ),
+					array(
+						'a-href-panel-link' => '<a href="javascript:return false;" class="go-to-wpcf7-forms-panel-btn">',
+						'/a' => '</a>',
+					)
+				),
+				'help-message' => self::replace_tags(
+					esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'pdf-forms-for-contact-form-7' ),
+					array(
+						'a-href-forum' => '<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
+						'a-href-tutorial' => '<a href="https://youtu.be/jy84xqnj0Zk" target="_blank">',
+						'/a' => '</a>',
+					)
+				),
+				'show-help' => esc_html__( 'Show Help', 'pdf-forms-for-contact-form-7' ),
+				'hide-help' => esc_html__( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
+				'show-tag-generator' => __( 'Show Tag Generator', 'pdf-forms-for-contact-form-7' ),
+				'hide-tag-generator' => __( 'Hide Tag Generator', 'pdf-forms-for-contact-form-7' ),
+				'get-tags' => esc_html__( 'Get Tags', 'pdf-forms-for-contact-form-7' ),
+				'all-pdfs' => esc_html__( 'All PDFs', 'pdf-forms-for-contact-form-7' ),
+			) );
 			
-			$args = wp_parse_args( $args, array() );
-			if( class_exists('WPCF7_TagGenerator') )
-				echo self::render( 'tag_generator', array(
-					'messages' => $messages,
-					'go-to-pdf-files' => esc_html__( "Go to PDF files", 'pdf-forms-for-contact-form-7' ),
-					'go-to-field-mappings' => esc_html__( "Go to Field Mappings", 'pdf-forms-for-contact-form-7' ),
-					'insert-tags' => esc_html__( "Insert Tags", 'pdf-forms-for-contact-form-7' ),
-					'insert-tag' => esc_html__( "Insert and Link", 'pdf-forms-for-contact-form-7' ),
-					'generate-and-insert-all-tags-message' => esc_html__( "The 'Insert & Link All' button allows you to generate tags for all remaining unlinked PDF fields, insert them into the form and link them to their corresponding fields.", 'pdf-forms-for-contact-form-7' ),
-					'insert-and-map-all-tags' => esc_html__( "Insert & Link All", 'pdf-forms-for-contact-form-7' ),
-					'field-mapping-generator' => esc_html__( 'Field Mapping Generator', 'pdf-forms-for-contact-form-7' ),
-					'field-mapping-generator-help' => esc_html__( 'This tool can be used to generate form-tags based on PDF fields after attaching a PDF file with a form.', 'pdf-forms-for-contact-form-7' ),
-					'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
-					'tag-generator' => esc_html__( 'Tag Generator Tool (deprecated)', 'pdf-forms-for-contact-form-7' ),
-					'tag-generator-help' => esc_html__( 'This tool allows one to create CF7 fields that are linked to PDF fields by name. This feature is deprecated in favor of the field mapper tool.', 'pdf-forms-for-contact-form-7' ),
-					'update-message' => self::replace_tags(
-						esc_html__( "The PDF file attachment tool, the field mapper tool and the image embedding tool have moved to the {a-href-panel-link}PDF Forms Filler panel{/a}.", 'pdf-forms-for-contact-form-7' ),
-						array(
-							'a-href-panel-link' => '<a href="#wpcf7-forms-panel" class="switch-to-wpcf7-forms-panel-btn">',
-							'/a' => '</a>',
-						)
-					),
-					'help-message' => self::replace_tags(
-						esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'pdf-forms-for-contact-form-7' ),
-						array(
-							'a-href-forum' => '<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
-							'a-href-tutorial' => '<a href="https://youtu.be/jy84xqnj0Zk" target="_blank">',
-							'/a' => '</a>',
-						)
-					),
-					'show-help' => esc_html__( 'Show Help', 'pdf-forms-for-contact-form-7' ),
-					'hide-help' => esc_html__( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
-					'show-tag-generator' => __( 'Show Tag Generator', 'pdf-forms-for-contact-form-7' ),
-					'hide-tag-generator' => __( 'Hide Tag Generator', 'pdf-forms-for-contact-form-7' ),
-					'get-tags' => esc_html__( 'Get Tags', 'pdf-forms-for-contact-form-7' ),
-					'all-pdfs' => esc_html__( 'All PDFs', 'pdf-forms-for-contact-form-7' ),
-				) );
-			// support for older CF7 versions
-			else
-				echo self::render( 'add_pdf_unsupported', array(
-					'unsupported-message' => esc_html__( 'Your CF7 plugin is too out of date, please upgrade.', 'pdf-forms-for-contact-form-7' ),
-				) );
+		}
+		
+		/**
+		 * Renders the contents of a dialog that comes up when user clicks the tag generator button in the form editor
+		 */
+		public function render_tag_generator( $contact_form, $options )
+		{
+			echo self::render( 'tag_generator', array(
+				'heading' => esc_html__( "PDF form fields" ),
+				'description' => self::replace_tags(
+					esc_html__( "Once you {a-href-panel-link}attach a PDF file with fields to your form{/a}, you will be able to generate form-tags that are linked to PDF form fields.", 'pdf-forms-for-contact-form-7' ),
+					array(
+						'a-href-panel-link' => '<a href="javascript:return false;" class="go-to-wpcf7-forms-panel-btn">',
+						'/a' => '</a>',
+					)
+				),
+				'go-to-pdf-files' => esc_html__( "Go to PDF files", 'pdf-forms-for-contact-form-7' ),
+				'go-to-field-mappings' => esc_html__( "Go to Field Mappings", 'pdf-forms-for-contact-form-7' ),
+				'insert-tags' => esc_html__( "Insert Tags", 'pdf-forms-for-contact-form-7' ),
+				'insert-tag' => esc_html__( "Insert and Link", 'pdf-forms-for-contact-form-7' ),
+				'generate-and-insert-all-tags-message' => esc_html__( "The 'Insert & Link All' button allows you to generate tags for all remaining unlinked PDF fields, insert them into the form and link them to their corresponding fields.", 'pdf-forms-for-contact-form-7' ),
+				'insert-and-map-all-tags' => esc_html__( "Insert & Link All", 'pdf-forms-for-contact-form-7' ),
+				'field-mapping-generator' => esc_html__( 'Field Mapping Generator', 'pdf-forms-for-contact-form-7' ),
+				'field-mapping-generator-help' => esc_html__( 'This tool can be used to generate form-tags based on PDF fields after attaching a PDF file with a form.', 'pdf-forms-for-contact-form-7' ),
+				'pdf-field' => esc_html__( 'PDF field', 'pdf-forms-for-contact-form-7' ),
+				'tag-generator' => esc_html__( 'Tag Generator Tool (deprecated)', 'pdf-forms-for-contact-form-7' ),
+				'tag-generator-help' => esc_html__( 'This tool allows one to create CF7 fields that are linked to PDF fields by name. This feature is deprecated in favor of the field mapper tool.', 'pdf-forms-for-contact-form-7' ),
+				'update-message' => self::replace_tags(
+					esc_html__( "The PDF file attachment tool, the field mapper tool and the image embedding tool have moved to the {a-href-panel-link}PDF Forms Filler panel{/a}.", 'pdf-forms-for-contact-form-7' ),
+					array(
+						'a-href-panel-link' => '<a href="javascript:return false;" class="go-to-wpcf7-forms-panel-btn">',
+						'/a' => '</a>',
+					)
+				),
+				'help-message' => self::replace_tags(
+					esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'pdf-forms-for-contact-form-7' ),
+					array(
+						'a-href-forum' => '<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
+						'a-href-tutorial' => '<a href="https://youtu.be/jy84xqnj0Zk" target="_blank">',
+						'/a' => '</a>',
+					)
+				),
+				'show-help' => esc_html__( 'Show Help', 'pdf-forms-for-contact-form-7' ),
+				'hide-help' => esc_html__( 'Hide Help', 'pdf-forms-for-contact-form-7' ),
+				'show-tag-generator' => __( 'Show Tag Generator', 'pdf-forms-for-contact-form-7' ),
+				'hide-tag-generator' => __( 'Hide Tag Generator', 'pdf-forms-for-contact-form-7' ),
+				'get-tags' => esc_html__( 'Get Tags', 'pdf-forms-for-contact-form-7' ),
+				'all-pdfs' => esc_html__( 'All PDFs', 'pdf-forms-for-contact-form-7' ),
+			) );
+		}
+		
+		public function render_tag_generator_unsupported()
+		{
+			echo self::render( 'add_pdf_unsupported', array(
+				'unsupported-message' => esc_html__( 'Your CF7 plugin is too out of date, please upgrade.', 'pdf-forms-for-contact-form-7' ),
+			) );
 		}
 		
 		/**

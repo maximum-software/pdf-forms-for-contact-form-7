@@ -13,6 +13,58 @@ jQuery(document).ready(function($) {
 	
 	var post_id = jQuery('.wpcf7-pdf-forms-settings-panel input[name=post_id]').val();
 	
+	var tagGeneratorVersion = parseInt(wpcf7_pdf_forms.WPCF7_VERSION.split('.')[0], 10) < 6 ? 1 : 2;
+	
+	var goToFormPanel = function() {
+		jQuery('#form-panel-tab a')[0].click();
+	};
+	
+	var goToPdfFormFillerPanel = function() {
+		jQuery('#wpcf7-forms-panel-tab a')[0].click();
+	};
+	
+	var openTagGenerator = function() {
+		goToFormPanel();
+		jQuery('button[data-target="tag-generator-panel-pdf_form"]')[0].click();
+	};
+	
+	var closeTagGenerator = function() {
+		if(tagGeneratorVersion == 1)
+			tb_remove();
+		else
+			jQuery('.wpcf7-pdf-forms-tag-generator-panel').closest('.tag-generator-dialog').find('.close-button')[0].click();
+	};
+	
+	var isInTagGenerator = function() {
+		return jQuery('.wpcf7-pdf-forms-tag-generator-panel').parent().is(':visible');
+	};
+	
+	var insertFormTags = function(tagText) {
+		if(tagGeneratorVersion == 1)
+		{
+			if(isInTagGenerator())
+			{
+				jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
+				jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag')[0].click();
+			}
+			else
+			{
+				wpcf7.taggen.insert(tagText);
+				wpcf7_form.trigger('change');
+				goToFormPanel();
+				wpcf7_form.trigger('focus');
+			}
+		}
+		else
+		{
+			if(!isInTagGenerator())
+				openTagGenerator();
+			
+			jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
+			jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag')[0].click();
+		}
+	};
+	
 	var clearMessages = function() {
 		jQuery('.wpcf7-pdf-forms-settings-panel .messages').empty();
 	};
@@ -23,21 +75,18 @@ jQuery(document).ready(function($) {
 		jQuery('.wpcf7-pdf-forms-admin .messages').append(
 			jQuery('<div class="error"/>').text(msg)
 		);
-		location.href = '#wpcf7-pdf-form-messages';
 	};
 	
 	var warningMessage = function(msg) {
 		jQuery('.wpcf7-pdf-forms-admin .messages').append(
 			jQuery('<div class="warning"/>').text(msg)
 		);
-		location.href = '#wpcf7-pdf-form-messages';
 	};
 	
 	var successMessage = function(msg) {
 		jQuery('.wpcf7-pdf-forms-admin .messages').append(
 			jQuery('<div class="updated"/>').text(msg)
 		);
-		location.href = '#wpcf7-pdf-form-messages';
 	};
 	
 	var spinners = 0;
@@ -303,12 +352,14 @@ jQuery(document).ready(function($) {
 			,'[_post_id]'
 			,'[_post_name]'
 			,'[_post_title]'
+			,'[_contact_form_title]'
 			,'[_post_url]'
 			,'[_post_author]'
 			,'[_post_author_email]'
 			,'[_site_title]'
 			,'[_site_description]'
 			,'[_site_url]'
+			,'[_site_domain]'
 			,'[_site_admin_email]'
 			,'[_user_login]'
 			,'[_user_email]'
@@ -355,6 +406,8 @@ jQuery(document).ready(function($) {
 					refreshCf7Fields();
 					refreshMappings();
 					
+					runLoadCf7FieldsCallbacks();
+					
 					if(callback)
 						callback();
 				}
@@ -379,7 +432,7 @@ jQuery(document).ready(function($) {
 	var refreshCf7Fields = function() {
 		precomputeCf7Select2Cache();
 		
-		jQuery('.wpcf7-pdf-forms-admin .cf7-field-list, .wpcf7-pdf-forms-settings-panel .cf7-field-list').resetSelect2Field();
+		jQuery('.wpcf7-pdf-forms-settings-panel .cf7-field-list').resetSelect2Field();
 	};
 	
 	var getData = function(field) {
@@ -690,7 +743,7 @@ jQuery(document).ready(function($) {
 		ajax: {},
 		width: '100%',
 		sharedDataElement: "unmappedPdfFields",
-		dropdownParent: jQuery('.wpcf7-pdf-forms-tag-generator-panel'),
+		dropdownParent: jQuery('.wpcf7-pdf-forms-tag-generator-panel').closest('.tag-generator-panel'),
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
 	jQuery('.wpcf7-pdf-forms-settings-panel .pdf-field-list').select2({
@@ -712,7 +765,7 @@ jQuery(document).ready(function($) {
 	jQuery('.wpcf7-pdf-forms-tag-generator-panel .pdf-files-list').select2({
 		ajax: {},
 		dropdownAutoWidth: true,
-		dropdownParent: jQuery('.wpcf7-pdf-forms-tag-generator-panel'),
+		dropdownParent: jQuery('.wpcf7-pdf-forms-tag-generator-panel').closest('.tag-generator-panel'),
 		sharedDataElement: "pdfSelect2Files",
 		dataAdapter: jQuery.fn.select2.amd.require("pdf-forms-for-cf7-shared-data-adapter")
 	});
@@ -844,7 +897,19 @@ jQuery(document).ready(function($) {
 		if(runWhenDoneTimers[func])
 			return;
 		runWhenDoneTimers[func] = setTimeout(function(func){ delete runWhenDoneTimers[func]; func(); }, 0, func);
-	}
+	};
+	
+	var runAfterLoadCf7FieldsCallbacks = {};
+	var runAfterLoadCf7Fields = function(func) {
+		if(runAfterLoadCf7FieldsCallbacks[func])
+			return;
+		runAfterLoadCf7FieldsCallbacks[func] = func;
+	};
+	var runLoadCf7FieldsCallbacks = function() {
+		for(let key in runAfterLoadCf7FieldsCallbacks)
+			runAfterLoadCf7FieldsCallbacks[key]();
+		runAfterLoadCf7FieldsCallbacks = {};
+	};
 	
 	var setMappings = function(mappings) {
 		setData('mappings', mappings);
@@ -1596,7 +1661,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Insert Tags' button handler
-	jQuery('.wpcf7-pdf-forms-admin').on("click", '.insert-tags-button', function(event) {
+	jQuery('.wpcf7-pdf-forms-tag-generator-panel').on("click", '.insert-tags-button', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1605,8 +1670,7 @@ jQuery(document).ready(function($) {
 		clearMessages();
 		
 		var tags = jQuery('.wpcf7-pdf-forms-admin .tags-textarea').val();
-		jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tags);
-		jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
+		insertFormTags(tags);
 		jQuery('.wpcf7-pdf-forms-admin .tags-textarea').val("");
 		
 		return false;
@@ -1645,7 +1709,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Insert And Link' button handler
-	jQuery('.wpcf7-pdf-forms-admin-insert-box, .wpcf7-pdf-forms-settings-panel').on("click", '.insert-tag-hint-btn', function(event) {
+	jQuery('.wpcf7-pdf-forms-tag-generator-panel, .wpcf7-pdf-forms-settings-panel').on("click", '.insert-tag-hint-btn', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1653,28 +1717,15 @@ jQuery(document).ready(function($) {
 		
 		clearMessages();
 		
-		var tag;
-		var tagGenerator = jQuery(this).closest('.tag-generator-panel');
-		var inTagGenerator = tagGenerator.length > 0;
-		if(inTagGenerator)
-			tag = tagGenerator.find('input.tag-hint');
-		else
-			tag = jQuery('.wpcf7-pdf-forms-settings-panel input.tag-hint');
-		
+		var tag = isInTagGenerator() ? jQuery('.wpcf7-pdf-forms-tag-generator-panel').find('input.tag-hint') : jQuery('.wpcf7-pdf-forms-settings-panel input.tag-hint');
 		var tagText = tag.val();
 		var cf7_field = tag.data('cf7_field');
 		var pdf_field = tag.data('pdf_field');
 		if(tagText !="" && (typeof cf7_field != 'undefined') && (typeof pdf_field != 'undefined'))
 		{
-			if(inTagGenerator)
-			{
-				jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
-				jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
-			}
-			else
-				wpcf7.taggen.insert(tagText);
+			insertFormTags(tagText);
 			
-			loadCf7Fields(function() {
+			runAfterLoadCf7Fields(function() {
 				var mapping_id = addMapping({
 					cf7_field: cf7_field,
 					pdf_field: pdf_field,
@@ -1687,7 +1738,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// set up 'Insert & Link All' button handler
-	jQuery('.wpcf7-pdf-forms-admin-insert-box, .wpcf7-pdf-forms-settings-panel').on("click", '.insert-and-map-all-tags-btn', function(event) {
+	jQuery('.wpcf7-pdf-forms-tag-generator-panel, .wpcf7-pdf-forms-settings-panel').on("click", '.insert-and-map-all-tags-btn', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
@@ -1707,17 +1758,9 @@ jQuery(document).ready(function($) {
 		
 		if(tagText)
 		{
-			var tagGenerator = jQuery(this).closest('.tag-generator-panel');
-			var inTagGenerator = tagGenerator.length > 0;
-			if(inTagGenerator)
-			{
-				jQuery('.wpcf7-pdf-forms-admin-insert-box .tag').val(tagText);
-				jQuery('.wpcf7-pdf-forms-admin-insert-box .insert-tag').click();
-			}
-			else
-				wpcf7.taggen.insert(tagText);
+			insertFormTags(tagText);
 			
-			loadCf7Fields(function() {
+			runAfterLoadCf7Fields(function() {
 				jQuery.each(pdf_fields, function(f, field) {
 					if(field.attachment_id == 'all' && field.tag_hint)
 					{
@@ -1734,16 +1777,15 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 	
-	// set up 'PDF Forms Filler panel' buttons handler
-	jQuery('.wpcf7-pdf-forms-tag-generator-panel').on("click", '.switch-to-wpcf7-forms-panel-btn, .go-to-wpcf7-forms-panel-btn', function(event) {
+	// set up 'Go to PDF Forms Filler panel' buttons handlers
+	jQuery('.wpcf7-pdf-forms-tag-generator-panel').on("click", '.go-to-wpcf7-forms-panel-btn', function(event) {
 		
 		// prevent running default button click handlers
 		event.stopPropagation();
 		event.preventDefault();
 		
-		tb_remove();
-		
-		jQuery('#wpcf7-forms-panel-tab a[href$="#wpcf7-forms-panel"]').click();
+		closeTagGenerator();
+		goToPdfFormFillerPanel();
 		
 		return false;
 	});
@@ -2178,11 +2220,33 @@ jQuery(document).ready(function($) {
 		setEmbeds(embeds);
 	});
 	
-	var changeHandler = function() {
-		loadCf7Fields(removeOldMappingsAndEmbeds);
+	// set up a trigger for the form change event
+	var changeHandler = function() { loadCf7Fields(removeOldMappingsAndEmbeds); };
+	wpcf7_form.on('change', changeHandler);
+	
+	// set up a trigger for the tag generator insertion because change event isn't fired when value is changed with js
+	var oldFormContent = "";
+	var changeDetectTTL = 0; // don't let the loop run forever
+	var changeDetectLoop = function() {
+		// polling for change is needed because tag insertion may happen at a later time
+		if(oldFormContent == wpcf7_form.val() && changeDetectTTL > 0)
+			runWhenDone(changeDetectLoop);
+		else
+			changeHandler();
+		changeDetectTTL--;
 	};
-	wpcf7_form.change(changeHandler);
-	jQuery('form.tag-generator-panel .insert-tag').click(changeHandler);
+	var changeDetect = function() {
+		oldFormContent = wpcf7_form.val();
+		changeDetectTTL = 10;
+		changeDetectLoop();
+	};
+	jQuery('form.tag-generator-panel .insert-tag').on('click', changeDetect);
+	
+	// TODO: remove this workaround, determine what is causing the tag-hint not to be filled when tag generator dialog is opened
+	if(tagGeneratorVersion == 2)
+		jQuery('button[data-target="tag-generator-panel-pdf_form"]').on("click", function(event) {
+			runWhenDone(function() { jQuery('.wpcf7-pdf-forms-tag-generator-panel .pdf-field-list').resetSelect2Field(); });
+		});
 	
 	// auto-resizing textareas
 	jQuery('.wpcf7-pdf-forms-admin').on("input change focus", "textarea.mail-tags", function() {

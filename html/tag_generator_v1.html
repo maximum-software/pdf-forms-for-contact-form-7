@@ -1,0 +1,82 @@
+<div class="control-box wpcf7-pdf-forms-admin wpcf7-pdf-forms-tag-generator-panel" style="height: auto;">
+	<div class="wpcf7-pdf-forms-spinner-overlay-box"></div>
+	<fieldset>
+		<legend>{update-message}</legend>
+		
+		<div class="field-mapping-generator-tool">
+			<div>
+				<span class="dashicons dashicons-plus-alt"></span>
+				<strong>{field-mapping-generator}</strong>
+				<a class="help-button" href="#">{hide-help}</a>
+				<div class="helpbox">
+					<span class="dashicons dashicons-editor-help"></span>
+					{field-mapping-generator-help}
+				</div>
+			</div>
+			<table class="form-table field-mapping-generator-table">
+				<tbody>
+					<tr>
+						<th scope="row">{pdf-field}</th>
+						<td class="pdf-field select-dropdown"><select class="pdf-field-list"></select></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="field-mapping-generator-bnts">
+				<a href="#wpcf7-forms-panel" class="button button-small go-to-wpcf7-forms-panel-btn">{go-to-pdf-files}</a>
+				<a href="#wpcf7-forms-panel" class="button button-small go-to-wpcf7-forms-panel-btn">{go-to-field-mappings}</a>
+			</div>
+		</div>
+		
+		<hr>
+		
+		<div class="tag-generator-tool">
+			<a name="wpcf7-pdf-form-tags-textarea"></a>
+			
+			<div>
+				<span class="dashicons dashicons-welcome-write-blog"></span>
+				<strong>{tag-generator}</strong>
+				<a class="tag-generator-toggle-button" href="#">{show-tag-generator}</a>
+				<a class="help-button tag-generator-body-element" href="#">{hide-help}</a>
+				
+				<div class="tag-generator-body-element">
+					<div class="helpbox">
+						<span class="dashicons dashicons-editor-help"></span>
+						{tag-generator-help}
+					</div>
+				</div>
+			</div>
+			
+			<textarea wrap="hard" name="text" class="tag code tags-textarea tag-generator-body-element"></textarea>
+			
+			<div class="submitbox tag-generator-body-element">
+				<select class="pdf-files-list" name="tag-generator-pdf-list"><option value="all">{all-pdfs}</option></select>
+				<a class="button button-primary get-tags-all-button" href="#">{get-tags}</a>
+				<input type="button" class="button button-primary insert-tags-button" value="{insert-tags}">
+			</div>
+		</div>
+		
+		<hr>
+		
+		<legend>{help-message}</legend>
+		
+	</fieldset>
+</div>
+
+<div class="insert-box wpcf7-pdf-forms-admin-insert-box wpcf7-pdf-forms-tag-generator-panel">
+	<table>
+		<tbody>
+			<tr>
+				<td class="tag-hint-row"><input type="text" class="tag-hint code" readonly="readonly" onfocus="this.select()"></td>
+				<td class="buttons"><input type="button" class="button button-primary insert-tag-hint-btn" value="{insert-tag}"></td>
+			</tr>
+			<tr>
+				<td class="generate-and-insert-all-tags-message">{generate-and-insert-all-tags-message}</td>
+				<td class="buttons"><input type="button" class="button button-primary insert-and-map-all-tags-btn" value="{insert-and-map-all-tags}"></td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="hidden" name="text" class="tag code hidden" value="" onfocus="this.select()">
+	<div class="submitbox hidden">
+		<input type="button" class="button insert-tag" value="">
+	</div>
+</div>
