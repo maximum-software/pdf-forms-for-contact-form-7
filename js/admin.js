@@ -1979,7 +1979,7 @@ jQuery(document).ready(function($) {
 		
 		var subject = tag.find('.cf7-field-list').val();
 		var mailtags = tag.find('.cf7-field-list').find('option:selected').data('mailtags');
-		var pdf_field =  tag.find('.pdf-field-list').val();
+		var pdf_field = tag.find('.pdf-field-list').val();
 		
 		if(pdf_field && subject)
 		{
