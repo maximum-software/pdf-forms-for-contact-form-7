@@ -1,8 +1,8 @@
 === PDF Forms Filler for CF7 ===
-Version: 2.1.10
-Stable tag: 2.1.10
+Version: 2.2.0
+Stable tag: 2.2.0
 Requires at least: 4.8
-Tested up to: 6.4
+Tested up to: 6.7
 Requires PHP: 5.2
 Tags: pdf, form, contact form, email, download
 Plugin URI: https://pdfformsfiller.org/
@@ -65,6 +65,15 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor.
 
 == Changelog ==
+
+= 2.2.0 =
+
+* Release date: November 11, 2024
+
+* Added support for CF7 v6.0
+* Moved attachment tool, the field mapper tool and the image embedding tool from tag generator to a separate settings panel
+* Added automatically download filled PDF feature
+* Other fixes and improvements
 
 = 2.1.10 =
 
