@@ -167,7 +167,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public function cron_schedules( $schedules )
 		{
 			$interval = $this->get_downloads()->get_timeout();
-			$display = self::replace_tags( __("Every {interval} seconds"), array( 'interval' => $interval ) );
+			$display = self::replace_tags( __( "Every {interval} seconds", 'pdf-forms-for-contact-form-7' ), array( 'interval' => $interval ) );
 			$schedules['wpcf7_pdf_forms_cron_frequency'] = array(
 				'interval' => $interval,
 				'display' => $display
@@ -686,7 +686,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			$panels += array(
 				'wpcf7-forms-panel' => array(
-					'title' => __( "PDF Forms Filler" ),
+					'title' => __( "PDF Forms Filler", 'pdf-forms-for-contact-form-7' ),
 					'callback' => array( $this, 'render_settings_panel' ),
 				),
 			);
@@ -707,7 +707,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			echo self::render( 'settings_panel', array(
 				'post-id' => esc_html( WPCF7_ContactForm::get_current()->id() ),
-				'pdf-forms-filler-title' => esc_html__( "PDF Forms Filler" ),
+				'pdf-forms-filler-title' => esc_html__( "PDF Forms Filler", 'pdf-forms-for-contact-form-7' ),
 				'messages' => $messages,
 				'instructions' => esc_html__( "You can use this panel to attach a PDF file to this contact form and link form-tags and mail-tags to fields in the PDF file. It is possible to link a combination of mail-tags to PDF fields. You can also embed images (from URLs or attached files) into the PDF file. Changes here are applied when the contact form is saved.", 'pdf-forms-for-contact-form-7' ),
 				'attach-pdf' => esc_html__( "Attach a PDF File", 'pdf-forms-for-contact-form-7' ),
@@ -1193,7 +1193,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						throw new Exception(
 							self::replace_tags(
 								__( "File type {mime-type} of {file} is unsupported for {purpose}", 'pdf-forms-for-contact-form-7' ),
-								array( 'mime-type' => $mimetype, 'file' => $filename, 'purpose' => __("image embedding", 'pdf-forms-for-contact-form-7') )
+								array( 'mime-type' => $mimetype, 'file' => $filename, 'purpose' => __( "image embedding", 'pdf-forms-for-contact-form-7') )
 							)
 						);
 					
@@ -1419,7 +1419,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							if( $pdf_field_multiline )
 								$value = implode( "\n", $value );
 							else
-								$value = implode( __( ", ", 'pdf-forms-for-wpforms' ), $value );
+								$value = implode( __( ", ", 'pdf-forms-for-contact-form-7' ), $value );
 						}
 						
 						// if pdf field is not a multiselect field but value is an array then use the first element only
@@ -1686,7 +1686,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					throw new Exception(
 						self::replace_tags(
 							__( "File type {mime-type} of {file} is unsupported for {purpose}", 'pdf-forms-for-contact-form-7' ),
-							array( 'mime-type' => $mimetype, 'file' => wp_basename( $filepath ), 'purpose' => __("PDF form filling", 'pdf-forms-for-contact-form-7') )
+							array( 'mime-type' => $mimetype, 'file' => wp_basename( $filepath ), 'purpose' => __( "PDF form filling", 'pdf-forms-for-contact-form-7' ) )
 						)
 					);
 				
@@ -2468,7 +2468,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			$attributes['classes'] = trim( $attributes['classes'] . " notice-$type" );
 			
 			if( !isset( $attributes['label'] ) )
-				$attributes['label'] = __( "PDF Forms Filler for CF7" );
+				$attributes['label'] = __( "PDF Forms Filler for CF7", 'pdf-forms-for-contact-form-7' );
 			
 			if( $notice_id )
 			{
@@ -2579,7 +2579,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public function render_tag_generator( $contact_form, $options )
 		{
 			echo self::render( 'tag_generator', array(
-				'heading' => esc_html__( "PDF form fields" ),
+				'heading' => esc_html__( "PDF form fields", 'pdf-forms-for-contact-form-7' ),
 				'description' => self::replace_tags(
 					esc_html__( "Once you {a-href-panel-link}attach a PDF file with fields to your form{/a}, you will be able to generate form-tags that are linked to PDF form fields.", 'pdf-forms-for-contact-form-7' ),
 					array(

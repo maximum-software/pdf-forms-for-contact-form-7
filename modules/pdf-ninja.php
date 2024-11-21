@@ -1112,7 +1112,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			'no-ssl-verify-label' => esc_html__( 'Ignore certificate verification errors', 'pdf-forms-for-contact-form-7' ),
 			'no-ssl-verify-value' => !$this->get_verify_ssl() ? 'checked' : '',
 			'email-label' => esc_html__( "Administrator's Email Address", 'pdf-forms-for-contact-form-7' ),
-			'email-value' => esc_html__( $this->get_admin_email() ),
+			'email-value' => esc_html( $this->get_admin_email() ),
 			'security-warning' => esc_html__( 'Warning: Using plain HTTP or disabling certificate verification can lead to data leaks.', 'pdf-forms-for-contact-form-7' ),
 			'edit-link' => esc_url( $this->menu_page_url( 'action=edit' ) ),
 			'nonce' => wp_nonce_field( 'wpcf7-pdfninja-edit' ),
@@ -1177,7 +1177,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 			$verify_ssl = $this->get_verify_ssl();
 			if( substr( $url, 0, 5 ) == 'http:' || !$verify_ssl )
 				$messages .= WPCF7_Pdf_Forms::render_warning_notice( 'insecure-pdf-ninja', array(
-				'label' => esc_html__( "Warning", 'pdf-forms-for-wpforms' ),
+				'label' => esc_html__( "PDF Forms Filler for CF7 plugin warning", 'pdf-forms-for-contact-form-7' ),
 				'message' => esc_html__( "Your Contact Form 7 integration settings indicate that you are using an insecure connection to the Pdf.Ninja API server.", 'pdf-forms-for-contact-form-7' ),
 			) );
 		}
