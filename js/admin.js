@@ -1069,6 +1069,19 @@ jQuery(document).ready(function($) {
 		tag.find('input.cf7-value').val(data.cf7_value);
 		tag.find('input.pdf-value').val(data.pdf_value);
 		
+		// make sure the "Delete All" button is shown in the list of value mappings for current field mapping only once
+		var manageDeleteAllValueMappingsButton = function(mapping_id) {
+			
+			var value_mapping_rows = template.parent().find('.pdf-valuemapping-row').filter(function() {
+				return jQuery(this).data('mapping_id') === mapping_id;
+			});
+			
+			value_mapping_rows.find('.delete-all-valuemappings-button').hide();
+			
+			if(value_mapping_rows.length > 1) // no need to show the "Delete All" button if there is only one value mapping
+				value_mapping_rows.last().find('.delete-all-valuemappings-button').show();
+		};
+		
 		var delete_button = tag.find('.delete-valuemapping-button');
 		delete_button.data('value_mapping_id', data.value_mapping_id);
 		delete_button.click(function(event) {
@@ -1082,11 +1095,31 @@ jQuery(document).ready(function($) {
 			
 			deleteValueMapping(jQuery(this).data('value_mapping_id'));
 			
-			jQuery(this).closest('.pdf-valuemapping-row').remove();
+			var value_mapping_row = jQuery(this).closest('.pdf-valuemapping-row');
+			var mapping_id = value_mapping_row.data('mapping_id');
+			value_mapping_row.remove();
+			manageDeleteAllValueMappingsButton(mapping_id);
+		});
+		
+		var delete_all_button = tag.find('.delete-all-valuemappings-button');
+		delete_all_button.data('mapping_id', data.mapping_id);
+		delete_all_button.click(function(event) {
+			
+			// prevent running default button click handlers
+			event.stopPropagation();
+			event.preventDefault();
+			
+			if(!confirm(wpcf7_pdf_forms.__Confirm_Delete_All_Value_Mappings))
+				return;
+			
+			var mapping_id = jQuery(this).data('mapping_id');
+			deleteValueMappings(mapping_id);
 		});
 		
 		var mappingTag = jQuery('.wpcf7-pdf-forms-admin .pdf-mapping-row[data-mapping_id="'+data.mapping_id+'"]');
 		tag.insertAfter(mappingTag);
+		
+		manageDeleteAllValueMappingsButton(data.mapping_id);
 	};
 	
 	var addMapping = function(data) {
