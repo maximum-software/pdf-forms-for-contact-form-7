@@ -960,9 +960,9 @@ jQuery(document).ready(function($) {
 		
 		var value_mappings = getValueMappings();
 		
-		for(var i=0; i<value_mappings.length; i++)
-			if(value_mappings[i].mapping_id == mapping_id)
-				value_mappings.splice(i, 1);
+		value_mappings = value_mappings.filter(function(value_mapping) {
+			return value_mapping.mapping_id != mapping_id;
+		});
 		
 		setValueMappings(value_mappings);
 		runWhenDone(refreshMappings);
