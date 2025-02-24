@@ -2518,7 +2518,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		public static function replace_tags( $string, $tags = array() )
 		{
 			return str_replace(
-				array_map( array( get_class(), 'add_curly_braces' ), array_keys( $tags ) ),
+				array_map( array( __CLASS__, 'add_curly_braces' ), array_keys( $tags ) ),
 				array_values( $tags ),
 				$string
 			);

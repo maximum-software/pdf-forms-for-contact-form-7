@@ -50,7 +50,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	{
 		try
 		{
-			$class = get_class();
+			$class = __CLASS__;
 			return ($this->get_key() != null) && (WPCF7_Pdf_Forms::get_instance()->get_service() instanceof $class);
 		}
 		catch(Exception $e)
