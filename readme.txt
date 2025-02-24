@@ -1,9 +1,7 @@
 === PDF Forms Filler for CF7 ===
 Version: 2.2.1
 Stable tag: 2.2.1
-Requires at least: 4.8
 Tested up to: 6.7
-Requires PHP: 5.2
 Tags: pdf, form, contact form, email, download
 Plugin URI: https://pdfformsfiller.org/
 Author: Maximum.Software
