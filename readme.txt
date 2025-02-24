@@ -7,6 +7,7 @@ Plugin URI: https://pdfformsfiller.org/
 Author: Maximum.Software
 Author URI: https://maximum.software/
 Contributors: maximumsoftware
+Donate link: https://github.com/sponsors/maximum-software
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
