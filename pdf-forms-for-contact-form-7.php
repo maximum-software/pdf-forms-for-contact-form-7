@@ -1042,6 +1042,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					"image/x-ms-bmp",
 					"image/svg+xml",
 					"image/webp",
+					"application/pdf",
 				);
 			
 			if( $mimetype )
