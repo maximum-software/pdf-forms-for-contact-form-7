@@ -748,7 +748,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'pdf-forms-for-contact-form-7' ),
 					array(
 						'a-href-forum' => '<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
-						'a-href-tutorial' => '<a href="https://youtu.be/jy84xqnj0Zk" target="_blank">',
+						'a-href-tutorial' => '<a href="https://youtu.be/rATOSROQAGU" target="_blank">',
 						'/a' => '</a>',
 					)
 				),
@@ -2561,7 +2561,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'pdf-forms-for-contact-form-7' ),
 					array(
 						'a-href-forum' => '<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
-						'a-href-tutorial' => '<a href="https://youtu.be/jy84xqnj0Zk" target="_blank">',
+						'a-href-tutorial' => '<a href="https://youtu.be/rATOSROQAGU" target="_blank">',
 						'/a' => '</a>',
 					)
 				),
@@ -2611,7 +2611,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 					esc_html__( "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}.", 'pdf-forms-for-contact-form-7' ),
 					array(
 						'a-href-forum' => '<a href="https://wordpress.org/support/plugin/pdf-forms-for-contact-form-7/" target="_blank">',
-						'a-href-tutorial' => '<a href="https://youtu.be/jy84xqnj0Zk" target="_blank">',
+						'a-href-tutorial' => '<a href="https://youtu.be/rATOSROQAGU" target="_blank">',
 						'/a' => '</a>',
 					)
 				),
