@@ -610,7 +610,7 @@ jQuery(document).ready(function($) {
 		var options = data.options;
 		
 		var attachments = getAttachments();
-		attachments.push(dataCopy(data));
+		attachments.push(deepCopy(data));
 		setAttachments(attachments);
 		
 		jQuery('.wpcf7-pdf-forms-settings-panel .instructions').remove();
