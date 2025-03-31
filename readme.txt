@@ -1,7 +1,7 @@
 === PDF Forms Filler for CF7 ===
-Version: 2.2.1
-Stable tag: 2.2.1
-Tested up to: 6.7
+Version: 2.2.2
+Stable tag: 2.2.2
+Tested up to: 6.8
 Tags: pdf, form, contact form, email, download
 Plugin URI: https://pdfformsfiller.org/
 Author: Maximum.Software
@@ -64,6 +64,13 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor.
 
 == Changelog ==
+
+= 2.2.2 =
+
+* Release date: March 31, 2025
+
+* Added 'delete all value mappings' button
+* Other minor bug fixes and improvements
 
 = 2.2.1 =
 
