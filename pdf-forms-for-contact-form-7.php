@@ -1195,7 +1195,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 						throw new Exception(
 							self::replace_tags(
 								__( "File type {mime-type} of {file} is unsupported for {purpose}", 'pdf-forms-for-contact-form-7' ),
-								array( 'mime-type' => $mimetype, 'file' => $filename, 'purpose' => __( "image embedding", 'pdf-forms-for-contact-form-7') )
+								array( 'mime-type' => $mimetype, 'file' => $filename, 'purpose' => __( "image embedding", 'pdf-forms-for-contact-form-7' ) )
 							)
 						);
 					
