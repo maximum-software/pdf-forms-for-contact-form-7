@@ -18,7 +18,9 @@ An external web API (https://pdf.ninja) is used for filling PDF forms (free usag
 
 Please see [Pdf.Ninja Terms of Use](https://pdf.ninja/#terms) and [Pdf.Ninja Privacy Policy](https://pdf.ninja/#privacy).
 
-Please see the [tutorial video](https://youtu.be/rATOSROQAGU) and the [documentation](https://pdfformsfiller.org/docs/cf7/) for detailed information.
+Please see the [tutorial video](https://youtu.be/9YoinoPM6eU) and the [documentation](https://pdfformsfiller.org/docs/cf7/) for detailed information.
+
+[![PDF Forms Filler for CF7 Tutorial](https://img.youtube.com/vi/9YoinoPM6eU/0.jpg)](https://www.youtube.com/watch?v=9YoinoPM6eU "PDF Forms Filler for CF7 Tutorial")
 
 Requirements:
 * PHP 5.2 or newer
