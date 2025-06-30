@@ -442,7 +442,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 				
 				wp_localize_script( 'wpcf7_pdf_forms_admin_script', 'wpcf7_pdf_forms', array(
 					'WPCF7_VERSION' => WPCF7_VERSION,
-					'ajax_url' => admin_url( 'admin-ajax.php' ),
 					'ajax_nonce' => wp_create_nonce( 'wpcf7-pdf-forms-ajax-nonce' ),
 					'__Unknown_error' => __( 'Unknown error', 'pdf-forms-for-contact-form-7' ),
 					'__Confirm_Delete_Attachment' => __( 'Are you sure you want to delete this file?  This will delete field mappings and image embeds associated with this file.', 'pdf-forms-for-contact-form-7' ),

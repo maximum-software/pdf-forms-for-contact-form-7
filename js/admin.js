@@ -203,7 +203,7 @@ jQuery(document).ready(function($) {
 		textarea.val('');
 		
 		jQuery.ajax({
-			url: wpcf7_pdf_forms.ajax_url,
+			url: ajaxurl,
 			type: 'POST',
 			data: { 'action': 'wpcf7_pdf_forms_query_tags', 'attachments': attachments, 'all': all, 'wpcf7-form': wpcf7_form.val(), 'nonce': wpcf7_pdf_forms.ajax_nonce },
 			cache: false,
@@ -433,7 +433,7 @@ jQuery(document).ready(function($) {
 		if(!callback) callback = null;
 		
 		jQuery.ajax({
-			url: wpcf7_pdf_forms.ajax_url,
+			url: ajaxurl,
 			type: 'POST',
 			data: { 'action': 'wpcf7_pdf_forms_query_cf7_fields', 'wpcf7-form': wpcf7_form.val(), 'nonce': wpcf7_pdf_forms.ajax_nonce },
 			cache: false,
@@ -837,7 +837,7 @@ jQuery(document).ready(function($) {
 		}
 		
 		jQuery.ajax({
-			url: wpcf7_pdf_forms.ajax_url,
+			url: ajaxurl,
 			type: 'POST',
 			data: {
 				'action': 'wpcf7_pdf_forms_preload_data',
@@ -1517,7 +1517,7 @@ jQuery(document).ready(function($) {
 			return;
 		
 		jQuery.ajax({
-			url: wpcf7_pdf_forms.ajax_url,
+			url: ajaxurl,
 			type: 'POST',
 			data: {
 				'action': 'wpcf7_pdf_forms_query_page_image',
@@ -1889,7 +1889,7 @@ jQuery(document).ready(function($) {
 		// submit request
 		
 		jQuery.ajax({
-			url: wpcf7_pdf_forms.ajax_url,
+			url: ajaxurl,
 			type: 'POST',
 			data: data,
 			cache: false,
