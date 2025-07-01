@@ -2466,10 +2466,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		{
 			if( ! isset( $attributes['classes'] ) )
 				$attributes['classes'] = "";
-			$attributes['classes'] = trim( $attributes['classes'] . " notice-$type" );
+			$attributes['classes'] = trim( $attributes['classes'] . " notice-" . esc_attr($type) );
 			
 			if( !isset( $attributes['label'] ) )
-				$attributes['label'] = __( "PDF Forms Filler for CF7", 'pdf-forms-for-contact-form-7' );
+				$attributes['label'] = esc_html__( "PDF Forms Filler for CF7", 'pdf-forms-for-contact-form-7' );
 			
 			if( $notice_id )
 			{
