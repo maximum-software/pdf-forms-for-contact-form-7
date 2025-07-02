@@ -37,21 +37,6 @@
 	</tbody>
 </table>
 
-<script type="text/javascript">
-	jQuery(document).ready(function($) {
-		jQuery("#copy-pdf-ninja-key-btn").click(function() {
-			var tmp = jQuery("<input>");
-			jQuery("body").append(tmp);
-			tmp.val(jQuery("#pdf-ninja-key").text()).select();
-			document.execCommand("copy");
-			tmp.remove();
-			var btn = this;
-			setTimeout(function() { jQuery(btn).text("{key-copied-btn-label}"); }, 1);
-			setTimeout(function() { jQuery(btn).text("{key-copy-btn-label}"); }, 1000);
-		});
-	});
-</script>
-
 <p>{security-warning}</p>
 
 <p>

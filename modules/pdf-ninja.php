@@ -1046,7 +1046,13 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	public function display_info()
 	{
 		try { $key = $this->get_key(); } catch(Exception $e) { $key = ""; }
-		
+
+		wp_enqueue_script( 'wpcf7_pdf_forms_integration_script', plugin_dir_url( dirname( __FILE__ ) ) . 'js/integration.js', array( 'jquery' ), WPCF7_Pdf_Forms::VERSION );
+		wp_localize_script( 'wpcf7_pdf_forms_integration_script', 'wpcf7_pdf_forms_integration', array(
+			'copy_key_label' => esc_html__( 'copy key', 'pdf-forms-for-contact-form-7' ),
+			'copied_label' => esc_html__( 'copied!', 'pdf-forms-for-contact-form-7' ),
+		) );
+
 		echo WPCF7_Pdf_Forms::render( 'pdfninja_integration_info', array(
 			'top-message' =>
 				WPCF7_Pdf_Forms::replace_tags(
