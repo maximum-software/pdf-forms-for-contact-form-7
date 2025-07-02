@@ -1,6 +1,6 @@
 === PDF Forms Filler for CF7 ===
-Version: 2.2.2
-Stable tag: 2.2.2
+Version: 2.2.3
+Stable tag: 2.2.3
 Tested up to: 6.8
 Tags: pdf, form, contact form, email, download
 Plugin URI: https://pdfformsfiller.org/
@@ -66,6 +66,14 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor.
 
 == Changelog ==
+
+= 2.2.3 =
+
+* Release date: July 2, 2025
+
+* Tested integration with CF7 v6.1
+* Fixed CF7 v6.1 compatibility issue on CF7's Integration page (copy button)
+* Other minor fixes and improvements
 
 = 2.2.2 =
 
