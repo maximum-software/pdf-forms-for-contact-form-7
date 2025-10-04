@@ -41,7 +41,7 @@ Requirements:
 
 Known problems:
  * Some third party plugins may break the functionality of this plugin (see a list below). Try troubleshooting the problem by disabling likely plugins that may cause issues, such as plugins that modify WordPress or Contact Form 7 in radical ways.
- * Some image optimization plugins optimize PDFs and strip PDF forms from PDF files. This may cause your existing forms to break at a random point in the future (when PDF file cache times out at the API).
+ * Some image optimization plugins optimize PDFs and strip PDF forms from PDF files. This may cause your existing forms to break.
  * If you are still using the old version of the API (v1) or the old version of Enterprise Extension (v1), please note that resulting PDFs may not render properly in some PDF readers and with some UTF-8 (non-latin) characters, checkboxes and radio buttons.
 
 Known incompatible plugins:
