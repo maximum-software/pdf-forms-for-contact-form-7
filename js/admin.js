@@ -16,11 +16,19 @@ jQuery(document).ready(function($) {
 	var tagGeneratorVersion = parseInt(wpcf7_pdf_forms.WPCF7_VERSION.split('.')[0], 10) < 6 ? 1 : 2;
 	
 	var goToFormPanel = function() {
-		jQuery('#form-panel-tab a')[0].click();
+		// prior to CF7 6.1.2
+		var link = jQuery('#form-panel-tab a')[0];
+		if(link) { link.click(); return; }
+		// CF7 6.1.2 and later
+		jQuery('#form-panel-tab')[0].click();
 	};
 	
 	var goToPdfFormFillerPanel = function() {
-		jQuery('#wpcf7-forms-panel-tab a')[0].click();
+		// prior to CF7 6.1.2
+		var link = jQuery('#wpcf7-forms-panel-tab a')[0];
+		if(link) { link.click(); return; }
+		// CF7 6.1.2 and later
+		jQuery('#wpcf7-forms-panel-tab')[0].click();
 	};
 	
 	var openTagGenerator = function() {
