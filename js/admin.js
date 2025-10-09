@@ -2318,7 +2318,7 @@ jQuery(document).ready(function($) {
 	var changeHandler = function() { loadCf7Fields(removeOldMappingsAndEmbeds); };
 	wpcf7_form.on('change', changeHandler);
 	
-	// set up a trigger for the tag generator insertion because change event isn't fired when value is changed with js
+	// set up triggers for the tag generator insertion because change event isn't fired when value is changed programmatically
 	var oldFormContent = "";
 	var changeDetectTTL = 0; // don't let the loop run forever
 	var changeDetectLoop = function() {
@@ -2334,7 +2334,18 @@ jQuery(document).ready(function($) {
 		changeDetectTTL = 10;
 		changeDetectLoop();
 	};
+	
+	// CF7 v5.9.8 and below
 	jQuery('form.tag-generator-panel .insert-tag').on('click', changeDetect);
+	
+	// CF7 v6.0+ uses dialog elements for tag generators
+	// the dialog 'close' event fires after tag insertion, but doesn't trigger textarea change event
+	jQuery('dialog.tag-generator-dialog').on('close', function() {
+		// only handle change if a tag was actually inserted (returnValue is not empty)
+		if(this.returnValue && this.returnValue !== '') {
+			changeDetect();
+		}
+	});
 	
 	// TODO: remove this workaround, determine what is causing the tag-hint not to be filled when tag generator dialog is opened
 	if(tagGeneratorVersion == 2)
