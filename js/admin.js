@@ -2347,9 +2347,10 @@ jQuery(document).ready(function($) {
 		}
 	});
 	
-	// TODO: remove this workaround, determine what is causing the tag-hint not to be filled when tag generator dialog is opened
+	// CF7 v6.0+ calls form.reset() when opening the tag generator dialog (in tag-generator-v2.js), which clears all form fields including the tag-hint field
+	// the following workaround re-populates the tag-hint field after the tag generator dialog opens
 	if(tagGeneratorVersion == 2)
-		jQuery('button[data-target="tag-generator-panel-pdf_form"]').on("click", function(event) {
+		jQuery('button[data-target="tag-generator-panel-pdf_form"]').on("click", function() {
 			runWhenDone(function() { jQuery('.wpcf7-pdf-forms-tag-generator-panel .pdf-field-list').resetSelect2Field(); });
 		});
 	
