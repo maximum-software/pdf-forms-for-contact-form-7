@@ -2319,18 +2319,18 @@ jQuery(document).ready(function($) {
 	wpcf7_form.on('change', changeHandler);
 	
 	// set up triggers for the tag generator insertion because change event isn't fired when value is changed programmatically
-	var oldFormContent = "";
+	var oldFormContentLength = 0;
 	var changeDetectTTL = 0; // don't let the loop run forever
 	var changeDetectLoop = function() {
 		// polling for change is needed because tag insertion may happen at a later time
-		if(oldFormContent == wpcf7_form.val() && changeDetectTTL > 0)
+		if(oldFormContentLength == wpcf7_form.val().length && changeDetectTTL > 0)
 			runWhenDone(changeDetectLoop);
 		else
 			changeHandler();
 		changeDetectTTL--;
 	};
 	var changeDetect = function() {
-		oldFormContent = wpcf7_form.val();
+		oldFormContentLength = wpcf7_form.val().length;
 		changeDetectTTL = 10;
 		changeDetectLoop();
 	};
