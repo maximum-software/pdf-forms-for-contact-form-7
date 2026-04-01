@@ -1871,7 +1871,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		
 		private static function escape_tag_value($value)
 		{
-			$value = esc_attr($value);
+			$value = esc_textarea($value);
 			$escape_characters = array("\\","]","|");
 			$escape_table = array('&#92;', '&#93;','&#124;');
 			$value = str_replace($escape_characters, $escape_table, $value);
@@ -2057,7 +2057,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 							{
 								$name = strval($field['name']);
 								
-								$tag = '<label>' . esc_html( $name ) . '</label>' . "\n";
+								$tag = '<label>' . esc_textarea( $name ) . '</label>' . "\n";
 								
 								$tag_flag = $attachment_id;
 								if( $all == "true" )
@@ -2741,7 +2741,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 									array(
 										'icon' => '<span class="dashicons dashicons-download"></span>',
 										'a-href-url' => '<a href="' . esc_attr( $file['url'] ) . '" download>',
-										'filename' => esc_html( $file['filename'] ),
+										'filename' => esc_textarea( $file['filename'] ),
 										'/a' => '</a>',
 										'i' => '<span class="file-size">',
 										'size' => esc_html( size_format( filesize( $file['filepath'] ) ) ),
