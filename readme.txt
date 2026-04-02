@@ -1,7 +1,7 @@
 === PDF Forms Filler for CF7 ===
-Version: 2.2.5
-Stable tag: 2.2.5
-Tested up to: 6.8
+Version: 2.2.6
+Stable tag: 2.2.6
+Tested up to: 7.0
 Tags: pdf, form, contact form, email, download
 Plugin URI: https://pdfformsfiller.org/
 Author: Maximum.Software
@@ -66,6 +66,13 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor.
 
 == Changelog ==
+
+= 2.2.6 =
+
+* Release date: April 2, 2026
+
+* Verified support for WP 7.0
+* Fixed issues related to double-escaping HTML
 
 = 2.2.5 =
 
