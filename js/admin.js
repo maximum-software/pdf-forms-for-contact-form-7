@@ -1225,8 +1225,9 @@ jQuery(document).ready(function($) {
 		{
 			var template = jQuery('.wpcf7-pdf-forms-admin .pdf-mapping-row-mailtag-template');
 			var tag = template.clone().removeClass('pdf-mapping-row-mailtag-template').addClass('pdf-mapping-row');
-			
-			tag.find('textarea.mail-tags').val(data.mail_tags).data('mapping_id', data.mapping_id);
+			tag.find('textarea.mail-tags')
+				.val(data.mail_tags)
+				.data('mapping_id', data.mapping_id);
 			tag.find('.pdf-field-name').text(pdf_field_caption);
 			
 			var virtual = false;
@@ -1447,8 +1448,9 @@ jQuery(document).ready(function($) {
 		{
 			var template = jQuery('.wpcf7-pdf-forms-settings-panel .image-embeds-row-mailtag-template');
 			var tag = template.clone().removeClass('image-embeds-row-mailtag-template').addClass('image-embeds-row');
-			tag.find('textarea.mail-tags').text(data.mail_tags);
-			tag.find('textarea.mail-tags').data('embed_id', data.embed.id);
+			tag.find('textarea.mail-tags')
+				.val(data.mail_tags)
+				.data('embed_id', data.embed.id);
 		}
 		else
 		{
