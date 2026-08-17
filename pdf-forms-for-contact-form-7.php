@@ -5,7 +5,7 @@
  * Description: Build Contact Form 7 forms from PDF forms. Get PDFs auto-filled and attached to email messages and/or website responses on form submission.
  * Version: 2.2.6
  * Requires at least: 4.8
- * Requires PHP: 5.2
+ * Requires PHP: 5.6
  * Requires Plugins: contact-form-7
  * Author: Maximum.Software
  * Author URI: https://maximum.software/
@@ -988,25 +988,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			if( function_exists( 'finfo_open' ) )
 			{
-				if( version_compare( phpversion(), "5.3" ) < 0 )
+				$finfo = finfo_open( FILEINFO_MIME_TYPE );
+				if( $finfo )
 				{
-					$finfo = finfo_open( FILEINFO_MIME );
-					if( $finfo )
-					{
-						$mimetype = finfo_file( $finfo, $filepath );
-						$mimetype = explode( ";", $mimetype );
-						$mimetype = reset( $mimetype );
-						finfo_close( $finfo );
-					}
-				}
-				else
-				{
-					$finfo = finfo_open( FILEINFO_MIME_TYPE );
-					if( $finfo )
-					{
-						$mimetype = finfo_file( $finfo, $filepath );
-						finfo_close( $finfo );
-					}
+					$mimetype = finfo_file( $finfo, $filepath );
+					finfo_close( $finfo );
 				}
 			}
 			
@@ -1838,18 +1824,10 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		}
 		
 		/**
-		 * PHP version specific wrapper for json_encode function
+		 * Wrapper for json_encode function
 		 */
 		public static function json_encode( $value )
 		{
-			if( version_compare( phpversion(), "5.4" ) < 0 )
-				return preg_replace(
-						"/\\\\u([a-f0-9]{4})/" .
-						"e", // don't warn me about this, I know!
-						"iconv('UCS-4LE','UTF-8',pack('V', hexdec('U$1')))",
-						json_encode( $value )
-					);
-			
 			return json_encode( $value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 		}
 		

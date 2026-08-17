@@ -338,7 +338,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		
 		try
 		{
-			$required_php_version = '5.4.0';
+			$required_php_version = '5.6.0';
 			if( version_compare( PHP_VERSION, $required_php_version ) < 0 )
 			{
 				$error = WPCF7_Pdf_Forms::replace_tags(

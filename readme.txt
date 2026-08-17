@@ -1,6 +1,7 @@
 === PDF Forms Filler for CF7 ===
 Version: 2.2.6
 Stable tag: 2.2.6
+Requires PHP: 5.6
 Tested up to: 7.0
 Tags: pdf, form, contact form, email, download
 Plugin URI: https://pdfformsfiller.org/
@@ -34,7 +35,7 @@ Please see the [tutorial video](https://youtu.be/9YoinoPM6eU) and the [documenta
 [youtube http://www.youtube.com/watch?v=9YoinoPM6eU]
 
 Requirements:
- * PHP 5.2 or newer
+ * PHP 5.6 or newer
  * WordPress 4.8 or newer
  * Contact Form 7 5.0 or newer
  * IE 11 (or equivalent) or newer

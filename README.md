@@ -23,7 +23,7 @@ Please see the [tutorial video](https://youtu.be/9YoinoPM6eU) and the [documenta
 [![PDF Forms Filler for CF7 Tutorial](https://img.youtube.com/vi/9YoinoPM6eU/0.jpg)](https://www.youtube.com/watch?v=9YoinoPM6eU "PDF Forms Filler for CF7 Tutorial")
 
 Requirements:
-* PHP 5.2 or newer
+* PHP 5.6 or newer
 * WordPress 4.8 or newer
 * Contact Form 7 5.0 or newer
 * IE 11 (or equivalent) or newer
