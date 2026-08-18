@@ -1460,6 +1460,16 @@ jQuery(document).ready(function($) {
 			tag.find('span.cf7-field-name').text(data.cf7_field_data.text);
 		}
 		
+		// set unique ids for coordinate inputs and their labels
+		tag.find('.page-coordinates label[for="embed-left"]').attr('for', 'embed-left-'+data.embed.id);
+		tag.find('.page-coordinates input[name="left"]').attr('id', 'embed-left-'+data.embed.id);
+		tag.find('.page-coordinates label[for="embed-top"]').attr('for', 'embed-top-'+data.embed.id);
+		tag.find('.page-coordinates input[name="top"]').attr('id', 'embed-top-'+data.embed.id);
+		tag.find('.page-coordinates label[for="embed-width"]').attr('for', 'embed-width-'+data.embed.id);
+		tag.find('.page-coordinates input[name="width"]').attr('id', 'embed-width-'+data.embed.id);
+		tag.find('.page-coordinates label[for="embed-height"]').attr('for', 'embed-height-'+data.embed.id);
+		tag.find('.page-coordinates input[name="height"]').attr('id', 'embed-height-'+data.embed.id);
+		
 		var delete_button = tag.find('.delete-cf7-field-embed-button');
 		delete_button.data('embed_id', data.embed.id);
 		delete_button.click(function(event) {
