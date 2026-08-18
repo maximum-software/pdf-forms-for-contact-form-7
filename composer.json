@@ -1,0 +1,76 @@
+{
+	"name": "maximum-software/pdf-forms-for-contact-form-7",
+	"description": "Build Contact Form 7 forms from PDF forms. Get PDFs auto-filled and attached to email messages and/or website responses on form submission.",
+	"version": "2.2.6",
+	"type": "wordpress-plugin",
+	"license": "GPL-3.0-only",
+	"authors": [
+		{
+			"name": "Maximum Software Inc",
+			"email": "contact@maximum.software"
+		}
+	],
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"require": {
+		"php": ">=5.6"
+	},
+	"require-dev": {
+		"maximum-software/wp-plugin-tooling": "dev-main"
+	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "ssh://git@gitea.maximum.software:2222/maximum-software/wp-plugin-tooling.git"
+		}
+	],
+	"config": {
+		"process-timeout": 3600,
+		"optimize-autoloader": true,
+		"preferred-install": "dist",
+		"sort-packages": true,
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"maximum-software/wp-plugin-tooling": true
+		}
+	},
+	"extra": {
+		"wp-plugin-tooling": {
+			"slug": "pdf-forms-for-contact-form-7",
+			"domain": "pdf-forms-for-contact-form-7",
+			"main_file": "pdf-forms-for-contact-form-7.php",
+			"svn_url": "https://plugins.svn.wordpress.org/pdf-forms-for-contact-form-7",
+			"php_version": "5.6",
+			"wp_version": "4.8",
+			"translation_headers": {
+				"Last-Translator": "Maximum Software Inc <contact@maximum.software>",
+				"Language-Team": "Maximum Software Inc <contact@maximum.software>"
+			},
+			"prefixes": [
+				"wpcf7_pdf_forms",
+				"WPCF7_PDF_FORMS",
+				"WPCF7_Pdf_Forms",
+				"WPCF7_Pdf_Ninja"
+			],
+			"phpcs_files": [
+				"./modules",
+				"./inc",
+				"./migrations",
+				"./pdf-forms-for-contact-form-7.php"
+			],
+			"package_files": [
+				"pdf-forms-for-contact-form-7.php",
+				"wpcf7-pdf-forms.php",
+				"readme.txt",
+				"LICENSE",
+				"js",
+				"css",
+				"html",
+				"modules",
+				"inc",
+				"languages",
+				"migrations"
+			]
+		}
+	}
+}

@@ -1,0 +1,32 @@
+# Distribution ignore file
+# This file is used when packaging the plugin for distribution
+# Files/directories listed here are excluded from the final zip
+
+# Build & release artifacts
+.distignore
+build
+dist
+svn
+
+# Dev tooling
+.editorconfig
+.gitignore
+.git
+.vscode
+.idea
+composer.json
+composer.lock
+vendor
+
+# Env
+.env
+.env.example
+
+# Plugin assets (not shipped in distribution)
+assets/icon-128x128.png
+assets/icon-256x256.png
+assets/icon.svg
+assets/screenshot-1.png
+assets/screenshot-2.png
+assets/screenshot-3.png
+assets/BrowserStack.png
