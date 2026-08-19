@@ -83,7 +83,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Storage', false ) )
 		 */
 		public function get_full_path()
 		{
-			return path_join( $this->get_storage_path(), $this->get_subpath() );
+			return trailingslashit( $this->get_storage_path() ) . $this->get_subpath();
 		}
 		
 		/**
