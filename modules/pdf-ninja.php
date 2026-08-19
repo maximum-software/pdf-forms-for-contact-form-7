@@ -722,7 +722,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		
 		$filepath = get_attached_file( $attachment_id );
 		$filename = wp_basename( $filepath );
-		$filecontents = file_get_contents( $filepath );
+		$filecontents = file_get_contents( $filepath ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- $filepath is a local filesystem path and can't be used with wp_remote_get()
 		
 		$payload .= "--{$boundary}\r\n"
 		          . "Content-Disposition: form-data; name=\"file\"; filename=\"{$filename}\"\r\n"
@@ -907,7 +907,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		foreach( $files as $fileId => $filepath )
 		{
 			$filename = wp_basename( $filepath );
-			$filecontents = file_get_contents( $filepath );
+			$filecontents = file_get_contents( $filepath ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- $filepath is a local filesystem path and can't be used with wp_remote_get()
 			
 			$payload .= "--{$boundary}\r\n"
 			          . "Content-Disposition: form-data; name=\"images[{$fileId}]\"; filename=\"{$filename}\"\r\n"

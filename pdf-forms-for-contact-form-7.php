@@ -2518,6 +2518,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 		 */
 		public static function render_file( $template_filepath, $attributes = array() )
 		{
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- $template_filepath is a local filesystem path and can't be used with wp_remote_get()
 			return self::replace_tags( file_get_contents( $template_filepath ) , $attributes );
 		}
 		
@@ -2624,10 +2625,12 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 		 */
 		public static function base64url_encode( $data )
 		{
+			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions -- only used to encode field names to avoid DB/JSON encoding issues
 			return rtrim( strtr( base64_encode( $data ), '+/', '._' ), '=' );
 		}
 		public static function base64url_decode( $data )
 		{
+			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions -- only used to decode field names to avoid DB/JSON encoding issues
 			return base64_decode( str_pad( strtr( $data, '._', '+/' ), strlen( $data ) % 4, '=', STR_PAD_RIGHT ) );
 		}
 		public static function wpcf7_field_name_encode( $attachment_id, $pdf_field_name )
@@ -2663,8 +2666,8 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 			foreach( explode( ';', $matches[2] ) as $ext )
 				if( $ext == "base64" )
 				{
-					$base64 = true; 
-					if( ! ( $data = base64_decode( $data, $strict=true ) ) )
+					$base64 = true;
+					if( ! ( $data = base64_decode( $data, $strict=true ) ) ) // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions -- only used to decode data URI that has base64-encoded content
 						return false;
 				}
 			
