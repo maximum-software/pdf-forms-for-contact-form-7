@@ -1536,6 +1536,20 @@ jQuery(document).ready(function($) {
 		if(!pageData || !pageData.width || !pageData.height)
 			return;
 		
+		// set the container and image dimensions
+		var width = 500;
+		var height = Math.round((pageData.height / pageData.width) * width);
+		var widthCss = width + 'px';
+		var heightCss = height + 'px';
+		
+		var container = tag.find('.jcrop-container');
+		var image = tag.find('.jcrop-page');
+		
+		container.css('width', widthCss);
+		container.css('height', heightCss);
+		image.attr('width', width).css('width', widthCss);
+		image.attr('height', height).css('height', heightCss);
+		
 		jQuery.ajax({
 			url: ajaxurl,
 			type: 'POST',
@@ -1555,22 +1569,6 @@ jQuery(document).ready(function($) {
 				
 				if(data.hasOwnProperty('snapshot'))
 				{
-					var width = 500;
-					var height = Math.round((pageData.height / pageData.width) * width);
-					
-					var container = tag.find('.jcrop-container');
-					var image = tag.find('.jcrop-page');
-					
-					var widthStr = width.toString();
-					var heightStr = height.toString();
-					var widthCss = widthStr + 'px';
-					var heightCss = heightStr + 'px';
-					
-					jQuery(image).attr('width', widthStr).css('width', widthCss);
-					jQuery(image).attr('height', heightStr).css('height', heightCss);
-					jQuery(container).css('width', widthCss);
-					jQuery(container).css('height', heightCss);
-					
 					var xPixelsPerPoint = width / pageData.width;
 					var yPixelsPerPoint = height / pageData.height;
 					
