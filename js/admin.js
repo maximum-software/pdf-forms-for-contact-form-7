@@ -1470,6 +1470,8 @@ jQuery(document).ready(function($) {
 		tag.find('.page-coordinates label[for="embed-height"]').attr('for', 'embed-height-'+data.embed.id);
 		tag.find('.page-coordinates input[name="height"]').attr('id', 'embed-height-'+data.embed.id);
 		
+		tag.attr('data-embed_id', data.embed.id);
+		
 		var delete_button = tag.find('.delete-cf7-field-embed-button');
 		delete_button.data('embed_id', data.embed.id);
 		delete_button.click(function(event) {
