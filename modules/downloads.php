@@ -192,7 +192,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads', false ) )
 								closedir( $temp_item_dir );
 							}
 							
-							rmdir( $temp_item_path );
+							@rmdir( $temp_item_path );
 						}
 					}
 				}
