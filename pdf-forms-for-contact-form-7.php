@@ -20,7 +20,7 @@ if( ! defined( 'ABSPATH' ) )
 
 require_once untrailingslashit( dirname( __FILE__ ) ) . '/inc/tgm-config.php';
 
-if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
+if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 {
 	class WPCF7_Pdf_Forms
 	{
@@ -70,7 +70,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			
-			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
+			if( ! class_exists( 'WPCF7', false ) || ! defined( 'WPCF7_VERSION' ) )
 				return;
 			
 			add_action( 'wp_enqueue_scripts', array( $this, 'front_end_enqueue_scripts' ) );
@@ -330,7 +330,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 		 */
 		public function admin_notices()
 		{
-			if( ( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) ) )
+			if( ( ! class_exists( 'WPCF7', false ) || ! defined( 'WPCF7_VERSION' ) ) )
 			{
 				if( current_user_can( 'activate_plugins' ) )
 					echo WPCF7_Pdf_Forms::render_error_notice( 'cf7-not-installed', array(
@@ -429,7 +429,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms' ) )
 			wp_register_script( 'wpcf7_pdf_forms_notices_script', plugin_dir_url( __FILE__ ) . 'js/notices.js', array( 'jquery' ), self::VERSION );
 			wp_enqueue_script( 'wpcf7_pdf_forms_notices_script' );
 			
-			if( ! class_exists('WPCF7') || ! defined( 'WPCF7_VERSION' ) )
+			if( ! class_exists( 'WPCF7', false ) || ! defined( 'WPCF7_VERSION' ) )
 				return;
 			
 			if( false !== strpos($hook, 'wpcf7') )

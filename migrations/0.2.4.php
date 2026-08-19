@@ -3,7 +3,7 @@
 	if( ! defined( 'ABSPATH' ) )
 		return;
 	
-	if( ! class_exists('WPCF7') )
+	if( ! class_exists( 'WPCF7', false ) )
 		return;
 	
 	function wpcf7_pdf_forms_migrate_option_value( $post_id, $attachment_id, $options )

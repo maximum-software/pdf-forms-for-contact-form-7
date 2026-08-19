@@ -3,7 +3,7 @@
 if( ! defined( 'ABSPATH' ) )
 	return;
 
-if( ! class_exists( 'WPCF7_Pdf_Forms_Storage' ) )
+if( ! class_exists( 'WPCF7_Pdf_Forms_Storage', false ) )
 {
 	class WPCF7_Pdf_Forms_Storage
 	{
