@@ -14,7 +14,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Storage', false ) )
 		
 		private function __construct() { }
 		
-		/*
+		/**
 		 * Returns a global instance of this class
 		 */
 		public static function get_instance()

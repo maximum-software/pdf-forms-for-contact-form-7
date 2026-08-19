@@ -2494,7 +2494,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 			return self::render_notice( $notice_id, 'error', $attributes );
 		}
 		
-		/*
+		/**
 		 * Helper for replace_tags function
 		 */
 		private static function add_curly_braces($str)

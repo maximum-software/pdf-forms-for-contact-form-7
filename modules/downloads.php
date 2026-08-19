@@ -25,7 +25,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms_Downloads', false ) )
 				$this->downloads_timeout = WPCF7_PDF_FORMS_DOWNLOADS_TIMEOUT_SECONDS;
 		}
 		
-		/*
+		/**
 		 * Returns a global instance of this class
 		 */
 		public static function get_instance()
