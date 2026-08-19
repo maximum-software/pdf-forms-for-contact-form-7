@@ -1,7 +1,6 @@
 <?php
 
-if( ! defined( 'ABSPATH' ) )
-	return;
+if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 // this file is needed for smooth upgrades from pre-1.2 versions to 1.2.0 and later versions
 // it fixes a plugin deactivation on upgrade issue due to main plugin php file rename

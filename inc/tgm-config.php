@@ -1,7 +1,6 @@
 <?php
 	
-	if( ! defined( 'ABSPATH' ) )
-		return;
+	if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
 	require_once dirname( __FILE__ ) . '/class-tgm-plugin-activation.php';
 	

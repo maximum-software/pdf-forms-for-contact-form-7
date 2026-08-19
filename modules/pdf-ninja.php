@@ -1,7 +1,6 @@
 <?php
 
-if( ! defined( 'ABSPATH' ) )
-	return;
+if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 {

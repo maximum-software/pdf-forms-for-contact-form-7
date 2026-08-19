@@ -1,7 +1,6 @@
 <?php
 
-if( ! defined( 'ABSPATH' ) )
-	return;
+if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 if( ! class_exists( 'WPCF7_Pdf_Forms_Storage', false ) )
 {

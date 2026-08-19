@@ -1,7 +1,6 @@
 <?php
 	
-	if( ! defined( 'ABSPATH' ) )
-		return;
+	if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
 	abstract class WPCF7_Pdf_Forms_Service extends WPCF7_Service
 	{
