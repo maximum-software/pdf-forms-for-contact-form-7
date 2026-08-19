@@ -592,8 +592,20 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 			return $attachment_id;
 		}
 		
-		private static $pdf_options = array('skip_empty' => false, 'attach_to_mail_1' => true, 'attach_to_mail_2' => false, 'flatten' => false, 'filename' => "", 'save_directory'=>"", 'download_link' => false, 'download_link_auto' => false );
-		private static $public_pdf_options = array('download_link', 'download_link_auto');
+		private static $pdf_options = array(
+			'skip_empty' => false,
+			'attach_to_mail_1' => true,
+			'attach_to_mail_2' => false,
+			'flatten' => false,
+			'filename' => "",
+			'save_directory' => "",
+			'download_link' => false,
+			'download_link_auto' => false,
+		);
+		private static $public_pdf_options = array(
+			'download_link',
+			'download_link_auto',
+		);
 		
 		/**
 		 * Updates post attachment options
