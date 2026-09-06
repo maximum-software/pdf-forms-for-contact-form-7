@@ -554,52 +554,28 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	}
 	
 	/**
-	 * Helper function that retries GET request if the file needs to be re-uploaded or md5 sum recalculated
+	 * Helper function that calls and retries an API request if the first call fails with a resolvable error
 	 */
-	private function api_get_retry_attachment( $attachment_id, $endpoint, $params )
+	private function api_retry_attachment( $attachment_id, callable $request_fn )
 	{
 		try
 		{
-			return $this->api_get( $endpoint, $params );
+			return $request_fn();
 		}
 		catch( WPCF7_Pdf_Ninja_Exception $e )
 		{
 			$reason = $e->getReason();
 			if( $reason == 'noSuchFileId' || $reason == 'md5sumMismatch' )
 			{
+				// file needs to be re-uploaded and/or md5sum updated
 				if( $this->is_local_attachment( $attachment_id ) )
+					// re-upload file (also updates md5sum)
 					$this->api_upload_file( $attachment_id );
 				else
-					// update local md5sum
-					$params['md5sum'] = WPCF7_Pdf_Forms::update_attachment_md5sum( $attachment_id );
+					// only update local md5sum
+					WPCF7_Pdf_Forms::update_attachment_md5sum( $attachment_id );
 				
-				return $this->api_get( $endpoint, $params );
-			}
-			throw $e;
-		}
-	}
-	
-	/**
-	 * Helper function that retries POST request if the file needs to be re-uploaded or md5 sum recalculated
-	 */
-	private function api_post_retry_attachment( $attachment_id, $endpoint, $payload, $headers = array(), $args_override = array() )
-	{
-		try
-		{
-			return $this->api_post( $endpoint, $payload, $headers, $args_override );
-		}
-		catch( WPCF7_Pdf_Ninja_Exception $e )
-		{
-			$reason = $e->getReason();
-			if( $reason == 'noSuchFileId' || $reason == 'md5sumMismatch' )
-			{
-				if( $this->is_local_attachment( $attachment_id ) )
-					$this->api_upload_file( $attachment_id );
-				else
-					// update local md5sum
-					$params['md5sum'] = WPCF7_Pdf_Forms::update_attachment_md5sum( $attachment_id );
-				
-				return $this->api_post( $endpoint, $payload, $headers, $args_override );
+				return $request_fn();
 			}
 			throw $e;
 		}
@@ -748,21 +724,23 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function api_get_info_helper( $endpoint, $attachment_id )
 	{
-		$params = array(
-			'md5sum' => WPCF7_Pdf_Forms::get_attachment_md5sum( $attachment_id ),
-			'key'    => $this->get_key(),
-		);
-		
-		if( $this->is_local_attachment( $attachment_id ) )
-		{
-			if( $this->is_new_file( $attachment_id ) )
-				$this->api_upload_file( $attachment_id );
-			$params['fileId'] = $this->get_file_id( $attachment_id );
-		}
-		else
-			$params['fileUrl'] = $this->get_file_url( $attachment_id );
-		
-		return $this->api_get_retry_attachment( $attachment_id, $endpoint, $params );
+		return $this->api_retry_attachment( $attachment_id, function() use ( $endpoint, $attachment_id ) {
+			$params = array(
+				'md5sum' => WPCF7_Pdf_Forms::get_attachment_md5sum( $attachment_id ),
+				'key'    => $this->get_key(),
+			);
+			
+			if( $this->is_local_attachment( $attachment_id ) )
+			{
+				if( $this->is_new_file( $attachment_id ) )
+					$this->api_upload_file( $attachment_id );
+				$params['fileId'] = $this->get_file_id( $attachment_id );
+			}
+			else
+				$params['fileUrl'] = $this->get_file_url( $attachment_id );
+			
+			return $this->api_get( $endpoint, $params );
+		});
 	}
 	
 	/**
@@ -798,24 +776,26 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function api_image( $destfile, $attachment_id, $page )
 	{
-		$params = array(
-			'md5sum' => WPCF7_Pdf_Forms::get_attachment_md5sum( $attachment_id ),
-			'key'    => $this->get_key(),
-			'type'   => 'jpeg',
-			'page'   => intval($page),
-			'dumpFile' => true,
-		);
-		
-		if( $this->is_local_attachment( $attachment_id ) )
-		{
-			if( $this->is_new_file( $attachment_id ) )
-				$this->api_upload_file( $attachment_id );
-			$params['fileId'] = $this->get_file_id( $attachment_id );
-		}
-		else
-			$params['fileUrl'] = $this->get_file_url( $attachment_id );
-		
-		$result = $this->api_get_retry_attachment( $attachment_id, 'image', $params );
+		$result = $this->api_retry_attachment( $attachment_id, function() use ( $attachment_id, $page ) {
+			$params = array(
+				'md5sum' => WPCF7_Pdf_Forms::get_attachment_md5sum( $attachment_id ),
+				'key'    => $this->get_key(),
+				'type'   => 'jpeg',
+				'page'   => intval($page),
+				'dumpFile' => true,
+			);
+			
+			if( $this->is_local_attachment( $attachment_id ) )
+			{
+				if( $this->is_new_file( $attachment_id ) )
+					$this->api_upload_file( $attachment_id );
+				$params['fileId'] = $this->get_file_id( $attachment_id );
+			}
+			else
+				$params['fileUrl'] = $this->get_file_url( $attachment_id );
+			
+			return $this->api_get( 'image', $params );
+		});
 		
 		if( ! isset( $result['content'] ) || ! isset( $result['content_type'] ) || $result['content_type'] != 'image/jpeg' )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
@@ -827,9 +807,19 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	}
 	
 	/**
-	 * Helper function for communicating with the API to generate PDF file
+	 * Builds the multipart POST payload for PDF generation requests
+	 * 
+	 * @param int   $attachment_id The attachment ID
+	 * @param array $data          The form data to encode
+	 * @param array $embeds        The embedded images
+	 * @param array $options       The request options
+	 * 
+	 * @return array Associative array with the following keys:
+	 *     'payload' (string) The multipart payload body
+	 *     'headers' (array)  The request headers
+	 *     'args'    (array)  The request argument overrides
 	 */
-	private function api_pdf_helper( $destfile, $endpoint, $attachment_id, $data, $embeds, $options )
+	private function build_pdf_payload( $attachment_id, $data, $embeds, $options )
 	{
 		if( !is_array ( $data ) )
 			$data = array();
@@ -921,7 +911,22 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 		$headers  = array( 'Content-Type' => 'multipart/form-data; boundary=' . $boundary );
 		$args = array( 'timeout' => 300 );
 		
-		$result = $this->api_post_retry_attachment( $attachment_id, $endpoint, $payload, $headers, $args );
+		return array(
+			'payload' => $payload,
+			'headers' => $headers,
+			'args'    => $args,
+		);
+	}
+	
+	/**
+	 * Helper function for communicating with the API to generate PDF file
+	 */
+	private function api_pdf_helper( $destfile, $endpoint, $attachment_id, $data, $embeds, $options )
+	{
+		$result = $this->api_retry_attachment( $attachment_id, function() use ( $endpoint, $attachment_id, $data, $embeds, $options ) {
+			$request = $this->build_pdf_payload( $attachment_id, $data, $embeds, $options );
+			return $this->api_post( $endpoint, $request['payload'], $request['headers'], $request['args'] );
+		});
 		
 		if( ! isset( $result['content'] ) || ! isset( $result['content_type'] ) || $result['content_type'] != 'application/pdf' )
 			throw new Exception( __( "Pdf.Ninja API server did not send an expected response", 'pdf-forms-for-contact-form-7' ) );
