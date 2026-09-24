@@ -56,11 +56,13 @@
 				"./modules",
 				"./inc",
 				"./migrations",
-				"./pdf-forms-for-contact-form-7.php"
+				"./pdf-forms-for-contact-form-7.php",
+				"./uninstall.php"
 			],
 			"package_files": [
 				"pdf-forms-for-contact-form-7.php",
 				"wpcf7-pdf-forms.php",
+				"uninstall.php",
 				"readme.txt",
 				"LICENSE",
 				"js",
