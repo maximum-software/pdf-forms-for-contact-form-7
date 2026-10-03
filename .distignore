@@ -40,4 +40,4 @@ vendor/select2/select2/dist/*
 vendor/select2/select2/dist/css/*
 !vendor/select2/select2/dist/css/select2.min.css
 vendor/select2/select2/dist/js/*
-!vendor/select2/select2/dist/js/select2.min.js
+!vendor/select2/select2/dist/js/select2.full.min.js
