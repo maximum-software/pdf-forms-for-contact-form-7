@@ -2,8 +2,6 @@
 	
 	if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
-	require_once dirname( __FILE__ ) . '/class-tgm-plugin-activation.php';
-	
 	add_action( 'tgmpa_register', 'wpcf7_pdf_forms_register_required_plugins' );
 	
 	function wpcf7_pdf_forms_register_required_plugins()

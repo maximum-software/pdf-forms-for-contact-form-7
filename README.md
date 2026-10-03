@@ -48,6 +48,16 @@ Known incompatible plugins:
 3. Activate the plugin through the 'Plugins' screen in WordPress.
 4. Start using the 'PDF Form' button in the CF7 form editor.
 
+## Development
+
+To set up a local development environment, install the PHP dependencies with Composer:
+
+```bash
+composer install
+```
+
+This installs the third-party libraries used by the plugin into the `vendor/` directory.
+
 ## Screenshots
 
 ![PDF Form button is available to access PDF attachments interface](assets/screenshot-1.png?raw=true)

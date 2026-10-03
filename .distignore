@@ -14,9 +14,8 @@ svn
 .git
 .vscode
 .idea
-composer.json
 composer.lock
-vendor
+vendor/bin
 
 # Env
 .env
