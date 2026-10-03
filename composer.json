@@ -14,8 +14,7 @@
 	"prefer-stable": true,
 	"require": {
 		"php": ">=5.6",
-		"select2/select2": "4.0.13",
-		"tgmpa/tgm-plugin-activation": "^2.6.1"
+		"select2/select2": "4.0.13"
 	},
 	"require-dev": {
 		"maximum-software/wp-plugin-tooling": "dev-main"
@@ -56,7 +55,6 @@
 			],
 			"phpcs_files": [
 				"./modules",
-				"./inc",
 				"./migrations",
 				"./pdf-forms-for-contact-form-7.php",
 				"./uninstall.php"
@@ -71,7 +69,6 @@
 				"css",
 				"html",
 				"modules",
-				"inc",
 				"languages",
 				"migrations"
 			]

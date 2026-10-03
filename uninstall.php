@@ -39,10 +39,6 @@ function wpcf7_pdf_forms_uninstall_site()
 	// remove cron jobs
 	wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
 	
-	// remove TGMPA dismissed notice flags (current and legacy ids)
-	delete_metadata( 'user', null, 'tgmpa_dismissed_notice_pdf-forms-for-contact-form-7', null, true );
-	delete_metadata( 'user', null, 'tgmpa_dismissed_notice_wpcf7-pdf-forms', null, true );
-	
 	// remove page snapshot attachments before the catch-all meta deletion below
 	$page_snapshots = get_posts( array(
 		'post_type' => 'attachment',
