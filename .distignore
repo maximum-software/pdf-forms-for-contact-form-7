@@ -31,3 +31,13 @@ assets/screenshot-1.png
 assets/screenshot-2.png
 assets/screenshot-3.png
 assets/BrowserStack.png
+
+# Select2: ship only the minified assets actually enqueued
+vendor/select2/select2/*
+!vendor/select2/select2/dist
+vendor/select2/select2/dist/*
+!vendor/select2/select2/dist/css
+vendor/select2/select2/dist/css/*
+!vendor/select2/select2/dist/css/select2.min.css
+vendor/select2/select2/dist/js/*
+!vendor/select2/select2/dist/js/select2.min.js
