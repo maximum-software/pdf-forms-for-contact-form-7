@@ -4,9 +4,9 @@
 
 # Build & release artifacts
 .distignore
-build
-dist
-svn
+/build
+/dist
+/svn
 
 # Dev tooling
 .editorconfig
