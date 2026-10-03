@@ -754,6 +754,31 @@ jQuery(document).ready(function($) {
 		}
 	);
 	
+	// localize select2's built-in messages for the current locale
+	// select2 resolves "select2/i18n/{locale}" from the <html lang> attribute
+	var locale = document.documentElement.lang;
+	var s2l10n = wpcf7_pdf_forms.select2;
+	// english is bundled with select2, so there is nothing to register
+	if(locale && s2l10n && locale.indexOf('en') !== 0)
+	{
+		var plural = function(count, single, many) {
+			return (count === 1 ? single : many).replace('{count}', count);
+		};
+
+		jQuery.fn.select2.amd.define('select2/i18n/' + locale, [], function() {
+			return {
+				errorLoading: function() { return s2l10n.__Error_Loading; },
+				inputTooLong: function(args) { return plural(args.input.length - args.maximum, s2l10n.__Input_Too_Long_Singular, s2l10n.__Input_Too_Long_Plural); },
+				inputTooShort: function(args) { return plural(args.minimum - args.input.length, s2l10n.__Input_Too_Short_Singular, s2l10n.__Input_Too_Short_Plural); },
+				loadingMore: function() { return s2l10n.__Loading_More; },
+				maximumSelected: function(args) { return plural(args.maximum, s2l10n.__Maximum_Selected_Singular, s2l10n.__Maximum_Selected_Plural); },
+				noResults: function() { return s2l10n.__No_Results; },
+				searching: function() { return s2l10n.__Searching; },
+				removeAllItems: function() { return s2l10n.__Remove_All_Items; }
+			};
+		});
+	}
+	
 	jQuery.fn.resetSelect2Field = function(id) {
 		
 		if(typeof id == 'undefined')

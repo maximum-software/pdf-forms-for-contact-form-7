@@ -457,6 +457,19 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 					'__All_PDFs' => __( 'All PDFs', 'pdf-forms-for-contact-form-7' ),
 					'__All_Pages' => __( 'All', 'pdf-forms-for-contact-form-7' ),
 					'__Null_Value_Mapping' => __( '--- EMPTY ---', 'pdf-forms-for-contact-form-7' ),
+					'select2' => array(
+						'__Error_Loading' => __( 'The results could not be loaded.', 'pdf-forms-for-contact-form-7' ),
+						'__Input_Too_Long_Singular' => __( 'Please delete 1 character', 'pdf-forms-for-contact-form-7' ),
+						'__Input_Too_Long_Plural' => __( 'Please delete {count} characters', 'pdf-forms-for-contact-form-7' ),
+						'__Input_Too_Short_Singular' => __( 'Please enter 1 or more characters', 'pdf-forms-for-contact-form-7' ),
+						'__Input_Too_Short_Plural' => __( 'Please enter {count} or more characters', 'pdf-forms-for-contact-form-7' ),
+						'__Loading_More' => __( 'Loading more results…', 'pdf-forms-for-contact-form-7' ),
+						'__Maximum_Selected_Singular' => __( 'You can only select 1 item', 'pdf-forms-for-contact-form-7' ),
+						'__Maximum_Selected_Plural' => __( 'You can only select {count} items', 'pdf-forms-for-contact-form-7' ),
+						'__No_Results' => __( 'No results found', 'pdf-forms-for-contact-form-7' ),
+						'__Searching' => __( 'Searching…', 'pdf-forms-for-contact-form-7' ),
+						'__Remove_All_Items' => __( 'Remove all items', 'pdf-forms-for-contact-form-7' ),
+					),
 				) );
 				
 				add_thickbox();

@@ -17,7 +17,7 @@ msgstr ""
 
 #. Plugin Name of the plugin
 #: pdf-forms-for-contact-form-7.php:3
-#: pdf-forms-for-contact-form-7.php:2461
+#: pdf-forms-for-contact-form-7.php:2473
 msgid "PDF Forms Filler for CF7"
 msgstr "CF7のPDFフォームフィラー"
 
@@ -152,8 +152,8 @@ msgstr "ローカルファイルシステムでファイルにアクセスでき
 
 #: modules/pdf-ninja.php:804
 #: modules/pdf-ninja.php:935
-#: pdf-forms-for-contact-form-7.php:931
-#: pdf-forms-for-contact-form-7.php:1152
+#: pdf-forms-for-contact-form-7.php:943
+#: pdf-forms-for-contact-form-7.php:1164
 msgid "Failed to create file"
 msgstr "ファイルの作成に失敗した"
 
@@ -163,17 +163,17 @@ msgid "Failed to encode JSON data"
 msgstr "JSONデータのエンコードに失敗しました"
 
 #: modules/pdf-ninja.php:985
-#: pdf-forms-for-contact-form-7.php:1676
-#: pdf-forms-for-contact-form-7.php:2012
-#: pdf-forms-for-contact-form-7.php:2141
-#: pdf-forms-for-contact-form-7.php:2297
-#: pdf-forms-for-contact-form-7.php:2377
+#: pdf-forms-for-contact-form-7.php:1688
+#: pdf-forms-for-contact-form-7.php:2024
+#: pdf-forms-for-contact-form-7.php:2153
+#: pdf-forms-for-contact-form-7.php:2309
+#: pdf-forms-for-contact-form-7.php:2389
 msgid "Nonce mismatch"
 msgstr "ノンス不一致"
 
 #: modules/pdf-ninja.php:988
-#: pdf-forms-for-contact-form-7.php:2150
-#: pdf-forms-for-contact-form-7.php:2386
+#: pdf-forms-for-contact-form-7.php:2162
+#: pdf-forms-for-contact-form-7.php:2398
 msgid "Permission denied"
 msgstr "アクセス拒否"
 
@@ -267,7 +267,7 @@ msgstr "新しいキーを取得します"
 #: modules/pdf-ninja.php:1143
 #: modules/pdf-ninja.php:1149
 #: modules/pdf-ninja.php:1168
-#: pdf-forms-for-contact-form-7.php:336
+#: pdf-forms-for-contact-form-7.php:334
 msgid "PDF Forms Filler for CF7 plugin error"
 msgstr "PDFフォームフィラーCF7プラグイン・エラーのために"
 
@@ -284,7 +284,7 @@ msgid "Failed to acquire the Pdf.Ninja API key on last attempt. {a-href-edit-ser
 msgstr "最後の試行でPdf.NinjaAPIキーの取得に失敗しました。 {a-href-edit-service-page}手動で再試行してください{/a}。"
 
 #: modules/pdf-ninja.php:1192
-#: pdf-forms-for-contact-form-7.php:345
+#: pdf-forms-for-contact-form-7.php:343
 msgid "PDF Forms Filler for CF7 plugin warning"
 msgstr "CF7プラグイン警告用のPDFフォームフィラー"
 
@@ -293,7 +293,7 @@ msgid "Your Contact Form 7 integration settings indicate that you are using an i
 msgstr "Contact Form 7統合設定は、Pdf.NinjaAPIサーバーへの安全でない接続を使用していることを示しています。"
 
 #: modules/pdf-ninja.php:1213
-#: pdf-forms-for-contact-form-7.php:445
+#: pdf-forms-for-contact-form-7.php:443
 msgid "Unknown error"
 msgstr "不明なエラー"
 
@@ -305,398 +305,442 @@ msgstr "不明なエラー"
 msgid "Missing feature"
 msgstr "不足している機能"
 
-#: pdf-forms-for-contact-form-7.php:169
+#: pdf-forms-for-contact-form-7.php:167
 msgid "Every {interval} seconds"
 msgstr "{interval}秒ごと"
 
-#: pdf-forms-for-contact-form-7.php:322
+#: pdf-forms-for-contact-form-7.php:320
 msgid "Docs"
 msgstr "ドキュメンテーション"
 
-#: pdf-forms-for-contact-form-7.php:323
+#: pdf-forms-for-contact-form-7.php:321
 msgid "Support"
 msgstr "サポート"
 
-#: pdf-forms-for-contact-form-7.php:337
+#: pdf-forms-for-contact-form-7.php:335
 msgid "The required plugin 'Contact Form 7' version is not installed!"
 msgstr "必要なプラグイン「ContactForm7」バージョンがインストールされていません！"
 
-#: pdf-forms-for-contact-form-7.php:348
+#: pdf-forms-for-contact-form-7.php:346
 msgid "The currently installed version of 'Contact Form 7' plugin ({current-wpcf7-version}) may not be supported by the current version of 'PDF Forms Filler for CF7' plugin ({current-plugin-version}), please switch to 'Contact Form 7' plugin version {supported-wpcf7-version} or below to ensure that 'PDF Forms Filler for CF7' plugin would work correctly."
 msgstr "現在インストールされている「Contact Form 7」プラグイン（{current-wpcf7-version}）は、現在の「PDF Forms Filler for CF7」プラグイン（{current-plugin-version}）ではサポートされていない可能性があります。「Contact Form 7」プラグインをバージョン{supported-wpcf7-version}以下に切り替えて、「PDF Forms Filler for CF7」プラグインが正しく動作するようにしてください。"
 
-#: pdf-forms-for-contact-form-7.php:350
+#: pdf-forms-for-contact-form-7.php:348
 msgid "Unknown version"
 msgstr "不明なバージョン"
 
-#: pdf-forms-for-contact-form-7.php:446
+#: pdf-forms-for-contact-form-7.php:444
 msgid "Are you sure you want to delete this file?  This will delete field mappings and image embeds associated with this file."
 msgstr "このファイルを削除してもよろしいですか？ これにより、このファイルに関連付けられているフィールドのマッピングとイメージの埋め込みが削除されます。"
 
-#: pdf-forms-for-contact-form-7.php:447
+#: pdf-forms-for-contact-form-7.php:445
 msgid "Are you sure you want to delete this mapping?"
 msgstr "このマッピングを削除してもよろしいですか？"
 
-#: pdf-forms-for-contact-form-7.php:448
+#: pdf-forms-for-contact-form-7.php:446
 msgid "Are you sure you want to delete all mappings?"
 msgstr "すべてのマッピングを削除してもよろしいですか？"
 
-#: pdf-forms-for-contact-form-7.php:449
+#: pdf-forms-for-contact-form-7.php:447
 msgid "Are you sure you want to delete all value mappings?"
 msgstr "すべての値マッピングを削除してもよろしいですか？"
 
-#: pdf-forms-for-contact-form-7.php:450
+#: pdf-forms-for-contact-form-7.php:448
 msgid "Are you sure you want to attach a PDF file without any form fields?"
 msgstr "フォームフィールドなしでPDFファイルを添付してもよろしいですか？"
 
-#: pdf-forms-for-contact-form-7.php:451
+#: pdf-forms-for-contact-form-7.php:449
 msgid "Are you sure you want to delete this embeded image?"
 msgstr "この埋め込み画像を削除してもよろしいですか？"
 
-#: pdf-forms-for-contact-form-7.php:452
-#: pdf-forms-for-contact-form-7.php:765
-#: pdf-forms-for-contact-form-7.php:2557
-#: pdf-forms-for-contact-form-7.php:2607
+#: pdf-forms-for-contact-form-7.php:450
+#: pdf-forms-for-contact-form-7.php:777
+#: pdf-forms-for-contact-form-7.php:2569
+#: pdf-forms-for-contact-form-7.php:2619
 msgid "Show Help"
 msgstr "ヘルプを表示"
 
-#: pdf-forms-for-contact-form-7.php:453
-#: pdf-forms-for-contact-form-7.php:766
-#: pdf-forms-for-contact-form-7.php:2558
-#: pdf-forms-for-contact-form-7.php:2608
+#: pdf-forms-for-contact-form-7.php:451
+#: pdf-forms-for-contact-form-7.php:778
+#: pdf-forms-for-contact-form-7.php:2570
+#: pdf-forms-for-contact-form-7.php:2620
 msgid "Hide Help"
 msgstr "ヘルプを隠す"
 
-#: pdf-forms-for-contact-form-7.php:454
-#: pdf-forms-for-contact-form-7.php:2559
-#: pdf-forms-for-contact-form-7.php:2609
+#: pdf-forms-for-contact-form-7.php:452
+#: pdf-forms-for-contact-form-7.php:2571
+#: pdf-forms-for-contact-form-7.php:2621
 msgid "Show Tag Generator"
 msgstr "タグジェネレータを表示"
 
-#: pdf-forms-for-contact-form-7.php:455
-#: pdf-forms-for-contact-form-7.php:2560
-#: pdf-forms-for-contact-form-7.php:2610
+#: pdf-forms-for-contact-form-7.php:453
+#: pdf-forms-for-contact-form-7.php:2572
+#: pdf-forms-for-contact-form-7.php:2622
 msgid "Hide Tag Generator"
 msgstr "タグジェネレータを非表示"
 
-#: pdf-forms-for-contact-form-7.php:456
+#: pdf-forms-for-contact-form-7.php:454
 msgid "Select a PDF file"
 msgstr "PDFファイルを選択"
 
-#: pdf-forms-for-contact-form-7.php:457
+#: pdf-forms-for-contact-form-7.php:455
 msgid "Select"
 msgstr "選択する"
 
-#: pdf-forms-for-contact-form-7.php:458
+#: pdf-forms-for-contact-form-7.php:456
 msgid "Custom text string..."
 msgstr "カスタムテキスト文字列..."
 
-#: pdf-forms-for-contact-form-7.php:459
-#: pdf-forms-for-contact-form-7.php:2562
-#: pdf-forms-for-contact-form-7.php:2612
+#: pdf-forms-for-contact-form-7.php:457
+#: pdf-forms-for-contact-form-7.php:2574
+#: pdf-forms-for-contact-form-7.php:2624
 msgid "All PDFs"
 msgstr "すべてのPDF"
 
-#: pdf-forms-for-contact-form-7.php:460
+#: pdf-forms-for-contact-form-7.php:458
 msgid "All"
 msgstr "全て"
 
-#: pdf-forms-for-contact-form-7.php:461
+#: pdf-forms-for-contact-form-7.php:459
 msgid "--- EMPTY ---"
 msgstr " - - 空の  - -"
 
-#: pdf-forms-for-contact-form-7.php:508
+#: pdf-forms-for-contact-form-7.php:462
+msgid "The results could not be loaded."
+msgstr "結果が読み込まれませんでした"
+
+#: pdf-forms-for-contact-form-7.php:463
+msgid "Please delete 1 character"
+msgstr "1 文字を削除してください"
+
+#: pdf-forms-for-contact-form-7.php:464
+msgid "Please delete {count} characters"
+msgstr "{count} 文字を削除してください"
+
+#: pdf-forms-for-contact-form-7.php:465
+msgid "Please enter 1 or more characters"
+msgstr "少なくとも 1 文字を入力してください"
+
+#: pdf-forms-for-contact-form-7.php:466
+msgid "Please enter {count} or more characters"
+msgstr "少なくとも {count} 文字を入力してください"
+
+#: pdf-forms-for-contact-form-7.php:467
+msgid "Loading more results…"
+msgstr "読み込み中…"
+
+#: pdf-forms-for-contact-form-7.php:468
+msgid "You can only select 1 item"
+msgstr "1 件しか選択できません"
+
+#: pdf-forms-for-contact-form-7.php:469
+msgid "You can only select {count} items"
+msgstr "{count} 件しか選択できません"
+
+#: pdf-forms-for-contact-form-7.php:470
+msgid "No results found"
+msgstr "対象が見つかりません"
+
+#: pdf-forms-for-contact-form-7.php:471
+msgid "Searching…"
+msgstr "検索しています…"
+
+#: pdf-forms-for-contact-form-7.php:472
+msgid "Remove all items"
+msgstr "すべてのアイテムを削除"
+
+#: pdf-forms-for-contact-form-7.php:520
 msgid "PDF Forms"
 msgstr "PDFフォーム"
 
-#: pdf-forms-for-contact-form-7.php:571
+#: pdf-forms-for-contact-form-7.php:583
 msgid "Copy"
 msgstr "コピー"
 
-#: pdf-forms-for-contact-form-7.php:700
-#: pdf-forms-for-contact-form-7.php:721
+#: pdf-forms-for-contact-form-7.php:712
+#: pdf-forms-for-contact-form-7.php:733
 msgid "PDF Forms Filler"
 msgstr "PDFフォーム記入ツール"
 
-#: pdf-forms-for-contact-form-7.php:723
+#: pdf-forms-for-contact-form-7.php:735
 msgid "You can use this panel to attach a PDF file to this contact form and link form-tags and mail-tags to fields in the PDF file. It is possible to link a combination of mail-tags to PDF fields. You can also embed images (from URLs or attached files) into the PDF file. Changes here are applied when the contact form is saved."
 msgstr "このパネルを使用して、このコンタクトフォームにPDFファイルを添付し、フォームタグやメールタグをPDFファイル内のフィールドにリンクすることができます。メールタグの組み合わせをPDFフィールドにリンクすることも可能です。また、画像（URLや添付ファイルから）をPDFファイルに埋め込むこともできます。ここでの変更は、コンタクトフォームを保存すると適用されます。"
 
-#: pdf-forms-for-contact-form-7.php:724
+#: pdf-forms-for-contact-form-7.php:736
 msgid "Attach a PDF File"
 msgstr "PDFファイルを添付"
 
-#: pdf-forms-for-contact-form-7.php:725
-#: pdf-forms-for-contact-form-7.php:748
+#: pdf-forms-for-contact-form-7.php:737
+#: pdf-forms-for-contact-form-7.php:760
 msgid "Delete"
 msgstr "削除"
 
-#: pdf-forms-for-contact-form-7.php:726
+#: pdf-forms-for-contact-form-7.php:738
 msgid "Map Value"
 msgstr "マップ値"
 
-#: pdf-forms-for-contact-form-7.php:727
+#: pdf-forms-for-contact-form-7.php:739
 msgid "Options"
 msgstr "オプション"
 
-#: pdf-forms-for-contact-form-7.php:728
+#: pdf-forms-for-contact-form-7.php:740
 msgid "Skip when empty"
 msgstr "空のときは無視する"
 
-#: pdf-forms-for-contact-form-7.php:729
+#: pdf-forms-for-contact-form-7.php:741
 msgid "Attach to primary email message"
 msgstr "プライマリ電子メールメッセージに添付"
 
-#: pdf-forms-for-contact-form-7.php:730
+#: pdf-forms-for-contact-form-7.php:742
 msgid "Attach to secondary email message"
 msgstr "セカンダリ電子メールメッセージに添付"
 
-#: pdf-forms-for-contact-form-7.php:731
+#: pdf-forms-for-contact-form-7.php:743
 msgid "Flatten"
 msgstr "フラットン"
 
-#: pdf-forms-for-contact-form-7.php:732
+#: pdf-forms-for-contact-form-7.php:744
 msgid "Filename (mail-tags can be used)"
 msgstr "ファイル名（メールタグも使用可能）"
 
-#: pdf-forms-for-contact-form-7.php:733
+#: pdf-forms-for-contact-form-7.php:745
 msgid "Save PDF file on the server at the given path relative to wp-content/uploads (mail-tags can be used; if empty, PDF file is not saved on disk)"
 msgstr "wp-content/uploadsを基準に指定されたパスのサーバーにPDFファイルを保存します（メールタグを使用できます。空の場合、PDFファイルはディスクに保存されません）"
 
-#: pdf-forms-for-contact-form-7.php:734
+#: pdf-forms-for-contact-form-7.php:746
 msgid "Add filled PDF download link to form submission response"
 msgstr "記入済みのPDFダウンロードリンクをフォーム送信応答に追加"
 
-#: pdf-forms-for-contact-form-7.php:735
+#: pdf-forms-for-contact-form-7.php:747
 msgid "Trigger an automatic download of the filled PDF file on a successful form submission response"
 msgstr "フォーム送信が成功した際に、記入済みPDFファイルを自動的にダウンロードするようトリガーします。"
 
-#: pdf-forms-for-contact-form-7.php:736
+#: pdf-forms-for-contact-form-7.php:748
 msgid "Field Mapper Tool"
 msgstr "フィールドマッパーツール"
 
-#: pdf-forms-for-contact-form-7.php:737
+#: pdf-forms-for-contact-form-7.php:749
 msgid "This tool can be used to link form fields and mail-tags to fields in the attached PDF files. When your users submit the form, input from form fields and other mail-tags will be inserted into the corresponding fields in the PDF file. CF7 to PDF field value mappings can also be created to enable the replacement of CF7 data when PDF fields are filled."
 msgstr "このツールを使用して、フォームフィールドやメールタグを添付されたPDFファイル内のフィールドにリンクできます。ユーザーがフォームを送信すると、フォームフィールドやその他のメールタグからの入力がPDFファイル内の対応するフィールドに挿入されます。PDFフィールドが埋められると、CF7データを置き換えるためのCF7からPDFへのフィールド値マッピングも作成できます。"
 
-#: pdf-forms-for-contact-form-7.php:738
-#: pdf-forms-for-contact-form-7.php:2539
-#: pdf-forms-for-contact-form-7.php:2589
+#: pdf-forms-for-contact-form-7.php:750
+#: pdf-forms-for-contact-form-7.php:2551
+#: pdf-forms-for-contact-form-7.php:2601
 msgid "PDF field"
 msgstr "PDFフィールド"
 
-#: pdf-forms-for-contact-form-7.php:739
+#: pdf-forms-for-contact-form-7.php:751
 msgid "CF7 field/mail-tags"
 msgstr "CF7フィールド/タグ"
 
-#: pdf-forms-for-contact-form-7.php:740
+#: pdf-forms-for-contact-form-7.php:752
 msgid "Add Mapping"
 msgstr "マッピングの追加"
 
-#: pdf-forms-for-contact-form-7.php:741
+#: pdf-forms-for-contact-form-7.php:753
 msgid "Delete All"
 msgstr "すべて削除"
 
-#: pdf-forms-for-contact-form-7.php:742
-#: pdf-forms-for-contact-form-7.php:2534
-#: pdf-forms-for-contact-form-7.php:2584
+#: pdf-forms-for-contact-form-7.php:754
+#: pdf-forms-for-contact-form-7.php:2546
+#: pdf-forms-for-contact-form-7.php:2596
 msgid "Insert and Link"
 msgstr "挿入とリンク"
 
-#: pdf-forms-for-contact-form-7.php:743
+#: pdf-forms-for-contact-form-7.php:755
 msgid "This button allows you to generate tags for all remaining unlinked PDF fields, insert them into the form and link them to their corresponding fields."
 msgstr "このボタンを使用すると、リンクされていないすべてのPDFフィールドのタグを生成し、フォームに挿入して対応するフィールドにリンクすることができます。"
 
-#: pdf-forms-for-contact-form-7.php:744
-#: pdf-forms-for-contact-form-7.php:2536
-#: pdf-forms-for-contact-form-7.php:2586
+#: pdf-forms-for-contact-form-7.php:756
+#: pdf-forms-for-contact-form-7.php:2548
+#: pdf-forms-for-contact-form-7.php:2598
 msgid "Insert & Link All"
 msgstr "すべてを挿入してリンクする"
 
-#: pdf-forms-for-contact-form-7.php:745
+#: pdf-forms-for-contact-form-7.php:757
 msgid "Image Embedding Tool"
 msgstr "画像埋め込みツール"
 
-#: pdf-forms-for-contact-form-7.php:746
+#: pdf-forms-for-contact-form-7.php:758
 msgid "This tool allows embedding of images into PDF files. Images are taken from file upload fields or URL field values. You can select a PDF file page and draw a bounding box for image insertion. Alternatively, you can insert your image in the center of every page."
 msgstr "このツールを使用して、画像をPDFファイルに埋め込むことができます。画像は、ファイルアップロードフィールドやURLフィールドの値から取得されます。PDFファイルのページを選択し、画像挿入用のバウンディングボックスを描くことができます。または、すべてのページの中央に画像を挿入することも可能です。"
 
-#: pdf-forms-for-contact-form-7.php:747
+#: pdf-forms-for-contact-form-7.php:759
 msgid "Embed Image"
 msgstr "画像を埋め込む"
 
-#: pdf-forms-for-contact-form-7.php:749
+#: pdf-forms-for-contact-form-7.php:761
 msgid "PDF file"
 msgstr "PDFファイル"
 
-#: pdf-forms-for-contact-form-7.php:750
+#: pdf-forms-for-contact-form-7.php:762
 msgid "Page"
 msgstr "ページ"
 
-#: pdf-forms-for-contact-form-7.php:751
+#: pdf-forms-for-contact-form-7.php:763
 msgid "Select a region where the image needs to be embeded."
 msgstr "イメージを埋め込む必要がある領域を選択します。"
 
-#: pdf-forms-for-contact-form-7.php:752
+#: pdf-forms-for-contact-form-7.php:764
 msgid "Top"
 msgstr "上"
 
-#: pdf-forms-for-contact-form-7.php:753
+#: pdf-forms-for-contact-form-7.php:765
 msgid "Left"
 msgstr "左"
 
-#: pdf-forms-for-contact-form-7.php:754
+#: pdf-forms-for-contact-form-7.php:766
 msgid "Width"
 msgstr "幅"
 
-#: pdf-forms-for-contact-form-7.php:755
+#: pdf-forms-for-contact-form-7.php:767
 msgid "Height"
 msgstr "高さ"
 
-#: pdf-forms-for-contact-form-7.php:756
+#: pdf-forms-for-contact-form-7.php:768
 msgid "pts"
 msgstr "ポイント"
 
-#: pdf-forms-for-contact-form-7.php:758
-#: pdf-forms-for-contact-form-7.php:2550
-#: pdf-forms-for-contact-form-7.php:2600
+#: pdf-forms-for-contact-form-7.php:770
+#: pdf-forms-for-contact-form-7.php:2562
+#: pdf-forms-for-contact-form-7.php:2612
 msgid "Have a question/comment/problem?  Feel free to use {a-href-forum}the support forum{/a} and view {a-href-tutorial}the tutorial video{/a}."
 msgstr "質問/コメント/問題がありますか？ {a-href-forum}サポートフォーラム{/a}を使い、{a-href-tutorial}チュートリアルビデオ{/a}をご覧ください。"
 
-#: pdf-forms-for-contact-form-7.php:921
+#: pdf-forms-for-contact-form-7.php:933
 msgid "Failed to download file: {error-message}"
 msgstr "ファイルのダウンロードに失敗しました：{error-message}"
 
-#: pdf-forms-for-contact-form-7.php:1193
-#: pdf-forms-for-contact-form-7.php:1686
+#: pdf-forms-for-contact-form-7.php:1205
+#: pdf-forms-for-contact-form-7.php:1698
 msgid "File type {mime-type} of {file} is unsupported for {purpose}"
 msgstr "{file}のファイルタイプ{mime-type}は{purpose}ではサポートされていません"
 
-#: pdf-forms-for-contact-form-7.php:1194
+#: pdf-forms-for-contact-form-7.php:1206
 msgid "image embedding"
 msgstr "画像の埋め込み"
 
-#: pdf-forms-for-contact-form-7.php:1420
+#: pdf-forms-for-contact-form-7.php:1432
 msgid ", "
 msgstr "、"
 
-#: pdf-forms-for-contact-form-7.php:1546
-#: pdf-forms-for-contact-form-7.php:1761
+#: pdf-forms-for-contact-form-7.php:1558
+#: pdf-forms-for-contact-form-7.php:1773
 msgid "Attachment file is not accessible"
 msgstr "添付ファイルにアクセスできません"
 
-#: pdf-forms-for-contact-form-7.php:1559
+#: pdf-forms-for-contact-form-7.php:1571
 msgid "Error generating PDF: {error-message} at {error-file}:{error-line}"
 msgstr "{error-file}：{error-line}でPDFの生成中にエラーが発生しました：{error-message}"
 
-#: pdf-forms-for-contact-form-7.php:1637
+#: pdf-forms-for-contact-form-7.php:1649
 msgid "An error occurred while processing a PDF: {error-message}"
 msgstr "PDFの処理中にエラーが発生しました：{error-message}"
 
-#: pdf-forms-for-contact-form-7.php:1687
+#: pdf-forms-for-contact-form-7.php:1699
 msgid "PDF form filling"
 msgstr "PDFフォームの入力"
 
-#: pdf-forms-for-contact-form-7.php:1778
+#: pdf-forms-for-contact-form-7.php:1790
 msgid "Could not read attached file"
 msgstr "添付ファイルを読み取れませんでした"
 
-#: pdf-forms-for-contact-form-7.php:1806
+#: pdf-forms-for-contact-form-7.php:1818
 msgid "No service"
 msgstr "サービス無し"
 
-#: pdf-forms-for-contact-form-7.php:2032
+#: pdf-forms-for-contact-form-7.php:2044
 msgid "This PDF file does not appear to contain a PDF form.  See https://acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.html for more information."
 msgstr "このPDFファイルにはPDFフォームが含まれていません。 詳細については、https：//acrobat.adobe.com/us/en/acrobat/how-to/create-fillable-pdf-forms-creator.htmlを参照してください。"
 
-#: pdf-forms-for-contact-form-7.php:2147
+#: pdf-forms-for-contact-form-7.php:2159
 msgid "Invalid post ID"
 msgstr "無効なポストID"
 
-#: pdf-forms-for-contact-form-7.php:2226
+#: pdf-forms-for-contact-form-7.php:2238
 msgid "Failed to get Contact Form fields"
 msgstr "連絡先フォームのフィールドを取得できませんでした"
 
-#: pdf-forms-for-contact-form-7.php:2343
+#: pdf-forms-for-contact-form-7.php:2355
 msgid "Failed to determine upload path"
 msgstr "アップロードパスの決定に失敗しました"
 
-#: pdf-forms-for-contact-form-7.php:2383
+#: pdf-forms-for-contact-form-7.php:2395
 msgid "Invalid page number"
 msgstr "ページ番号が無効です"
 
-#: pdf-forms-for-contact-form-7.php:2392
+#: pdf-forms-for-contact-form-7.php:2404
 msgid "Failed to retrieve page snapshot"
 msgstr "ページスナップショットの取得に失敗しました"
 
-#: pdf-forms-for-contact-form-7.php:2420
-#: pdf-forms-for-contact-form-7.php:2426
-#: pdf-forms-for-contact-form-7.php:2436
+#: pdf-forms-for-contact-form-7.php:2432
+#: pdf-forms-for-contact-form-7.php:2438
+#: pdf-forms-for-contact-form-7.php:2448
 msgid "PDF Form"
 msgstr "PDFフォーム"
 
-#: pdf-forms-for-contact-form-7.php:2531
-#: pdf-forms-for-contact-form-7.php:2581
+#: pdf-forms-for-contact-form-7.php:2543
+#: pdf-forms-for-contact-form-7.php:2593
 msgid "Go to PDF files"
 msgstr "PDFファイルに移動"
 
-#: pdf-forms-for-contact-form-7.php:2532
-#: pdf-forms-for-contact-form-7.php:2582
+#: pdf-forms-for-contact-form-7.php:2544
+#: pdf-forms-for-contact-form-7.php:2594
 msgid "Go to Field Mappings"
 msgstr "フィールドマッピングに移動"
 
-#: pdf-forms-for-contact-form-7.php:2533
-#: pdf-forms-for-contact-form-7.php:2583
+#: pdf-forms-for-contact-form-7.php:2545
+#: pdf-forms-for-contact-form-7.php:2595
 msgid "Insert Tags"
 msgstr "挿入タグ"
 
-#: pdf-forms-for-contact-form-7.php:2535
-#: pdf-forms-for-contact-form-7.php:2585
+#: pdf-forms-for-contact-form-7.php:2547
+#: pdf-forms-for-contact-form-7.php:2597
 msgid "The 'Insert & Link All' button allows you to generate tags for all remaining unlinked PDF fields, insert them into the form and link them to their corresponding fields."
 msgstr "「すべて挿入＆リンク」ボタンを使用すると、リンクされていないPDFフィールドのタグをすべて生成し、それらをフォームに挿入して対応するフィールドにリンクすることができます。"
 
-#: pdf-forms-for-contact-form-7.php:2537
-#: pdf-forms-for-contact-form-7.php:2587
+#: pdf-forms-for-contact-form-7.php:2549
+#: pdf-forms-for-contact-form-7.php:2599
 msgid "Field Mapping Generator"
 msgstr "フィールドマッピングジェネレーター"
 
-#: pdf-forms-for-contact-form-7.php:2538
-#: pdf-forms-for-contact-form-7.php:2588
+#: pdf-forms-for-contact-form-7.php:2550
+#: pdf-forms-for-contact-form-7.php:2600
 msgid "This tool can be used to generate form-tags based on PDF fields after attaching a PDF file with a form."
 msgstr "このツールを使用すると、PDFファイルをフォームに添付した後に、PDFフィールドに基づいてフォームタグを生成することができます。"
 
-#: pdf-forms-for-contact-form-7.php:2540
-#: pdf-forms-for-contact-form-7.php:2590
+#: pdf-forms-for-contact-form-7.php:2552
+#: pdf-forms-for-contact-form-7.php:2602
 msgid "Tag Generator Tool (deprecated)"
 msgstr "タグ生成ツール（非推奨）"
 
-#: pdf-forms-for-contact-form-7.php:2541
-#: pdf-forms-for-contact-form-7.php:2591
+#: pdf-forms-for-contact-form-7.php:2553
+#: pdf-forms-for-contact-form-7.php:2603
 msgid "This tool allows creation of CF7 fields that are linked to PDF fields by name. This feature is deprecated in favor of the field mapper tool."
 msgstr "このツールを使用すると、名前によってPDFフィールドにリンクされたCF7フィールドを作成できます。この機能は、フィールドマッパーツールに取って代わられます。"
 
-#: pdf-forms-for-contact-form-7.php:2543
-#: pdf-forms-for-contact-form-7.php:2593
+#: pdf-forms-for-contact-form-7.php:2555
+#: pdf-forms-for-contact-form-7.php:2605
 msgid "The PDF file attachment tool, the field mapper tool and the image embedding tool have moved to the {a-href-panel-link}PDF Forms Filler panel{/a}."
 msgstr "PDFファイル添付ツール、フィールドマッパーツール、および画像埋め込みツールは、{a-href-panel-link}PDF Forms Fillerパネル{/a}に移動しました。"
 
-#: pdf-forms-for-contact-form-7.php:2561
-#: pdf-forms-for-contact-form-7.php:2611
+#: pdf-forms-for-contact-form-7.php:2573
+#: pdf-forms-for-contact-form-7.php:2623
 msgid "Get Tags"
 msgstr "タグを取得"
 
-#: pdf-forms-for-contact-form-7.php:2573
+#: pdf-forms-for-contact-form-7.php:2585
 msgid "PDF form fields"
 msgstr "PDFフォームフィールド"
 
-#: pdf-forms-for-contact-form-7.php:2575
+#: pdf-forms-for-contact-form-7.php:2587
 msgid "Once you {a-href-panel-link}attach a PDF file with fields to your form{/a}, you will be able to generate form-tags that are linked to PDF form fields."
 msgstr "一度{a-href-panel-link}フィールド付きのPDFファイルをフォームに添付{/a}すると、PDFフォームフィールドにリンクされたフォームタグを生成できるようになります。"
 
-#: pdf-forms-for-contact-form-7.php:2619
+#: pdf-forms-for-contact-form-7.php:2631
 msgid "Your CF7 plugin is too out of date, please upgrade."
 msgstr "あなたのCF7プラグインはあまりにも古くなって、アップグレードしてくださいです。"
 
-#: pdf-forms-for-contact-form-7.php:2732
+#: pdf-forms-for-contact-form-7.php:2744
 msgid "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}"
 msgstr "{icon} {a-href-url}{filename}{/a} {i}({size}){/i}"
