@@ -16,6 +16,8 @@ svn
 .idea
 composer.lock
 vendor/bin
+vendor/composer
+vendor/autoload.php
 
 # Env
 .env

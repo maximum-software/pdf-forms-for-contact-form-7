@@ -17,8 +17,6 @@
 
 if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-require_once untrailingslashit( dirname( __FILE__ ) ) . '/vendor/autoload.php';
-
 if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 {
 	class WPCF7_Pdf_Forms
