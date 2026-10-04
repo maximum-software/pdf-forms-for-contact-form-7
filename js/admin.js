@@ -4,6 +4,13 @@ jQuery(document).ready(function($) {
 	if(!wpcf7_form)
 		return;
 	
+	// select2 is a hard dependency for this admin UI, bail early if it's unavailable
+	if(!jQuery.fn.select2 || !jQuery.fn.select2.amd)
+	{
+		console.error('select2 failed to enqueue correctly, preventing PDF Forms Filler admin UI initialization');
+		return;
+	}
+	
 	var pluginData = {
 		attachments: [],
 		mappings: [],
