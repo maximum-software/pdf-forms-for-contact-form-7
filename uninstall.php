@@ -50,6 +50,14 @@ function wpcf7_pdf_forms_uninstall_site()
 	foreach( $page_snapshots as $attachment_id )
 		wp_delete_post( $attachment_id, true );
 	
+	// detach PDF attachments from CF7 forms
+	$attached_pdf_ids = $wpdb->get_col( $wpdb->prepare(
+		"SELECT DISTINCT post_id FROM {$wpdb->postmeta} WHERE meta_key LIKE %s",
+		$wpdb->esc_like( 'wpcf7-pdf-forms-options-' ) . '%'
+	) );
+	foreach( $attached_pdf_ids as $attachment_id )
+		wp_update_post( array( 'ID' => (int) $attachment_id, 'post_parent' => 0 ) );
+	
 	// remove all remaining plugin post meta
 	$wpdb->query( $wpdb->prepare(
 		"DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE %s",
