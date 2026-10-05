@@ -45,6 +45,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 			register_activation_hook( __FILE__, array( $this, 'plugin_activated' ) );
 			register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivated' ) );
 			add_action( 'wpcf7_pdf_forms_cron', array( $this, 'cron' ) );
+			add_filter( 'cron_schedules', array( $this, 'cron_schedules' ) );
 		}
 		
 		/**
@@ -102,8 +103,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 			
 			// hook that allows to copy media and mapping
 			add_filter( 'wpcf7_copy', array( $this, 'duplicate_form_hook' ), 10, 2 );
-			
-			add_filter( 'cron_schedules', array( $this, 'cron_schedules' ) );
 			
 			// TODO: allow users to run this manually
 			add_action( 'admin_init', array( $this, 'upgrade_data' ) );
