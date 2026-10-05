@@ -203,18 +203,22 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 		{
 			$plugin_path = plugin_basename( __FILE__ );
 			
-			if( $hook_extra['action'] == 'update'
-			&& $hook_extra['type'] == 'plugin'
-			&& isset( $hook_extra['plugins'] )
-			&& is_array( $hook_extra['plugins'] ) )
+			if( $hook_extra['action'] != 'update' || $hook_extra['type'] != 'plugin' )
+				return;
+			
+			$plugins = array();
+			
+			if( isset( $hook_extra['plugins'] ) && is_array( $hook_extra['plugins'] ) )
+				$plugins = $hook_extra['plugins'];
+			elseif( isset( $hook_extra['plugin'] ) )
+				$plugins = array( $hook_extra['plugin'] );
+			
+			foreach( $plugins as $plugin )
 			{
-				foreach( $hook_extra['plugins'] as $plugin )
+				if( $plugin == $plugin_path )
 				{
-					if( $plugin == $plugin_path )
-					{
-						set_transient( 'wpcf7_pdf_forms_updated_old_version', self::VERSION );
-						break;
-					}
+					set_transient( 'wpcf7_pdf_forms_updated_old_version', self::VERSION );
+					break;
 				}
 			}
 		}
