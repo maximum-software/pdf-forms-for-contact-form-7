@@ -235,7 +235,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 			
 			foreach( $contents as $file )
 			{
-				$extension = end( explode( ".", $file ) );
 				$filepath = $dir . DIRECTORY_SEPARATOR . $file;
 				if( is_file( $filepath ) )
 				if( preg_match("/^(\d+\.\d+\.\d+)\.php$/u", $file, $matches) )
