@@ -41,7 +41,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 			add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 			add_action( 'plugins_loaded', array( $this, 'plugin_init' ) );
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'action_links' ) );
-			add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 99, 2 );
 			register_activation_hook( __FILE__, array( $this, 'plugin_activated' ) );
 			register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivated' ) );
 			add_action( 'wpcf7_pdf_forms_cron', array( $this, 'cron' ) );
@@ -197,33 +196,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 		}
 		
 		/**
-		 * Runs after plugin updates and triggers data migration
-		 */
-		public function upgrader_process_complete( $upgrader, $hook_extra )
-		{
-			$plugin_path = plugin_basename( __FILE__ );
-			
-			if( $hook_extra['action'] != 'update' || $hook_extra['type'] != 'plugin' )
-				return;
-			
-			$plugins = array();
-			
-			if( isset( $hook_extra['plugins'] ) && is_array( $hook_extra['plugins'] ) )
-				$plugins = $hook_extra['plugins'];
-			elseif( isset( $hook_extra['plugin'] ) )
-				$plugins = array( $hook_extra['plugin'] );
-			
-			foreach( $plugins as $plugin )
-			{
-				if( $plugin == $plugin_path )
-				{
-					set_transient( 'wpcf7_pdf_forms_updated_old_version', self::VERSION );
-					break;
-				}
-			}
-		}
-		
-		/**
 		 * Returns sorted list of data migration scripts in the migrations directory
 		 */
 		private function get_migrations()
@@ -250,28 +222,30 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 		}
 		
 		/**
-		 * Runs data migration when triggered
+		 * Runs data migration when the stored version differs from the current version
 		 */
 		public function upgrade_data()
 		{
 			if( wp_doing_ajax() )
 				return;
 			
-			$old_version = get_transient( 'wpcf7_pdf_forms_updated_old_version' );
-			if( !$old_version )
+			$stored_version = get_option( 'wpcf7_pdf_forms_version' );
+			
+			if( $stored_version === self::VERSION )
 				return;
 			
-			delete_transient( 'wpcf7_pdf_forms_updated_old_version' );
-			
-			$new_version = self::VERSION;
-			
-			$migrations = $this->get_migrations();
-			foreach($migrations as $version => $script)
+			if( $stored_version )
 			{
-				if( version_compare( $version, $old_version ) > 0
-				&& version_compare( $version, $new_version ) <= 0 )
-					$this->run_data_migration( $script );
+				$migrations = $this->get_migrations();
+				foreach( $migrations as $version => $script )
+				{
+					if( version_compare( $version, $stored_version ) > 0
+					&& version_compare( $version, self::VERSION ) <= 0 )
+						$this->run_data_migration( $script );
+				}
 			}
+			
+			update_option( 'wpcf7_pdf_forms_version', self::VERSION, true );
 		}
 		
 		/**

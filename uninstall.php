@@ -34,7 +34,9 @@ function wpcf7_pdf_forms_uninstall_site()
 	
 	// remove transients
 	delete_transient( 'wpcf7_pdf_forms_pdfninja_key_failure' );
-	delete_transient( 'wpcf7_pdf_forms_updated_old_version' );
+	
+	// remove options
+	delete_option( 'wpcf7_pdf_forms_version' );
 	
 	// remove cron jobs
 	wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
