@@ -45,7 +45,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 			register_activation_hook( __FILE__, array( $this, 'plugin_activated' ) );
 			register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivated' ) );
 			add_action( 'wpcf7_pdf_forms_cron', array( $this, 'cron' ) );
-			add_filter( 'cron_schedules', array( $this, 'cron_schedules' ) );
 		}
 		
 		/**
@@ -158,20 +157,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 		}
 		
 		/**
-		 * Hook that adds a cron schedule
-		 */
-		public function cron_schedules( $schedules )
-		{
-			$interval = $this->get_downloads()->get_timeout();
-			$display = self::replace_tags( __( "Every {interval} seconds", 'pdf-forms-for-contact-form-7' ), array( 'interval' => $interval ) );
-			$schedules['wpcf7_pdf_forms_cron_frequency'] = array(
-				'interval' => $interval,
-				'display' => $display
-			);
-			return $schedules;
-		}
-		
-		/**
 		 * Enables cron
 		 */
 		private function enable_cron()
@@ -192,7 +177,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 			}
 			
 			if( $due === false )
-				wp_schedule_event( $current_time, 'wpcf7_pdf_forms_cron_frequency', 'wpcf7_pdf_forms_cron' );
+				wp_schedule_event( $current_time, 'hourly', 'wpcf7_pdf_forms_cron' );
 		}
 		
 		/**
