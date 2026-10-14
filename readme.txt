@@ -1,8 +1,8 @@
 === PDF Forms Filler for CF7 ===
-Version: 2.2.6
-Stable tag: 2.2.6
+Version: 2.2.7
+Stable tag: 2.2.7
 Requires PHP: 5.6
-Tested up to: 7.0
+Tested up to: 7.1
 Tags: pdf, form, contact form, email, download
 Plugin URI: https://pdfformsfiller.org/
 Author: Maximum.Software
@@ -67,6 +67,19 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor.
 
 == Changelog ==
+
+= 2.2.7 =
+
+* Release date: October 14, 2026
+
+* Verified support for CF7 v6.2.2 and WP v7.1
+* Updated minimum PHP version requirement to 5.6
+* Added uninstall script that removes plugin data, detaches PDF attachments and cleans up the downloads directory
+* Simplified the cleanup cron
+* Fixed stale md5sum on API request retry
+* Cleaned up bundled libraries, removed TGMPA dependency, switched to the full select2 build for cross-plugin safety
+* Fixed translations
+* Other minor fixes and improvements
 
 = 2.2.6 =
 
