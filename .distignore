@@ -15,6 +15,7 @@
 .vscode
 .idea
 composer.lock
+docs
 vendor/bin
 vendor/composer
 vendor/autoload.php
