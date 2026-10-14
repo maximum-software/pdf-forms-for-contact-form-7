@@ -688,8 +688,11 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 			if( $service && is_callable( array( $service, 'thickbox_messages' ) ) )
 				$messages .= $service->thickbox_messages();
 			
+			$current = WPCF7_ContactForm::get_current();
+			$post_id = $current ? $current->id() : 0;
+			
 			echo self::render( 'settings_panel', array(
-				'post-id' => esc_html( WPCF7_ContactForm::get_current()->id() ),
+				'post-id' => esc_html( $post_id ),
 				'pdf-forms-filler-title' => esc_html__( "PDF Forms Filler", 'pdf-forms-for-contact-form-7' ),
 				'messages' => $messages,
 				'instructions' => esc_html__( "You can use this panel to attach a PDF file to this contact form and link form-tags and mail-tags to fields in the PDF file. It is possible to link a combination of mail-tags to PDF fields. You can also embed images (from URLs or attached files) into the PDF file. Changes here are applied when the contact form is saved.", 'pdf-forms-for-contact-form-7' ),
