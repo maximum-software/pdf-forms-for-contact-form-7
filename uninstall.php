@@ -34,12 +34,17 @@ function wpcf7_pdf_forms_uninstall_site()
 	
 	// remove transients
 	delete_transient( 'wpcf7_pdf_forms_pdfninja_key_failure' );
+	delete_transient( 'wpcf7_pdf_forms_updated_old_version' );
 	
 	// remove options
 	delete_option( 'wpcf7_pdf_forms_version' );
 	
 	// remove cron jobs
 	wp_clear_scheduled_hook( 'wpcf7_pdf_forms_cron' );
+	
+	// remove TGMPA dismissed notice flags (current and legacy ids)
+	delete_metadata( 'user', null, 'tgmpa_dismissed_notice_pdf-forms-for-contact-form-7', null, true );
+	delete_metadata( 'user', null, 'tgmpa_dismissed_notice_wpcf7-pdf-forms', null, true );
 	
 	// remove page snapshot attachments before the catch-all meta deletion below
 	$page_snapshots = get_posts( array(
@@ -71,7 +76,7 @@ function wpcf7_pdf_forms_uninstall_site()
 }
 
 /**
- * Remove the downloads directory and its one-level-deep subdirectories.
+ * Remove the downloads directory and its one-level-deep subdirectories
  */
 function wpcf7_pdf_forms_cleanup_downloads_directory()
 {
