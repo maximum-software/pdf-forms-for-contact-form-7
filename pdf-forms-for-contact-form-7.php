@@ -1436,7 +1436,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 					{
 						$empty_data = true;
 						foreach( $data as $field => $value )
-							if( !( is_null( $value ) || $value === array() || trim( $value ) === "" ) )
+							if( !( is_null( $value ) || $value === array() || ( ! is_array( $value ) && trim( $value ) === "" ) ) )
 							{
 								$empty_data = false;
 								break;
