@@ -2740,11 +2740,14 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 		 */
 		public function handle_hidden_iframe_download()
 		{
-			if( isset( $_GET['wpcf7-pdf-forms-download'] ) )
+			if( isset( $_GET['wpcf7-pdf-forms-download'] ) && isset( $_GET['hash'] ) )
 			{
 				$downloads = $this->get_downloads();
 				$filepath = $_GET['wpcf7-pdf-forms-download'];
 				$hash = $_GET['hash'];
+				
+				if( ! is_string( $filepath ) || ! is_string( $hash ) )
+					return;
 				
 				// invasive pat down
 				$path_parts = explode( '/', $filepath );
