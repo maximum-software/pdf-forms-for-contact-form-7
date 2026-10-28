@@ -254,7 +254,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 		private function run_data_migration( $script )
 		{
 			try { include( $script ); }
-			catch( Throwable $e ) { }
+			catch( Throwable $e ) { self::log_error( $e ); }
 		}
 		
 		/**
@@ -1049,7 +1049,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 					if( method_exists( $parser, 'getParsedMail' ) )
 						$content = $parser->getParsedMail();
 				}
-				catch(Throwable $e) { } // ignore
+				catch(Throwable $e) { self::log_error( $e ); } // ignore
 			}
 			
 			return $content;
@@ -1263,7 +1263,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 							else
 								$data[$field] = self::wpcf7_mail_replace_tags( "[".$name."]" );
 						}
-						catch(Throwable $e) { }
+						catch(Throwable $e) { self::log_error( $e ); }
 					}
 					
 					if( count( $value_mappings ) > 0 )
@@ -1814,6 +1814,24 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 		public static function json_encode( $value )
 		{
 			return json_encode( $value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+		}
+
+		/**
+		 * Logs a throwable to the debug log when WP_DEBUG is enabled
+		 */
+		public static function log_error( $e )
+		{
+			if( defined( 'WP_DEBUG' ) && WP_DEBUG )
+				error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- error_log() is the WordPress convention for writing to the debug log
+					self::replace_tags(
+						'PDF Forms Filler for CF7: {error-message} at {error-file}:{error-line}',
+						array(
+							'error-message' => $e->getMessage(),
+							'error-file'    => wp_basename( $e->getFile() ),
+							'error-line'    => $e->getLine(),
+						)
+					)
+				);
 		}
 		
 		/**

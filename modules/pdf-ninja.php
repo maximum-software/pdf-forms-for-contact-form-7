@@ -1161,7 +1161,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 	 */
 	public function admin_notices()
 	{
-		try { $this->get_key(); } catch(Throwable $e) { };
+		try { $this->get_key(); } catch(Throwable $e) { WPCF7_Pdf_Forms::log_error( $e ); }
 		$fail = get_transient( 'wpcf7_pdf_forms_pdfninja_key_failure' );
 		if( isset( $fail ) && $fail && current_user_can( 'wpcf7_manage_integration' ) )
 			echo WPCF7_Pdf_Forms::render_error_notice( 'pdf-ninja-new-key-failure', array(
@@ -1193,7 +1193,7 @@ class WPCF7_Pdf_Ninja extends WPCF7_Pdf_Forms_Service
 				'message' => esc_html__( "Your Contact Form 7 integration settings indicate that you are using an insecure connection to the Pdf.Ninja API server.", 'pdf-forms-for-contact-form-7' ),
 			) );
 		}
-		catch(Throwable $e) { };
+		catch(Throwable $e) { WPCF7_Pdf_Forms::log_error( $e ); }
 		
 		return $messages;
 	}
