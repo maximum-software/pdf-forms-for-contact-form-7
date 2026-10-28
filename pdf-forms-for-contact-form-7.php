@@ -5,7 +5,7 @@
  * Description: Build Contact Form 7 forms from PDF forms. Get PDFs auto-filled and attached to email messages and/or website responses on form submission.
  * Version: 2.2.7
  * Requires at least: 4.8
- * Requires PHP: 5.6
+ * Requires PHP: 7.0
  * Requires Plugins: contact-form-7
  * Author: Maximum.Software
  * Author URI: https://maximum.software/
@@ -254,7 +254,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 		private function run_data_migration( $script )
 		{
 			try { include( $script ); }
-			catch( Exception $e ) { }
+			catch( Throwable $e ) { }
 		}
 		
 		/**
@@ -1049,7 +1049,6 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 					if( method_exists( $parser, 'getParsedMail' ) )
 						$content = $parser->getParsedMail();
 				}
-				catch(Exception $e) { } // ignore
 				catch(Throwable $e) { } // ignore
 			}
 			
@@ -1264,7 +1263,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 							else
 								$data[$field] = self::wpcf7_mail_replace_tags( "[".$name."]" );
 						}
-						catch(Exception $e) { }
+						catch(Throwable $e) { }
 					}
 					
 					if( count( $value_mappings ) > 0 )
@@ -1527,7 +1526,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 						
 						$files[] = array( 'attachment_id' => $attachment_id, 'file' => $destfile, 'filename' => $destfilename . '.pdf', 'options' => $attachment['options'] );
 					}
-					catch(Exception $e)
+					catch(Throwable $e)
 					{
 						throw new Exception(
 							self::replace_tags(
@@ -1604,7 +1603,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 					}
 				}
 			}
-			catch( Exception $e )
+			catch( Throwable $e )
 			{
 				$abort = true;
 				$submission->set_response(
@@ -1684,7 +1683,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 					'info' => $info,
 				) );
 			}
-			catch( Exception $e )
+			catch( Throwable $e )
 			{
 				return wp_send_json( array(
 					'success'  => false,
@@ -1742,7 +1741,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 					$md5sum = @md5_file( $temp_filepath );
 					@unlink( $temp_filepath );
 				}
-				catch(Exception $e)
+				catch(Throwable $e)
 				{
 					@unlink( $temp_filepath );
 					throw $e;
@@ -2046,7 +2045,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 					'tags' => $tags,
 				) );
 			}
-			catch( Exception $e )
+			catch( Throwable $e )
 			{
 				return wp_send_json( array(
 					'success'  => false,
@@ -2175,7 +2174,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 					'embeds' => $embeds,
 				) );
 			}
-			catch( Exception $e )
+			catch( Throwable $e )
 			{
 				return wp_send_json( array(
 					'success'  => false,
@@ -2280,7 +2279,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 					'fields' => $fields,
 				) );
 			}
-			catch( Exception $e )
+			catch( Throwable $e )
 			{
 				return wp_send_json( array(
 					'success'  => false,
@@ -2371,7 +2370,7 @@ if( ! class_exists( 'WPCF7_Pdf_Forms', false ) )
 					'snapshot' => reset( $snapshot ),
 				) );
 			}
-			catch( Exception $e )
+			catch( Throwable $e )
 			{
 				return wp_send_json( array(
 					'success' => false,

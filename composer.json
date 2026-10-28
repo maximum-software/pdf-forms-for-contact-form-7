@@ -13,7 +13,7 @@
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"require": {
-		"php": ">=5.6",
+		"php": ">=7.0",
 		"select2/select2": "4.0.13"
 	},
 	"require-dev": {
@@ -41,7 +41,7 @@
 			"domain": "pdf-forms-for-contact-form-7",
 			"main_file": "pdf-forms-for-contact-form-7.php",
 			"svn_url": "https://plugins.svn.wordpress.org/pdf-forms-for-contact-form-7",
-			"php_version": "5.6",
+			"php_version": "7.0",
 			"wp_version": "4.8",
 			"translation_headers": {
 				"Last-Translator": "Maximum Software Inc <contact@maximum.software>",
