@@ -1,6 +1,6 @@
 === PDF Forms Filler for CF7 ===
-Version: 2.2.7
-Stable tag: 2.2.7
+Version: 2.2.8
+Stable tag: 2.2.8
 Requires PHP: 7.0
 Tested up to: 7.1
 Tags: pdf, form, contact form, email, download
@@ -67,6 +67,15 @@ Special thanks to the following sponsors of this plugin:
 4. Start using the 'PDF Form' button in the CF7 form editor.
 
 == Changelog ==
+
+= 2.2.8 =
+
+* Release date: October 28, 2026
+
+* Fixed a crash on PHP 8 when skip when empty is used with multiselect fields
+* Updated minimum PHP version requirement to 7.0
+* Minor uninstall script fix: delete data from old versions
+* Other minor fixes and improvements
 
 = 2.2.7 =
 
